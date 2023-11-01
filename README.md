@@ -333,7 +333,7 @@ graph TB
 ### Example team composition and interaction with vendor (MS) support
 ```mermaid
 classDiagram
-  class PowerPlatformTeam {
+  class PowerPlatformServices {
     +Platform Architect (1.5)
     +Security Expert (Temp)
     +Tech Lead / Manager (1)
@@ -354,10 +354,11 @@ classDiagram
     +App 2
     +App 3
   }
-  PowerPlatformTeam --> Azure : Utilizes
-  PowerPlatformTeam --> M365 : Utilizes
-  Azure --> PowerPlatformTeam : Supports
-  M365 --> PowerPlatformTeam : Supports
-  PowerPlatformTeam --> BusinessClients : Supports
-  PowerPlatformTeam --> Executive : Reports
+  PowerPlatformServices --> Azure : Utilizes
+  PowerPlatformServices --> M365 : Utilizes
+  Azure --> PowerPlatformServices : Supports
+  M365 --> PowerPlatformServices : Supports
+  PowerPlatformServices --> BusinessClients : Supports
+  BusinessClients --> PowerPlatformServices : Utilizes
+  PowerPlatformServices --> Executive : Reports
 ```
