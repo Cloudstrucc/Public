@@ -1,4 +1,4 @@
-# Microsoft 365 Power Platform Services
+# Enterprise Microsoft 365 Power Platform Client Services
 
 Enhancing our Power Platform utilization, secure implementations, adherence to PBMM commitments, and delivering digital efficiency within the organization fostering platform adoption
 
