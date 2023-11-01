@@ -1,4 +1,4 @@
-# Global Affairs Canada - Power Platform Services
+# Microsoft 365 Power Platform Services
 
 Enhancing GAC's Power Platform utilization, secure implementations, adherence to PBMM commitments, and delivering digital efficiency within the organization fostering platform adoption
 
