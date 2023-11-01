@@ -63,27 +63,6 @@ flowchart LR
   DE --> RM(Resource Maintenance)
 ```
 
-```mermaid
-classDiagram
-  class PowerPlatformTeam {
-    +Platform Architects
-    +Security Experts
-    +Project Managers
-    +Developers
-    +QA Engineers
-  }
-  class Azure {
-    +Cloud Services
-  }
-  class M365 {
-    +Office 365 Services
-  }
-  PowerPlatformTeam --> Azure : Utilizes
-  PowerPlatformTeam --> M365 : Utilizes
-  Azure --> PowerPlatformTeam : Supports
-  M365 --> PowerPlatformTeam : Supports
-```
-
 ### Process for vendor upgrades
 
 ```mermaid
@@ -292,3 +271,25 @@ graph TB
 - **Training Material**: Training material should be comprehensive and comprise documentation, videos, and in-person training sessions, all readily available without manual request through a dedicated portal. This material should be designed to equip individuals with the necessary skills and knowledge to effectively use Power Platform.
 - **Community of Excellence (CoE) Kit**: The implementation of CoE kit items can be selective, with core components being installed, and additional items considered as the organization matures. These kits help in improving the efficiency and effectiveness of Power Platform usage.
 - **Reference Material**: A library of reference material should be accessible to users. This material includes environment management apps and Power Platform CoE Hygiene resources to support various projects and initiatives.
+
+
+```mermaid
+classDiagram
+  class PowerPlatformTeam {
+    +Platform Architects
+    +Security Experts
+    +Project Managers
+    +Developers
+    +QA Engineers
+  }
+  class Azure {
+    +Cloud Services
+  }
+  class M365 {
+    +Office 365 Services
+  }
+  PowerPlatformTeam --> Azure : Utilizes
+  PowerPlatformTeam --> M365 : Utilizes
+  Azure --> PowerPlatformTeam : Supports
+  M365 --> PowerPlatformTeam : Supports
+```
