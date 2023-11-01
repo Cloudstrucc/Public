@@ -334,20 +334,30 @@ graph TB
 ```mermaid
 classDiagram
   class PowerPlatformTeam {
-    +Platform Architects
-    +Security Experts
-    +Project Managers
-    +Developers
-    +QA Engineers
+    +Platform Architect (1.5)
+    +Security Expert (Temp)
+    +Tech Lead / Manager (1)
+    +Developers (junior & intermeidate) (2)
+    +QA Engineers (1)
   }
   class Azure {
     +Cloud Services
   }
+  class Executive {
+    +Director
+  }
   class M365 {
     +Office 365 Services
+  }
+  class BusinessClients {
+    +EDMSP
+    +App 2
+    +App 3
   }
   PowerPlatformTeam --> Azure : Utilizes
   PowerPlatformTeam --> M365 : Utilizes
   Azure --> PowerPlatformTeam : Supports
   M365 --> PowerPlatformTeam : Supports
+  PowerPlatformTeam --> BusinessClients : Supports
+  PowerPlatformTeam --> Executive : Reports
 ```
