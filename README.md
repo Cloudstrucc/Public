@@ -2,6 +2,9 @@
 
 Enhancing our Power Platform utilization, secure implementations, adherence to PBMM commitments, and delivering digital efficiency within the organization fostering platform adoption
 
+![arch](https://lucid.app/publicSegments/view/cc2c6508-459e-49e6-9163-24bebbe462f4/image.jpeg)
+
+
 ## Problem Statement & Opportunity
 
 The agency is at a critical inflection point, tasked with enhancing its IM/IT landscape to meet the evolving demands of technology and service delivery. Historically, the agency has navigated its technological needs through a mosaic of approaches, each contributing value in its context. Now, we are presented with the opportunity to consolidate these efforts by adopting a unified SaaS solution with the Power Platform, which aligns with our strategic objectives and promises substantial cost efficiency and predictability in expenditures.
