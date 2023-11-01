@@ -52,6 +52,17 @@ This document will detail the proposed strategy, emphasizing the potential savin
 - **Dedicated DevOps Environment**: The Power Platform Admin group should maintain a dedicated DevOps environment for sourcing control of the test suite automation and backlog tracking. The integration between DevOps and Power Platform allows for the auto-creation of DevOps work items, enabling the administration of backlogs using standard sprints and conventional backlog administration.
 - **Resource Maintenance**: To effectively maintain the processes outlined above, a small group of full-time employees (FTEs) or vendors is recommended. The process for maintaining these systems should be well-defined and standardized. This ensures that we can quickly integrate junior/intermediate developers with Power Platform experience into the group within a 30-day period (60 days initially). This process may include training materials and basic testing to validate the resource's capabilities, encompassing documentation in Markdown format, video content, and possibly in-person training sessions.
 
+
+```mermaid
+flowchart LR
+  AR(Automatic Releases) -->|Security/Bug Fixes| IR(Issues Resolution)
+  WR(Wave Releases) -->|Scheduled Upgrades| PR(Preview Ready Environments)
+  PR --> AT(Automated Testing)
+  AT --> GT(Governance Tool)
+  GT --> DE(Dedicated DevOps Environment)
+  DE --> RM(Resource Maintenance)
+```
+
 ```mermaid
 classDiagram
   class PowerPlatformTeam {
@@ -144,6 +155,16 @@ graph TB
 - **Release Backlog**: The backlog for these activities should be managed using the Power Platform Admin components app, or a similar tool like Azure DevOps, to ensure that the backlog is governed and that processes are consistently followed.
 - **Empty Backlog Review**: In the event that a GOC/Enterprise component has an empty backlog and has been reviewed as part of the process, the empty backlog should still include a decision work item that justifies "no action." This review process might occur quarterly and should be relatively rare. It might depend on the current team's capacity/resources and the stability of the module.
 
+```mermaid
+flowchart LR
+  AR(Alignment with Releases) --> CD(Continuous Development)
+  CD --> RE(Release Environments)
+  RE --> MI(Module Inventory)
+  MI --> SRM(Supported Reusable Modules)
+  SRM --> RB(Release Backlog)
+  RB --> EBR(Empty Backlog Review)
+```
+
 #### Process for Component
 
 ```mermaid
@@ -191,6 +212,16 @@ graph TD
 - **Environment Requests**: The scope of environment requests should also include AAD app registrations, KeyVault URLs, security group membership, and B2C registrations (if applicable).
 - **Release Notes**: Release notes should be readily available in Markdown (DocFX) format. This allows individual project development/build teams to download previews and GA releases at their discretion. However, production support for these releases is not in scope.
 - **Access Control**: Developers should not have sysadmin access to production without proper Power Platform Maker and Privileged Identity Management (PIM) access controls in place.
+
+```mermaid
+flowchart LR
+  II(Immediate Implementation) --> TT(Triage Tickets)
+  TT --> CV(Collaboration with Vendors)
+  CV --> AR(Ambiguity Reduction)
+  AR --> ER(Environment Requests)
+  ER --> RN(Release Notes)
+  RN --> AC(Access Control)
+```
 
 ### Process for App Support
 
