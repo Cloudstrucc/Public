@@ -52,6 +52,35 @@ This document will detail the proposed strategy, emphasizing the potential savin
 - **Dedicated DevOps Environment**: The Power Platform Admin group should maintain a dedicated DevOps environment for sourcing control of the test suite automation and backlog tracking. The integration between DevOps and Power Platform allows for the auto-creation of DevOps work items, enabling the administration of backlogs using standard sprints and conventional backlog administration.
 - **Resource Maintenance**: To effectively maintain the processes outlined above, a small group of full-time employees (FTEs) or vendors is recommended. The process for maintaining these systems should be well-defined and standardized. This ensures that we can quickly integrate junior/intermediate developers with Power Platform experience into the group within a 30-day period (60 days initially). This process may include training materials and basic testing to validate the resource's capabilities, encompassing documentation in Markdown format, video content, and possibly in-person training sessions.
 
+```mermaid
+classDiagram
+  class PowerPlatformAdmin {
+    +Track Wave Releases
+    +Manage Governance Tool
+  }
+  class Developer {
+    +Maintain Preview Environments
+    +Execute Automated Tests
+  }
+  class QAEngineer {
+    +Design Automated Test Suites
+    +Validate Release Adherence
+  }
+  class ProjectManager {
+    +Oversee Upgrade Timelines
+    +Resource Allocation
+  }
+  class ITSupport {
+    +Issue Resolution
+    +Support Automatic Release Updates
+  }
+
+  PowerPlatformAdmin --> Developer : Directs
+  Developer --> QAEngineer : Collaborates
+  QAEngineer --> ITSupport : Assists
+  ProjectManager --> PowerPlatformAdmin : Coordinates
+  ProjectManager --> ITSupport : Manages
+```
 
 ```mermaid
 flowchart LR
@@ -135,6 +164,36 @@ graph TB
 - **Empty Backlog Review**: In the event that a GOC/Enterprise component has an empty backlog and has been reviewed as part of the process, the empty backlog should still include a decision work item that justifies "no action." This review process might occur quarterly and should be relatively rare. It might depend on the current team's capacity/resources and the stability of the module.
 
 ```mermaid
+classDiagram
+  class EnterpriseArchitect {
+    +Oversee Component Upgrades
+    +Align with Vendor Releases
+  }
+  class DevOpsSpecialist {
+    +Continuous Development
+    +Manage Release Environments
+  }
+  class SecurityExpert {
+    +Ensure Component Compliance
+    +Manage Module Inventory
+  }
+  class SupportAgent {
+    +Troubleshoot Module Issues
+    +Maintain Release Backlog
+  }
+  class DocumentationSpecialist {
+    +Curate Module Documentation
+    +Review Empty Backlog Decisions
+  }
+
+  EnterpriseArchitect --> DevOpsSpecialist : Directs
+  DevOpsSpecialist --> SecurityExpert : Collaborates
+  SecurityExpert --> SupportAgent : Supports
+  SupportAgent --> DocumentationSpecialist : Provides Input
+  EnterpriseArchitect --> DocumentationSpecialist : Reviews
+```
+
+```mermaid
 flowchart LR
   AR(Alignment with Releases) --> CD(Continuous Development)
   CD --> RE(Release Environments)
@@ -191,6 +250,36 @@ graph TD
 - **Environment Requests**: The scope of environment requests should also include AAD app registrations, KeyVault URLs, security group membership, and B2C registrations (if applicable).
 - **Release Notes**: Release notes should be readily available in Markdown (DocFX) format. This allows individual project development/build teams to download previews and GA releases at their discretion. However, production support for these releases is not in scope.
 - **Access Control**: Developers should not have sysadmin access to production without proper Power Platform Maker and Privileged Identity Management (PIM) access controls in place.
+
+```mermaid
+classDiagram
+  class ServiceDeskAgent {
+    +Immediate Ticket Response
+    +Triage Tickets
+  }
+  class SupportManager {
+    +Coordinate Vendor Collaboration
+    +Oversee Support Processes
+  }
+  class ApplicationDeveloper {
+    +Resolve Application Bugs
+    +Handle Environment Requests
+  }
+  class SecurityComplianceOfficer {
+    +Monitor Access Control
+    +Ensure Compliance with PIM
+  }
+  class VendorSupport {
+    +Provide Expertise
+    +Assist with Platform Layer Issues
+  }
+
+  ServiceDeskAgent --> SupportManager : Reports
+  SupportManager --> ApplicationDeveloper : Directs
+  ApplicationDeveloper --> SecurityComplianceOfficer : Collaborates
+  ServiceDeskAgent --> VendorSupport : Escalates
+  SupportManager --> VendorSupport : Coordinates
+```
 
 ```mermaid
 flowchart LR
