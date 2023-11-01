@@ -52,6 +52,27 @@ This document will detail the proposed strategy, emphasizing the potential savin
 - **Dedicated DevOps Environment**: The Power Platform Admin group should maintain a dedicated DevOps environment for sourcing control of the test suite automation and backlog tracking. The integration between DevOps and Power Platform allows for the auto-creation of DevOps work items, enabling the administration of backlogs using standard sprints and conventional backlog administration.
 - **Resource Maintenance**: To effectively maintain the processes outlined above, a small group of full-time employees (FTEs) or vendors is recommended. The process for maintaining these systems should be well-defined and standardized. This ensures that we can quickly integrate junior/intermediate developers with Power Platform experience into the group within a 30-day period (60 days initially). This process may include training materials and basic testing to validate the resource's capabilities, encompassing documentation in Markdown format, video content, and possibly in-person training sessions.
 
+```mermaid
+classDiagram
+  class PowerPlatformTeam {
+    +Platform Architects
+    +Security Experts
+    +Project Managers
+    +Developers
+    +QA Engineers
+  }
+  class Azure {
+    +Cloud Services
+  }
+  class M365 {
+    +Office 365 Services
+  }
+  PowerPlatformTeam --> Azure : Utilizes
+  PowerPlatformTeam --> M365 : Utilizes
+  Azure --> PowerPlatformTeam : Supports
+  M365 --> PowerPlatformTeam : Supports
+```
+
 ### Process for vendor upgrades
 
 ```mermaid
