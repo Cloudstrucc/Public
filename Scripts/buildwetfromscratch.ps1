@@ -6,23 +6,23 @@
 # to do: update the header footer and body html with boiler plate (automate steps above)
 
 # Connection details (replace placeholders with actual values)
-$clientId = "4ff994b1-9789-40e1-874c-50fc92007812"
-$tenantId = "24a46daa-7b87-4566-9eea-281326a1b75c"  # Replace with your Azure AD tenant ID
+$clientId = "<client id>"
+$tenantId = "<tenant id>"  # Replace with your Azure AD tenant ID
 $authority = "https://login.microsoftonline.com/$tenantId"
-$resource = "https://goc-wetv14.api.crm3.dynamics.com"
+$resource = "https://<crm instance>.api.crm3.dynamics.com"
 $redirectUri = "https://login.onmicrosoft.com" # Redirect URI for the app
 $tokenEndpoint = "$authority/oauth2/v2.0/token"
-$websiteId = "27ad7a40-e299-ee11-be37-0022483c04c3"
-$pageTemplateId = "cb07803a-e299-ee11-be37-0022483c04c3"
-$publishingStateId = "e007803a-e299-ee11-be37-0022483c04c3"
-$homePageId = "e3ac7a40-e299-ee11-be37-0022483c04c3"
+$websiteId = "<website id>" 
+$pageTemplateId = "<page template id>" # choose the preferered template for the webpage that parent the assets such as not found or similar.
+$publishingStateId = "<publishing state id>"
+$homePageId = "<home page's webpage id value" 
 # Prepare the body for the token request
 $body = @{
     client_id     = $clientId
     scope         = $resource + "/.default"
     grant_type    = "client_credentials"  # Assuming client credentials flow
     redirect_uri  = $redirectUri
-    client_secret = "SIf8Q~KwaXZdzgC0gBwELfF2rgHPq5TcW-bM-b9w"  # Replace with your client secret
+    client_secret = "<secret>"  # Replace with your client secret
 }
 # Acquire the token
 $authResponse = Invoke-RestMethod -Method Post -Uri $tokenEndpoint -Body $body -ContentType "application/x-www-form-urlencoded"
