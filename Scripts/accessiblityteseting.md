@@ -35,11 +35,12 @@ Similar to pa11y, create a script for axe-cli. Here's a bash script example:
 URL="https://example.com" # Replace with your URL
 axe $URL
 ```
+
 And for PowerShell:
 
 ```
-    $URL = "https://example.com" # Replace with your URL
-    axe $URL
+$URL = "https://example.com" # Replace with your URL
+axe $URL
 ```
 
 Run the script as you would with the pa11y script.
