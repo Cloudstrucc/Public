@@ -4,15 +4,13 @@ To use pa11y or axe-cli for accessibility testing in your bash or PowerShell scr
 
 ## **Using pa11y**
 
-    Install pa11y:
-    Open your terminal or PowerShell and run the following command to install pa11y globally:
+Open your terminal or PowerShell and run the following command to install pa11y globally:
 
 ```
 npm install -g pa11y
 ```
 
 Create a bash or PowerShell script that runs pa11y against a specified URL. Here's an example for a bash script:
-#!/bin/bash
 
 ```
 URL="https://example.com" # Replace with your URL
@@ -24,8 +22,7 @@ Make the bash script executable with chmod +x scriptname.sh and then run it. For
 
 ## **Using axe-cli**
 
-    Install axe-cli:
-    Install axe-cli globally using npm:
+Install axe-cli globally using npm:
 
 ```
 npm install -g axe-cli
@@ -34,20 +31,15 @@ npm install -g axe-cli
 Create a Bash/Powershell Script:
 Similar to pa11y, create a script for axe-cli. Here's a bash script example:
 
-#!/bin/bash
-
 ```
 URL="https://example.com" # Replace with your URL
 axe $URL
 ```
-
 And for PowerShell:
 
 ```
     $URL = "https://example.com" # Replace with your URL
     axe $URL
 ```
-
-Run the Script:
 
 Run the script as you would with the pa11y script.
