@@ -1,11 +1,29 @@
 # Enterprise Microsoft 365 Power Platform Client Services
 
+## Quick Start (WET Canada.ca theme deployment) - draft (doesnt include full featured GOC portal only the theme installation)
+
+Download the buildwetfromscratch.ps1 and gocbaseline.ps1 from the scripts folder
+
+### Pre-requisites
+
+* Azure AD App registration to connect to your dataverse environment (app user w/ system admin in Dataverse).
+* Deploy a blank portal (or customer self service if licensed for customer service / case management - D365). For enhanced data model environment only three protal types are supported by EDM and these helper scripts will support each of them.
+
+### Steps
+
+Run gocbaseline.ps1 to set global settings for theme import into a Power Pages site (Standard and Enhanced supported)
+
+Run buildwetfromscratch.ps1 to install the theme. 
+
+*You can set JSON file configurations rather than manualy entering runtime variable values.* 
+
+## Purpose and Architecture (Target)
+
 Enhancing our Power Platform utilization, secure implementations, adherence to PBMM commitments, and delivering digital efficiency within the organization fostering platform adoption
 
 The image below illustrates the range of M365 and Azure technologies underpinning our platform. These technologies, all based on SaaS or PaaS models, have been vetted for both non-production and production use. Their subscription-based licensing offers cost transparency and predictability, unlike IaaS's capacity-based model, which can be more challenging to forecast. With this service now fully integrated into our PBMM-compliant production environment, clients can expedite projects by leveraging existing functionalities for security, accessibility, and data integrity, rather than building these from the ground up. The adoption of this model enhances the visibility and security of application development. By establishing robust support and tooling, we enable the efficient creation of technical artifacts, driving platform adoption and reducing project failure risks. This approach decentralizes corporate knowledge, standardizes staff onboarding, and fosters a service line that aligns with industry and security standards. Furthermore, it streamlines management by centralizing efforts into a cohesive framework akin to SaaS solutions like Microsoft Teams.
 
 ![arch](https://lucid.app/publicSegments/view/cc2c6508-459e-49e6-9163-24bebbe462f4/image.jpeg)
-
 
 ## Problem Statement & Opportunity
 
@@ -83,6 +101,7 @@ classDiagram
   ProjectManager --> PowerPlatformAdmin : Coordinates
   ProjectManager --> ITSupport : Manages
 ```
+
 ```mermaid
 graph TB
   subgraph Vendor Product Upgrade Implementation Strategy & Process
@@ -331,6 +350,7 @@ graph TB
 - **Reference Material**: A library of reference material should be accessible to users. This material includes environment management apps and Power Platform CoE Hygiene resources to support various projects and initiatives.
 
 ### Example team composition and interaction with vendor (MS) support
+
 ```mermaid
 classDiagram
   class PowerPlatformServices {
