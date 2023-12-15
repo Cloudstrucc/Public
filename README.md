@@ -1,6 +1,6 @@
 # Enterprise Microsoft 365 Power Platform Client Services
 
-## Quick Start (WET Canada.ca theme deployment) - draft (doesnt include full featured GOC portal only the theme installation)
+## Quick Start (WET Canada.ca theme deployment) - *ALPHA - these scripts will automate the installation of any version of the WET Canada.ca theme to your Dataverse environment. This can also be used to implement other downloaded themes as it will recursively loop through the downloaded extracted zip file of any bootstrap theme v3,4, or 5 and create the routes (web pages) and child files (with annotations-notes attachments)*
 
 Download the buildwetfromscratch.ps1 and gocbaseline.ps1 from the scripts folder
 
@@ -11,9 +11,9 @@ Download the buildwetfromscratch.ps1 and gocbaseline.ps1 from the scripts folder
 
 ### Steps
 
-Run gocbaseline.ps1 to set global settings for theme import into a Power Pages site (Standard and Enhanced supported)
+Run gocbaseline.ps1 to set global settings for theme import into a Power Pages site (Standard and Enhanced supported) *alternatively, go to your dataverse environment's advanced settings and remove the "file restrictions" from system settings' General setting tab and increase the file size limit in the email tab to 100000kb which is what this script will do. This is required so that the next script can effectively upload the JS, CSS, html and other files found in the theme zip file. *
 
-Run buildwetfromscratch.ps1 to install the theme. 
+Run buildwetfromscratch.ps1 to install the theme. *Once this is ran, edit the header and footer by copying the index.en.html copy from the root of the GCWeb folder in the extracted theme zip file. Copy the body's "main" element in the home page's page copy. This part will be automated in later release, but by doing this you can validate that everything renders correctly.*
 
 *You can set JSON file configurations rather than manualy entering runtime variable values.* 
 
