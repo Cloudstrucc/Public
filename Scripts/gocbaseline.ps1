@@ -1,10 +1,38 @@
-# Connection details (replace placeholders with actual values)
-$clientId = "<client id>"
-$tenantId = "<tenant id>"
+# Default values for connection parameters
+$defaultConnectionConfig = @{
+    "clientId" = "<client id>"
+    "tenantId" = "<tenant id>"
+    "crmInstance" = "https://<crm instance>.api.crm3.dynamics.com"
+    "redirectUri" = "https://login.onmicrosoft.com"
+}
+
+# Help prompt for connection parameters
+Write-Host "Please provide the necessary connection details for your Dynamics 365 environment."
+
+$clientId = Read-Host "Enter the client ID for your application (Azure AD Application Client ID)" -Default $defaultConnectionConfig["clientId"]
+$tenantId = Read-Host "Enter your Azure AD tenant ID" -Default $defaultConnectionConfig["tenantId"]
+$crmInstance = Read-Host "Enter the URL of your Dynamics 365 environment" -Default $defaultConnectionConfig["crmInstance"]
+$redirectUri = Read-Host "Enter the redirect URI for your application" -Default $defaultConnectionConfig["redirectUri"]
+
 $authority = "https://login.microsoftonline.com/$tenantId"
-$resource = "https://<crm instance>.api.crm3.dynamics.com"
-$redirectUri = "https://login.onmicrosoft.com" # Redirect URI for the app
+$resource = $crmInstance
 $tokenEndpoint = "$authority/oauth2/v2.0/token"
+
+# Help prompt for the CAB file
+Write-Host "To install the French language pack, you will need the CAB file for the language pack."
+Write-Host "You can obtain the CAB file from the Microsoft Volume Licensing Service Center (VLSC) or the Dynamics 365 admin portal."
+Write-Host "If you don't have access to these sources, please contact your Microsoft account representative or support for assistance."
+
+$useJsonConfig = Read-Host "Do you want to provide a JSON configuration file for installation and system settings? (Y/N)"
+
+$jsonConfig = $null
+
+if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
+    $jsonFilePath = Read-Host "Enter the path to the JSON configuration file"
+    if (Test-Path -Path $jsonFilePath -PathType Leaf) {
+        $jsonConfig = Get-Content $jsonFilePath | ConvertFrom-Json
+    }
+}
 
 # Define default configuration values
 $defaultConfig = @{
@@ -106,7 +134,15 @@ function ConfigureSystemSettings {
 $accessToken = Get-AccessToken -clientId $clientId -authority $authority -resource $resource -redirectUri $redirectUri
 
 # Install the French language pack
-Install-FrenchLanguagePack -languagePackPath $defaultConfig["languagePackPath"] -accessToken $accessToken
+if ($null -ne $jsonConfig -and $jsonConfig.ContainsKey("languagePackPath")) {
+    Install-FrenchLanguagePack -languagePackPath $jsonConfig["languagePackPath"] -accessToken $accessToken
+} else {
+    Install-FrenchLanguagePack -languagePackPath $defaultConfig["languagePackPath"] -accessToken $accessToken
+}
 
 # Configure system settings
-ConfigureSystemSettings -fileSizeLimit $defaultConfig["fileSizeLimit"] -allowedExtensions $defaultConfig["allowedExtensions"] -accessToken $accessToken
+if ($null -ne $jsonConfig -and $jsonConfig.ContainsKey("fileSizeLimit") -and $jsonConfig.ContainsKey("allowedExtensions")) {
+    ConfigureSystemSettings -fileSizeLimit $jsonConfig["fileSizeLimit"] -allowedExtensions $jsonConfig["allowedExtensions"] -accessToken $accessToken
+} else {
+    ConfigureSystemSettings -fileSizeLimit $defaultConfig["fileSizeLimit"] -allowedExtensions $defaultConfig["allowedExtensions"] -accessToken $accessToken
+}
