@@ -105,6 +105,9 @@ function CreateWebPage {
     )
     
     $partialUrl = $name.ToLower()
+    if ($parentPageId -eq $homePageId) {
+        $partialUrl = "/"
+    }
     $filter = "mspp_partialurl eq '$partialUrl'"
     if ($parentPageId) {
         $filter += " and _mspp_parentpageid_value eq $parentPageId"
