@@ -25,7 +25,8 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
     `"pageTemplateId`": `"<page template id>`",
     `"publishingStateId`": `"<publishing state id>`",
     `"homePageId`": `"<home page's webpage id value>`",
-    `"edm`": `$false
+    `"edm`": `$false,
+    `"clientSecret`": `"app registration client secret`",
 }"
 
     # Exit the script
@@ -43,6 +44,7 @@ $defaultConfig = @{
     "publishingStateId" = "<publishing state id>"
     "homePageId" = "<home page's webpage id value>"
     "edm" = $false
+    "clientSecret" = "SIf8Q~KwaXZdzgC0gBwELfF2rgHPq5TcW-bM-b9w"
 }
 
 
@@ -73,17 +75,12 @@ $websiteId = $config.websiteId
 $pageTemplateId = $config.pageTemplateId
 $publishingStateId = $config.publishingStateId
 $homePageId = $config.homePageId
-$edm = $config.edm
-
+$edm = $true
+$secret = $config.clientSecret
+$prefix = "mspp"
 # Function to apply prefix
 function ApplyPrefix($attributeName) {
-    return if ($edm) { $attributeName -replace "_adx", $prefix } else { $attributeName }
-}
-
-
-# Function to apply prefix
-function ApplyPrefix($attributeName) {
-    return if ($edm) { $attributeName -replace "_adx", $prefix } else { $attributeName }
+    return $(if ($edm) { $attributeName -replace "adx", $prefix } else { $attributeName -replace "adx", $prefix })
 }
 
 # Prepare the body for the token request
@@ -92,7 +89,7 @@ $body = @{
     scope         = $resource + "/.default"
     grant_type    = "client_credentials"  # Assuming client credentials flow
     redirect_uri  = $redirectUri
-    client_secret = "<secret>"  # Replace with your client secret
+    client_secret = $secret  # Replace with your client secret
 }
 # Acquire the token
 $authResponse = Invoke-RestMethod -Method Post -Uri $tokenEndpoint -Body $body -ContentType "application/x-www-form-urlencoded"
@@ -111,6 +108,8 @@ $headers = @{
 $apiUrl = $resource + "/api/data/v9.2/"
 
 # Function to create a webpage in Dataverse
+# Function to create a webpage in Dataverse
+# Function to create a webpage in Dataverse
 function CreateWebPage {
     param (
         [string]$name,
@@ -118,13 +117,13 @@ function CreateWebPage {
     )
     
     $partialUrl = $name.ToLower()
-    $filter = "adx_partialurl eq '$partialUrl'"
+    $filter = (ApplyPrefix("adx_partialurl eq '$partialUrl'"))
     if ($parentPageId) {
         $filter += " and " + (ApplyPrefix("_adx_parentpageid_value")) + " eq $parentPageId"
     }
     
     # Check if the webpage exists
-    $checkUrl = $apiUrl + "adx_webpages?" + "$filter=$filter"
+    $checkUrl = $apiUrl + (ApplyPrefix("adx_webpages")) + "?" + "$filter=$filter"
     $existingPages = Invoke-RestMethod -Uri $checkUrl -Method Get -Headers $headers
     $existingPage = $existingPages.value | Select-Object -First 1
     
@@ -143,13 +142,13 @@ function CreateWebPage {
     $webPageJson = $webPage | ConvertTo-Json
     if ($existingPage) {
         # Update existing webpage
-        $updateUrl = $apiUrl + "adx_webpages(" + $existingPage.adx_webpageid + ")"
+        $updateUrl = $apiUrl + (ApplyPrefix("adx_webpages(" + $existingPage.adx_webpageid + ")"))
         Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPageJson -Headers $headers -ContentType "application/json"
         return $existingPage.adx_webpageid
     } else {
         try {
             
-            $webPageResponse = Invoke-RestMethod -Uri ($apiUrl + "adx_webpages") -Method Post -Body $webPageJson -Headers $headers -ContentType "application/json"
+            $webPageResponse = Invoke-RestMethod -Uri ($apiUrl + (ApplyPrefix("adx_webpages"))) -Method Post -Body $webPageJson -Headers $headers -ContentType "application/json"
             $newWebPage = $webPageResponse.adx_webpageid
             $contentPage = @{
                 (ApplyPrefix("adx_name")) = $name
@@ -161,7 +160,7 @@ function CreateWebPage {
                 (ApplyPrefix("adx_webpagelanguageid@odata.bind")) = "/adx_websitelanguages(2ead7a40-e299-ee11-be37-0022483c04c3)"  
             }
             $contentPageJson = $contentPage | ConvertTo-Json
-            Invoke-RestMethod -Uri ($apiUrl + "adx_webpages") -Method Post -Body $contentPageJson -Headers $headers -ContentType "application/json"
+            Invoke-RestMethod -Uri ($apiUrl + (ApplyPrefix("adx_webpages"))) -Method Post -Body $contentPageJson -Headers $headers -ContentType "application/json"
             
             return $webPageResponse.adx_webpageid
         } catch {
@@ -170,87 +169,7 @@ function CreateWebPage {
     }
 }
 
-# Function to create a web file
-function CreateWebFile {
-    param (
-        [string]$filePath,
-        [string]$parentPageId
-    )
-    $fileName = [System.IO.Path]::GetFileName($filePath)
-    $partialUrl = $fileName.Replace(" ", "").ToLower()
-    $mimeType = [System.Web.MimeMapping]::GetMimeMapping($filePath)
-    $fileContent = [Convert]::ToBase64String([System.IO.File]::ReadAllBytes($filePath))
-    
-    # Check if the web file exists
-    $filter = ApplyPrefix("adx_partialurl eq '$partialUrl'")
-    if ($parentPageId) {
-        $filter += " and " + (ApplyPrefix("_adx_parentpageid_value")) + " eq $parentPageId"
-    }
-    
-    $checkUrl = $apiUrl + "adx_webfiles?" + "$filter=$filter"
-    $existingFiles = Invoke-RestMethod -Uri $checkUrl -Method Get -Headers $headers
-    $existingFile = $existingFiles.value | Select-Object -First 1
-    
-    $webFile = @{
-        (ApplyPrefix("adx_name")) = $fileName
-        (ApplyPrefix("adx_partialurl")) = $partialUrl
-        (ApplyPrefix("adx_parentpageid@odata.bind")) = if ($parentPageId) { "/adx_webpages($parentPageId)" } else { $null }
-        (ApplyPrefix("adx_websiteid@odata.bind")) = "/adx_websites($websiteId)"  # Match website ID
-        (ApplyPrefix("adx_publishingstateid@odata.bind")) = "/adx_publishingstates($publishingStateId)"
-    }
-    try {
-        $webFileJson = $webFile | ConvertTo-Json
-        if ($existingFile) {
-            # Update existing web file
-            $updateUrl = $apiUrl + "adx_webfiles(" + $existingFile.adx_webfileid + ")"
-            Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json"
-            $webFileId = $existingFile.adx_webfileid
 
-            $annotation = @{
-                "objectid_adx_webfile@odata.bind" = "/adx_webfiles($webFileId)"
-                "subject" = $fileName
-                "filename" = $fileName
-                "mimetype" = $mimeType
-                "documentbody" = $fileContent
-            }
-            
-            Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotation | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
-        } else {
-            $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "adx_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json"
-            $webFileId = $webFileResponse.adx_webfileid
-            
-            if (-not $webFileId) {
-                Write-Error "Failed to create web file for $fileName"
-                return
-            }
-            
-            $annotation = @{
-                "objectid_adx_webfile@odata.bind" = "/adx_webfiles($webFileId)"
-                "subject" = $fileName
-                "filename" = $fileName
-                "mimetype" = $mimeType
-                "documentbody" = $fileContent
-            }
-            
-            Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotation | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
-            
-            # Additional logic for theme.css
-            if ($fileName -eq "theme.css") {
-                $homePageWebFile = @{
-                    (ApplyPrefix("adx_name")) = $fileName + " - Home Page"
-                    (ApplyPrefix("adx_partialurl")) = $fileName.Replace(" ", "").ToLower() + "-homepage"
-                    (ApplyPrefix("adx_parentpageid@odata.bind")) = "/adx_webpages($homePageId)" # Assuming $homePageId is defined
-                    (ApplyPrefix("adx_websiteid@odata.bind")) = "/adx_websites($websiteId)"
-                    (ApplyPrefix("adx_publishingstateid@odata.bind")) = "/adx_publishingstates($publishingStateId)"
-                }
-                $homePageWebFileJson = $homePageWebFile | ConvertTo-Json -Depth 10
-                Invoke-RestMethod -Uri ($apiUrl + "adx_webfiles") -Headers $headers -Method Post -Body $homePageWebFileJson -ContentType "application/json"
-            }
-        } 
-    } catch {
-        Write-Error "API call failed with $_.Exception.Message"
-    }
-}
 
 # Function to process folder and create webpages + webfiles
 function WriteHierarchy {
@@ -287,7 +206,7 @@ function WriteHierarchy {
 }
 
 # Extract the zip file
-$zipFilePath = "C:\Users\Fred\projects\GOC-COE\GOC-CoE-Portal\themes-dist-14.1.0-gcweb.zip"
+$zipFilePath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb.zip"
 $extractionPath = "C:\Users\Fred\projects\GOC-COE\GOC-CoE-Portal\files"
 Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
 
