@@ -105,6 +105,9 @@ function CreateWebPage {
     )
     
     $partialUrl = $name.ToLower()
+    if ($parentPageId -eq $homePageId) {
+        $partialUrl = "/"
+    }
     $filter = "mspp_partialurl eq '$partialUrl'"
     if ($parentPageId) {
         $filter += " and _mspp_parentpageid_value eq $parentPageId"
@@ -156,7 +159,6 @@ function CreateWebPage {
     }
 }
 
-# Function to create a web file
 # Function to create a web file
 function CreateWebFile {
     param (
