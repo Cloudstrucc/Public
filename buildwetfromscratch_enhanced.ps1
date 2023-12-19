@@ -1,10 +1,3 @@
-# Pre requisites and post running
-# System settings
-# app registration / sys admin
-# post: download the css/theme.css - replace the root theme.css - comment all css in the portalbasictheme.css file
-# to do: update the header footer and body html with boiler plate (automate steps above)
-
-# Prompt the user for input or provide a JSON file option
 $useJsonConfig = Read-Host "Do you want to provide a JSON configuration file? (Y/N/H) [H for Help]"
 $jsonConfig = $null
 
@@ -104,24 +97,35 @@ function CreateWebPage {
         [string]$parentPageId
     )
     
+    # Logic to determine if this is the home page
+    # check the name or ID against known values for the home page
+    $isHomePage = $false
+    if ($name -eq "themes-dist-14.1.0-gcweb" -or $parentPageId -eq $null) {
+        $isHomePage = $true
+    }
+
     $partialUrl = $name.ToLower()
-    if ($parentPageId -eq $homePageId) {
-        $partialUrl = "/"
+
+    Write-Host "Page Name: $name, Parent Page ID: $parentPageId, Is Home Page: $isHomePage"
+    if ($isHomePage) {
+        
+        return $existingPage.mspp_webpageid
     }
     $filter = "mspp_partialurl eq '$partialUrl'"
     if ($parentPageId) {
         $filter += " and _mspp_parentpageid_value eq $parentPageId"
     }
+
+    $checkUrl = $apiUrl + "mspp_webpages?" + "`$filter=$filter"
     
-    # Check if the webpage exists
-    $checkUrl = $apiUrl + "mspp_webpages?" + "$filter=$filter"
+    Write-Host "Checking URL: $checkUrl"  # Debugging statement
     $existingPages = Invoke-RestMethod -Uri $checkUrl -Method Get -Headers $headers
     $existingPage = $existingPages.value | Select-Object -First 1
     
     $webPage = @{
         "mspp_name" = $name
         "mspp_partialurl" = $partialUrl
-        "mspp_isroot" = $true
+      #  "mspp_isroot" = $true
         "mspp_pagetemplateid@odata.bind" = "/mspp_pagetemplates($pageTemplateId)"
         "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
         "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
@@ -129,12 +133,14 @@ function CreateWebPage {
     if ($parentPageId) {
         $webPage["mspp_parentpageid@odata.bind"] = "/mspp_webpages($parentPageId)"
     }
+    
+    Write-Host "Checking URL: $checkUrl"  # Debugging statement
     $webPageJson = $webPage | ConvertTo-Json
     if ($existingPage) {
-        # Update existing webpage
-        $updateUrl = $apiUrl + "mspp_webpages(" + $existingPage.mspp_webpageid + ")"
-        Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPageJson -Headers $headers -ContentType "application/json"
-        return $existingPage.mspp_webpageid
+        Write-Host "Web page already exists. Updating existing page."
+      #  $updateUrl = $apiUrl + "mspp_webpages(" + $existingPage.mspp_webpageid + ")"
+      #  Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPageJson -Headers $headers -ContentType "application/json"
+        return $existingPage.mspp_webpageid #do nothing
     } else {
         try {
             
@@ -152,7 +158,7 @@ function CreateWebPage {
             $contentPageJson = $contentPage | ConvertTo-Json
             Invoke-RestMethod -Uri ($apiUrl + "mspp_webpages") -Method Post -Body $contentPageJson -Headers $headers -ContentType "application/json"
             
-            return $webPageResponse.mspp_webpageid
+            return $newWebPage
         } catch {
             Write-Error "API call failed with $_.Exception.Message"
         }
@@ -170,14 +176,20 @@ function CreateWebFile {
     $mimeType = [System.Web.MimeMapping]::GetMimeMapping($filePath)
     $fileContent = [Convert]::ToBase64String([System.IO.File]::ReadAllBytes($filePath))
     
-    # Check if the web file exists
     $filter = "mspp_partialurl eq '$partialUrl'"
     if ($parentPageId) {
         $filter += " and _mspp_parentpageid_value eq $parentPageId"
     }
     
-    $checkUrl = $apiUrl + "mspp_webfiles?" + "$filter=$filter"
+    $checkUrl = $apiUrl + "mspp_webfiles?" + "`$filter=$filter"
     $existingFiles = Invoke-RestMethod -Uri $checkUrl -Method Get -Headers $headers
+
+    if ($existingFiles.value.Count -gt 0) {
+        Write-Host "Web file already exists: $filePath"
+        # Optionally, handle updating the existing file here
+        return
+    }
+    
     $existingFile = $existingFiles.value | Select-Object -First 1
     
     $webFile = @{
@@ -202,7 +214,7 @@ function CreateWebFile {
                 "mimetype" = $mimeType
                 "documentbody" = $fileContent
             }
-            
+            Write-Host $webFileId + $existingFile
           #  Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotation | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
         } else {
             $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json"
@@ -247,34 +259,23 @@ function WriteHierarchy {
     param (
         [string]$path,
         [string]$indent = "",
-        [string]$parentPageId = $null # This is the ID of the parent webpage, if any
+        [string]$parentPageId = $null
     )
-    $extractedFolderName = "themes-dist-14.1.0-gcweb"
+    
     $items = Get-ChildItem -Path $path
     
     foreach ($item in $items) {
-        
-        # Skip the initial extracted folder
-        if ($item.Name -eq $extractedFolderName) {
-            
-            WriteHierarchy -path $item.FullName -indent ("  " + $indent) -parentPageId $homePageId
-            continue
-        }
-        if (Test-Path -Path $item.FullName -PathType Container) {
-            Write-Host $item.Name
-            # Create a webpage for the folder
-            $newPageId =  CreateWebPage -name $item.Name -parentPageId $parentPageId
-            
-            # Recursively call Write-Hierarchy for the subfolder, passing the new page ID as parentPageId
-            WriteHierarchy -path $item.FullName -indent ("  " + $indent) -parentPageId $newPageId
+        if (-not $item.PSIsContainer) {
+            # Process files
+            CreateWebFile -filePath $item.FullName -parentPageId $parentPageId
         } else {
-            # If it's a file, create a web file and associate it with the parent webpage
-            if ($parentPageId) {
-                CreateWebFile -filePath $item.FullName -parentPageId $parentPageId
-            }
+            # Process directories
+            $newPageId = CreateWebPage -name $item.Name -parentPageId $parentPageId
+            WriteHierarchy -path $item.FullName -indent ("  " + $indent) -parentPageId $newPageId
         }
     }
 }
+
 
 # Extract the zip file
 $zipFilePath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb.zip"
@@ -282,9 +283,11 @@ $extractionPath = "C:\Users\Fred\source\repos\pub\Public\files"
 Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
 
 # Start processing the extracted folder
+Write-Host $extractionPath
 WriteHierarchy -path $extractionPath
 
 # Helpers
+
 function DeleteNonRootWebPages {
     $queryUrl = $apiUrl + "mspp_webpages?\$filter=" + ("mspp_isroot eq false and _mspp_websiteid_value" + " eq '$websiteId'")
     try {
@@ -300,5 +303,50 @@ function DeleteNonRootWebPages {
 }
 
 
+
+function DeleteTodaysMsppWebFiles {
+    $today = (Get-Date).Date
+    $tomorrow = $today.AddDays(1)
+
+    # Format dates for OData query
+    $todayString = $today.ToString("yyyy-MM-ddT00:00:00Z") # Format adjusted here
+    $tomorrowString = $tomorrow.ToString("yyyy-MM-ddT00:00:00Z") # Format adjusted here
+
+    # Query to get webfiles created today
+    $queryUrl = $apiUrl + "mspp_webfiles?`$filter=mspp_createdon ge $todayString and mspp_createdon lt $tomorrowString"
+    
+    try {
+        $webFilesToday = Invoke-RestMethod -Uri $queryUrl -Method Get -Headers $headers
+        foreach ($webFile in $webFilesToday.value) {
+            $webFileId = $webFile.mspp_webfileid
+            $deleteUrl = $apiUrl + "mspp_webfiles($webFileId)"
+            Invoke-RestMethod -Uri $deleteUrl -Method Delete -Headers $headers
+            Write-Host "Deleted web file: $webFileId"
+        }
+        Write-Host "All web files created today have been deleted."
+    } catch {
+        Write-Error "An error occurred: $_.Exception.Message"
+    }
+}
+
+
+
+function FetchSampleMsppWebFiles {
+    $queryUrl = $apiUrl + 'mspp_webfiles?$select=mspp_name' # Corrected query
+    Write-Host $queryUrl
+    try {
+        $webFilesSample = Invoke-RestMethod -Uri $queryUrl -Method Get -Headers $headers
+        foreach ($webFile in $webFilesSample.value) {
+            $webFile | Format-List
+        }
+    } catch {
+        Write-Error "An error occurred: $_.Exception.Message"
+    }
+}
+
+
+
+## FetchSampleMsppWebFiles
 # Call the function
+# DeleteTodaysMsppWebFiles
 #DeleteNonRootWebPages
