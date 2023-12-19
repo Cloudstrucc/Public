@@ -183,39 +183,24 @@ function CreateWebFile {
     
     $checkUrl = $apiUrl + "mspp_webfiles?" + "`$filter=$filter"
     $existingFiles = Invoke-RestMethod -Uri $checkUrl -Method Get -Headers $headers
-
-    if ($existingFiles.value.Count -gt 0) {
-        Write-Host "Web file already exists: $filePath"
-        # Optionally, handle updating the existing file here
-        return
-    }
-    
-    $existingFile = $existingFiles.value | Select-Object -First 1
-    
+   
     $webFile = @{
         "mspp_name" = $fileName
-        "mspp_partialurl" = $partialUrl
+        "mspp_partialurl" = $partialUrl           
         "mspp_parentpageid@odata.bind" = if ($parentPageId) { "/mspp_webpages($parentPageId)" } else { $null }
         "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"  # Match website ID
         "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
     }
     try {
         $webFileJson = $webFile | ConvertTo-Json
-        if ($existingFile) {
+        if ($existingFiles.value.Count -gt 0) {
+            Write-Host "Web file already exists: $filePath"
+            $existingFile = $existingFiles.value | Select-Object -First 1
             # Update existing web file
             $updateUrl = $apiUrl + "mspp_webfiles(" + $existingFile.mspp_webfileid + ")"
             Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json"
             $webFileId = $existingFile.mspp_webfileid
-
-            $annotation = @{
-                "objectid_mspp_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
-                "subject" = $fileName
-                "filename" = $fileName
-                "mimetype" = $mimeType
-                "documentbody" = $fileContent
-            }
-            Write-Host $webFileId + $existingFile
-          #  Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotation | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
+           
         } else {
             $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json"
             $webFileId = $webFileResponse.mspp_webfileid
@@ -224,17 +209,7 @@ function CreateWebFile {
                 Write-Error "Failed to create web file for $fileName"
                 return
             }
-            
-            $annotation = @{
-                "objectid_mspp_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
-                "subject" = $fileName
-                "filename" = $fileName
-                "mimetype" = $mimeType
-                "documentbody" = $fileContent
-            }
-            
-          #  Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotation | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
-            
+                   
             # Additional logic for theme.css
             if ($fileName -eq "theme.css") {
                 $homePageWebFile = @{
@@ -346,7 +321,7 @@ function FetchSampleMsppWebFiles {
 
 
 
-## FetchSampleMsppWebFiles
+# FetchSampleMsppWebFiles
 # Call the function
 # DeleteTodaysMsppWebFiles
 #DeleteNonRootWebPages

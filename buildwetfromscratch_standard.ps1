@@ -183,39 +183,24 @@ function CreateWebFile {
     
     $checkUrl = $apiUrl + "adx_webfiles?" + "`$filter=$filter"
     $existingFiles = Invoke-RestMethod -Uri $checkUrl -Method Get -Headers $headers
-
-    if ($existingFiles.value.Count -gt 0) {
-        Write-Host "Web file already exists: $filePath"
-        # Optionally, handle updating the existing file here
-        return
-    }
-    
-    $existingFile = $existingFiles.value | Select-Object -First 1
-    
+   
     $webFile = @{
         "adx_name" = $fileName
-        "adx_partialurl" = $partialUrl
+        "adx_partialurl" = $partialUrl           
         "adx_parentpageid@odata.bind" = if ($parentPageId) { "/adx_webpages($parentPageId)" } else { $null }
         "adx_websiteid@odata.bind" = "/adx_websites($websiteId)"  # Match website ID
         "adx_publishingstateid@odata.bind" = "/adx_publishingstates($publishingStateId)"
     }
     try {
         $webFileJson = $webFile | ConvertTo-Json
-        if ($existingFile) {
+        if ($existingFiles.value.Count -gt 0) {
+            Write-Host "Web file already exists: $filePath"
+            $existingFile = $existingFiles.value | Select-Object -First 1
             # Update existing web file
             $updateUrl = $apiUrl + "adx_webfiles(" + $existingFile.adx_webfileid + ")"
             Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json"
             $webFileId = $existingFile.adx_webfileid
-
-            $annotation = @{
-                "objectid_adx_webfile@odata.bind" = "/adx_webfiles($webFileId)"
-                "subject" = $fileName
-                "filename" = $fileName
-                "mimetype" = $mimeType
-                "documentbody" = $fileContent
-            }
-            Write-Host $webFileId + $existingFile
-          #  Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotation | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
+           
         } else {
             $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "adx_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json"
             $webFileId = $webFileResponse.adx_webfileid
@@ -224,17 +209,7 @@ function CreateWebFile {
                 Write-Error "Failed to create web file for $fileName"
                 return
             }
-            
-            $annotation = @{
-                "objectid_adx_webfile@odata.bind" = "/adx_webfiles($webFileId)"
-                "subject" = $fileName
-                "filename" = $fileName
-                "mimetype" = $mimeType
-                "documentbody" = $fileContent
-            }
-            
-          #  Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotation | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
-            
+                   
             # Additional logic for theme.css
             if ($fileName -eq "theme.css") {
                 $homePageWebFile = @{
@@ -346,7 +321,7 @@ function FetchSampleadxWebFiles {
 
 
 
-## FetchSampleadxWebFiles
+# FetchSampleadxWebFiles
 # Call the function
 # DeleteTodaysadxWebFiles
 #DeleteNonRootWebPages
