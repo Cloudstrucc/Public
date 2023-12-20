@@ -239,25 +239,16 @@ function CreateFileAttachment {
     )
 
     # Set the API URL for creating a file attachment
-    $apiUrl = "https://[YourDynamics365Domain].crm.dynamics.com/api/data/v9.0/fileattachments"
-
+    # $apiUrl = "https://[YourDynamics365Domain].crm.dynamics.com/api/data/v9.0/fileattachments"
+    $apiUrl = $apiUrl + "fileattachments"
     # Prepare the JSON payload
     $attachment = @{
         "filename" = $fileName
         "mimetype" = $mimeType
         "documentbody" = $fileContent  # The content of the file in base64 encoding
-        "objectid_entity@odata.bind" = "/[YourEntitySetName]($entityId)"  # The entity to which this attachment is related
+        "objectid_entity@odata.bind" = "/[mspp_webfile]($entityId)"  # The entity to which this attachment is related
     }
-    $jsonPayload = $attachment | ConvertTo-Json
-
-    # Set the necessary headers, including authentication headers
-    $headers = @{
-        "Authorization" = "Bearer [YourAccessToken]"  # Replace with your actual access token
-        "Content-Type" = "application/json"
-        "OData-MaxVersion" = "4.0"
-        "OData-Version" = "4.0"
-    }
-
+    $jsonPayload = $attachment | ConvertTo-Json   
     # Send the HTTP POST request
     try {
         $response = Invoke-RestMethod -Uri $apiUrl -Method Post -Headers $headers -Body $jsonPayload
