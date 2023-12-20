@@ -15,7 +15,7 @@ Download the buildwetfromscratch.ps1 and gocbaseline.ps1 from the scripts folder
 
 Run gocbaseline.ps1 to set global settings for theme import into a Power Pages site (Standard and Enhanced supported) *alternatively, go to your dataverse environment's advanced settings and remove the "file restrictions" from system settings' General setting tab and increase the file size limit in the email tab to 100000kb which is what this script will do. This is required so that the next script can effectively upload the JS, CSS, html and other files found in the theme zip file. *
 
-Run buildwetfromscratch.ps1 to install the theme. *Once this is ran, edit the header and footer by copying the index.en.html copy from the root of the GCWeb folder in the extracted theme zip file. Copy the body's "main" element in the home page's page copy. This part will be automated in later release, but by doing this you can validate that everything renders correctly.*
+Run buildwetfromscratch_{enhanced or standard}.ps1 to install the theme. *Once this is ran, edit the header and footer by copying the index.en.html copy from the root of the GCWeb folder in the extracted theme zip file. Copy the body's "main" element in the home page's page copy. This part will be automated in later release, but by doing this you can validate that everything renders correctly.*
 
 *You can set JSON file configurations rather than manualy entering runtime variable values.*
 
