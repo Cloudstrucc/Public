@@ -200,6 +200,15 @@ function CreateWebFile {
             $updateUrl = $apiUrl + "adx_webfiles(" + $existingFile.adx_webfileid + ")"
             Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json"
             $webFileId = $existingFile.adx_webfileid
+            $annotation = @{
+                "objectid_adx_webfile@odata.bind" = "/adx_webfiles($webFileId)"
+                "subject" = $fileName
+                "filename" = $fileName
+                "mimetype" = $mimeType
+                "documentbody" = $fileContent
+            }
+            Write-Host $webFileId + $existingFile
+           Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotation | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
            
         } else {
             $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "adx_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json"
@@ -209,6 +218,15 @@ function CreateWebFile {
                 Write-Error "Failed to create web file for $fileName"
                 return
             }
+            $annotation = @{
+                "objectid_adx_webfile@odata.bind" = "/adx_webfiles($webFileId)"
+                "subject" = $fileName
+                "filename" = $fileName
+                "mimetype" = $mimeType
+                "documentbody" = $fileContent
+            }
+            
+           Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotation | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
                    
             # Additional logic for theme.css
             if ($fileName -eq "theme.css") {

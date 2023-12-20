@@ -165,6 +165,8 @@ function CreateWebPage {
     }
 }
 
+
+
 # Function to create a web file
 function CreateWebFile {
     param (
@@ -200,6 +202,24 @@ function CreateWebFile {
             $updateUrl = $apiUrl + "mspp_webfiles(" + $existingFile.mspp_webfileid + ")"
             Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json"
             $webFileId = $existingFile.mspp_webfileid
+            # if ($webFileId) {
+                        # Fetch the PowerPageComponent ID
+                $componentFilter = "_mspp_webfileid_value eq $webFileId"
+                $componentUrl = $apiUrl + "powerpagecomponents?" + "`$filter=$componentFilter"
+                $component = Invoke-RestMethod -Uri $componentUrl -Method Get -Headers $headers
+
+                if ($component.value.Count -gt 0) {
+                    $componentId = $component.value[0].powerpagecomponentid
+                    $patchUrl = "$apiUrl/powerpagecomponents($componentId)/filecontent?x-ms-file-name=$fileName"
+                    $byteContent = [System.Text.Encoding]::UTF8.GetString($fileContent)
+                    Invoke-RestMethod -Uri $patchUrl -Method Patch -Body $byteContent -Headers $headers -ContentType "application/octet-stream"
+                } else {
+                    Write-Error "Failed to find corresponding PowerPageComponent for web file: $fileName"
+                }
+            # } else {
+            #     Write-Error "Web file ID not found."
+            # }
+            
            
         } else {
             $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json"
@@ -209,6 +229,24 @@ function CreateWebFile {
                 Write-Error "Failed to create web file for $fileName"
                 return
             }
+            # if ($webFileId) {
+                # Fetch the PowerPageComponent ID
+                $componentFilter = "_mspp_webfileid_value eq $webFileId"
+                $componentUrl = $apiUrl + "powerpagecomponents?" + "`$filter=$componentFilter"
+                $component = Invoke-RestMethod -Uri $componentUrl -Method Get -Headers $headers
+
+                if ($component.value.Count -gt 0) {
+                    $componentId = $component.value[0].powerpagecomponentid
+                    $patchUrl = "$apiUrl/powerpagecomponents($componentId)/filecontent?x-ms-file-name=$fileName"
+                    $byteContent = [System.Text.Encoding]::UTF8.GetString($fileContent)
+                    Invoke-RestMethod -Uri $patchUrl -Method Patch -Body $byteContent -Headers $headers -ContentType "application/octet-stream"
+                } else {
+                    Write-Error "Failed to find corresponding PowerPageComponent for web file: $fileName"
+                }
+            # } else {
+            #     Write-Error "Web file ID not found."
+            # }
+            
                    
             # Additional logic for theme.css
             if ($fileName -eq "theme.css") {
@@ -242,7 +280,10 @@ function WriteHierarchy {
     foreach ($item in $items) {
         if (-not $item.PSIsContainer) {
             # Process files
-            CreateWebFile -filePath $item.FullName -parentPageId $parentPageId
+            if ($parentPageId == $null) {
+                $parentPageId = $homePageId
+            }
+            CreateWebFile -filePath $item.FullName -parentPageId $parentPageId         
         } else {
             # Process directories
             $newPageId = CreateWebPage -name $item.Name -parentPageId $parentPageId
@@ -259,7 +300,7 @@ Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
 
 # Start processing the extracted folder
 Write-Host $extractionPath
-WriteHierarchy -path $extractionPath
+WriteHierarchy -path ($extractionPath + "\themes-dist-14.1.0-gcweb")
 
 # Helpers
 
