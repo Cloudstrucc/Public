@@ -202,7 +202,7 @@ function CreateWebFile {
             $updateUrl = $apiUrl + "mspp_webfiles(" + $existingFile.mspp_webfileid + ")"
             Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json"
             $webFileId = $existingFile.mspp_webfileid
-           
+            CreateFileAttachment -entityId $webFileId -fileName $fileName -mimeType $mimeType -fileContent $fileContent
          } else {
             $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json"
             $webFileId = $webFileResponse.mspp_webfileid
@@ -211,8 +211,6 @@ function CreateWebFile {
                 Write-Error "Failed to create web file for $fileName"
                 return
             }
-           
-                   
             # Additional logic for theme.css
             if ($fileName -eq "theme.css") {
                 $homePageWebFile = @{
@@ -225,13 +223,51 @@ function CreateWebFile {
                 $homePageWebFileJson = $homePageWebFile | ConvertTo-Json -Depth 10
                 Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $homePageWebFileJson -ContentType "application/json"
             }
-      
+            CreateFileAttachment -entityId $webFileId -fileName $fileName -mimeType $mimeType -fileContent $fileContent
 
       }  
     } catch {
         Write-Error "API call failed with $_.Exception.Message"
     }
 }
+function CreateFileAttachment {
+    param (
+        [string]$entityId,  # ID of the entity the file attachment will be related to
+        [string]$fileName,  # Name of the file
+        [string]$mimeType,  # MIME type of the file
+        [string]$fileContent  # Base64-encoded content of the file
+    )
+
+    # Set the API URL for creating a file attachment
+    $apiUrl = "https://[YourDynamics365Domain].crm.dynamics.com/api/data/v9.0/fileattachments"
+
+    # Prepare the JSON payload
+    $attachment = @{
+        "filename" = $fileName
+        "mimetype" = $mimeType
+        "documentbody" = $fileContent  # The content of the file in base64 encoding
+        "objectid_entity@odata.bind" = "/[YourEntitySetName]($entityId)"  # The entity to which this attachment is related
+    }
+    $jsonPayload = $attachment | ConvertTo-Json
+
+    # Set the necessary headers, including authentication headers
+    $headers = @{
+        "Authorization" = "Bearer [YourAccessToken]"  # Replace with your actual access token
+        "Content-Type" = "application/json"
+        "OData-MaxVersion" = "4.0"
+        "OData-Version" = "4.0"
+    }
+
+    # Send the HTTP POST request
+    try {
+        $response = Invoke-RestMethod -Uri $apiUrl -Method Post -Headers $headers -Body $jsonPayload
+        return $response
+    } catch {
+        Write-Error "API call failed with $_.Exception.Message"
+    }
+}
+
+
 
 
 
