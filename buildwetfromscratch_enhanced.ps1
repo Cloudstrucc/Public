@@ -204,7 +204,7 @@ function CreateWebFile {
             Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json"
             $webFileId = $existingFile.mspp_webfileid
             $annotationData = @{
-                "objectid_mspp_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
+                "objectid_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
                 "subject" = "Uploaded File"
                 "filename" = $fileName
                 "mimetype" = $mimeType
@@ -222,7 +222,7 @@ function CreateWebFile {
                 return
             }
             $annotationData1 = @{
-                "objectid_mspp_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
+                "objectid_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
                 "subject" = "Uploaded File"
                 "filename" = $fileName
                 "mimetype" = $mimeType
@@ -241,10 +241,7 @@ function CreateWebFile {
                 $homePageWebFileJson = $homePageWebFile | ConvertTo-Json -Depth 10
                 Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $homePageWebFileJson -ContentType "application/json"
             }
-            # After creating WebFile, create Annotation for the file content
-           
-          
-
+            # After creating WebFile, create Annotation for the file content    
       }  
     } catch {
         Write-Error "API call failed with $_.Exception.Message"
