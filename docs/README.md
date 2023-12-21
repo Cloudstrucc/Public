@@ -4,6 +4,7 @@ Enhancing GAC's Power Platform utilization, secure implementations, adherence to
 
 ## Documentation framework
 https://gohugo.io/getting-started/quick-start/
+
 The wet-canada-hugo folder includes a hugo markdown site. To run the site install hugo, once installed run the hugo server command at the root of the wet-canada-hugo folder to test locally. Run the hugo command to 'publish' the markdown site to copy the published files (site) to any web server technology (e.g. web app services, azure storage, s3 etc.)
 
 ## Problem Statement & Opportunity
