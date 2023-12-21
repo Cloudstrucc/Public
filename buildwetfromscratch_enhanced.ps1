@@ -204,7 +204,7 @@ function CreateWebFile {
             Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json"
             $webFileId = $existingFile.mspp_webfileid
             $annotationData = @{
-                "objectid_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
+                "objectid_mspp_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
                 "subject" = "Uploaded File"
                 "filename" = $fileName
                 "mimetype" = $mimeType
@@ -222,7 +222,7 @@ function CreateWebFile {
                 return
             }
             $annotationData1 = @{
-                "objectid_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
+                "objectid_mspp_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
                 "subject" = "Uploaded File"
                 "filename" = $fileName
                 "mimetype" = $mimeType
