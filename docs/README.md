@@ -2,6 +2,10 @@
 
 Enhancing GAC's Power Platform utilization, secure implementations, adherence to PBMM commitments, and delivering digital efficiency within the organization fostering platform adoption
 
+## Documentation framework
+
+The wet-canada-hugo folder includes a hugo markdown site. To run the site install hugo, once installed run the hugo server command at the root of the wet-canada-hugo folder to test locally. Run the hugo command to 'publish' the markdown site to copy the published files (site) to any web server technology (e.g. web app services, azure storage, s3 etc.)
+
 ## Problem Statement & Opportunity
 
 The agency is at a critical inflection point, tasked with enhancing its IM/IT landscape to meet the evolving demands of technology and service delivery. Historically, the agency has navigated its technological needs through a mosaic of approaches, each contributing value in its context. Now, we are presented with the opportunity to consolidate these efforts by adopting a unified SaaS solution with the Power Platform, which aligns with our strategic objectives and promises substantial cost efficiency and predictability in expenditures.
