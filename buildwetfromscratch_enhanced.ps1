@@ -66,6 +66,7 @@ $publishingStateId = $config.publishingStateId
 $homePageId = $config.homePageId
 $secret = $config.clientSecret
 
+
 # Prepare the body for the token request
 $body = @{
     client_id     = $clientId
