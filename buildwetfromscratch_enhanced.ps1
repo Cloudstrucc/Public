@@ -65,7 +65,7 @@ $pageTemplateId = $config.pageTemplateId
 $publishingStateId = $config.publishingStateId
 $homePageId = $config.homePageId
 $secret = $config.clientSecret
-
+$blobAddress = $config.blobAddress
 
 # Prepare the body for the token request
 $body = @{
@@ -90,8 +90,7 @@ $headers = @{
 
 # Define the Dataverse API URL
 $apiUrl = $resource + "/api/data/v9.2/"
-
-# Function to create a webpage in Dataverse
+# Function to create or update a web page
 function CreateWebPage {
     param (
         [string]$name,
@@ -99,7 +98,7 @@ function CreateWebPage {
     )
     
     # Logic to determine if this is the home page
-    # check the name or ID against known values for the home page
+    # Check the name or ID against known values for the home page
     $isHomePage = $false
     if ($name -eq "themes-dist-14.1.0-gcweb" -or $parentPageId -eq $null) {
         $isHomePage = $true
@@ -108,11 +107,14 @@ function CreateWebPage {
     $partialUrl = $name.ToLower()
 
     Write-Host "Page Name: $name, Parent Page ID: $parentPageId, Is Home Page: $isHomePage"
+    
     if ($isHomePage) {
-        
         return $existingPage.mspp_webpageid
     }
-    $filter = "mspp_partialurl eq '$partialUrl'"
+
+    # Include the website ID in the filter condition
+    $filter = "mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value" + " eq '$websiteId'"
+
     if ($parentPageId) {
         $filter += " and _mspp_parentpageid_value eq $parentPageId"
     }
@@ -126,39 +128,27 @@ function CreateWebPage {
     $webPage = @{
         "mspp_name" = $name
         "mspp_partialurl" = $partialUrl
-      #  "mspp_isroot" = $true
         "mspp_pagetemplateid@odata.bind" = "/mspp_pagetemplates($pageTemplateId)"
         "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
         "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
     }
+    
     if ($parentPageId) {
         $webPage["mspp_parentpageid@odata.bind"] = "/mspp_webpages($parentPageId)"
     }
     
     Write-Host "Checking URL: $checkUrl"  # Debugging statement
     $webPageJson = $webPage | ConvertTo-Json
+    
     if ($existingPage) {
         Write-Host "Web page already exists. Updating existing page."
-      #  $updateUrl = $apiUrl + "mspp_webpages(" + $existingPage.mspp_webpageid + ")"
-      #  Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPageJson -Headers $headers -ContentType "application/json"
-        return $existingPage.mspp_webpageid #do nothing
+        $updateUrl = $apiUrl + "mspp_webpages(" + $existingPage.mspp_webpageid + ")"
+        Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPageJson -Headers $headers -ContentType "application/json"
+        return $existingPage.mspp_webpageid
     } else {
         try {
-            
             $webPageResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webpages") -Method Post -Body $webPageJson -Headers $headers -ContentType "application/json"
             $newWebPage = $webPageResponse.mspp_webpageid
-            $contentPage = @{
-                "mspp_name" = $name
-                "mspp_partialurl" = $partialUrl
-                "mspp_pagetemplateid@odata.bind" = "/mspp_pagetemplates(cb07803a-e299-ee11-be37-0022483c04c3)"
-                "mspp_websiteid@odata.bind" = "/mspp_websites(27ad7a40-e299-ee11-be37-0022483c04c3)"
-                "mspp_rootwebpageid@odata.bind" = "/mspp_webpages($newWebPage)"
-                "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates(e007803a-e299-ee11-be37-0022483c04c3)"
-                "mspp_webpagelanguageid@odata.bind" = "/mspp_websitelanguages(2ead7a40-e299-ee11-be37-0022483c04c3)"
-            }
-            $contentPageJson = $contentPage | ConvertTo-Json
-            Invoke-RestMethod -Uri ($apiUrl + "mspp_webpages") -Method Post -Body $contentPageJson -Headers $headers -ContentType "application/json"
-            
             return $newWebPage
         } catch {
             Write-Error "API call failed with $_.Exception.Message"
@@ -168,87 +158,97 @@ function CreateWebPage {
 
 
 
-# Function to create a web file
+# Function to create or update a web file with the parent web page ID
 function CreateWebFile {
     param (
         [string]$filePath,
         [string]$parentPageId
     )
+
     $fileName = [System.IO.Path]::GetFileName($filePath)
     $partialUrl = $fileName.Replace(" ", "").ToLower()
     $mimeType = [System.Web.MimeMapping]::GetMimeMapping($filePath)
     $fileContent = [Convert]::ToBase64String([System.IO.File]::ReadAllBytes($filePath))
-    
-    $filter = "mspp_partialurl eq '$partialUrl'"
+    $relativePath = Get-RelativePath ($extractionPath + "\themes-dist-14.1.0-gcweb") $filePath
+
+    # Construct the blob storage URL
+    $blobUrl = "$blobAddress$relativePath$partialUrl"
+
+    $filter = "mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value" + " eq '$websiteId'"
+
     if ($parentPageId) {
         $filter += " and _mspp_parentpageid_value eq $parentPageId"
     }
-    
+
     $checkUrl = $apiUrl + "mspp_webfiles?" + "`$filter=$filter"
     $existingFiles = Invoke-RestMethod -Uri $checkUrl -Method Get -Headers $headers
-   
+
     $webFile = @{
         "mspp_name" = $fileName
-        "mspp_partialurl" = $partialUrl           
-        "mspp_parentpageid@odata.bind" = if ($parentPageId) { "/mspp_webpages($parentPageId)" } else { $null }
+        "mspp_partialurl" = $partialUrl
         "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"  # Match website ID
         "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
+        "mspp_cloudblobaddress" = $blobUrl  # Set the blob storage URL to the full path
     }
-   
+
+    if ($parentPageId) {
+        $webFile["mspp_parentpageid@odata.bind"] = "/mspp_webpages($parentPageId)"
+    }
+
     try {
-        $webFileJson = $webFile | ConvertTo-Json
+        $webFileJson = $webFile | ConvertTo-JSon
+
         if ($existingFiles.value.Count -gt 0) {
             Write-Host "Web file already exists: $filePath"
             $existingFile = $existingFiles.value | Select-Object -First 1
-            # Update existing web file
             $updateUrl = $apiUrl + "mspp_webfiles(" + $existingFile.mspp_webfileid + ")"
             Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json"
             $webFileId = $existingFile.mspp_webfileid
-            $annotationData = @{
-                "objectid_mspp_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
-                "subject" = "Uploaded File"
-                "filename" = $fileName
-                "mimetype" = $mimeType
-                "documentbody" = $fileContent
-            } | ConvertTo-Json      
-            Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotationData | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
-            
-         } else {
+        } else {
             $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json"
             $webFileId = $webFileResponse.mspp_webfileid
-           
 
             if (-not $webFileId) {
                 Write-Error "Failed to create web file for $fileName"
                 return
             }
-            $annotationData1 = @{
-                "objectid_mspp_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
-                "subject" = "Uploaded File"
-                "filename" = $fileName
-                "mimetype" = $mimeType
-                "documentbody" = $fileContent
-            } | ConvertTo-Json      
-            Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotationData1 | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
-            # Additional logic for theme.css
-            if ($fileName -eq "theme.css") {
-                $homePageWebFile = @{
-                    "mspp_name" = $fileName + " - Home Page"
-                    "mspp_partialurl" = $fileName.Replace(" ", "").ToLower() + "-homepage"
-                    "mspp_parentpageid@odata.bind" = "/mspp_webpages($homePageId)" # Assuming $homePageId is defined
-                    "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
-                    "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
-                }
-                $homePageWebFileJson = $homePageWebFile | ConvertTo-Json -Depth 10
-                Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $homePageWebFileJson -ContentType "application/json"
-            }
-            # After creating WebFile, create Annotation for the file content    
-      }  
+        }
+
+        $annotationData = @{
+            "objectid_mspp_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
+            "subject" = "Uploaded File"
+            "filename" = $fileName
+            "mimetype" = $mimeType
+            "documentbody" = $fileContent
+        } | ConvertTo-Json
+
+      #  Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotationData | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
+
     } catch {
         Write-Error "API call failed with $_.Exception.Message"
     }
 }
 
+function Get-RelativePath {
+    param (
+        [string]$basePath,
+        [string]$targetPath
+    )
+
+    $basePath = [System.IO.Path]::GetFullPath($basePath)
+    $targetPath = [System.IO.Path]::GetFullPath($targetPath)
+
+    if ($targetPath.StartsWith($basePath, [System.StringComparison]::OrdinalIgnoreCase)) {
+        $relativePath = $targetPath.Substring($basePath.Length)
+        if ($relativePath.StartsWith("\", [System.StringComparison]::OrdinalIgnoreCase)) {
+            $relativePath = $relativePath.Substring(1)
+        }
+        return $relativePath.Replace("\", "/")
+    }
+    else {
+        return $targetPath
+    }
+}
 
 
 # Function to process folder and create webpages + webfiles
