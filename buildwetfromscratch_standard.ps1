@@ -149,10 +149,10 @@ function CreateWebPage {
             $contentPage = @{
                 "adx_name" = $name
                 "adx_partialurl" = $partialUrl
-                "adx_pagetemplateid@odata.bind" = "/adx_pagetemplates(cb07803a-e299-ee11-be37-0022483c04c3)"
-                "adx_websiteid@odata.bind" = "/adx_websites(27ad7a40-e299-ee11-be37-0022483c04c3)"
+                "adx_pagetemplateid@odata.bind" = "/adx_pagetemplates($pub)"
+                "adx_websiteid@odata.bind" = "/adx_websites($websiteId)"
                 "adx_rootwebpageid@odata.bind" = "/adx_webpages($newWebPage)"
-                "adx_publishingstateid@odata.bind" = "/adx_publishingstates(e007803a-e299-ee11-be37-0022483c04c3)"
+                "adx_publishingstateid@odata.bind" = "/adx_publishingstates($publishingStateId)"
                 "adx_webpagelanguageid@odata.bind" = "/adx_websitelanguages(2ead7a40-e299-ee11-be37-0022483c04c3)"
             }
             $contentPageJson = $contentPage | ConvertTo-Json
@@ -263,7 +263,7 @@ function WriteHierarchy {
             CreateWebFile -filePath $item.FullName -parentPageId $parentPageId
         } else {
             # Process directories
-            $newPageId = CreateWebPage -name $item.Name -parentPageId $parentPageId
+           # $newPageId = CreateWebPage -name $item.Name -parentPageId $parentPageId
             WriteHierarchy -path $item.FullName -indent ("  " + $indent) -parentPageId $newPageId
         }
     }

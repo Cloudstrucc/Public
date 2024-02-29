@@ -340,6 +340,56 @@ function FetchSampleMsppWebFiles {
 # Call the function
 # DeleteTodaysMsppWebFiles
 
+Function DeleteAnnotations($webfileId) {
+    $annotationsUrl = "annotations"
+    $annotationsQuery = "?`$filter=_objectid_value eq $webfileId and filename ne null&`$orderby=createdon desc"
+    
+    $response = $httpClient.GetAsync("$annotationsUrl$annotationsQuery").Result
+    if ($response.IsSuccessStatusCode) {
+        $annotations = $response.Content.ReadAsAsync([PSCustomObject[]]).Result
+
+        # Keep track of the latest annotation with an attachment
+        $latestAnnotationWithAttachment = $null
+
+        # Loop through annotations and delete
+        foreach ($annotation in $annotations) {
+            if ($null -eq $latestAnnotationWithAttachment -and $null -ne $annotation.filename) {
+                # Keep the first annotation with an attachment as the latest
+                $latestAnnotationWithAttachment = $annotation
+            } else {
+                # Delete other annotations
+                $annotationId = $annotation.annotationid
+                $deleteResponse = $httpClient.DeleteAsync("$annotationsUrl($annotationId)").Result
+                if ($deleteResponse.IsSuccessStatusCode) {
+                    Write-Host "Deleted annotation with ID: $annotationId"
+                } else {
+                    Write-Host "Failed to delete annotation with ID: $annotationId"
+                }
+            }
+        }
+    } else {
+        Write-Host "Failed to retrieve annotations for webfile with ID: $webfileId"
+    }
+}
+
+Function PurgeDubAnnocations {
+    # Query and delete annotations for each webfile
+$webfilesUrl = "adx_webfiles"
+$webfilesQuery = "?`$select=adx_webfileid"
+$response = $httpClient.GetAsync("$webfilesUrl$webfilesQuery").Result
+
+if ($response.IsSuccessStatusCode) {
+    $webfiles = $response.Content.ReadAsAsync([PSCustomObject[]]).Result
+
+    foreach ($webfile in $webfiles) {
+        $webfileId = $webfile.adx_webfileid
+        Write-Host "Processing webfile with ID: $webfileId"
+        DeleteAnnotations $webfileId
+    }
+} else {
+    Write-Host "Failed to retrieve webfiles"
+}
+}
 
 # Extract the zip file &  runtime script calls
 $zipFilePath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb.zip"
