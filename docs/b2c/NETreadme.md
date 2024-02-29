@@ -3,7 +3,8 @@
 First, ensure you have the necessary NuGet package for OpenID Connect authentication. For a .NET 7 application, you would typically use the `Microsoft.AspNetCore.Authentication.OpenIdConnect` package.
 
 ```powershell
-dotnet add package Microsoft.AspNetCore.Authentication.OpenIdConnectdotnet add package Microsoft.Identity.Web
+dotnet add package Microsoft.AspNetCore.Authentication.OpenIdConnect
+dotnet add package Microsoft.Identity.Web
 ```
 
 ## Step 2: Configure Services in Program.cs
