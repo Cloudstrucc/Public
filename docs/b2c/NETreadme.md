@@ -50,7 +50,15 @@ Next, add your Azure AD B2C settings to your `appsettings.json` file:
 ```json
 {
   "AzureAdB2C": {
-    "Instance": "https://
+    "Instance": "https://<your-tenant-name>.b2clogin.com",
+    "ClientId": "<your-application-client-id>",
+    "Domain": "<your-tenant-name>.onmicrosoft.com",
+    "SignUpSignInPolicyId": "<your-sign-up-sign-in-policy>",
+    "CallbackPath": "/signin-oidc",
+    "ClientSecret": "<your-client-secret>",
+    "Authority": "https://<your-tenant-name>.b2clogin.com/<your-tenant-name>.onmicrosoft.com/<your-sign-up-sign-in-policy>"
+  }
+}
 ```
 
 Replace `<your-tenant-name>`, `<your-application-client-id>`, `<your-sign-up-sign-in-policy>`, and `<your-client-secret>` with your actual Azure AD B2C tenant information.
