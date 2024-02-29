@@ -31,7 +31,7 @@ builder.Services.AddControllersWithViews();builder.Services.AddAuthentication(op
     options.Scope.Add("openid");
     options.Scope.Add("profile");
     // Add additional scopes here    // Map user claims
-    options.TokenValidationParameters.NameClaimType = "name";
+    options.TokenValidationParameters.NameClaimType = "sub";
 });var app = builder.Build();// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
