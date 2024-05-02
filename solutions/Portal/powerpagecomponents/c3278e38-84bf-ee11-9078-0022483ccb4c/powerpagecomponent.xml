@@ -1,0 +1,203 @@
+<powerpagecomponent powerpagecomponentid="c3278e38-84bf-ee11-9078-0022483ccb4c">
+  <content>{
+  "copy": "&lt;main property=\"mainContentOfPage\" resource=\"#wb-main\" typeof=\"WebPageElement\" class=\"container\"&gt;\r\n  &lt;h1 property=\"name\"&gt;Content page&lt;/h1&gt;\r\n  &lt;p&gt;\r\n    &lt;strong&gt;From &lt;a href=\"#\"&gt;[Institution name]&lt;/a&gt;&lt;/strong&gt;\r\n  &lt;/p&gt;\r\n  &lt;section&gt;\r\n    &lt;h2&gt;Heading 2 (&lt;code&gt;h2&lt;/code&gt;)&lt;/h2&gt;\r\n    &lt;section&gt;\r\n      &lt;h3&gt;Heading 3 (&lt;code&gt;h3&lt;/code&gt;)&lt;/h3&gt;\r\n      &lt;section&gt;\r\n        &lt;h4&gt;Heading 4 (&lt;code&gt;h4&lt;/code&gt;)&lt;/h4&gt;\r\n        &lt;section&gt;\r\n          &lt;h5&gt;Heading 5 (&lt;code&gt;h5&lt;/code&gt;)&lt;/h5&gt;\r\n          &lt;section&gt;\r\n            &lt;h6&gt;Heading 6 (&lt;code&gt;h6&lt;/code&gt;)&lt;/h6&gt;\r\n            &lt;p&gt;Paragraph - default appearance&lt;/p&gt;\r\n          &lt;/section&gt;\r\n        &lt;/section&gt;\r\n      &lt;/section&gt;\r\n    &lt;/section&gt;\r\n  &lt;/section&gt;\r\n  &lt;p&gt;&lt;a href=\"#\"&gt;Link&lt;/a&gt;&lt;/p&gt;\r\n  &lt;ul&gt;\r\n    &lt;li&gt;\r\n      unordered list (&lt;code&gt;ul&lt;/code&gt;) - level 1\r\n      &lt;ul&gt;\r\n        &lt;li&gt;\r\n          unordered list (&lt;code&gt;ul&lt;/code&gt;) - level 2\r\n          &lt;ul&gt;\r\n            &lt;li&gt;unordered list (&lt;code&gt;ul&lt;/code&gt;) - level 3&lt;/li&gt;\r\n          &lt;/ul&gt;\r\n        &lt;/li&gt;\r\n      &lt;/ul&gt;\r\n    &lt;/li&gt;\r\n  &lt;/ul&gt;\r\n  &lt;ol&gt;\r\n    &lt;li&gt;ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 1&lt;/li&gt;\r\n    &lt;li&gt;\r\n      ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 1\r\n      &lt;ol&gt;\r\n        &lt;li&gt;ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 2&lt;/li&gt;\r\n        &lt;li&gt;\r\n          ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 2\r\n          &lt;ol&gt;\r\n            &lt;li&gt;ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 3&lt;/li&gt;\r\n            &lt;li&gt;ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 3&lt;/li&gt;\r\n          &lt;/ol&gt;\r\n        &lt;/li&gt;\r\n      &lt;/ol&gt;\r\n    &lt;/li&gt;\r\n  &lt;/ol&gt;\r\n  &lt;table class=\"table table-striped\"&gt;\r\n    &lt;caption&gt;\r\n      Table caption\r\n    &lt;/caption&gt;\r\n    &lt;thead&gt;\r\n      &lt;tr&gt;\r\n        &lt;th scope=\"col\"&gt;Table header (&lt;code&gt;th&lt;/code&gt;)&lt;/th&gt;\r\n        &lt;th scope=\"col\"&gt;Table header (&lt;code&gt;th&lt;/code&gt;)&lt;/th&gt;\r\n        &lt;th scope=\"col\"&gt;Table header (&lt;code&gt;th&lt;/code&gt;)&lt;/th&gt;\r\n        &lt;th scope=\"col\"&gt;Table header (&lt;code&gt;th&lt;/code&gt;)&lt;/th&gt;\r\n      &lt;/tr&gt;\r\n    &lt;/thead&gt;\r\n    &lt;tbody&gt;\r\n      &lt;tr&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n      &lt;/tr&gt;\r\n      &lt;tr&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n      &lt;/tr&gt;\r\n      &lt;tr&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;\r\n      &lt;/tr&gt;\r\n    &lt;/tbody&gt;\r\n  &lt;/table&gt;\r\n  &lt;form method=\"post\" action=\"#\" class=\"form-horizontal\"&gt;\r\n    &lt;div class=\"form-group\"&gt;\r\n      &lt;label for=\"data1\" class=\"col-sm-3 control-label\"&gt;Form &lt;code&gt;input&lt;/code&gt;&lt;/label&gt;\r\n      &lt;div class=\"col-sm-9\"&gt;&lt;input type=\"text\" name=\"data1\" class=\"form-control\" /&gt;&lt;/div&gt;\r\n    &lt;/div&gt;\r\n    &lt;div class=\"form-group\"&gt;\r\n      &lt;label for=\"data2\" class=\"col-sm-3 control-label\"&gt;Form &lt;code&gt;textarea&lt;/code&gt;&lt;/label&gt;\r\n      &lt;div class=\"col-sm-9\"&gt;&lt;textarea rows=\"3\" cols=\"15\" name=\"data2\" class=\"form-control\"&gt;&lt;/textarea&gt;&lt;/div&gt;\r\n    &lt;/div&gt;\r\n    &lt;div class=\"form-group\"&gt;\r\n      &lt;label for=\"data4\" class=\"col-sm-3 control-label\"&gt;Form &lt;code&gt;select&lt;/code&gt;&lt;/label&gt;\r\n      &lt;div class=\"col-sm-9\"&gt;\r\n        &lt;select name=\"data4\" class=\"form-control\"&gt;\r\n          &lt;option value=\"1\"&gt;Option 1&lt;/option&gt;\r\n          &lt;option value=\"2\"&gt;Option 2&lt;/option&gt;\r\n          &lt;option value=\"3\"&gt;Option 3&lt;/option&gt;\r\n          &lt;option value=\"4\"&gt;Option 4&lt;/option&gt;\r\n        &lt;/select&gt;\r\n      &lt;/div&gt;\r\n    &lt;/div&gt;\r\n    &lt;div class=\"form-group\"&gt;\r\n      &lt;div class=\"col-sm-offset-3 col-sm-9\"&gt;&lt;button type=\"submit\" class=\"btn btn-primary\"&gt;Submit&lt;/button&gt;&lt;/div&gt;\r\n    &lt;/div&gt;\r\n  &lt;/form&gt;\r\n  &lt;blockquote&gt;\r\n    &lt;p&gt;\"&lt;code&gt;blockquote&lt;/code&gt;\"&lt;/p&gt;\r\n    &lt;footer&gt;\r\n      &lt;code&gt;footer&lt;/code&gt; &lt;cite&gt;&lt;code&gt;cite&lt;/code&gt;&lt;/cite&gt;\r\n    &lt;/footer&gt;\r\n  &lt;/blockquote&gt;\r\n  &lt;h2&gt;Section with limited width content&lt;/h2&gt;\r\n  &lt;p&gt;Add the CSS class name &lt;code&gt;.cnt-wdth-lmtd&lt;/code&gt; to a sectioning element &lt;code&gt;&amp;lt;section class=\"cnt-wdth-lmtd\"&amp;gt;...&amp;lt;section&amp;gt;&lt;/code&gt; inside the main content of your page. More guidance are provided in the Content and IA specification.&lt;/p&gt;\r\n  &lt;section class=\"cnt-wdth-lmtd\"&gt;\r\n    &lt;h3&gt;Section example with limited width content&lt;/h3&gt;\r\n    &lt;p&gt;Different example text. Different example text. Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.&lt;/p&gt;\r\n  &lt;/section&gt;\r\n  &lt;h2&gt;Call to action button&lt;/h2&gt;\r\n  &lt;p&gt;Add the CSS class name &lt;code&gt;.btn-call-to-action&lt;/code&gt; to a your button or link that define the main call for action for a page. For example the initiation button/link in a service initiation pages. More guidance are provided in the Content and IA specification.&lt;/p&gt;\r\n  &lt;div class=\"row\"&gt;\r\n    &lt;div class=\"col-sm-6\"&gt;\r\n      &lt;h3&gt;Link&lt;/h3&gt;\r\n      &lt;p class=\"mrgn-bttm-0\"&gt;&lt;a href=\"#\" class=\"btn btn-call-to-action\"&gt;[Call to action]&lt;/a&gt;&lt;/p&gt;\r\n      &lt;pre&gt;&lt;code&gt;&amp;lt;p&amp;gt;&amp;lt;a class=\"btn &lt;strong&gt;btn-call-to-action&lt;/strong&gt;\" href=\"#\"&amp;gt;[Call to action]&amp;lt;/a&amp;gt;&amp;lt;/p&amp;gt;&lt;/code&gt;&lt;/pre&gt;\r\n    &lt;/div&gt;\r\n    &lt;div class=\"col-sm-6\"&gt;\r\n      &lt;h3&gt;Button&lt;/h3&gt;\r\n      &lt;button type=\"button\" class=\"btn btn-call-to-action\"&gt;[Call to action]&lt;/button&gt;\r\n      &lt;pre&gt;&lt;code&gt;&amp;lt;button class=\"btn &lt;strong&gt;btn-call-to-action&lt;/strong&gt;\" type=\"button\"&amp;gt;[Call to action]&amp;lt;/button&amp;gt;&lt;/code&gt;&lt;/pre&gt;\r\n    &lt;/div&gt;\r\n  &lt;/div&gt;\r\n  &lt;section class=\"pagedetails\"&gt;\r\n    &lt;h2 class=\"wb-inv\"&gt;Page details&lt;/h2&gt;\r\n    &lt;div class=\"row\"&gt;\r\n      &lt;div data-wb-share=\"{'lnkClass': 'btn btn-default btn-block'}\" class=\"wb-share col-sm-4 col-md-3 col-sm-push-8 col-md-push-9 wb-init wb-share-inited\"&gt;\r\n        &lt;section class=\"shr-pg mfp-hide modal-dialog modal-content overlay-def\"&gt;\r\n          &lt;header class=\"modal-header\"&gt;&lt;h2 class=\"modal-title\"&gt;Share this page&lt;/h2&gt;&lt;/header&gt;\r\n          &lt;div class=\"modal-body\"&gt;\r\n            &lt;ul class=\"list-unstyled colcount-xs-2\"&gt;\r\n              &lt;li&gt;&lt;a href=\"https://www.blogger.com/blog_this.pyra?t=&amp;amp;u=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;n=Content%20page%20-%20Canada.ca\" rel=\"noreferrer noopener\" class=\"shr-lnk blogger btn btn-default\"&gt;Blogger&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://www.diigo.com/post?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;title=Content%20page%20-%20Canada.ca\" rel=\"noreferrer noopener\" class=\"shr-lnk diigo btn btn-default\"&gt;Diigo&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"mailto:?subject=Content%20page%20-%20Canada.ca&amp;amp;body=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html%0A\" rel=\"noreferrer noopener\" class=\"shr-lnk email btn btn-default\"&gt;Email&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://www.facebook.com/sharer.php?u=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;t=Content%20page%20-%20Canada.ca\" rel=\"noreferrer noopener\" class=\"shr-lnk facebook btn btn-default\"&gt;Facebook&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://mail.google.com/mail/?view=cm&amp;amp;fs=1&amp;amp;tf=1&amp;amp;to=&amp;amp;su=Content%20page%20-%20Canada.ca&amp;amp;body=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html%0A\" rel=\"noreferrer noopener\" class=\"shr-lnk gmail btn btn-default\"&gt;Gmail&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://www.linkedin.com/shareArticle?mini=true&amp;amp;url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;title=Content%20page%20-%20Canada.ca&amp;amp;ro=false&amp;amp;summary=&amp;amp;source=\" rel=\"noreferrer noopener\" class=\"shr-lnk linkedin btn btn-default\"&gt;LinkedIn®&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://www.myspace.com/Modules/PostTo/Pages/?u=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;t=Content%20page%20-%20Canada.ca\" rel=\"noreferrer noopener\" class=\"shr-lnk myspace btn btn-default\"&gt;MySpace&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://www.pinterest.com/pin/create/button/?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;media=&amp;amp;description=Content%20page%20-%20Canada.ca\" rel=\"noreferrer noopener\" class=\"shr-lnk pinterest btn btn-default\"&gt;Pinterest&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://reddit.com/submit?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;title=Content%20page%20-%20Canada.ca\" rel=\"noreferrer noopener\" class=\"shr-lnk reddit btn btn-default\"&gt;reddit&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://tinyurl.com/create.php?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html\" rel=\"noreferrer noopener\" class=\"shr-lnk tinyurl btn btn-default\"&gt;TinyURL&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://www.tumblr.com/share/link?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;name=Content%20page%20-%20Canada.ca&amp;amp;description=\" rel=\"noreferrer noopener\" class=\"shr-lnk tumblr btn btn-default\"&gt;tumblr&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://twitter.com/intent/tweet?text=Content%20page%20-%20Canada.ca&amp;amp;url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html\" rel=\"noreferrer noopener\" class=\"shr-lnk twitter btn btn-default\"&gt;Twitter&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://api.whatsapp.com/send?text=Content%20page%20-%20Canada.ca%0A%0Ahttps%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html\" rel=\"noreferrer noopener\" class=\"shr-lnk whatsapp btn btn-default\"&gt;Whatsapp&lt;/a&gt;&lt;/li&gt;\r\n              &lt;li&gt;&lt;a href=\"https://compose.mail.yahoo.com/?to=&amp;amp;subject=Content%20page%20-%20Canada.ca&amp;amp;body=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html%0A\" rel=\"noreferrer noopener\" class=\"shr-lnk yahoomail btn btn-default\"&gt;Yahoo! Mail&lt;/a&gt;&lt;/li&gt;\r\n            &lt;/ul&gt;\r\n            &lt;p class=\"col-sm-12 shr-dscl\"&gt;No endorsement of any products or services is expressed or implied.&lt;/p&gt;\r\n            &lt;div class=\"clearfix\"&gt;&lt;/div&gt;\r\n          &lt;/div&gt;\r\n        &lt;/section&gt;\r\n        &lt;a href=\"#shr-pg0\" aria-controls=\"shr-pg0\" class=\"shr-opn wb-lbx btn btn-default btn-block wb-lbx-inited wb-init\"&gt;&lt;span class=\"glyphicon glyphicon-share\"&gt;&lt;/span&gt;Share this page&lt;/a&gt;\r\n      &lt;/div&gt;\r\n      &lt;div class=\"col-sm-6 col-md-5 col-lg-4 col-sm-pull-4 col-md-pull-3\"&gt;\r\n        &lt;dl&gt;\r\n          &lt;dt&gt;Date modified:&lt;/dt&gt;\r\n          &lt;dd&gt;&lt;time property=\"dateModified\"&gt;2017-09-29&lt;/time&gt;&lt;/dd&gt;\r\n        &lt;/dl&gt;\r\n      &lt;/div&gt;\r\n    &lt;/div&gt;\r\n  &lt;/section&gt;\r\n&lt;/main&gt;\r\n&lt;div class=\"row sectionBlockLayout text-left\" style=\"display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;\"&gt;\r\n  &lt;div class=\"container\" style=\"padding: 0px; display: flex; flex-wrap: wrap;\"&gt;&lt;div class=\"col-md-12 columnBlockLayout\" style=\"flex-grow: 1; display: flex; flex-direction: column; min-width: 250px; word-break: break-word;\"&gt;&lt;/div&gt;&lt;/div&gt;\r\n&lt;/div&gt;\r\n",
+  "enablerating": false,
+  "enabletracking": false,
+  "excludefromsearch": false,
+  "feedbackpolicy": 756150000,
+  "hiddenfromsitemap": false,
+  "isroot": false,
+  "pagetemplateid": "cb07803a-e299-ee11-be37-0022483c04c3",
+  "parentpageid": "e3ac7a40-e299-ee11-be37-0022483c04c3",
+  "partialurl": "reference",
+  "publishingstateid": "e007803a-e299-ee11-be37-0022483c04c3",
+  "sharedpageconfiguration": true
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Reference</name>
+  <powerpagecomponenttype>2</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <powerpagesitelanguageid>
+    <powerpagesitelanguageid>2ead7a40-e299-ee11-be37-0022483c04c3</powerpagesitelanguageid>
+  </powerpagesitelanguageid>
+  <searchcontent>&lt;main property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement" class="container"&gt;
+  &lt;h1 property="name"&gt;Content page&lt;/h1&gt;
+  &lt;p&gt;
+    &lt;strong&gt;From &lt;a href="#"&gt;[Institution name]&lt;/a&gt;&lt;/strong&gt;
+  &lt;/p&gt;
+  &lt;section&gt;
+    &lt;h2&gt;Heading 2 (&lt;code&gt;h2&lt;/code&gt;)&lt;/h2&gt;
+    &lt;section&gt;
+      &lt;h3&gt;Heading 3 (&lt;code&gt;h3&lt;/code&gt;)&lt;/h3&gt;
+      &lt;section&gt;
+        &lt;h4&gt;Heading 4 (&lt;code&gt;h4&lt;/code&gt;)&lt;/h4&gt;
+        &lt;section&gt;
+          &lt;h5&gt;Heading 5 (&lt;code&gt;h5&lt;/code&gt;)&lt;/h5&gt;
+          &lt;section&gt;
+            &lt;h6&gt;Heading 6 (&lt;code&gt;h6&lt;/code&gt;)&lt;/h6&gt;
+            &lt;p&gt;Paragraph - default appearance&lt;/p&gt;
+          &lt;/section&gt;
+        &lt;/section&gt;
+      &lt;/section&gt;
+    &lt;/section&gt;
+  &lt;/section&gt;
+  &lt;p&gt;&lt;a href="#"&gt;Link&lt;/a&gt;&lt;/p&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      unordered list (&lt;code&gt;ul&lt;/code&gt;) - level 1
+      &lt;ul&gt;
+        &lt;li&gt;
+          unordered list (&lt;code&gt;ul&lt;/code&gt;) - level 2
+          &lt;ul&gt;
+            &lt;li&gt;unordered list (&lt;code&gt;ul&lt;/code&gt;) - level 3&lt;/li&gt;
+          &lt;/ul&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;ol&gt;
+    &lt;li&gt;ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 1&lt;/li&gt;
+    &lt;li&gt;
+      ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 1
+      &lt;ol&gt;
+        &lt;li&gt;ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 2&lt;/li&gt;
+        &lt;li&gt;
+          ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 2
+          &lt;ol&gt;
+            &lt;li&gt;ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 3&lt;/li&gt;
+            &lt;li&gt;ordered list (&lt;code&gt;ol&lt;/code&gt;) - level 3&lt;/li&gt;
+          &lt;/ol&gt;
+        &lt;/li&gt;
+      &lt;/ol&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+  &lt;table class="table table-striped"&gt;
+    &lt;caption&gt;
+      Table caption
+    &lt;/caption&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;
+        &lt;th scope="col"&gt;Table header (&lt;code&gt;th&lt;/code&gt;)&lt;/th&gt;
+        &lt;th scope="col"&gt;Table header (&lt;code&gt;th&lt;/code&gt;)&lt;/th&gt;
+        &lt;th scope="col"&gt;Table header (&lt;code&gt;th&lt;/code&gt;)&lt;/th&gt;
+        &lt;th scope="col"&gt;Table header (&lt;code&gt;th&lt;/code&gt;)&lt;/th&gt;
+      &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+        &lt;td&gt;Table data (&lt;code&gt;td&lt;/code&gt;)&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+  &lt;form method="post" action="#" class="form-horizontal"&gt;
+    &lt;div class="form-group"&gt;
+      &lt;label for="data1" class="col-sm-3 control-label"&gt;Form &lt;code&gt;input&lt;/code&gt;&lt;/label&gt;
+      &lt;div class="col-sm-9"&gt;&lt;input type="text" name="data1" class="form-control" /&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="form-group"&gt;
+      &lt;label for="data2" class="col-sm-3 control-label"&gt;Form &lt;code&gt;textarea&lt;/code&gt;&lt;/label&gt;
+      &lt;div class="col-sm-9"&gt;&lt;textarea rows="3" cols="15" name="data2" class="form-control"&gt;&lt;/textarea&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="form-group"&gt;
+      &lt;label for="data4" class="col-sm-3 control-label"&gt;Form &lt;code&gt;select&lt;/code&gt;&lt;/label&gt;
+      &lt;div class="col-sm-9"&gt;
+        &lt;select name="data4" class="form-control"&gt;
+          &lt;option value="1"&gt;Option 1&lt;/option&gt;
+          &lt;option value="2"&gt;Option 2&lt;/option&gt;
+          &lt;option value="3"&gt;Option 3&lt;/option&gt;
+          &lt;option value="4"&gt;Option 4&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="form-group"&gt;
+      &lt;div class="col-sm-offset-3 col-sm-9"&gt;&lt;button type="submit" class="btn btn-primary"&gt;Submit&lt;/button&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+  &lt;blockquote&gt;
+    &lt;p&gt;"&lt;code&gt;blockquote&lt;/code&gt;"&lt;/p&gt;
+    &lt;footer&gt;
+      &lt;code&gt;footer&lt;/code&gt; &lt;cite&gt;&lt;code&gt;cite&lt;/code&gt;&lt;/cite&gt;
+    &lt;/footer&gt;
+  &lt;/blockquote&gt;
+  &lt;h2&gt;Section with limited width content&lt;/h2&gt;
+  &lt;p&gt;Add the CSS class name &lt;code&gt;.cnt-wdth-lmtd&lt;/code&gt; to a sectioning element &lt;code&gt;&amp;lt;section class="cnt-wdth-lmtd"&amp;gt;...&amp;lt;section&amp;gt;&lt;/code&gt; inside the main content of your page. More guidance are provided in the Content and IA specification.&lt;/p&gt;
+  &lt;section class="cnt-wdth-lmtd"&gt;
+    &lt;h3&gt;Section example with limited width content&lt;/h3&gt;
+    &lt;p&gt;Different example text. Different example text. Different example text. Different example text. Different example text. Different example text. Different example text. Different example text.&lt;/p&gt;
+  &lt;/section&gt;
+  &lt;h2&gt;Call to action button&lt;/h2&gt;
+  &lt;p&gt;Add the CSS class name &lt;code&gt;.btn-call-to-action&lt;/code&gt; to a your button or link that define the main call for action for a page. For example the initiation button/link in a service initiation pages. More guidance are provided in the Content and IA specification.&lt;/p&gt;
+  &lt;div class="row"&gt;
+    &lt;div class="col-sm-6"&gt;
+      &lt;h3&gt;Link&lt;/h3&gt;
+      &lt;p class="mrgn-bttm-0"&gt;&lt;a href="#" class="btn btn-call-to-action"&gt;[Call to action]&lt;/a&gt;&lt;/p&gt;
+      &lt;pre&gt;&lt;code&gt;&amp;lt;p&amp;gt;&amp;lt;a class="btn &lt;strong&gt;btn-call-to-action&lt;/strong&gt;" href="#"&amp;gt;[Call to action]&amp;lt;/a&amp;gt;&amp;lt;/p&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+    &lt;/div&gt;
+    &lt;div class="col-sm-6"&gt;
+      &lt;h3&gt;Button&lt;/h3&gt;
+      &lt;button type="button" class="btn btn-call-to-action"&gt;[Call to action]&lt;/button&gt;
+      &lt;pre&gt;&lt;code&gt;&amp;lt;button class="btn &lt;strong&gt;btn-call-to-action&lt;/strong&gt;" type="button"&amp;gt;[Call to action]&amp;lt;/button&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;section class="pagedetails"&gt;
+    &lt;h2 class="wb-inv"&gt;Page details&lt;/h2&gt;
+    &lt;div class="row"&gt;
+      &lt;div data-wb-share="{'lnkClass': 'btn btn-default btn-block'}" class="wb-share col-sm-4 col-md-3 col-sm-push-8 col-md-push-9 wb-init wb-share-inited"&gt;
+        &lt;section class="shr-pg mfp-hide modal-dialog modal-content overlay-def"&gt;
+          &lt;header class="modal-header"&gt;&lt;h2 class="modal-title"&gt;Share this page&lt;/h2&gt;&lt;/header&gt;
+          &lt;div class="modal-body"&gt;
+            &lt;ul class="list-unstyled colcount-xs-2"&gt;
+              &lt;li&gt;&lt;a href="https://www.blogger.com/blog_this.pyra?t=&amp;amp;u=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;n=Content%20page%20-%20Canada.ca" rel="noreferrer noopener" class="shr-lnk blogger btn btn-default"&gt;Blogger&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://www.diigo.com/post?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;title=Content%20page%20-%20Canada.ca" rel="noreferrer noopener" class="shr-lnk diigo btn btn-default"&gt;Diigo&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="mailto:?subject=Content%20page%20-%20Canada.ca&amp;amp;body=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html%0A" rel="noreferrer noopener" class="shr-lnk email btn btn-default"&gt;Email&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;t=Content%20page%20-%20Canada.ca" rel="noreferrer noopener" class="shr-lnk facebook btn btn-default"&gt;Facebook&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://mail.google.com/mail/?view=cm&amp;amp;fs=1&amp;amp;tf=1&amp;amp;to=&amp;amp;su=Content%20page%20-%20Canada.ca&amp;amp;body=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html%0A" rel="noreferrer noopener" class="shr-lnk gmail btn btn-default"&gt;Gmail&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://www.linkedin.com/shareArticle?mini=true&amp;amp;url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;title=Content%20page%20-%20Canada.ca&amp;amp;ro=false&amp;amp;summary=&amp;amp;source=" rel="noreferrer noopener" class="shr-lnk linkedin btn btn-default"&gt;LinkedIn®&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://www.myspace.com/Modules/PostTo/Pages/?u=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;t=Content%20page%20-%20Canada.ca" rel="noreferrer noopener" class="shr-lnk myspace btn btn-default"&gt;MySpace&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://www.pinterest.com/pin/create/button/?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;media=&amp;amp;description=Content%20page%20-%20Canada.ca" rel="noreferrer noopener" class="shr-lnk pinterest btn btn-default"&gt;Pinterest&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://reddit.com/submit?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;title=Content%20page%20-%20Canada.ca" rel="noreferrer noopener" class="shr-lnk reddit btn btn-default"&gt;reddit&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://tinyurl.com/create.php?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html" rel="noreferrer noopener" class="shr-lnk tinyurl btn btn-default"&gt;TinyURL&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://www.tumblr.com/share/link?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html&amp;amp;name=Content%20page%20-%20Canada.ca&amp;amp;description=" rel="noreferrer noopener" class="shr-lnk tumblr btn btn-default"&gt;tumblr&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://twitter.com/intent/tweet?text=Content%20page%20-%20Canada.ca&amp;amp;url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html" rel="noreferrer noopener" class="shr-lnk twitter btn btn-default"&gt;Twitter&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://api.whatsapp.com/send?text=Content%20page%20-%20Canada.ca%0A%0Ahttps%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html" rel="noreferrer noopener" class="shr-lnk whatsapp btn btn-default"&gt;Whatsapp&lt;/a&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;a href="https://compose.mail.yahoo.com/?to=&amp;amp;subject=Content%20page%20-%20Canada.ca&amp;amp;body=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Ftemplates%2Fcontent-page%2Fcontent-en.html%0A" rel="noreferrer noopener" class="shr-lnk yahoomail btn btn-default"&gt;Yahoo! Mail&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;p class="col-sm-12 shr-dscl"&gt;No endorsement of any products or services is expressed or implied.&lt;/p&gt;
+            &lt;div class="clearfix"&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/section&gt;
+        &lt;a href="#shr-pg0" aria-controls="shr-pg0" class="shr-opn wb-lbx btn btn-default btn-block wb-lbx-inited wb-init"&gt;&lt;span class="glyphicon glyphicon-share"&gt;&lt;/span&gt;Share this page&lt;/a&gt;
+      &lt;/div&gt;
+      &lt;div class="col-sm-6 col-md-5 col-lg-4 col-sm-pull-4 col-md-pull-3"&gt;
+        &lt;dl&gt;
+          &lt;dt&gt;Date modified:&lt;/dt&gt;
+          &lt;dd&gt;&lt;time property="dateModified"&gt;2017-09-29&lt;/time&gt;&lt;/dd&gt;
+        &lt;/dl&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+&lt;/main&gt;
+&lt;div class="row sectionBlockLayout text-left" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;"&gt;
+  &lt;div class="container" style="padding: 0px; display: flex; flex-wrap: wrap;"&gt;&lt;div class="col-md-12 columnBlockLayout" style="flex-grow: 1; display: flex; flex-direction: column; min-width: 250px; word-break: break-word;"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+Reference</searchcontent>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

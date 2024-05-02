@@ -1,0 +1,14 @@
+<powerpagecomponent powerpagecomponentid="a7ecb4e7-8c99-ee11-be37-000d3aff3da3">
+  <content>{
+  "description": "Set to \"True\" to force the user to submit the profile information before accessing the website contents.",
+  "value": "true"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Profile/ForceSignUp</name>
+  <powerpagecomponenttype>9</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

@@ -1,0 +1,20 @@
+<powerpagecomponent powerpagecomponentid="a0c494db-5d9a-ee11-be37-0022483c04c3">
+  <content>{
+  "contentdisposition": 756150000,
+  "enabletracking": false,
+  "excludefromsearch": false,
+  "hiddenfromsitemap": false,
+  "parentpageid": "a2ea5ada-5d9a-ee11-be37-000d3aff3da3",
+  "partialurl": "2021-04-gcaem.min.css",
+  "publishingstateid": "e007803a-e299-ee11-be37-0022483c04c3"
+}</content>
+  <filecontent mimetype="application/octet-stream">2021-04-gcaem.min.css</filecontent>
+  <iscustomizable>1</iscustomizable>
+  <name>2021-04-gcaem.min.css</name>
+  <powerpagecomponenttype>3</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

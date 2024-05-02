@@ -1,0 +1,15 @@
+<powerpagesites>
+  <powerpagesite powerpagesiteid="27ad7a40-e299-ee11-be37-0022483c04c3">
+    <content>{
+  "defaultlanguage": "2ead7a40-e299-ee11-be37-0022483c04c3",
+  "footerwebtemplateid": "99e0b841-e299-ee11-be37-000d3aff3da3",
+  "headerwebtemplateid": "33ad7a40-e299-ee11-be37-0022483c04c3",
+  "website_language": 1033
+}</content>
+    <datamodelversion>2.0</datamodelversion>
+    <iscustomizable>1</iscustomizable>
+    <name>RE Portal</name>
+    <statecode>0</statecode>
+    <statuscode>1</statuscode>
+  </powerpagesite>
+</powerpagesites>

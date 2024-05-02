@@ -1,0 +1,20 @@
+<powerpagecomponent powerpagecomponentid="88974a26-5d9a-ee11-be37-0022483c04c3">
+  <content>{
+  "contentdisposition": 756150000,
+  "enabletracking": false,
+  "excludefromsearch": false,
+  "hiddenfromsitemap": false,
+  "parentpageid": "611f9b75-5a9a-ee11-be37-0022483c04c3",
+  "partialurl": "json-fr.html",
+  "publishingstateid": "e007803a-e299-ee11-be37-0022483c04c3"
+}</content>
+  <filecontent mimetype="application/octet-stream">json-fr.html</filecontent>
+  <iscustomizable>1</iscustomizable>
+  <name>json-fr.html</name>
+  <powerpagecomponenttype>3</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

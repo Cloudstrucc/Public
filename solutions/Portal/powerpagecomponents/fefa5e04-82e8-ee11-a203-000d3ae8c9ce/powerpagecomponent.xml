@@ -1,0 +1,21 @@
+<powerpagecomponent powerpagecomponentid="fefa5e04-82e8-ee11-a203-000d3ae8c9ce">
+  <content>{
+  "disablepagevalidation": false,
+  "displayimageonly": false,
+  "displayorder": 3,
+  "displaypagechildlinks": false,
+  "externalurl": "https://site-md9za.powerappsportals.com/Account/Login/LogOff",
+  "openinnewwindow": false,
+  "publishingstateid": "e007803a-e299-ee11-be37-0022483c04c3",
+  "robotsfollowlink": true,
+  "weblinksetid": "d6ac7a40-e299-ee11-be37-0022483c04c3"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Logout</name>
+  <powerpagecomponenttype>5</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

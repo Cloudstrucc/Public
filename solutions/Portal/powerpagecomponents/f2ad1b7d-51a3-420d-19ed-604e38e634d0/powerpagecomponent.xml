@@ -1,0 +1,21 @@
+<powerpagecomponent powerpagecomponentid="f2ad1b7d-51a3-420d-19ed-604e38e634d0">
+  <content>{
+  "contentdisposition": 756150000,
+  "enabletracking": false,
+  "excludefromsearch": false,
+  "hiddenfromsitemap": false,
+  "parentpageid": "e3ac7a40-e299-ee11-be37-0022483c04c3",
+  "partialurl": "GREY-1.scss",
+  "publishingstateid": "e007803a-e299-ee11-be37-0022483c04c3",
+  "summary": "GREY_DESCRIPTION"
+}</content>
+  <filecontent mimetype="application/octet-stream">GREY-1.scss</filecontent>
+  <iscustomizable>1</iscustomizable>
+  <name>GREY (1)</name>
+  <powerpagecomponenttype>3</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

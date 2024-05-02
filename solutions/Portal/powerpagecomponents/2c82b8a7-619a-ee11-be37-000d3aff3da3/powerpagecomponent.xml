@@ -1,0 +1,20 @@
+<powerpagecomponent powerpagecomponentid="2c82b8a7-619a-ee11-be37-000d3aff3da3">
+  <content>{
+  "contentdisposition": 756150000,
+  "enabletracking": false,
+  "excludefromsearch": false,
+  "hiddenfromsitemap": false,
+  "parentpageid": "af7c96a4-619a-ee11-be37-0022483c04c3",
+  "partialurl": "2024-09-kejimkujik.min.js",
+  "publishingstateid": "e007803a-e299-ee11-be37-0022483c04c3"
+}</content>
+  <filecontent mimetype="application/octet-stream">2024-09-kejimkujik.min.js</filecontent>
+  <iscustomizable>1</iscustomizable>
+  <name>2024-09-kejimkujik.min.js</name>
+  <powerpagecomponenttype>3</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

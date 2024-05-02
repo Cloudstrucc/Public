@@ -1,0 +1,28 @@
+<powerpagecomponent powerpagecomponentid="de625a0f-cbc0-ee11-9078-0022483ccb4c">
+  <content>{
+  "displayorder": 1,
+  "enablerating": false,
+  "enabletracking": false,
+  "excludefromsearch": false,
+  "feedbackpolicy": 756150005,
+  "hiddenfromsitemap": false,
+  "isroot": false,
+  "pagetemplateid": "cb07803a-e299-ee11-be37-0022483c04c3",
+  "parentpageid": "e3ac7a40-e299-ee11-be37-0022483c04c3",
+  "partialurl": "components",
+  "publishingstateid": "e007803a-e299-ee11-be37-0022483c04c3",
+  "sharedpageconfiguration": true
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Design Reference</name>
+  <powerpagecomponenttype>2</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <powerpagesitelanguageid>
+    <powerpagesitelanguageid>2ead7a40-e299-ee11-be37-0022483c04c3</powerpagesitelanguageid>
+  </powerpagesitelanguageid>
+  <searchcontent>Design Reference</searchcontent>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

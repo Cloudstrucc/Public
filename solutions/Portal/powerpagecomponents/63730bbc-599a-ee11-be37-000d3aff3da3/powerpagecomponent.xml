@@ -1,0 +1,29 @@
+<powerpagecomponent powerpagecomponentid="63730bbc-599a-ee11-be37-000d3aff3da3">
+  <content>{
+  "displayorder": 1,
+  "enablerating": false,
+  "enabletracking": false,
+  "excludefromsearch": false,
+  "feedbackpolicy": 756150005,
+  "hiddenfromsitemap": false,
+  "isroot": false,
+  "pagetemplateid": "45066dac-b4c4-ee11-9079-0022483ccb4c",
+  "partialurl": "/",
+  "publishingstateid": "e007803a-e299-ee11-be37-0022483c04c3",
+  "rootwebpageid": "e3ac7a40-e299-ee11-be37-0022483c04c3",
+  "sharedpageconfiguration": true,
+  "summary": "&lt;p&gt;This is a sample landing page for you to start creating your website.&lt;/p&gt;"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Home</name>
+  <powerpagecomponenttype>2</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <powerpagesitelanguageid>
+    <powerpagesitelanguageid>2ead7a40-e299-ee11-be37-0022483c04c3</powerpagesitelanguageid>
+  </powerpagesitelanguageid>
+  <searchcontent>Home</searchcontent>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

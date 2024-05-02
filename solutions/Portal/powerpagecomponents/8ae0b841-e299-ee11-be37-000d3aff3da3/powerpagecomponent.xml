@@ -1,0 +1,25 @@
+<powerpagecomponent powerpagecomponentid="8ae0b841-e299-ee11-be37-000d3aff3da3">
+  <content>{
+  "enablerating": false,
+  "enabletracking": false,
+  "excludefromsearch": false,
+  "feedbackpolicy": 756150000,
+  "hiddenfromsitemap": true,
+  "isroot": true,
+  "pagetemplateid": "e49bc03b-e299-ee11-be37-000d3aff3da3",
+  "parentpageid": "e3ac7a40-e299-ee11-be37-0022483c04c3",
+  "partialurl": "profile",
+  "publishingstateid": "e007803a-e299-ee11-be37-0022483c04c3",
+  "sharedpageconfiguration": false,
+  "title": "Profile"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Profile</name>
+  <powerpagecomponenttype>2</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <searchcontent>ProfileProfile</searchcontent>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>
