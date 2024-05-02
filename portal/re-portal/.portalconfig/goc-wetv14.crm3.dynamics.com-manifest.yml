@@ -2475,8 +2475,8 @@ adx_webrole:
   IsDeleted: false
 adx_website:
 - RecordId: 27ad7a40-e299-ee11-be37-0022483c04c3
-  DisplayName: Site 1 - site-md9za
-  CheckSum: 7b459da8b18afa68bd6d8f83d95d4eaf25e7cb529f4c5577f36a3e0ce6d3e27c
+  DisplayName: RE Portal
+  CheckSum: c78464c94137e496bfa6e9ae71d078134dad29718bca022278914c128a95ccdb
   IsDeleted: false
 adx_websiteaccess:
 - RecordId: 28ad7a40-e299-ee11-be37-0022483c04c3
