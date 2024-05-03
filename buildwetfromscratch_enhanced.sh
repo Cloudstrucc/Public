@@ -1,351 +1,257 @@
-$useJsonConfig = Read-Host "Do you want to provide a JSON configuration file? (Y/N/H) [H for Help]"
-$jsonConfig = $null
+#!/bin/bash
 
-if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
-    $jsonFilePath = Read-Host "Enter the path to the JSON configuration file"
-    if (Test-Path -Path $jsonFilePath -PathType Leaf) {
-        $jsonConfig = Get-Content $jsonFilePath | ConvertFrom-Json
-    }
-} elseif ($useJsonConfig -eq "H" -or $useJsonConfig -eq "h") {
+read -p "Do you want to provide a JSON configuration file? (Y/N/H) [H for Help]: " useJsonConfig
+jsonConfig=""
+
+if [[ $useJsonConfig == "Y" || $useJsonConfig == "y" ]]; then
+    read -p "Enter the path to the JSON configuration file: " jsonFilePath
+    if [ -f "$jsonFilePath" ]; then
+        jsonConfig=$(jq '.' "$jsonFilePath")
+    fi
+elif [[ $useJsonConfig == "H" || $useJsonConfig == "h" ]]; then
     # Display a brief description of how the JSON object should be created
-    Write-Host "JSON Configuration File Format:"
-    Write-Host "{
-    `"clientId`": `"<client id>`",
-    `"tenantId`": `"<tenant id>`",
-    `"crmInstance`": `"<crm instance>`",
-    `"redirectUri`": `"https://login.onmicrosoft.com`",
-    `"websiteId`": `"<website id>`",
-    `"pageTemplateId`": `"<page template id>`",
-    `"publishingStateId`": `"<publishing state id>`",
-    `"homePageId`": `"<home page's webpage id value>`",
-    `"clientSecret`": `"app registration client secret`",
-}"
+    echo "JSON Configuration File Format:"
+    echo '{
+    "clientId": "<client id>",
+    "tenantId": "<tenant id>",
+    "crmInstance": "<crm instance>",
+    "redirectUri": "https://login.onmicrosoft.com",
+    "websiteId": "<website id>",
+    "pageTemplateId": "<page template id>",
+    "publishingStateId": "<publishing state id>",
+    "homePageId": "<home page'\''s webpage id value>",
+    "clientSecret": "app registration client secret"
+    }'
 
     # Exit the script
     exit
-}
+fi
 
 # Define default values
-$defaultConfig = @{
-    "clientId" = "<client id>"
-    "tenantId" = "<tenant id>"
-    "crmInstance" = "<crm instance>"
-    "redirectUri" = "https://login.onmicrosoft.com"
-    "websiteId" = "<website id>"
-    "pageTemplateId" = "<page template id>"
-    "publishingStateId" = "<publishing state id>"
-    "homePageId" = "<home page's webpage id value>"
-    "clientSecret" = "SIf8Q~KwaXZdzgC0gBwELfF2rgHPq5TcW-bM-b9w"
-}
+defaultConfig='{
+    "clientId": "<client id>",
+    "tenantId": "<tenant id>",
+    "crmInstance": "<crm instance>",
+    "redirectUri": "https://login.onmicrosoft.com",
+    "websiteId": "<website id>",
+    "pageTemplateId": "<page template id>",
+    "publishingStateId": "<publishing state id>",
+    "homePageId": "<home page'\''s webpage id value>",
+    "clientSecret": "SIf8Q~KwaXZdzgC0gBwELfF2rgHPq5TcW-bM-b9w"
+}'
 
 # Use user-provided JSON or default values
-$config = if ($null -ne $jsonConfig) {
-    $jsonConfig
-} else {
-    $defaultConfig | ForEach-Object {
-        $key = $_.Key
-        $value = Read-Host "Enter the value for $key (Default: $($_.Value))"
-        if ([string]::IsNullOrEmpty($value)) {
-            $_.Value
-        } else {
-            $value
-        }
-    }
-}
+if [ ! -z "$jsonConfig" ]; then
+    config="$jsonConfig"
+else
+    config="$defaultConfig"
+    declare -A defaultConfigMap
+    defaultConfigMap=(
+        ["clientId"]="client id"
+        ["tenantId"]="tenant id"
+        ["crmInstance"]="crm instance"
+        ["websiteId"]="website id"
+        ["pageTemplateId"]="page template id"
+        ["publishingStateId"]="publishing state id"
+        ["homePageId"]="home page's webpage id value"
+        ["clientSecret"]="app registration client secret"
+    )
+
+    for key in "${!defaultConfigMap[@]}"; do
+        echo "Enter the value for ${defaultConfigMap[$key]} (Default: ${config[$key]}): "
+        read value
+        if [ -z "$value" ]; then
+            config="$config"
+        else
+            config="${config//\"$key\": \"${config[$key]}\",\"$key\": \"$value\"}"
+        fi
+    done
+fi
 
 # Set the variables based on the configuration
-$clientId = $config.clientId
-$tenantId = $config.tenantId
-$authority = "https://login.microsoftonline.com/$tenantId"
-$resource = "https://$($config.crmInstance).api.crm3.dynamics.com"
-$redirectUri = $config.redirectUri
-$tokenEndpoint = "$authority/oauth2/v2.0/token"
-$websiteId = $config.websiteId
-$pageTemplateId = $config.pageTemplateId
-$publishingStateId = $config.publishingStateId
-$homePageId = $config.homePageId
-$secret = $config.clientSecret
-$blobAddress = $config.blobAddress
+clientId="${config['clientId']}"
+tenantId="${config['tenantId']}"
+authority="https://login.microsoftonline.com/$tenantId"
+crmInstance="${config['crmInstance']}"
+resource="https://$crmInstance.api.crm3.dynamics.com"
+redirectUri="${config['redirectUri']}"
+tokenEndpoint="$authority/oauth2/v2.0/token"
+websiteId="${config['websiteId']}"
+pageTemplateId="${config['pageTemplateId']}"
+publishingStateId="${config['publishingStateId']}"
+homePageId="${config['homePageId']}"
+secret="${config['clientSecret']}"
+blobAddress="${config['blobAddress']}"
 
 # Prepare the body for the token request
-$body = @{
-    client_id     = $clientId
-    scope         = $resource + "/.default"
-    grant_type    = "client_credentials"  # Assuming client credentials flow
-    redirect_uri  = $redirectUri
-    client_secret = $secret  # Replace with your client secret
-}
+body="{\"client_id\":\"$clientId\",\"scope\":\"$resource/.default\",\"grant_type\":\"client_credentials\",\"redirect_uri\":\"$redirectUri\",\"client_secret\":\"$secret\"}"
+
 # Acquire the token
-$authResponse = Invoke-RestMethod -Method Post -Uri $tokenEndpoint -Body $body -ContentType "application/x-www-form-urlencoded"
-$token = $authResponse.access_token
+authResponse=$(curl -s -X POST -d "$body" -H "Content-Type: application/x-www-form-urlencoded" "$tokenEndpoint")
+token=$(echo "$authResponse" | jq -r '.access_token')
 
 # Set up the HTTP client headers
-$headers = @{
-    Authorization = "Bearer $token"
-    "OData-MaxVersion" = "4.0"
-    "OData-Version" = "4.0"
-    Accept = "application/json"
-    Prefer = "return=representation"
-}
+headers=("Authorization: Bearer $token" "OData-MaxVersion: 4.0" "OData-Version: 4.0" "Accept: application/json" "Prefer: return=representation")
 
 # Define the Dataverse API URL
-$apiUrl = $resource + "/api/data/v9.2/"
+apiUrl="$resource/api/data/v9.2/"
+
 # Function to create or update a web page
 function CreateWebPage {
-    param (
-        [string]$name,
-        [string]$parentPageId
-    )
+    name="$1"
+    parentPageId="$2"
     
     # Logic to determine if this is the home page
     # Check the name or ID against known values for the home page
-    $isHomePage = $false
-    if ($name -eq "themes-dist-14.1.0-gcweb" -or $parentPageId -eq $null) {
-        $isHomePage = $true
-    }
+    isHomePage=false
+    if [[ "$name" == "themes-dist-14.1.0-gcweb" || -z "$parentPageId" ]]; then
+        isHomePage=true
+    fi
 
-    $partialUrl = $name.ToLower()
+    partialUrl=$(echo "$name" | tr '[:upper:]' '[:lower:]')
 
-    Write-Host "Page Name: $name, Parent Page ID: $parentPageId, Is Home Page: $isHomePage"
+    echo "Page Name: $name, Parent Page ID: $parentPageId, Is Home Page: $isHomePage"
     
-    if ($isHomePage) {
-        return $existingPage.mspp_webpageid
-    }
+    if $isHomePage; then
+        return "$existingPage.mspp_webpageid"
+    fi
 
     # Include the website ID in the filter condition
-    $filter = "mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value" + " eq '$websiteId'"
+    filter="mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value eq '$websiteId'"
 
-    if ($parentPageId) {
-        $filter += " and _mspp_parentpageid_value eq $parentPageId"
-    }
+    if [ -n "$parentPageId" ]; then
+        filter+=" and _mspp_parentpageid_value eq $parentPageId"
+    fi
 
-    $checkUrl = $apiUrl + "mspp_webpages?" + "`$filter=$filter"
+    checkUrl="$apiUrl/mspp_webpages?$filter=$filter"
     
-    Write-Host "Checking URL: $checkUrl"  # Debugging statement
-    $existingPages = Invoke-RestMethod -Uri $checkUrl -Method Get -Headers $headers
-    $existingPage = $existingPages.value | Select-Object -First 1
+    echo "Checking URL: $checkUrl"  # Debugging statement
+    existingPages=$(curl -s -X GET -H "${headers[@]}" "$checkUrl")
+    existingPage=$(echo "$existingPages" | jq '.value[0]')
     
-    $webPage = @{
-        "mspp_name" = $name
-        "mspp_partialurl" = $partialUrl
-        "mspp_pagetemplateid@odata.bind" = "/mspp_pagetemplates($pageTemplateId)"
-        "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
-        "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
-    }
+    webPage="{\"mspp_name\":\"$name\",\"mspp_partialurl\":\"$partialUrl\",\"mspp_pagetemplateid@odata.bind\":\"/mspp_pagetemplates($pageTemplateId)\",\"mspp_websiteid@odata.bind\":\"/mspp_websites($websiteId)\",\"mspp_publishingstateid@odata.bind\":\"/mspp_publishingstates($publishingStateId)\"}"
     
-    if ($parentPageId) {
-        $webPage["mspp_parentpageid@odata.bind"] = "/mspp_webpages($parentPageId)"
-    }
+    if [ -n "$parentPageId" ]; then
+        webPage+=",\"mspp_parentpageid@odata.bind\":\"/mspp_webpages($parentPageId)\""
+    fi
     
-    Write-Host "Checking URL: $checkUrl"  # Debugging statement
-    $webPageJson = $webPage | ConvertTo-Json
+    echo "Checking URL: $checkUrl"  # Debugging statement
+    webPageJson=$(echo "$webPage" | jq -c '.')
     
-    if ($existingPage) {
-        Write-Host "Web page already exists. Updating existing page."
-        $updateUrl = $apiUrl + "mspp_webpages(" + $existingPage.mspp_webpageid + ")"
-        Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPageJson -Headers $headers -ContentType "application/json"
-        return $existingPage.mspp_webpageid
-    } else {
-        try {
-            $webPageResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webpages") -Method Post -Body $webPageJson -Headers $headers -ContentType "application/json"
-            $newWebPage = $webPageResponse.mspp_webpageid
-            return $newWebPage
-        } catch {
-            Write-Error "API call failed with $_.Exception.Message"
-        }
-    }
+    if [ -n "$existingPage" ]; then
+        echo "Web page already exists. Updating existing page."
+        updateUrl="$apiUrl/mspp_webpages/${existingPage.mspp_webpageid}"
+        curl -s -X PATCH -d "$webPageJson" -H "${headers[@]}" -H "Content-Type: application/json" "$updateUrl"
+        return "$existingPage.mspp_webpageid"
+    else
+        newWebPage=$(curl -s -X POST -d "$webPageJson" -H "${headers[@]}" -H "Content-Type: application/json" "$apiUrl/mspp_webpages" | jq -r '.mspp_webpageid')
+        return "$newWebPage"
+    fi
 }
-
-
 
 # Function to create or update a web file with the parent web page ID
 function CreateWebFile {
-    param (
-        [string]$filePath,
-        [string]$parentPageId
-    )
+    filePath="$1"
+    parentPageId="$2"
 
-    $fileName = [System.IO.Path]::GetFileName($filePath)
-    $partialUrl = $fileName.Replace(" ", "").ToLower()
-    $mimeType = [System.Web.MimeMapping]::GetMimeMapping($filePath)
-    $fileContent = [Convert]::ToBase64String([System.IO.File]::ReadAllBytes($filePath))
-    $relativePath = Get-RelativePath ($extractionPath + "\themes-dist-14.1.0-gcweb") $filePath
+    fileName=$(basename "$filePath")
+    partialUrl=$(echo "$fileName" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+    mimeType=$(file --mime-type -b "$filePath")
+    fileContent=$(base64 < "$filePath")
+    relativePath=${filePath#$extractionPath/themes-dist-14.1.0-gcweb}
 
     # Construct the blob storage URL
-    $blobUrl = "$blobAddress$relativePath$partialUrl"
+    blobUrl="$blobAddress$relativePath$partialUrl"
 
-    $filter = "mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value" + " eq '$websiteId'"
+    filter="mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value eq '$websiteId'"
 
-    if ($parentPageId) {
-        $filter += " and _mspp_parentpageid_value eq $parentPageId"
-    }
+    if [ -n "$parentPageId" ]; then
+        filter+=" and _mspp_parentpageid_value eq $parentPageId"
+    fi
 
-    $checkUrl = $apiUrl + "mspp_webfiles?" + "`$filter=$filter"
-    $existingFiles = Invoke-RestMethod -Uri $checkUrl -Method Get -Headers $headers
+    checkUrl="$apiUrl/mspp_webfiles?$filter=$filter"
+    existingFiles=$(curl -s -X GET -H "${headers[@]}" "$checkUrl")
 
-    $webFile = @{
-        "mspp_name" = $fileName
-        "mspp_partialurl" = $partialUrl
-        "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"  # Match website ID
-        "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
-        "mspp_cloudblobaddress" = $blobUrl  # Set the blob storage URL to the full path
-    }
+    webFile="{\"mspp_name\":\"$fileName\",\"mspp_partialurl\":\"$partialUrl\",\"mspp_websiteid@odata.bind\":\"/mspp_websites($websiteId)\",\"mspp_publishingstateid@odata.bind\":\"/mspp_publishingstates($publishingStateId)\",\"mspp_cloudblobaddress\":\"$blobUrl\"}"
 
-    if ($parentPageId) {
-        $webFile["mspp_parentpageid@odata.bind"] = "/mspp_webpages($parentPageId)"
-    }
+    if [ -n "$parentPageId" ]; then
+        webFile+=",\"mspp_parentpageid@odata.bind\":\"/mspp_webpages($parentPageId)\""
+    fi
 
-    try {
-        $webFileJson = $webFile | ConvertTo-JSon
+    webFileJson=$(echo "$webFile" | jq -c '.')
+    
+    if [ -n "$existingFiles" ]; then
+        echo "Web file already exists: $filePath"
+        existingFile=$(echo "$existingFiles" | jq '.value[0]')
+        updateUrl="$apiUrl/mspp_webfiles/${existingFile.mspp_webfileid}"
+        curl -s -X PATCH -d "$webFileJson" -H "${headers[@]}" -H "Content-Type: application/json" "$updateUrl"
+        webFileId="${existingFile.mspp_webfileid}"
+    else
+        webFileResponse=$(curl -s -X POST -d "$webFileJson" -H "${headers[@]}" -H "Content-Type: application/json" "$apiUrl/mspp_webfiles")
+        webFileId=$(echo "$webFileResponse" | jq -r '.mspp_webfileid')
 
-        if ($existingFiles.value.Count -gt 0) {
-            Write-Host "Web file already exists: $filePath"
-            $existingFile = $existingFiles.value | Select-Object -First 1
-            $updateUrl = $apiUrl + "mspp_webfiles(" + $existingFile.mspp_webfileid + ")"
-            Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json"
-            $webFileId = $existingFile.mspp_webfileid
-        } else {
-            $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json"
-            $webFileId = $webFileResponse.mspp_webfileid
+        if [ -z "$webFileId" ]; then
+            echo "Failed to create web file for $fileName"
+            return
+        fi
+    fi
 
-            if (-not $webFileId) {
-                Write-Error "Failed to create web file for $fileName"
-                return
-            }
-        }
-
-        $annotationData = @{
-            "objectid_mspp_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
-            "subject" = "Uploaded File"
-            "filename" = $fileName
-            "mimetype" = $mimeType
-            "documentbody" = $fileContent
-        } | ConvertTo-Json
-
-      #  Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotationData | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
-
-    } catch {
-        Write-Error "API call failed with $_.Exception.Message"
-    }
+    annotationData="{\"objectid_mspp_webfile@odata.bind\":\"/mspp_webfiles($webFileId)\",\"subject\":\"Uploaded File\",\"filename\":\"$fileName\",\"mimetype\":\"$mimeType\",\"documentbody\":\"$fileContent\"}"
+    
+    # Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotationData | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
 }
 
 function Get-RelativePath {
-    param (
-        [string]$basePath,
-        [string]$targetPath
-    )
+    basePath="$1"
+    targetPath="$2"
 
-    $basePath = [System.IO.Path]::GetFullPath($basePath)
-    $targetPath = [System.IO.Path]::GetFullPath($targetPath)
+    basePath=$(realpath "$basePath")
+    targetPath=$(realpath "$targetPath")
 
-    if ($targetPath.StartsWith($basePath, [System.StringComparison]::OrdinalIgnoreCase)) {
-        $relativePath = $targetPath.Substring($basePath.Length)
-        if ($relativePath.StartsWith("\", [System.StringComparison]::OrdinalIgnoreCase)) {
-            $relativePath = $relativePath.Substring(1)
-        }
-        return $relativePath.Replace("\", "/")
-    }
-    else {
-        return $targetPath
-    }
+    if [[ "$targetPath" == "$basePath"* ]]; then
+        relativePath=${targetPath#$basePath}
+        if [[ "$relativePath" == /* ]]; then
+            relativePath=${relativePath#"/"}
+        fi
+        echo "$relativePath" | tr '\' '/'
+    else
+        echo "$targetPath"
+    fi
 }
-
 
 # Function to process folder and create webpages + webfiles
 function WriteHierarchy {
-    param (
-        [string]$path,
-        [string]$indent = "",
-        [string]$parentPageId = $null
-    )
+    path="$1"
+    indent="$2"
+    parentPageId="$3"
     
-    $items = Get-ChildItem -Path $path
+    items=($(find "$path" -type f -o -type d))
     
-    foreach ($item in $items) {
-        if (-not $item.PSIsContainer) {
+    for item in "${items[@]}"; do
+        if [ ! -d "$item" ]; then
             # Process files
-            if ($null -eq $parentPageId) {
-                $parentPageId = $homePageId
-            }
-            CreateWebFile -filePath $item.FullName -parentPageId $parentPageId         
-        } else {
+            if [ -z "$parentPageId" ]; then
+                parentPageId="$homePageId"
+            fi
+            CreateWebFile "$item" "$parentPageId"
+        else
             # Process directories
-            $newPageId = CreateWebPage -name $item.Name -parentPageId $parentPageId
-            WriteHierarchy -path $item.FullName -indent ("  " + $indent) -parentPageId $newPageId
-        }
-    }
+            newPageId=$(CreateWebPage "$(basename "$item")" "$parentPageId")
+            WriteHierarchy "$item" "  $indent" "$newPageId"
+        fi
+    done
 }
 
-# Helpers
-
-function DeleteNonRootWebPages {
-    $queryUrl = $apiUrl + "mspp_webpages?\$filter=" + ("mspp_isroot eq false and _mspp_websiteid_value" + " eq '$websiteId'")
-    try {
-        $webPages = Invoke-RestMethod -Uri $queryUrl -Method Get -Headers $headers
-        foreach ($webPage in $webPages.value) {
-            $deleteUrl = $apiUrl + "mspp_webpages(" + $webPage.mspp_webpageid + ")"
-            Invoke-RestMethod -Uri $deleteUrl -Method Delete -Headers $headers
-            Write-Host "Deleted web page: $($webPage | Select-Object -ExpandProperty $(ApplyPrefix("mspp_name")))"
-        }
-    } catch {
-        Write-Error "Error in deleting non-root web pages: $_"
-    }
-}
-
-
-
-function DeleteTodaysMsppWebFiles {
-    $today = (Get-Date).Date
-    $tomorrow = $today.AddDays(1)
-
-    # Format dates for OData query
-    $todayString = $today.ToString("yyyy-MM-ddT00:00:00Z") # Format adjusted here
-    $tomorrowString = $tomorrow.ToString("yyyy-MM-ddT00:00:00Z") # Format adjusted here
-
-    # Query to get webfiles created today
-    $queryUrl = $apiUrl + "mspp_webfiles?`$filter=mspp_createdon ge $todayString and mspp_createdon lt $tomorrowString"
-    
-    try {
-        $webFilesToday = Invoke-RestMethod -Uri $queryUrl -Method Get -Headers $headers
-        foreach ($webFile in $webFilesToday.value) {
-            $webFileId = $webFile.mspp_webfileid
-            $deleteUrl = $apiUrl + "mspp_webfiles($webFileId)"
-            Invoke-RestMethod -Uri $deleteUrl -Method Delete -Headers $headers
-            Write-Host "Deleted web file: $webFileId"
-        }
-        Write-Host "All web files created today have been deleted."
-    } catch {
-        Write-Error "An error occurred: $_.Exception.Message"
-    }
-}
-
-
-
-function FetchSampleMsppWebFiles {
-    $queryUrl = $apiUrl + 'mspp_webfiles?$select=mspp_name' # Corrected query
-    Write-Host $queryUrl
-    try {
-        $webFilesSample = Invoke-RestMethod -Uri $queryUrl -Method Get -Headers $headers
-        foreach ($webFile in $webFilesSample.value) {
-            $webFile | Format-List
-        }
-    } catch {
-        Write-Error "An error occurred: $_.Exception.Message"
-    }
-}
-
-
-#DeleteNonRootWebPages
+# DeleteNonRootWebPages
 # FetchSampleMsppWebFiles
 # Call the function
 # DeleteTodaysMsppWebFiles
 
-
-# Extract the zip file &  runtime script calls
-$zipFilePath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb.zip"
-$extractionPath = "C:\Users\Fred\source\repos\pub\Public\files"
-Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+# Extract the zip file & runtime script calls
+zipFilePath="C:/Users/Fred/source/repos/pub/Public/files/themes-dist-14.1.0-gcweb.zip"
+extractionPath="C:/Users/Fred/source/repos/pub/Public/files"
+unzip "$zipFilePath" -d "$extractionPath"
 
 # Start processing the extracted folder
-Write-Host $extractionPath
-WriteHierarchy -path ($extractionPath + "\themes-dist-14.1.0-gcweb")
+echo "$extractionPath"
+WriteHierarchy "$extractionPath/themes-dist-14.1.0-gcweb" "" ""

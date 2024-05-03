@@ -57,7 +57,7 @@ $config = if ($null -ne $jsonConfig) {
 $clientId = $config.clientId
 $tenantId = $config.tenantId
 $authority = "https://login.microsoftonline.com/$tenantId"
-$resource = "https://$($config.crmInstance).api.crm3.dynamics.com"
+$resource = $config.crmInstance
 $redirectUri = $config.redirectUri
 $tokenEndpoint = "$authority/oauth2/v2.0/token"
 $websiteId = $config.websiteId
@@ -124,10 +124,11 @@ function CreateWebPage {
     Write-Host "Checking URL: $checkUrl"  # Debugging statement
     $existingPages = Invoke-RestMethod -Uri $checkUrl -Method Get -Headers $headers
     $existingPage = $existingPages.value | Select-Object -First 1
-    
+
     $webPage = @{
         "mspp_name" = $name
         "mspp_partialurl" = $partialUrl
+        "mspp_parentpageid@odata.bind" = "/mspp_webpages($parentPageId)"
         "mspp_pagetemplateid@odata.bind" = "/mspp_pagetemplates($pageTemplateId)"
         "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
         "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
@@ -143,11 +144,11 @@ function CreateWebPage {
     if ($existingPage) {
         Write-Host "Web page already exists. Updating existing page."
         $updateUrl = $apiUrl + "mspp_webpages(" + $existingPage.mspp_webpageid + ")"
-        Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPageJson -Headers $headers -ContentType "application/json"
+        Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPageJson -Headers $headers -ContentType "application/json; charset=utf-8"
         return $existingPage.mspp_webpageid
     } else {
         try {
-            $webPageResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webpages") -Method Post -Body $webPageJson -Headers $headers -ContentType "application/json"
+            $webPageResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webpages") -Method Post -Body $webPageJson -Headers $headers -ContentType "application/json; charset=utf-8"
             $newWebPage = $webPageResponse.mspp_webpageid
             return $newWebPage
         } catch {
@@ -188,7 +189,6 @@ function CreateWebFile {
         "mspp_partialurl" = $partialUrl
         "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"  # Match website ID
         "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
-        "mspp_cloudblobaddress" = $blobUrl  # Set the blob storage URL to the full path
     }
 
     if ($parentPageId) {
@@ -202,10 +202,10 @@ function CreateWebFile {
             Write-Host "Web file already exists: $filePath"
             $existingFile = $existingFiles.value | Select-Object -First 1
             $updateUrl = $apiUrl + "mspp_webfiles(" + $existingFile.mspp_webfileid + ")"
-            Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json"
+            Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json; charset=utf-8"
             $webFileId = $existingFile.mspp_webfileid
         } else {
-            $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json"
+            $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json; charset=utf-8"
             $webFileId = $webFileResponse.mspp_webfileid
 
             if (-not $webFileId) {
@@ -214,15 +214,19 @@ function CreateWebFile {
             }
         }
 
-        $annotationData = @{
-            "objectid_mspp_webfile@odata.bind" = "/mspp_webfiles($webFileId)"
-            "subject" = "Uploaded File"
-            "filename" = $fileName
-            "mimetype" = $mimeType
-            "documentbody" = $fileContent
+        $existingRow = Invoke-RestMethod -Uri ($apiUrl + "powerpagecomponents($webFileId)") -Method Get -Headers $headers
+
+        Write-Host "File Name: $($existingRow.name)"
+        $existingRow = @{
+            "powerpagecomponentid" = $existingRow.powerpagecomponentid
+            "name" = $existingRow.name
+            "filecontent" = $fileContent
         } | ConvertTo-Json
 
-      #  Invoke-RestMethod -Uri ($apiUrl + "annotations") -Method Post -Body ($annotationData | ConvertTo-Json -Depth 10) -Headers $headers -ContentType "application/json"
+        # Set this to the url, of your automation, which places the file
+        #$apiUrl = "https://prod-29.canadacentral.logic.azure.com:443/workflows/4f706ababab94e1aa9a42e2f19958b6f/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=9-9Lolk4lpr1Y3EjTcDMwT1M21mckOOpKHZbo4_kaeo"
+       
+        Invoke-WebRequest -Uri $apiUrl -Method Post -Body $existingRow -ContentType "application/json; charset=utf-8"
 
     } catch {
         Write-Error "API call failed with $_.Exception.Message"
@@ -269,8 +273,10 @@ function WriteHierarchy {
             }
             CreateWebFile -filePath $item.FullName -parentPageId $parentPageId         
         } else {
-            # Process directories
+            # Process directoriesY
+
             $newPageId = CreateWebPage -name $item.Name -parentPageId $parentPageId
+
             WriteHierarchy -path $item.FullName -indent ("  " + $indent) -parentPageId $newPageId
         }
     }
@@ -391,16 +397,6 @@ if ($response.IsSuccessStatusCode) {
 }
 }
 
-# Extract the zip file &  runtime script calls
-$zipFilePath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb.zip"
-$extractionPath = "C:\Users\Fred\source\repos\pub\Public\files"
-Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
-
-# Start processing the extracted folder
-Write-Host $extractionPath
-WriteHierarchy -path ($extractionPath + "\themes-dist-14.1.0-gcweb")
-
-
 
 ## SETUP POST THEME INSTALL ##
 function CreateCustomHeader {
@@ -444,4 +440,17 @@ function CreateSampleWizardPageEdit {
 function CreateSampleWeblinkSetWizard {
     # create all wiziard pages before this - so this s/b called in a callback for the wizard web page creates.
 }
+
+
+
+# Extract the zip file &  runtime script calls
+$zipFilePath = "C:\themes-dist-14.2.0-gcweb.zip"
+$extractionPath = "C:\themes-dist-14.2.0-gcweb" 
+# Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+
+# Start processing the extracted folder
+Write-Host $extractionPath
+WriteHierarchy -path $extractionPath -parentPageId $homePageId
+
+
 ## END SETUP POST THEME INSTALL ##
