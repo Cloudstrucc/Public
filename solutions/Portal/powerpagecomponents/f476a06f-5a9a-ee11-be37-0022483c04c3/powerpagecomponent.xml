@@ -1,0 +1,31 @@
+<powerpagecomponent powerpagecomponentid="f476a06f-5a9a-ee11-be37-0022483c04c3">
+  <content>{
+  "copy": "&lt;div id=\"i6662gj\" class=\"row sectionBlockLayout text-left\" style=\"display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;\"&gt;\n  &lt;div class=\"container\" id=\"i0qtclt\" style=\"padding: 0px; display: flex; flex-wrap: wrap;\"&gt;&lt;div class=\"col-md-12 columnBlockLayout\" style=\"flex-grow: 1; display: flex; flex-direction: column; min-width: 250px; word-break: break-word;\"&gt;&lt;/div&gt;&lt;/div&gt;\n&lt;/div&gt;\n",
+  "enablerating": false,
+  "enabletracking": false,
+  "excludefromsearch": false,
+  "feedbackpolicy": 756150000,
+  "hiddenfromsitemap": false,
+  "isroot": false,
+  "pagetemplateid": "cb07803a-e299-ee11-be37-0022483c04c3",
+  "partialurl": "component",
+  "publishingstateid": "e007803a-e299-ee11-be37-0022483c04c3",
+  "rootwebpageid": "5756ae71-5a9a-ee11-be37-0022483d081a",
+  "sharedpageconfiguration": true
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>component</name>
+  <powerpagecomponenttype>2</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <powerpagesitelanguageid>
+    <powerpagesitelanguageid>2ead7a40-e299-ee11-be37-0022483c04c3</powerpagesitelanguageid>
+  </powerpagesitelanguageid>
+  <searchcontent>&lt;div id="i6662gj" class="row sectionBlockLayout text-left" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;"&gt;
+  &lt;div class="container" id="i0qtclt" style="padding: 0px; display: flex; flex-wrap: wrap;"&gt;&lt;div class="col-md-12 columnBlockLayout" style="flex-grow: 1; display: flex; flex-direction: column; min-width: 250px; word-break: break-word;"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+component</searchcontent>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

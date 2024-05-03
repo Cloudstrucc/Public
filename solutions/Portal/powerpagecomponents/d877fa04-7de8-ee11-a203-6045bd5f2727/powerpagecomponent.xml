@@ -1,0 +1,18 @@
+<powerpagecomponent powerpagecomponentid="d877fa04-7de8-ee11-a203-6045bd5f2727">
+  <content>{
+  "display_name": "CS/HOME/SUBTITLE",
+  "type": 756150000,
+  "value": "Reporting Entity Portal - Enterprise"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>CS/HOME/SUBTITLE</name>
+  <powerpagecomponenttype>7</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <powerpagesitelanguageid>
+    <powerpagesitelanguageid>2ead7a40-e299-ee11-be37-0022483c04c3</powerpagesitelanguageid>
+  </powerpagesitelanguageid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

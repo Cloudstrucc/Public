@@ -1,0 +1,24 @@
+<powerpagecomponent powerpagecomponentid="c2ecac79-5a9a-ee11-be37-000d3aff3da3">
+  <content>{
+  "enablerating": false,
+  "enabletracking": false,
+  "excludefromsearch": false,
+  "feedbackpolicy": 756150000,
+  "hiddenfromsitemap": false,
+  "isroot": true,
+  "pagetemplateid": "cb07803a-e299-ee11-be37-0022483c04c3",
+  "parentpageid": "02c8957b-5a9a-ee11-be37-0022483c04c3",
+  "partialurl": "authentication",
+  "publishingstateid": "e007803a-e299-ee11-be37-0022483c04c3",
+  "sharedpageconfiguration": true
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>authentication</name>
+  <powerpagecomponenttype>2</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <searchcontent>authentication</searchcontent>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

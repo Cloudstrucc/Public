@@ -1,0 +1,435 @@
+-----Wizard Page Standard -> page template (for each EDIT step, assign this template)
+{% extends 'Layout 1 Column with Left Nav' %}
+
+{% block navigation %} 
+
+{% assign current_page = current_page | default: page %}
+{% assign parent_page = current_page.adx_parentpageid %}
+
+{% if parent_page %}
+{% assign weblink_set_name = parent_page.name %}
+  
+      {% assign weblink_set_name = page.adx_navigation.name %}
+      {% include "Weblink List Group Left" weblink_set_name: parent_page.name showdescriptions: true %}
+  
+{% endif %}
+
+{% endblock %}
+
+{% block main %}
+  {% include 'Validation Summary - Wizard Form Step'%}
+  {% include 'Page Copy' %}   
+
+  {% if page.adx_entitylist %}
+    {% include 'entity_list' key: page.adx_entitylist.id %}
+  {% endif %}
+  
+  {% if page.adx_entityform %}
+  <style>
+  h2 {
+    display: block;
+    font-size: 1.3em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: bold;
+  }
+</style>
+    
+    {% entityform id: page.adx_entityform.id %}
+
+ <script>
+       
+     //  jQuery(".instructions").detach().appendTo('#instructions');
+       jQuery(".validation-summary").detach().appendTo('#step-validation-header')       
+ 
+ </script>
+ 
+  {% endif %}
+  
+  {% if page.adx_webform %}
+    {% webform id: page.adx_webform.id %}
+  {% endif %}
+
+{% endblock %}
+
+{% block nextPrevious %}
+  {% if parent_page %}
+    {% include "Web Link Button" weblink_set_name: parent_page.name %}
+  {% endif %}
+{% endblock %}
+
+------Layout 1 Column with Left Nav
+{% include 'Wizard Style' %}
+
+<main property="mainContentOfPage">
+<!-- <div class="wrapper-body"> -->
+    <div class="container">
+        <div class="page-heading">
+          {% block breadcrumbs %}
+            {% include 'Breadcrumbs' %}
+          {% endblock %}
+
+          {% block title %}
+            {% assign parentPageTitle = page.parent.title %}
+            {% include 'Page Header' title: parentPageTitle %}
+          {% endblock %}
+        </div>
+        
+            <div class="col-md-3">
+            {% block navigation %}
+            {% endblock %}
+            </div>
+            <div class="col-md-9">
+            {% block main %}
+              
+            {% endblock %}
+
+            {% block nextPrevious %}
+
+            {% endblock %}
+            </div>
+        
+    </div>
+          <div class ="push"></div>
+<!-- </div> -->
+</main>
+
+---Wizard Style
+<style>
+
+  .usa-process-list {
+    font-family: Source Sans Pro Web, Helvetica Neue, Helvetica, Roboto, Arial,
+      sans-serif;
+    font-size: 1.06rem;
+    line-height: 4;
+    margin-bottom: 0;
+    margin-top: 0;
+    list-style-type: none;
+    padding-left: 0;
+    counter-reset: usa-numbered-list;
+    padding: 20px 0 0 calc((2.5rem / 2) - (0.5rem / 2));
+    position: relative;
+  }
+  .usa-process-list > li {
+    margin-bottom: 0;
+    max-width: unset;
+  }
+  .usa-process-list > .usa-process-list__item {
+    max-width: 72ex;
+  }
+  
+  .usa-process-list__item {
+    border-left: 0.3125rem solid #EBEBEB;
+    font-size: 1.06rem;
+    margin-bottom: 0;
+    margin-left: 0.37rem;
+    padding-bottom: 2rem;
+    padding-left: calc(calc((2.5rem / 2) - 0.25rem) * 2);
+  }
+  
+  
+  .usa-prose .usa-process-list {
+    font-family: Source Sans Pro Web, Helvetica Neue, Helvetica, Roboto, Arial,
+      sans-serif;
+    font-size: 1.06rem;
+    line-height: 3;
+    margin-bottom: 0;
+    margin-top: 0;
+    list-style-type: none;
+    padding-left: 0;
+    counter-reset: usa-numbered-list;
+    padding: 20px 0 0 calc((2.5rem / 2) - (0.5rem / 2));
+    position: relative;
+  }
+  .usa-prose .usa-process-list > li {
+    margin-bottom: 0;
+    max-width: unset;
+  }
+  .usa-prose .usa-process-list > .usa-process-list__item {
+    max-width: 72ex;
+  }
+  .usa-prose .usa-process-list__item {
+    border-left: 0.5rem solid #d9e8f6;
+    font-size: 1.06rem;
+    margin-bottom: 0;
+    padding-bottom: 2rem;
+    padding-left: calc(calc((2.5rem / 2) - 0.25rem) * 2);
+  }
+  
+  .usa-process-list__item:last-child {
+    border-left: 0.5rem solid transparent;
+  }
+  .usa-process-list__item::before {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    border-radius: 99rem;
+    width: 2.5rem;
+    background-color: #EBEBEB;
+  
+    box-shadow: 0 0 0 0.25rem white;
+    color: #B0B0B0;
+    content: counter(usa-numbered-list, decimal);
+    counter-increment: usa-numbered-list;
+    display: flex;
+    font-family: Source Sans Pro Web, Helvetica Neue, Helvetica, Roboto, Arial,
+      sans-serif;
+    font-size: 1.2rem;
+    /* font-weight: 700; */
+    height: 3rem;
+    left: 0;
+    line-height: 0.9;
+    margin-top: 0.45rem;
+    position: absolute;
+    width: 3rem;
+  }
+  
+  .active.usa-process-list__item::before {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    border-radius: 99rem;
+    width: 2.5rem;
+    background-color: #5664A8;
+  
+  
+    box-shadow: 0 0 0 0.25rem white;
+    color: white;
+    content: counter(usa-numbered-list, decimal);
+    counter-increment: usa-numbered-list;
+    display: flex;
+    font-family: Source Sans Pro Web, Helvetica Neue, Helvetica, Roboto, Arial,
+      sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    height: 3rem;
+    left: 0;
+    line-height: 0.9;
+    margin-top: 0.45rem;
+    position: absolute;
+    width: 3rem;
+  }
+  
+  
+  .usa-process-list__item:hover::before {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    border-radius: 99rem;
+    width: 2.5rem;
+    background-color: #8B8DA5;
+    box-shadow: 0 0 0 0.25rem white;
+    color: white;
+    content: counter(usa-numbered-list, decimal);
+    counter-increment: usa-numbered-list;
+    display: flex;
+    font-family: Source Sans Pro Web, Helvetica Neue, Helvetica, Roboto, Arial,
+      sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    height: 3rem;
+    left: 0;
+    line-height: 0.9;
+    margin-top: 0.45rem;
+    position: absolute;
+    width: 3rem;
+  }
+  
+  
+  
+  .usa-process-list__item ul {
+    list-style-type: disc;
+  }
+  .usa-process-list__item ul li {
+    margin-bottom: 0.25rem;
+  }
+  .usa-process-list__item ul li:last-child {
+    margin-bottom: 0;
+  }
+  .usa-process-list__item > *:first-child {
+    margin-top: 0;
+  }
+  .usa-process-list__item > *:last-child {
+    margin-bottom: 0;
+  }
+  
+  .usa-process-list__heading {
+    font-family: Source Sans Pro Web, Helvetica Neue, Helvetica, Roboto, Arial,
+      sans-serif;
+    font-size: 1.2rem;
+    line-height: 1.1;
+    color: #B0B0B0;
+    font-family: Source Sans Pro Web, Helvetica Neue, Helvetica, Roboto, Arial,
+      sans-serif;
+    font-weight: 700;
+    margin: 0;
+  
+  }
+  
+  .active.usa-process-list__heading {
+      font-family: Source Sans Pro Web, Helvetica Neue, Helvetica, Roboto, Arial,
+        sans-serif;
+      font-size: 1.2rem;
+      line-height: 1.1;
+      color: #1b1b1b;
+      font-family: Source Sans Pro Web, Helvetica Neue, Helvetica, Roboto, Arial,
+        sans-serif;
+      font-weight: 700;
+      margin: 0;
+  
+    }
+  
+  .usa-process-list__heading + * {
+    margin-top: 0.25rem;
+  }
+  
+  a {
+    text-decoration: none;
+  
+  }
+  
+  a, a:visited, a:hover, a:active {
+    color: inherit;
+  }
+  
+  .not-active {
+      pointer-events: none;
+      cursor: default;
+  }
+  
+  </style>
+
+  ---Weblink List Group Left
+  {% assign weblink_set_name = weblink_set_name %}
+  {% assign showdescriptions = showdescriptions | default: false %}
+  
+  {% if weblink_set_name %}
+    {% assign weblink_set = weblinks[weblink_set_name] %}
+    {% if weblink_set %}
+      {% if showdescriptions %} 
+          {% comment %}     
+          <div class="list-group weblinks">
+              <ol class="usa-process-list" >
+                {% for link in weblink_set.weblinks %}              
+                  <li class="usa-process-list__item padding-bottom-4 {% if link.url == request.path %} active {% endif %}">
+                    <a class="weblink usa-process-list__heading font-sans-xl line-height-sans-1" style='font-size:18px' href="{{ link.url | h }}{{ request.query }}">                  
+                     {{ link.name | escape }}
+                    </a>
+                  </li>
+                {% endfor %} 
+              </ol>   
+          </div>
+          #243850
+          #fff
+          {% endcomment %}
+         
+          <nav class="wb-sec" typeof="SiteNavigationElement" id="wb-sec" role="navigation">
+            <h2 id="wb-sec-h" class="wb-inv">Section menu</h2>
+             <section class="list-group menu list-unstyled">
+                    <h3>Menu</h3>
+                    <ul class="list-group menu list-unstyled">
+                     {% for link in weblink_set.weblinks %}  
+                         <li>                                                            
+                            <a style="{% if link.url == request.path %} background-color: #243850; color: #fff; {% endif %}"  href="{{ link.url | h }}{{ request.query }}" class="list-group-item {% if link.url == request.path %} active hover {% endif %}">
+                              {{ link.name | escape }}
+                            </a>
+                        </li>               
+                    {% endfor %}                                         
+                    </ul>
+                </section>
+          </nav>
+          {% editable weblink_set %}      
+      {% else %}
+        <div class="panel panel-default {% if weblink_set.editable %}xrm-entity xrm-editable-adx_weblinkset{% endif %}">
+          <div class="panel-heading">
+            <div class="panel-title"><span class="fa fa-bars" aria-hidden="true" style="font-size: 14px;"></span>&nbsp; {{ snippets["Related Links Navigation Heading"] | default:"Related Links" | h }}</div>
+          </div>
+          <div class="weblinks list-group">
+            {% for link in weblink_set.weblinks %}
+              <a class="weblink list-group-item{% if link.url == request.path %} active{% endif %}" href="{{ link.url | h }}{{ request.query }}" title="{{ link.tooltip | h }}">
+                {% if link.image %}
+                  {% if link.image.url startswith '.' %}
+                    <span class="{{ link.image.url | split:'.' | join | h }}" aria-hidden="true"></span>
+                  {% else %}
+                    <img src="{{ link.image.url | h }}" alt="{{ link.image.alternate_text | h }}" />
+                  {% endif %}
+                {% endif %}
+                {{ link.name | h }}
+              </a>
+            {% endfor %}
+          </div>
+        {% editable weblink_set %}
+        </div>
+    {% endif %}
+   {% endif %}
+  {% endif %}
+  
+  {% comment %}
+  <div class="container">
+     <div class="row">
+          <div class="col-md-3">
+              {% assign wizard = weblinks["Risk Questionnaire Report"] %}
+              {% if wizard %}
+              <ol class="usa-process-list" >
+              {% for link in wizard.weblinks %}
+              
+                <li class="usa-process-list__item padding-bottom-4 {% if request.params.url == link.url %}active{% endif %}">
+                  <a class="usa-process-list__heading font-sans-xl line-height-sans-1 {% if request.params.url == link.url %}active{% endif %}" style='font-size:16px' href="{{ link.url | escape }}{% if idparam %}?id={{idparam}}{% endif %}">
+                   {{ link.name | escape }}
+                </li>
+  
+              {% endfor %} 
+              </ol>
+  
+              {% endif %}
+              
+          </div>
+  
+          <div class="col-md-9">
+  
+              {% assign id = entities['adx_webpage'][page.id].adx_entityform.id %}
+              {% entityform id: id %}
+            
+          </div>
+    </div>
+  </div>
+  {% endcomment %}
+  
+
+  ---weblink button 
+  {% assign weblink_set_name = weblink_set_name %}
+
+{% if weblink_set_name %}
+  {% assign weblink_set = weblinks[weblink_set_name] %}
+  {% if weblink_set %}
+      {% assign i = 0 %}
+      {% for link in weblink_set.weblinks %}
+        {% if i != 0 %}
+            {% assign i_minus_1 = i | minus: 1 %}
+            {% assign previousLink = weblink_set.weblinks[i_minus_1] %}
+        {% endif %}
+
+        {% if link.url == request.path %}
+            {% break %}
+        {% endif %}
+
+        {% assign i = i | plus: 1 %}
+      {% endfor %}
+
+
+        {% assign i_plus_1 = i | plus: 1 %}
+      {% if weblink_set.weblinks.size != i_plus_1 %}
+        {% assign nextLink = weblink_set.weblinks[i_plus_1] %}
+      {% endif %}
+      
+    <ul class="pager">
+      <li class="previous{% if previousLink %}{% else %} disabled{% endif %}"><a href="{{ previousLink.url }}{{ request.query }}" rel="prev">Previous</a></li>
+      <li class="next{% if nextLink %}{% else %} disabled{% endif %}"><a href="{{ nextLink.url }}{{ request.query }}" rel="next">Next</a></li>
+    </ul>
+ {% endif %}
+{% endif %}

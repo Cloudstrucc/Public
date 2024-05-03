@@ -1,0 +1,13 @@
+{
+    "clientId": "4ff994b1-9789-40e1-874c-50fc92007812",
+    "tenantId": "24a46daa-7b87-4566-9eea-281326a1b75c",
+    "crmInstance": "goc-wetv14",
+    "redirectUri": "https://login.onmicrosoft.com",
+    "websiteId": "354976a2-0a10-4d04-9663-4cdd276c812b",
+    "pageTemplateId": "75d82dfb-cc26-48bf-be32-a5b555e8981a",
+    "publishingStateId": "03153f8d-88f9-42c9-afc9-be9fe89bf69c",
+    "homePageId": "04ccbbb2-ba59-40d2-9807-7fae3c7fadc1",
+    "clientSecret": "SIf8Q~KwaXZdzgC0gBwELfF2rgHPq5TcW-bM-b9w",
+    "blobAddress": "https://csenterprise.blob.core.windows.net/wet141/"
+}
+

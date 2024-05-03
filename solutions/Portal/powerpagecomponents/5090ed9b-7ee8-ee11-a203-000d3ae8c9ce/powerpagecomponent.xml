@@ -1,0 +1,18 @@
+<powerpagecomponent powerpagecomponentid="5090ed9b-7ee8-ee11-a203-000d3ae8c9ce">
+  <content>{
+  "display_name": "CS/Home/JobsLink",
+  "type": 756150001,
+  "value": "&lt;a href=\"/search\"&gt;Search&lt;/a&gt;"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>CS/Home/JobsLink</name>
+  <powerpagecomponenttype>7</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <powerpagesitelanguageid>
+    <powerpagesitelanguageid>2ead7a40-e299-ee11-be37-0022483c04c3</powerpagesitelanguageid>
+  </powerpagesitelanguageid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

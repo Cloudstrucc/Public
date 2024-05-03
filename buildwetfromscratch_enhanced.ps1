@@ -156,7 +156,7 @@ function CreateWebPage {
     }
 }
 
-
+#### create example wizard form end ########
 
 # Function to create or update a web file with the parent web page ID
 function CreateWebFile {
@@ -340,6 +340,56 @@ function FetchSampleMsppWebFiles {
 # Call the function
 # DeleteTodaysMsppWebFiles
 
+Function DeleteAnnotations($webfileId) {
+    $annotationsUrl = "annotations"
+    $annotationsQuery = "?`$filter=_objectid_value eq $webfileId and filename ne null&`$orderby=createdon desc"
+    
+    $response = $httpClient.GetAsync("$annotationsUrl$annotationsQuery").Result
+    if ($response.IsSuccessStatusCode) {
+        $annotations = $response.Content.ReadAsAsync([PSCustomObject[]]).Result
+
+        # Keep track of the latest annotation with an attachment
+        $latestAnnotationWithAttachment = $null
+
+        # Loop through annotations and delete
+        foreach ($annotation in $annotations) {
+            if ($null -eq $latestAnnotationWithAttachment -and $null -ne $annotation.filename) {
+                # Keep the first annotation with an attachment as the latest
+                $latestAnnotationWithAttachment = $annotation
+            } else {
+                # Delete other annotations
+                $annotationId = $annotation.annotationid
+                $deleteResponse = $httpClient.DeleteAsync("$annotationsUrl($annotationId)").Result
+                if ($deleteResponse.IsSuccessStatusCode) {
+                    Write-Host "Deleted annotation with ID: $annotationId"
+                } else {
+                    Write-Host "Failed to delete annotation with ID: $annotationId"
+                }
+            }
+        }
+    } else {
+        Write-Host "Failed to retrieve annotations for webfile with ID: $webfileId"
+    }
+}
+
+Function PurgeDubAnnocations {
+    # Query and delete annotations for each webfile
+$webfilesUrl = "adx_webfiles"
+$webfilesQuery = "?`$select=adx_webfileid"
+$response = $httpClient.GetAsync("$webfilesUrl$webfilesQuery").Result
+
+if ($response.IsSuccessStatusCode) {
+    $webfiles = $response.Content.ReadAsAsync([PSCustomObject[]]).Result
+
+    foreach ($webfile in $webfiles) {
+        $webfileId = $webfile.adx_webfileid
+        Write-Host "Processing webfile with ID: $webfileId"
+        DeleteAnnotations $webfileId
+    }
+} else {
+    Write-Host "Failed to retrieve webfiles"
+}
+}
 
 # Extract the zip file &  runtime script calls
 $zipFilePath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb.zip"
@@ -349,3 +399,49 @@ Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
 # Start processing the extracted folder
 Write-Host $extractionPath
 WriteHierarchy -path ($extractionPath + "\themes-dist-14.1.0-gcweb")
+
+
+
+## SETUP POST THEME INSTALL ##
+function CreateCustomHeader {
+
+}
+
+function CreateCustomFooter {
+
+}
+
+function UpdateHomePage {
+
+}
+
+function CreateStyleGuidePage {
+
+}
+
+#### wizard feature pre-requisites
+function CreateWizardWebTemplates {
+    # create based on files/liquid
+}
+function CreateWizardPageTemplate {
+    # include the update only, the insert should simply use the standardtemplate
+}
+#### wizard feature set up end ########
+
+#### create example wizard form
+function CreateSampleWizardForm {
+    # call the helper methods below
+}
+
+function CreateSampleWizardPageCreate {
+    # use a form for oob table with insert (so create basic form with insert) then create web page and associate default page tempalte and the basic form
+    # make sure the basic form has redirect to first step
+}
+function CreateSampleWizardPageEdit {
+    # once all pages are created, make sure to create the web link set for these
+}
+
+function CreateSampleWeblinkSetWizard {
+    # create all wiziard pages before this - so this s/b called in a callback for the wizard web page creates.
+}
+## END SETUP POST THEME INSTALL ##

@@ -1,0 +1,15 @@
+<powerpagecomponent powerpagecomponentid="df07803a-e299-ee11-be37-0022483c04c3">
+  <content>{
+  "displayorder": 1,
+  "isdefault": false,
+  "isvisible": false
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Draft</name>
+  <powerpagecomponenttype>1</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>27ad7a40-e299-ee11-be37-0022483c04c3</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>
