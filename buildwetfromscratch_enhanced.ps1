@@ -393,9 +393,9 @@ Function DeleteAnnotations($webfileId) {
 
 Function PurgeDubAnnocations {
     # Query and delete annotations for each webfile
-$webfilesUrl = "adx_webfiles"
-$webfilesQuery = "?`$select=adx_webfileid"
-$response = $httpClient.GetAsync("$webfilesUrl$webfilesQuery").Result
+    $webfilesUrl = "adx_webfiles"
+    $webfilesQuery = "?`$select=adx_webfileid"
+    $response = $httpClient.GetAsync("$webfilesUrl$webfilesQuery").Result
 
     if ($response.IsSuccessStatusCode) {
         $webfiles = $response.Content.ReadAsAsync([PSCustomObject[]]).Result
@@ -415,13 +415,10 @@ function CreateWebTemplate {
         [string]$markup = "",
         [string]$filename = ""
     )
-    $liquidFilePath = "liquid\webtemplates\CS-header.liquid"
+   
 
-    # Call the function with the liquid file path
-    # $htmlString = Get-HTMLStringFromLiquidFile -liquidFilePath $liquidFilePath
     $htmlString = $markup
-    # $htmlString = Get-HTMLString
-    # Define the JSON payload for the mspp_webtemplate record
+
     $webTemplatePayload = @{
         "mspp_name" = $filename
         "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
@@ -464,6 +461,14 @@ function CreateWebTemplate {
             # Check the response
             if ($webresponse -ne $null) {
                 Write-Host "mspp_webtemplate created successfully with ID: $($webresponse.mspp_webtemplateid)"
+                $pageTemplateId = $webresponse.mspp_webtemplateid
+                $pageTemplatePayload = @{
+                    "mspp_name" = $filename
+                    "mspp_type" = "756150001"
+                    "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
+                    "mspp_webtemplateid@odata.bind" = "/mspp_webtemplates($pageTemplateId)"
+                } | ConvertTo-Json
+                $pageTemplateResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_pagetemplates") -Method Post -Body $pageTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
             } else {
                 Write-Host "Failed to create mspp_webtemplate"
             }  
@@ -551,9 +556,9 @@ function Write-Templates {
     
     # Write content of files in the current folder
     foreach ($file in $files) {
-        Write-Host "${indent}  File: $($file.Name)"
+        Write-Host "${indent}  File: $($file.Name.Substring(0, $file.Name.LastIndexOf('.')))"
         $html = Get-Content -Path $file.FullName 
-        CreateWebTemplate -filename $file.Name -markup "${html} $_ "
+        CreateWebTemplate -filename $file.Name.Substring(0, $file.Name.LastIndexOf('.')) -markup "${html} $_ "
              
        
     }
@@ -635,6 +640,6 @@ $rootFolderPath = "C:\Users\Fred\source\repos\pub\Public\liquid\webtemplates"
 #Write-Host $extractionPath
 #WriteHierarchy -path $extractionPath -parentPageId $homePageId
 CreateSnippets
-# Write-Templates -folderPath $rootFolderPath
+Write-Templates -folderPath $rootFolderPath
 
 ## END SETUP POST THEME INSTALL ##
