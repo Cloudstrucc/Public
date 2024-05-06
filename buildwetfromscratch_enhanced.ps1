@@ -645,13 +645,15 @@ function CreateSampleWeblinkSetWizard {
 
 
 function RunPortalTemplateInstall {
-    $zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
-    $extractionPath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb" 
+    # $zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
+    # $extractionPath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb" 
+    
+    # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+    # Write-Host $extractionPath
+    # WriteHierarchy -path $extractionPath -parentPageId $homePageId
+        
+    # CreateSnippets
     $rootFolderPath = "C:\Users\Fred\source\repos\pub\Public\liquid\webtemplates"
-    Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
-    Write-Host $extractionPath
-    WriteHierarchy -path $extractionPath -parentPageId $homePageId
-    CreateSnippets
     Write-Templates -folderPath $rootFolderPath
     UpdateHomePage -pageTemplateName "CS-Home-WET"
 }
