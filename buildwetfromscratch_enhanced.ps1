@@ -17,8 +17,7 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
     `"websiteId`": `"<website id>`",
     `"pageTemplateId`": `"<page template id>`",
     `"publishingStateId`": `"<publishing state id>`",
-    `"homePageId`": `"<home page's webpage id value>`",
-    `"clientSecret`": `"Gnt8Q~boybpmRQZnEAngNgDumQqNhKwM_kCwdcbI`",
+    `"homePageId`": `"<home page's webpage id value>`",   
     `"blobAddress`" = `"<blob address>`"
 }"
 
