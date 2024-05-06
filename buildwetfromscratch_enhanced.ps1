@@ -418,17 +418,27 @@ function CreateWebTemplate {
         "mspp_source" = "$htmlString"
     } | ConvertTo-Json
 
-
-
-    # Make the request to create the adx_webtemplate record
-    $webtresponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webtemplates") -Method Post -Body $webTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
-
-    # Check the response
-    if ($webtresponse -ne $null) {
-        Write-Host "mspp_webtemplate created successfully with ID: $($response.adx_webtemplateid)"
+    $filter = "mspp_name eq '$filename' and _mspp_websiteid_value" + " eq '$websiteId'"
+    $checkWebTemplateExists = $apiUrl + "mspp_webtemplates?" + "`$filter=$filter"
+    $existingTemplates = Invoke-RestMethod -Uri $checkWebTemplateExists -Method Get -Headers $headers
+    if ($existingTemplates.value.Count -gt 0) {
+        Write-Host "Web template already exists: $filePath"
+        $existingTemplate = $existingTemplates.value | Select-Object -First 1
+        $updateUrl = $apiUrl + "mspp_webtemplates(" + $existingTemplate.mspp_webtemplateid + ")"
+        Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
+        $webtemplatedid = $existingTemplate.mspp_webtemplateid
     } else {
-        Write-Host "Failed to create adx_webtemplate"
-    }   
+            # Make the request to create the adx_webtemplate record
+            $webtresponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webtemplates") -Method Post -Body $webTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
+
+            # Check the response
+            if ($webtresponse -ne $null) {
+                Write-Host "mspp_webtemplate created successfully with ID: $($response.adx_webtemplateid)"
+            } else {
+                Write-Host "Failed to create adx_webtemplate"
+            }  
+    }
+    
 }
 
 function Write-Templates {
