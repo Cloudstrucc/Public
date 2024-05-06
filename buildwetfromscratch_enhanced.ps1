@@ -103,6 +103,7 @@ function CreateWebPage {
     $isHomePage = $false
     if ($name -eq "themes-dist-14.1.0-gcweb" -or $parentPageId -eq $null) {
         $isHomePage = $true
+        Write-Host "Page Name: $name, Parent Page ID: $parentPageId, Is Home Page: $isHomePage"
     }
 
     $partialUrl = $name.ToLower()
@@ -225,7 +226,7 @@ function CreateWebFile {
         } | ConvertTo-Json
 
         # Set this to the url, of your automation, which places the file
-        $apiUrl = "https://prod-29.canadacentral.logic.azure.com:443/workflows/4f706ababab94e1aa9a42e2f19958b6f/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=9-9Lolk4lpr1Y3EjTcDMwT1M21mckOOpKHZbo4_kaeo"
+        $apiUrl = "https://prod-16.canadacentral.logic.azure.com:443/workflows/d0266af9e24b457e81d042e204f1c990/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=cnCrDBP18LAb40X3H7E_dtydKWbGK9GpdL0tK68_z8s"
        
         Invoke-WebRequest -Uri $apiUrl -Method Post -Body $existingRow -ContentType "application/json; charset=utf-8"
 
@@ -268,14 +269,17 @@ function WriteHierarchy {
     
     foreach ($item in $items) {
         if (-not $item.PSIsContainer) {
-            # Process files
+            #Process files
+            
             if ($null -eq $parentPageId) {
                 $parentPageId = $homePageId
             }
-            CreateWebFile -filePath $item.FullName -parentPageId $parentPageId         
+            Write-Host "IS NOT FOLDER + $parentPageId + $item"
+            CreateWebFile -filePath $item.FullName -parentPageId $parentPageId 
+                   
         } else {
             # Process directoriesY
-
+            Write-Host "IS FOLDER + $parentPageId + $item"
             $newPageId = CreateWebPage -name $item.Name -parentPageId $parentPageId
 
             WriteHierarchy -path $item.FullName -indent ("  " + $indent) -parentPageId $newPageId
@@ -446,7 +450,7 @@ function CreateSampleWeblinkSetWizard {
 
 # Extract the zip file &  runtime script calls
 $zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
-$extractionPath = "C:\Users\Fred\Downloads\themes-dist-14.1.0-gcweb" 
+$extractionPath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb" 
 # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
 
 # Start processing the extracted folder
