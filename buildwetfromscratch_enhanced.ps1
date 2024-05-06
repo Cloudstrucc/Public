@@ -36,6 +36,7 @@ $defaultConfig = @{
     "publishingStateId" = "<publishing state id>"
     "homePageId" = "<home page's webpage id value>"
     "clientSecret" = "SIf8Q~KwaXZdzgC0gBwELfF2rgHPq5TcW-bM-b9w"
+    "clientSecret" = "SIf8Q~KwaXZdzgC0gBwELfF2rgHPq5TcW-bM-b9w"
 }
 
 # Use user-provided JSON or default values
@@ -57,6 +58,7 @@ $config = if ($null -ne $jsonConfig) {
 $clientId = $config.clientId
 $tenantId = $config.tenantId
 $authority = "https://login.microsoftonline.com/$tenantId"
+$resource = $config.crmInstance
 $resource = $config.crmInstance
 $redirectUri = $config.redirectUri
 $tokenEndpoint = "$authority/oauth2/v2.0/token"
