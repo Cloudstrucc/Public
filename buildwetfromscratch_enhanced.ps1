@@ -35,8 +35,6 @@ $defaultConfig = @{
     "pageTemplateId" = "<page template id>"
     "publishingStateId" = "<publishing state id>"
     "homePageId" = "<home page's webpage id value>"
-    "clientSecret" = "SIf8Q~KwaXZdzgC0gBwELfF2rgHPq5TcW-bM-b9w"
-    "clientSecret" = "SIf8Q~KwaXZdzgC0gBwELfF2rgHPq5TcW-bM-b9w"
 }
 
 # Use user-provided JSON or default values
@@ -58,8 +56,7 @@ $config = if ($null -ne $jsonConfig) {
 $clientId = $config.clientId
 $tenantId = $config.tenantId
 $authority = "https://login.microsoftonline.com/$tenantId"
-$resource = $config.crmInstance
-$resource = $config.crmInstance
+$resource = "https://$($config.crmInstance).api.crm3.dynamics.com"
 $redirectUri = $config.redirectUri
 $tokenEndpoint = "$authority/oauth2/v2.0/token"
 $websiteId = $config.websiteId
@@ -390,20 +387,39 @@ $webfilesUrl = "adx_webfiles"
 $webfilesQuery = "?`$select=adx_webfileid"
 $response = $httpClient.GetAsync("$webfilesUrl$webfilesQuery").Result
 
-if ($response.IsSuccessStatusCode) {
-    $webfiles = $response.Content.ReadAsAsync([PSCustomObject[]]).Result
+    if ($response.IsSuccessStatusCode) {
+        $webfiles = $response.Content.ReadAsAsync([PSCustomObject[]]).Result
 
-    foreach ($webfile in $webfiles) {
-        $webfileId = $webfile.adx_webfileid
-        Write-Host "Processing webfile with ID: $webfileId"
-        DeleteAnnotations $webfileId
+        foreach ($webfile in $webfiles) {
+            $webfileId = $webfile.adx_webfileid
+            Write-Host "Processing webfile with ID: $webfileId"
+            DeleteAnnotations $webfileId
+        }
+    } else {
+        Write-Host "Failed to retrieve webfiles"
     }
-} else {
-    Write-Host "Failed to retrieve webfiles"
-}
 }
 
+function CreateWebTemplate {
+    # Define the JSON payload for the mspp_webtemplate record
+    $webTemplatePayload = @{
+        "mspp_name" = "MyWebTemplate"
+        "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
+        "mspp_source" = "<html><body><h1>Hello, Portal!</h1></body></html>"
+    } | ConvertTo-Json
 
+
+
+    # Make the request to create the adx_webtemplate record
+    $webtresponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webtemplates") -Method Post -Body $webTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
+
+    # Check the response
+    if ($webtresponse -ne $null) {
+        Write-Host "mspp_webtemplate created successfully with ID: $($response.adx_webtemplateid)"
+    } else {
+        Write-Host "Failed to create adx_webtemplate"
+    }   
+}
 ## SETUP POST THEME INSTALL ##
 function CreateCustomHeader {
 
@@ -455,8 +471,8 @@ $extractionPath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.
 # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
 
 # Start processing the extracted folder
-Write-Host $extractionPath
-WriteHierarchy -path $extractionPath -parentPageId $homePageId
-
+#Write-Host $extractionPath
+#WriteHierarchy -path $extractionPath -parentPageId $homePageId
+CreateWebTemplate
 
 ## END SETUP POST THEME INSTALL ##
