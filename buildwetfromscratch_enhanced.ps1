@@ -65,9 +65,9 @@ $publishingStateId = $config.publishingStateId
 $homePageId = $config.homePageId
 $secret = $config.clientSecret
 $blobAddress = $config.blobAddress
-$englishLanguageId = '20f6128a-d758-4de0-88df-6201e6ccd8b6'
-$frenchLanguageId = '20f6128a-d758-4de0-88df-6201e6ccd8b6'
-
+$englishLanguageId = '86fd7246-a146-4fdd-88f9-be660e6a8b44'
+$frenchLanguageId = '86fd7246-a146-4fdd-88f9-be660e6a8b44'
+$webFileFlowURL = "https://prod-19.canadacentral.logic.azure.com:443/workflows/3d37575913bf41138aa8f39577b47ecf/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3I6NvX2Km9WnvEXWfpx50On-1f6Y46MI2g4KRn8i6OM"
 # Prepare the body for the token request
 $body = @{
     client_id     = $clientId
@@ -234,7 +234,7 @@ function CreateWebFile {
         } | ConvertTo-Json
 
         # Set this to the url, of your automation, which places the file
-        $apiUrl = "https://prod-16.canadacentral.logic.azure.com:443/workflows/d0266af9e24b457e81d042e204f1c990/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=cnCrDBP18LAb40X3H7E_dtydKWbGK9GpdL0tK68_z8s"
+        $apiUrl = $webFileFlowUrl 
        
         Invoke-WebRequest -Uri $apiUrl -Method Post -Body $existingRow -ContentType "application/json; charset=utf-8"
 
@@ -645,14 +645,14 @@ function CreateSampleWeblinkSetWizard {
 
 
 function RunPortalTemplateInstall {
-    # $zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
-    # $extractionPath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb" 
+    $zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
+    $extractionPath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb" 
     
-    # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
-    # Write-Host $extractionPath
-    # WriteHierarchy -path $extractionPath -parentPageId $homePageId
+    Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+    Write-Host $extractionPath
+    WriteHierarchy -path $extractionPath -parentPageId $homePageId
         
-    # CreateSnippets
+    CreateSnippets
     $rootFolderPath = "C:\Users\Fred\source\repos\pub\Public\liquid\webtemplates"
     Write-Templates -folderPath $rootFolderPath
     UpdateHomePage -pageTemplateName "CS-Home-WET"
