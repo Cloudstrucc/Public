@@ -1,0 +1,156 @@
+
+<style>
+
+
+.gc-main-footer {
+  margin-top:1em;
+}
+
+.application-bar {
+  background-color: #38414d;
+  color: #fff;
+  margin-top: 15px;
+}
+.application-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.application-bar h2 a {
+  color: #fff;
+  text-decoration: none;
+}
+.application-bar h2 a:hover {
+  text-decoration: underline;
+}
+.application-bar h2 {
+  border: none;
+  margin: 10px 0 8px;
+}
+
+.logout-link {
+    margin-left: auto; /* This will push the Logout link to the right side */
+}
+
+.logout-link a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.logout-link a:hover {
+    text-decoration: underline;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: auto;
+}
+
+.dropbtn {
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #38414d;
+    min-width: 160px;
+    z-index: 1;
+    top: 100%;
+    right: 0;
+}
+
+/* Dropdown links */
+.dropdown-content a {
+    color: #fff;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Show the dropdown on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Style the profile favicon */
+.profile-favicon {
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+.container {
+  
+    max-width: 1200px;  
+    margin: auto;
+}
+
+.sidebar {
+    width: 250px;  
+    background-color: #f5f5f5;  
+    padding: 1em;
+    box-sizing: border-box;
+    height: 100vh;  
+    overflow-y: auto;  
+}
+
+.content {
+    flex-grow: 1;
+    padding: 1em;
+    box-sizing: border-box;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu > li > a {
+    display: block;
+    padding: 0.5em 1em;
+    text-decoration: none;
+    color: #333;  
+}
+
+.menu > li > a:hover {
+    background-color: #ddd;  
+}
+
+.submenu {
+    list-style: none;
+    padding: 0;
+    padding-left: 1em;
+    display: none;  
+}
+
+.menu > li:hover .submenu {
+    display: block;  
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .content {
+        flex-basis: auto;
+    }
+}
+
+
+
+</style>
