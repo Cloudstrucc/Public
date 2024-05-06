@@ -152,7 +152,7 @@ function CreateWebPage {
     if ($existingPage) {
         Write-Host "Web page already exists. Updating existing page."
         $updateUrl = $apiUrl + "mspp_webpages(" + $existingPage.mspp_webpageid + ")"
-        Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPageJson -Headers $headers -ContentType "application/json; charset=utf-8"
+        Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPageJson -Headers $updateHeaders -ContentType "application/json; charset=utf-8"
         return $existingPage.mspp_webpageid
     } else {
         try {
@@ -210,7 +210,7 @@ function CreateWebFile {
             Write-Host "Web file already exists: $filePath"
             $existingFile = $existingFiles.value | Select-Object -First 1
             $updateUrl = $apiUrl + "mspp_webfiles(" + $existingFile.mspp_webfileid + ")"
-            Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $headers -ContentType "application/json; charset=utf-8"
+            Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webFileJson -Headers $updateHeaders -ContentType "application/json; charset=utf-8"
             $webFileId = $existingFile.mspp_webfileid
         } else {
             $webFileResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webfiles") -Headers $headers -Method Post -Body $webFileJson -ContentType "application/json; charset=utf-8"
