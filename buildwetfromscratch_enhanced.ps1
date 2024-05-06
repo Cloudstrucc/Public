@@ -401,7 +401,7 @@ $response = $httpClient.GetAsync("$webfilesUrl$webfilesQuery").Result
 }
 
 function CreateWebTemplate {
-    $liquidFilePath = "liquid\CS-header.liquid"5
+    $liquidFilePath = "liquid\webtemplates\CS-header.liquid"
 
 # Call the function with the liquid file path
     $htmlString = Get-HTMLStringFromLiquidFile -liquidFilePath $liquidFilePath
