@@ -18,7 +18,8 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
     `"pageTemplateId`": `"<page template id>`",
     `"publishingStateId`": `"<publishing state id>`",
     `"homePageId`": `"<home page's webpage id value>`",
-    `"clientSecret`": `"app registration client secret`",
+    `"clientSecret`": `"Gnt8Q~boybpmRQZnEAngNgDumQqNhKwM_kCwdcbI`",
+    `"blobAddress`" = `"<blob address>`"
 }"
 
     # Exit the script
@@ -35,7 +36,8 @@ $defaultConfig = @{
     "pageTemplateId" = "<page template id>"
     "publishingStateId" = "<publishing state id>"
     "homePageId" = "<home page's webpage id value>"
-    "clientSecret" = "SIf8Q~KwaXZdzgC0gBwELfF2rgHPq5TcW-bM-b9w"
+    "clientSecret" = "<client secret>"
+    "blobAddress" = "<blob address>"
 }
 
 # Use user-provided JSON or default values
@@ -57,7 +59,7 @@ $config = if ($null -ne $jsonConfig) {
 $clientId = $config.clientId
 $tenantId = $config.tenantId
 $authority = "https://login.microsoftonline.com/$tenantId"
-$resource = $config.crmInstance
+$resource = "https://$($config.crmInstance).api.crm3.dynamics.com"
 $redirectUri = $config.redirectUri
 $tokenEndpoint = "$authority/oauth2/v2.0/token"
 $websiteId = $config.websiteId
@@ -224,7 +226,7 @@ function CreateWebFile {
         } | ConvertTo-Json
 
         # Set this to the url, of your automation, which places the file
-        #$apiUrl = "https://prod-29.canadacentral.logic.azure.com:443/workflows/4f706ababab94e1aa9a42e2f19958b6f/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=9-9Lolk4lpr1Y3EjTcDMwT1M21mckOOpKHZbo4_kaeo"
+        $apiUrl = "https://prod-29.canadacentral.logic.azure.com:443/workflows/4f706ababab94e1aa9a42e2f19958b6f/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=9-9Lolk4lpr1Y3EjTcDMwT1M21mckOOpKHZbo4_kaeo"
        
         Invoke-WebRequest -Uri $apiUrl -Method Post -Body $existingRow -ContentType "application/json; charset=utf-8"
 
@@ -444,8 +446,8 @@ function CreateSampleWeblinkSetWizard {
 
 
 # Extract the zip file &  runtime script calls
-$zipFilePath = "C:\themes-dist-14.2.0-gcweb.zip"
-$extractionPath = "C:\themes-dist-14.2.0-gcweb" 
+$zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
+$extractionPath = "C:\Users\Fred\Downloads\themes-dist-14.1.0-gcweb" 
 # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
 
 # Start processing the extracted folder
