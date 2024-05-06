@@ -86,6 +86,14 @@ $headers = @{
     Accept = "application/json"
     Prefer = "return=representation"
 }
+$updateHeaders = @{
+    Authorization = "Bearer $token"
+    "OData-MaxVersion" = "4.0"
+    "OData-Version" = "4.0"
+    Accept = "application/json"
+    Prefer = "return=representation"
+    "If-Match" = "*"
+}
 
 # Define the Dataverse API URL
 $apiUrl = $resource + "/api/data/v9.2/"
@@ -417,25 +425,45 @@ function CreateWebTemplate {
         "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
         "mspp_source" = "$htmlString"
     } | ConvertTo-Json
+    
 
     $filter = "mspp_name eq '$filename'"
     $checkWebTemplateExists = $apiUrl + "mspp_webtemplates?" + "`$filter=$filter"
-    $existingTemplates = Invoke-RestMethod -Uri $checkWebTemplateExists -Method Get -Headers $headers
+    $existingTemplates = Invoke-RestMethod -Uri $checkWebTemplateExists -Method Get -Headers $headers -ContentType "application/json; charset=utf-8"
     if ($existingTemplates.value.Count -gt 0) {
         Write-Host "Web template already exists: $filename"
-        $existingTemplate = $existingTemplates.value | Select-Object -First 1
-        $updateUrl = $apiUrl + "mspp_webtemplates(" + $existingTemplate.mspp_webtemplateid + ")"
-        Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
-        $webtemplatedid = $existingTemplate.mspp_webtemplateid
+
+        $existingTemplate = $existingTemplates.value[0]  # Access first item in the array
+        Write-Host $existingTemplate
+        # Check if 'mspp_webtemplateid' property exists in the existing template
+        if ($existingTemplate.PSObject.Properties["mspp_webtemplateid"]) {
+        
+            # $existingTemplate = $existingTemplates.value | Select-Object -First 1
+            $updateUrl = $apiUrl + "mspp_webtemplates(" + $existingTemplate.mspp_webtemplateid + ")"
+            
+            Write-Host "$updateUrl"
+            $webTemplatePayloadUpdate = @{
+                "mspp_source" = $htmlString
+            } | ConvertTo-Json
+            $webtresponse = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webTemplatePayloadUpdate -Headers $updateHeaders -ContentType "application/json; charset=utf-8;"
+            # -ContentType "application/json; charset=utf-8"
+            if ($webtresponse -ne $null) {
+                Write-Host "mspp_webtemplate UPDATED successfully with ID: $($response.mspp_webtemplateid)"
+            } else {
+                Write-Host "Failed to UPDATE mspp_webtemplate"
+            }  
+            $webtemplatedid = $existingTemplate.mspp_webtemplateid
+        }
+        
     } else {
-            # Make the request to create the adx_webtemplate record
-            $webtresponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webtemplates") -Method Post -Body $webTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
+            # Make the request to create the mspp_webtemplate record
+            $webresponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webtemplates") -Method Post -Body $webTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
 
             # Check the response
-            if ($webtresponse -ne $null) {
-                Write-Host "mspp_webtemplate created successfully with ID: $($response.adx_webtemplateid)"
+            if ($webresponse -ne $null) {
+                Write-Host "mspp_webtemplate created successfully with ID: $($webresponse.mspp_webtemplateid)"
             } else {
-                Write-Host "Failed to create adx_webtemplate"
+                Write-Host "Failed to create mspp_webtemplate"
             }  
     }
     
