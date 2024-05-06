@@ -559,32 +559,11 @@ function Write-Templates {
         Write-Host "${indent}  File: $($file.Name.Substring(0, $file.Name.LastIndexOf('.')))"
         $html = Get-Content -Path $file.FullName 
         CreateWebTemplate -filename $file.Name.Substring(0, $file.Name.LastIndexOf('.')) -markup "${html} $_ "
-             
+        
        
     }
            
 }
-
-
-
-
-function Get-HTMLStringFromLiquidFile {
-    param (
-        [string]$liquidFilePath
-    )
-
-    # Check if the liquid file exists
-    if (Test-Path $liquidFilePath -PathType Leaf) {
-        # Read the content of the liquid file
-        $html = Get-Content -Path $liquidFilePath -Raw
-        return $html
-    } else {
-        Write-Host "Liquid file not found: $liquidFilePath"
-        return $null
-    }
-}
-
-
 
 ## SETUP POST THEME INSTALL ##
 function CreateCustomHeader {
@@ -596,7 +575,41 @@ function CreateCustomFooter {
 }
 
 function UpdateHomePage {
+    param (
+        [string]$pageTemplateName,
+        [string]$indent = ""
+    )
 
+    $filter = "mspp_name eq '$pageTemplateName'"
+    $checkPageTemplateExists = $apiUrl + "mspp_pagetemplates?" + "`$filter=$filter"
+    $existingTemplates = Invoke-RestMethod -Uri $checkPageTemplateExists -Method Get -Headers $headers -ContentType "application/json; charset=utf-8"
+    
+   
+
+    if ($existingTemplates.value.Count -gt 0) {
+        Write-Host "Page template exists: $filename"
+
+        $existingTemplate = $existingTemplates.value[0]  # Access first item in the array
+        Write-Host $existingTemplate
+        $pageTemplateId = $existingTemplate.mspp_pagetemplateid
+        # Update Home Page
+        $updateUrl = $apiUrl + "mspp_webpages(" + $homePageId + ")"
+        
+        Write-Host "$updateUrl"
+        $webPagePayload = @{
+            "mspp_pagetemplateid@odata.bind" = "/mspp_pagetemplates($pageTemplateId)"
+        } | ConvertTo-Json
+        $webPageResponse = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPagePayload -Headers $updateHeaders -ContentType "application/json; charset=utf-8;"
+        # -ContentType "application/json; charset=utf-8"
+        if ($webPageResponse -ne $null) {
+            Write-Host "mspp_webpage UPDATED successfully"
+        } else {
+            Write-Host "Failed to UPDATE home page"
+        }  
+   
+        
+        
+    }
 }
 
 function CreateStyleGuidePage {
@@ -639,7 +652,8 @@ $rootFolderPath = "C:\Users\Fred\source\repos\pub\Public\liquid\webtemplates"
 
 #Write-Host $extractionPath
 #WriteHierarchy -path $extractionPath -parentPageId $homePageId
-CreateSnippets
-Write-Templates -folderPath $rootFolderPath
+# CreateSnippets
+# Write-Templates -folderPath $rootFolderPath
+UpdateHomePage -pageTemplateName "CS-Home-WET"
 
 ## END SETUP POST THEME INSTALL ##
