@@ -65,6 +65,8 @@ $publishingStateId = $config.publishingStateId
 $homePageId = $config.homePageId
 $secret = $config.clientSecret
 $blobAddress = $config.blobAddress
+$englishLanguageId = '20f6128a-d758-4de0-88df-6201e6ccd8b6'
+$frenchLanguageId = '20f6128a-d758-4de0-88df-6201e6ccd8b6'
 
 # Prepare the body for the token request
 $body = @{
@@ -415,7 +417,7 @@ function CreateWebTemplate {
     )
     $liquidFilePath = "liquid\webtemplates\CS-header.liquid"
 
-# Call the function with the liquid file path
+    # Call the function with the liquid file path
     # $htmlString = Get-HTMLStringFromLiquidFile -liquidFilePath $liquidFilePath
     $htmlString = $markup
     # $htmlString = Get-HTMLString
@@ -468,6 +470,71 @@ function CreateWebTemplate {
     }
     
 }
+
+function CreateSnippets {
+
+    # Read snippet content from the JSON file
+    $jsonFilePath = "C:\Users\Fred\source\repos\pub\Public\liquid\contentsnippets\snippets.json"
+    $snippetsJson = Get-Content $jsonFilePath | ConvertFrom-Json
+    
+    # Iterate through each entry in the JSON object
+    foreach ($entry in $snippetsJson.PSObject.Properties) {
+        $snippetName = $entry.Name
+        $snippetContentEnglish = $entry.Value[0]
+        $snippetContentFrench = $entry.Value[1]
+        # Define the JSON payload for the mspp_contentsnippet record
+        $snippetPayloadEnglish = @{
+            "mspp_name" = $snippetName
+            "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
+            "mspp_value" = $snippetContentEnglish
+            "mspp_contentsnippetlanguageid@odata.bind"= "/mspp_websitelanguages($englishLanguageId)"
+        } | ConvertTo-Json
+        $snippetPayloadFrench = @{
+            "mspp_name" = $snippetName
+            "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
+            "mspp_value" = $snippetContentFrench
+            "mspp_contentsnippetlanguageid@odata.bind"= "/mspp_websitelanguages($frenchLanguageId)"
+        } | ConvertTo-Json
+
+        # Check if the snippet already exists
+        # $filter = "mspp_name eq '$snippetName' and _contentsnippetlanguageid_value eq $englishLanguageId"
+        $filter = "(mspp_name eq '$snippetName' and _mspp_contentsnippetlanguageid_value eq $englishLanguageId) or (mspp_name eq '$snippetName' and _mspp_contentsnippetlanguageid_value eq $frenchLanguageId)"
+
+        $checkSnippetExists = $apiUrl + "mspp_contentsnippets?" + "`$filter=$filter"
+        $existingSnippets = Invoke-RestMethod -Uri $checkSnippetExists -Method Get -Headers $headers -ContentType "application/json; charset=utf-8"
+
+        if ($existingSnippets.value.Count -gt 0) {
+            Write-Host "Snippet already exists: $snippetName"
+            $existingSnippet = $existingSnippets.value[0]  # Access first item in the array
+
+            # Check if 'mspp_contentsnippetid' property exists in the existing snippet
+            if ($existingSnippet.PSObject.Properties["mspp_contentsnippetid"]) {
+                $updateUrl = $apiUrl + "mspp_contentsnippets(" + $existingSnippet.mspp_contentsnippetid + ")"
+               
+
+                # Perform PATCH request to update the snippet
+                $snippetResponse = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $snippetPayloadEnglish -Headers $updateHeaders -ContentType "application/json; charset=utf-8"
+
+                if ($snippetResponse -ne $null) {
+                    Write-Host "Snippet UPDATED successfully with ID: $($existingSnippet.mspp_contentsnippetid)"
+                } else {
+                    Write-Host "Failed to UPDATE snippet"
+                }
+            }
+        } else {
+            # Make the request to create the snippet record
+            $snippetResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_contentsnippets") -Method Post -Body $snippetPayloadEnglish -Headers $headers -ContentType "application/json; charset=utf-8"
+
+            # Check the response
+            if ($snippetResponse -ne $null) {
+                Write-Host "Snippet created successfully with ID: $($snippetResponse.mspp_contentsnippetid)"
+            } else {
+                Write-Host "Failed to create snippet"
+            }
+        }
+    }
+}
+
 
 function Write-Templates {
     param (
@@ -562,16 +629,12 @@ function CreateSampleWeblinkSetWizard {
 # Extract the zip file &  runtime script calls
 $zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
 $extractionPath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb" 
+$rootFolderPath = "C:\Users\Fred\source\repos\pub\Public\liquid\webtemplates"
 # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
 
-# Start processing the extracted folder
 #Write-Host $extractionPath
 #WriteHierarchy -path $extractionPath -parentPageId $homePageId
-# CreateWebTemplate
-
-$rootFolderPath = "C:\Users\Fred\source\repos\pub\Public\liquid\webtemplates"
-
-# Call the function to write folder content
-Write-Templates -folderPath $rootFolderPath
+CreateSnippets
+# Write-Templates -folderPath $rootFolderPath
 
 ## END SETUP POST THEME INSTALL ##
