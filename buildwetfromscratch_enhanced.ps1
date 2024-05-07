@@ -103,6 +103,47 @@ $updateHeaders = @{
 
 # Define the Dataverse API URL
 $apiUrl = $resource + "/api/data/v9.2/"
+
+function CreateRecordAPI {
+    param (
+        [string]$url,
+        [string]$body        
+    )
+    $response = Invoke-RestMethod -Uri $url -Method Post -Body $body -Headers $headers -ContentType "application/json; charset=utf-8"
+    return $response
+
+}
+
+function UpdateRecordAPI {
+    param (
+        [string]$url,
+        [string]$body        
+    )
+    $response = Invoke-RestMethod -Uri $url -Method Patch -Body $body -Headers $updateHeaders -ContentType "application/json; charset=utf-8"
+    return $response
+}
+
+function GetRecordAPI {
+    param (
+        [string]$url        
+    )
+    
+    $response = Invoke-RestMethod -Uri $url -Method Get -Headers $headers
+    return $response
+}
+function UpdateBaselineStyles {
+    $filter = "mspp_partialurl eq 'portalbasictheme.css' and _mspp_websiteid_value eq '$websiteId'"
+    $url = $apiUrl + "mspp_webfiles?" + "`$filter=$filter"    
+    $record = GetRecordAPI -url $url 
+    Write-Host $record.value.mspp_name
+    $webFile = @{
+        "mspp_name" = $fileName
+        "mspp_partialurl" = $partialUrl
+        "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"  # Match website ID
+        "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
+    } | ConvertTo-JSon
+
+}
 # Function to create or update a web page
 function CreateWebPage {
     param (
@@ -203,7 +244,7 @@ function CreateWebFile {
         "mspp_partialurl" = $partialUrl
         "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"  # Match website ID
         "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
-    }
+    } 
 
     if ($parentPageId) {
         $webFile["mspp_parentpageid@odata.bind"] = "/mspp_webpages($parentPageId)"
@@ -535,17 +576,18 @@ function CreateSampleWeblinkSetWizard {
 
 
 function RunPortalTemplateInstall {
-    $zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
-    $extractionPath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb" 
+    # $zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
+    # $extractionPath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb" 
     
-    Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
-    Write-Host $extractionPath
-    WriteHierarchy -path $extractionPath -parentPageId $homePageId
+    # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+    # Write-Host $extractionPath
+    # WriteHierarchy -path $extractionPath -parentPageId $homePageId
         
-    CreateSnippets
-    $rootFolderPath = "C:\Users\Fred\source\repos\pub\Public\liquid\webtemplates"
-    Write-Templates -folderPath $rootFolderPath
-    UpdateHomePage -pageTemplateName "CS-Home-WET"
+    # CreateSnippets
+    # $rootFolderPath = "C:\Users\Fred\source\repos\pub\Public\liquid\webtemplates"
+    # Write-Templates -folderPath $rootFolderPath
+    # UpdateHomePage -pageTemplateName "CS-Home-WET"
+    #UpdateBaselineStyles
 }
 
 RunPortalTemplateInstall
