@@ -23,8 +23,10 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
     `"publishingStateId`": `"<publishing state id>`",
     `"homePageId`": `"<home page's webpage id value>`",   
     `"blobAddress`" = `"<blob address>`"
+    `"ENWebsiteLanguageId`" = `"<lang id EN>`"
+    `"FRWebsiteLanguageId`" = `"<lang id FR>`"
+    `"FlowURL`" = `"<flow URL>`"
 }"
-6
     # Exit the script
     exit
 }
@@ -69,9 +71,9 @@ $publishingStateId = $config.publishingStateId
 $homePageId = $config.homePageId
 $secret = $config.clientSecret
 $blobAddress = $config.blobAddress
-$englishLanguageId = '86fd7246-a146-4fdd-88f9-be660e6a8b44'
-$frenchLanguageId = '86fd7246-a146-4fdd-88f9-be660e6a8b44'
-$webFileFlowURL = "https://prod-19.canadacentral.logic.azure.com:443/workflows/3d37575913bf41138aa8f39577b47ecf/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3I6NvX2Km9WnvEXWfpx50On-1f6Y46MI2g4KRn8i6OM"
+$englishLanguageId = $config.ENWebsiteLanguageId 
+$frenchLanguageId = $config.FRWebsiteLanguageId
+$webFileFlowURL = $config.FlowURL
 # Prepare the body for the token request
 $body = @{
     client_id     = $clientId
