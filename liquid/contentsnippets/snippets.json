@@ -1,5 +1,5 @@
 {
-    "CS/HOME/DESC": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "FRENCH LOREM"],
+    "CS/HOME/DESC": ["ENGLISH TEXT", "FRENCH LOREM"],
     "CS/HOME/SUBTITLE": ["Client Portal","Portail"],
     "CS/HOME/TITLE": ["Agency name", "Nom de l'Organisation"]
 }
