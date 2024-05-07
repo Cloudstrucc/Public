@@ -1,3 +1,7 @@
+# CLEAR HOME PAGE PAGE COPY
+# REPLACE THE PORTALBASICTHEME.CSS WITH THE ONE IN THIS REPO
+# REPLACE THE THEME.CSS HOME WITH THE ONE IN THIS REPO
+
 $useJsonConfig = Read-Host "Do you want to provide a JSON configuration file? (Y/N/H) [H for Help]"
 $jsonConfig = $null
 
@@ -295,120 +299,6 @@ function WriteHierarchy {
     }
 }
 
-# Helpers
-
-function DeleteNonRootWebPages {
-    $queryUrl = $apiUrl + "mspp_webpages?\$filter=" + ("mspp_isroot eq false and _mspp_websiteid_value" + " eq '$websiteId'")
-    try {
-        $webPages = Invoke-RestMethod -Uri $queryUrl -Method Get -Headers $headers
-        foreach ($webPage in $webPages.value) {
-            $deleteUrl = $apiUrl + "mspp_webpages(" + $webPage.mspp_webpageid + ")"
-            Invoke-RestMethod -Uri $deleteUrl -Method Delete -Headers $headers
-            Write-Host "Deleted web page: $($webPage | Select-Object -ExpandProperty $(ApplyPrefix("mspp_name")))"
-        }
-    } catch {
-        Write-Error "Error in deleting non-root web pages: $_"
-    }
-}
-
-
-
-function DeleteTodaysMsppWebFiles {
-    $today = (Get-Date).Date
-    $tomorrow = $today.AddDays(1)
-
-    # Format dates for OData query
-    $todayString = $today.ToString("yyyy-MM-ddT00:00:00Z") # Format adjusted here
-    $tomorrowString = $tomorrow.ToString("yyyy-MM-ddT00:00:00Z") # Format adjusted here
-
-    # Query to get webfiles created today
-    $queryUrl = $apiUrl + "mspp_webfiles?`$filter=mspp_createdon ge $todayString and mspp_createdon lt $tomorrowString"
-    
-    try {
-        $webFilesToday = Invoke-RestMethod -Uri $queryUrl -Method Get -Headers $headers
-        foreach ($webFile in $webFilesToday.value) {
-            $webFileId = $webFile.mspp_webfileid
-            $deleteUrl = $apiUrl + "mspp_webfiles($webFileId)"
-            Invoke-RestMethod -Uri $deleteUrl -Method Delete -Headers $headers
-            Write-Host "Deleted web file: $webFileId"
-        }
-        Write-Host "All web files created today have been deleted."
-    } catch {
-        Write-Error "An error occurred: $_.Exception.Message"
-    }
-}
-
-
-
-function FetchSampleMsppWebFiles {
-    $queryUrl = $apiUrl + 'mspp_webfiles?$select=mspp_name' # Corrected query
-    Write-Host $queryUrl
-    try {
-        $webFilesSample = Invoke-RestMethod -Uri $queryUrl -Method Get -Headers $headers
-        foreach ($webFile in $webFilesSample.value) {
-            $webFile | Format-List
-        }
-    } catch {
-        Write-Error "An error occurred: $_.Exception.Message"
-    }
-}
-
-
-#DeleteNonRootWebPages
-# FetchSampleMsppWebFiles
-# Call the function
-# DeleteTodaysMsppWebFiles
-
-Function DeleteAnnotations($webfileId) {
-    $annotationsUrl = "annotations"
-    $annotationsQuery = "?`$filter=_objectid_value eq $webfileId and filename ne null&`$orderby=createdon desc"
-    
-    $response = $httpClient.GetAsync("$annotationsUrl$annotationsQuery").Result
-    if ($response.IsSuccessStatusCode) {
-        $annotations = $response.Content.ReadAsAsync([PSCustomObject[]]).Result
-
-        # Keep track of the latest annotation with an attachment
-        $latestAnnotationWithAttachment = $null
-
-        # Loop through annotations and delete
-        foreach ($annotation in $annotations) {
-            if ($null -eq $latestAnnotationWithAttachment -and $null -ne $annotation.filename) {
-                # Keep the first annotation with an attachment as the latest
-                $latestAnnotationWithAttachment = $annotation
-            } else {
-                # Delete other annotations
-                $annotationId = $annotation.annotationid
-                $deleteResponse = $httpClient.DeleteAsync("$annotationsUrl($annotationId)").Result
-                if ($deleteResponse.IsSuccessStatusCode) {
-                    Write-Host "Deleted annotation with ID: $annotationId"
-                } else {
-                    Write-Host "Failed to delete annotation with ID: $annotationId"
-                }
-            }
-        }
-    } else {
-        Write-Host "Failed to retrieve annotations for webfile with ID: $webfileId"
-    }
-}
-
-Function PurgeDubAnnocations {
-    # Query and delete annotations for each webfile
-    $webfilesUrl = "adx_webfiles"
-    $webfilesQuery = "?`$select=adx_webfileid"
-    $response = $httpClient.GetAsync("$webfilesUrl$webfilesQuery").Result
-
-    if ($response.IsSuccessStatusCode) {
-        $webfiles = $response.Content.ReadAsAsync([PSCustomObject[]]).Result
-
-        foreach ($webfile in $webfiles) {
-            $webfileId = $webfile.adx_webfileid
-            Write-Host "Processing webfile with ID: $webfileId"
-            DeleteAnnotations $webfileId
-        }
-    } else {
-        Write-Host "Failed to retrieve webfiles"
-    }
-}
 
 function CreateWebTemplate {
     param (       
@@ -566,11 +456,11 @@ function Write-Templates {
 }
 
 ## SETUP POST THEME INSTALL ##
-function CreateCustomHeader {
+function UpsertCustomHeader {
 
 }
 
-function CreateCustomFooter {
+function UpsertCustomFooter {
 
 }
 
@@ -612,7 +502,7 @@ function UpdateHomePage {
     }
 }
 
-function CreateStyleGuidePage {
+function UpsertStyleGuidePage {
 
 }
 
