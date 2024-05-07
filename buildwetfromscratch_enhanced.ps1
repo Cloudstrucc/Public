@@ -1,6 +1,5 @@
 # CLEAR HOME PAGE PAGE COPY
-# REPLACE THE PORTALBASICTHEME.CSS WITH THE ONE IN THIS REPO DONE?  = ask at config runtime
-# REPLACE THE THEME.CSS HOME WITH THE ONE IN THIS REPO DONE?s = ask at config runtime
+# SET HEADER AND FOOTER ON WEBSITE RECORD
 
 $useJsonConfig = Read-Host "Do you want to provide a JSON configuration file? (Y/N/H) [H for Help]"
 $jsonConfig = $null
@@ -74,6 +73,15 @@ $blobAddress = $config.blobAddress
 $englishLanguageId = $config.ENWebsiteLanguageId 
 $frenchLanguageId = $config.FRWebsiteLanguageId
 $webFileFlowURL = $config.FlowURL
+
+$basePath = "C:\Users\Fred\source\repos\pub\Public\"
+$basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
+$portalBasicThemePath = $basePath + "portalbasictheme.css"
+$themePath = $basePath + "theme.css"
+$zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
+$extractionPath = $basePath + "files\themes-dist-14.1.0-gcweb" 
+$basePathTemplates = $basePath + "liquid\webtemplates"
+$pageTemplateNameNewHome = "CS-Home-WET"
 # Prepare the body for the token request
 $body = @{
     client_id     = $clientId
@@ -134,8 +142,8 @@ function GetRecordAPI {
     return $response
 }
 function UpdateBaselineStyles {
-    CreateWebFile -filePath "C:\Users\Fred\source\repos\pub\Public\portalbasictheme.css" -parentPageId $homePageId
-    CreateWebFile -filePath "C:\Users\Fred\source\repos\pub\Public\theme.css" -parentPageId $homePageId
+    CreateWebFile -filePath $portalBasicThemePath -parentPageId $homePageId
+    CreateWebFile -filePath $themePath -parentPageId $homePageId
 
 }
 # Function to create or update a web page
@@ -404,7 +412,7 @@ function CreateWebTemplate {
 function CreateSnippets {
 
     # Read snippet content from the JSON file
-    $jsonFilePath = "C:\Users\Fred\source\repos\pub\Public\liquid\contentsnippets\snippets.json"
+    $jsonFilePath = $basePathSnippets
     $snippetsJson = Get-Content $jsonFilePath | ConvertFrom-Json
     
     # Iterate through each entry in the JSON object
@@ -570,17 +578,14 @@ function CreateSampleWeblinkSetWizard {
 
 
 function RunPortalTemplateInstall {
-    $zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
-    $extractionPath = "C:\Users\Fred\source\repos\pub\Public\files\themes-dist-14.1.0-gcweb" 
+    
     
     Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
     Write-Host $extractionPath
-    WriteHierarchy -path $extractionPath -parentPageId $homePageId
-        
-    CreateSnippets
-    $rootFolderPath = "C:\Users\Fred\source\repos\pub\Public\liquid\webtemplates"
-    Write-Templates -folderPath $rootFolderPath
-    UpdateHomePage -pageTemplateName "CS-Home-WET"
+    WriteHierarchy -path $extractionPath -parentPageId $homePageId        
+    CreateSnippets    
+    Write-Templates -folderPath $basePathTemplates
+    UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
     UpdateBaselineStyles
 }
 
