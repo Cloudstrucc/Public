@@ -1,6 +1,6 @@
 # CLEAR HOME PAGE PAGE COPY
-# REPLACE THE PORTALBASICTHEME.CSS WITH THE ONE IN THIS REPO
-# REPLACE THE THEME.CSS HOME WITH THE ONE IN THIS REPO
+# REPLACE THE PORTALBASICTHEME.CSS WITH THE ONE IN THIS REPO DONE?  = ask at config runtime
+# REPLACE THE THEME.CSS HOME WITH THE ONE IN THIS REPO DONE?s = ask at config runtime
 
 $useJsonConfig = Read-Host "Do you want to provide a JSON configuration file? (Y/N/H) [H for Help]"
 $jsonConfig = $null
@@ -24,7 +24,7 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
     `"homePageId`": `"<home page's webpage id value>`",   
     `"blobAddress`" = `"<blob address>`"
 }"
-
+6
     # Exit the script
     exit
 }
@@ -132,16 +132,8 @@ function GetRecordAPI {
     return $response
 }
 function UpdateBaselineStyles {
-    $filter = "mspp_partialurl eq 'portalbasictheme.css' and _mspp_websiteid_value eq '$websiteId'"
-    $url = $apiUrl + "mspp_webfiles?" + "`$filter=$filter"    
-    $record = GetRecordAPI -url $url 
-    Write-Host $record.value.mspp_name
-    $webFile = @{
-        "mspp_name" = $fileName
-        "mspp_partialurl" = $partialUrl
-        "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"  # Match website ID
-        "mspp_publishingstateid@odata.bind" = "/mspp_publishingstates($publishingStateId)"
-    } | ConvertTo-JSon
+    CreateWebFile -filePath "C:\Users\Fred\source\repos\pub\Public\portalbasictheme.css" -parentPageId $homePageId
+    CreateWebFile -filePath "C:\Users\Fred\source\repos\pub\Public\theme.css" -parentPageId $homePageId
 
 }
 # Function to create or update a web page
@@ -587,7 +579,7 @@ function RunPortalTemplateInstall {
     # $rootFolderPath = "C:\Users\Fred\source\repos\pub\Public\liquid\webtemplates"
     # Write-Templates -folderPath $rootFolderPath
     # UpdateHomePage -pageTemplateName "CS-Home-WET"
-    #UpdateBaselineStyles
+    UpdateBaselineStyles
 }
 
 RunPortalTemplateInstall
