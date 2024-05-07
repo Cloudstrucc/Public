@@ -1,6 +1,23 @@
 # CLEAR HOME PAGE PAGE COPY
 # SET HEADER AND FOOTER ON WEBSITE RECORD
 
+#####################################
+
+
+$basePath = "C:\Users\Fred\source\repos\pub\Public\"
+$basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
+$portalBasicThemePath = $basePath + "portalbasictheme.css"
+$themePath = $basePath + "theme.css"
+$zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
+$extractionPath = $basePath + "files\themes-dist-14.1.0-gcweb" 
+$basePathTemplates = $basePath + "liquid\webtemplates"
+$pageTemplateNameNewHome = "CS-Home-WET"
+
+
+
+####################################
+
+
 $useJsonConfig = Read-Host "Do you want to provide a JSON configuration file? (Y/N/H) [H for Help]"
 $jsonConfig = $null
 
@@ -74,14 +91,9 @@ $englishLanguageId = $config.ENWebsiteLanguageId
 $frenchLanguageId = $config.FRWebsiteLanguageId
 $webFileFlowURL = $config.FlowURL
 
-$basePath = "C:\Users\Fred\source\repos\pub\Public\"
-$basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
-$portalBasicThemePath = $basePath + "portalbasictheme.css"
-$themePath = $basePath + "theme.css"
-$zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
-$extractionPath = $basePath + "files\themes-dist-14.1.0-gcweb" 
-$basePathTemplates = $basePath + "liquid\webtemplates"
-$pageTemplateNameNewHome = "CS-Home-WET"
+
+
+
 # Prepare the body for the token request
 $body = @{
     client_id     = $clientId
