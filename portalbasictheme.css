@@ -661,7 +661,3 @@ a.anchor-hover-text-decoration-none:hover {
 a.anchor-hover-text-decoration-underline:hover {
   text-decoration: underline; }
 **/
-.bg-primary {
-  --bs-bg-opacity: 1;
-  background-color: #284162;
-}

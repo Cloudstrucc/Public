@@ -593,13 +593,13 @@ function CreateSampleWeblinkSetWizard {
 function RunPortalTemplateInstall {
     
     
-    Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
-    Write-Host $extractionPath
-    WriteHierarchy -path $extractionPath -parentPageId $homePageId        
-    CreateSnippets    
+    # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+    # Write-Host $extractionPath
+    # WriteHierarchy -path $extractionPath -parentPageId $homePageId        
+    # CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
-    UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
-    UpdateBaselineStyles
+    # UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
+    # UpdateBaselineStyles
 }
 
 RunPortalTemplateInstall
