@@ -1,7 +1,10 @@
+### TO DO ###
 # CLEAR HOME PAGE PAGE COPY
+# UPDDATE the breadcrumps webtemplate & the language toggle
 # SET HEADER AND FOOTER ON WEBSITE RECORD
 # SET bootstrap.min.css (home version) and create webfile for favicon.ico
 # Dont create child folder for root
+##############
 
 #####################################
 # GC WET RELEASES: https://github.com/wet-boew/GCWeb/releases
@@ -588,18 +591,15 @@ function CreateSampleWeblinkSetWizard {
     # create all wiziard pages before this - so this s/b called in a callback for the wizard web page creates.
 }
 
-
-
 function RunPortalTemplateInstall {
     
-    
-    # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
-    # Write-Host $extractionPath
-    # WriteHierarchy -path $extractionPath -parentPageId $homePageId        
-    # CreateSnippets    
+    Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+    Write-Host $extractionPath
+    WriteHierarchy -path $extractionPath -parentPageId $homePageId        
+    CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
-    # UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
-    # UpdateBaselineStyles
+    UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
+    UpdateBaselineStyles
 }
 
 RunPortalTemplateInstall
