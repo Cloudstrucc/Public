@@ -19,6 +19,8 @@ $extractionPath = $basePath + "files\"
 $themeRootFolderName = "themes-dist-15.0.0-gcweb"
 $basePathTemplates = $basePath + "liquid\webtemplates"
 $pageTemplateNameNewHome = "CS-Home-WET"
+$webTemplateHeader = "cs-header"
+$webTemplateFooter = "cs-footer"
 
 ####################################
 
@@ -408,18 +410,26 @@ function CreateWebTemplate {
     } else {
             # Make the request to create the mspp_webtemplate record
             $webresponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webtemplates") -Method Post -Body $webTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
-
+            
             # Check the response
-            if ($webresponse -ne $null) {
+            if ($null -ne $webresponse) {
                 Write-Host "mspp_webtemplate created successfully with ID: $($webresponse.mspp_webtemplateid)"
-                $pageTemplateId = $webresponse.mspp_webtemplateid
-                $pageTemplatePayload = @{
-                    "mspp_name" = $filename
-                    "mspp_type" = "756150001"
-                    "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
-                    "mspp_webtemplateid@odata.bind" = "/mspp_webtemplates($pageTemplateId)"
-                } | ConvertTo-Json
-                $pageTemplateResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_pagetemplates") -Method Post -Body $pageTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
+
+                if (($filename -eq $webTemplateHeader) -or ($filename -eq $webTemplateFooter)  ) {
+                    $websiteRecord = @{                        
+                        "mspp_headerwebtemplateid@odata.bind" = "/mspp_webtemplates($webresponse.mspp_webtemplateid)"
+                    } | ConvertTo-Json
+                    Invoke-RestMethod -Uri ($apiUrl + "mspp_websites") -Method PATCH -Body $websiteRecord -Headers $updateHeaders -ContentType "application/json; charset=utf-8"                       
+                } else {
+                    $pageTemplateId = $webresponse.mspp_webtemplateid
+                    $pageTemplatePayload = @{
+                        "mspp_name" = $filename
+                        "mspp_type" = "756150001"
+                        "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
+                        "mspp_webtemplateid@odata.bind" = "/mspp_webtemplates($pageTemplateId)"
+                    } | ConvertTo-Json
+                    Invoke-RestMethod -Uri ($apiUrl + "mspp_pagetemplates") -Method Post -Body $pageTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"                    
+                }                
             } else {
                 Write-Host "Failed to create mspp_webtemplate"
             }  
@@ -498,8 +508,8 @@ function Write-Templates {
         [string]$indent = ""
     )
 
-    # Get child folders and files
-    $folders = Get-ChildItem -Path $folderPath
+    # Get child files
+    # $folders = Get-ChildItem -Path $folderPath
     $files = Get-ChildItem -Path $folderPath -File
 
     # Write folder name
