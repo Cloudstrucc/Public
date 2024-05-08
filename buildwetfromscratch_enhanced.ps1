@@ -443,7 +443,7 @@ function CreateWebTemplate {
                     $webTemplateId = $webresponse.mspp_webtemplateid
 
                     $updateUrlWebTemp = $apiUrl + "mspp_webtemplates(" + $webTemplateId + ")"
-                    Invoke-RestMethod -Uri $updateUrlWebTemp -Method Patch -Body $webTemplatePayload -updateHeaders $headers -ContentType "application/json; charset=utf-8"                    
+                    Invoke-RestMethod -Uri $updateUrlWebTemp -Method Patch -Body $webTemplatePayload -Headers $updateHeaders -ContentType "application/json; charset=utf-8"                    
                 }                
             } else {
                 Write-Host "Failed to create mspp_webtemplate"
@@ -620,13 +620,13 @@ function CreateSampleWeblinkSetWizard {
 
 function RunPortalTemplateInstall {
     
-    # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
-    # Write-Host $extractionPath          
+    Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+    Write-Host $extractionPath          
     CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
     UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
-    # WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId 
-    # UpdateBaselineStyles
+    WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId 
+    UpdateBaselineStyles
 }
 
 RunPortalTemplateInstall
