@@ -3,7 +3,8 @@
 # SET bootstrap.min.css (home version) and create webfile for favicon.ico
 
 #####################################
-
+# GC WET RELEASES: https://github.com/wet-boew/GCWeb/releases
+#####################################
 
 $basePath = "C:\Users\Fred\source\repos\pub\Public\"
 $basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
