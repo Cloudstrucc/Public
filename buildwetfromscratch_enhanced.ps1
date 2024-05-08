@@ -1,5 +1,6 @@
 # CLEAR HOME PAGE PAGE COPY
 # SET HEADER AND FOOTER ON WEBSITE RECORD
+# SET bootstrap.min.css (home version) and create webfile for favicon.ico
 
 #####################################
 
@@ -8,15 +9,12 @@ $basePath = "C:\Users\Fred\source\repos\pub\Public\"
 $basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
 $portalBasicThemePath = $basePath + "portalbasictheme.css"
 $themePath = $basePath + "theme.css"
-$zipFilePath = "C:\themes-dist-14.1.0-gcweb.zip"
-$extractionPath = $basePath + "files\themes-dist-14.1.0-gcweb" 
+$zipFilePath = "C:\themes-dist-15.0.0-gcweb.zip"
+$extractionPath = $basePath + "files\themes-dist-15.0.0-gcweb" 
 $basePathTemplates = $basePath + "liquid\webtemplates"
 $pageTemplateNameNewHome = "CS-Home-WET"
 
-
-
 ####################################
-
 
 $useJsonConfig = Read-Host "Do you want to provide a JSON configuration file? (Y/N/H) [H for Help]"
 $jsonConfig = $null
@@ -592,7 +590,7 @@ function CreateSampleWeblinkSetWizard {
 function RunPortalTemplateInstall {
     
     
-    #Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+    Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
     Write-Host $extractionPath
     WriteHierarchy -path $extractionPath -parentPageId $homePageId        
     CreateSnippets    
