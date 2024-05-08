@@ -2,8 +2,6 @@
 # CLEAR HOME PAGE PAGE COPY
 # UPDDATE the breadcrumps webtemplate & the language toggle
 # SET HEADER AND FOOTER ON WEBSITE RECORD
-# SET bootstrap.min.css (home version) and create webfile for favicon.ico
-# Dont create child folder for root
 ##############
 
 #####################################
@@ -14,6 +12,8 @@ $basePath = "C:\Users\Fred\source\repos\pub\Public\"
 $basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
 $portalBasicThemePath = $basePath + "portalbasictheme.css"
 $themePath = $basePath + "theme.css"
+$bootstrapPath = $basePath + "bootstrap.min.css"
+$faviconPath = $basePath + "favicon.ico"
 $zipFilePath = "C:\themes-dist-15.0.0-gcweb.zip"
 $extractionPath = $basePath + "files\themes-dist-15.0.0-gcweb" 
 $themeRootFolderName = "themes-dist-15.0.0-gcweb"
@@ -160,6 +160,8 @@ function GetRecordAPI {
 function UpdateBaselineStyles {
     CreateWebFile -filePath $portalBasicThemePath -parentPageId $homePageId
     CreateWebFile -filePath $themePath -parentPageId $homePageId
+    CreateWebFile -filePath $bootstrapPath -parentPageId $homePageId
+    CreateWebFile -filePath $faviconPath -parentPageId $homePageId
 
 }
 # Function to create or update a web page
