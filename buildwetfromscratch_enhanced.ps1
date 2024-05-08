@@ -419,7 +419,7 @@ function CreateWebTemplate {
                     $websiteRecord = @{                        
                         "mspp_headerwebtemplateid@odata.bind" = "/mspp_webtemplates($webresponse.mspp_webtemplateid)"
                     } | ConvertTo-Json
-                    Invoke-RestMethod -Uri ($updateUrl + "mspp_websites") -Method Patch -Body $websiteRecord -Headers $updateHeaders -ContentType "application/json; charset=utf-8"                       
+                    Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $websiteRecord -Headers $updateHeaders -ContentType "application/json; charset=utf-8"                   
                 } else {
                     $pageTemplateId = $webresponse.mspp_webtemplateid
                     $pageTemplatePayload = @{
