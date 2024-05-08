@@ -12,7 +12,8 @@ $basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
 $portalBasicThemePath = $basePath + "portalbasictheme.css"
 $themePath = $basePath + "theme.css"
 $zipFilePath = "C:\themes-dist-15.0.0-gcweb.zip"
-$extractionPath = $basePath + "files\" #"files\themes-dist-15.0.0-gcweb" 
+$extractionPath = $basePath + "files\themes-dist-15.0.0-gcweb" 
+$themeRootFolderName = "themes-dist-15.0.0-gcweb"
 $basePathTemplates = $basePath + "liquid\webtemplates"
 $pageTemplateNameNewHome = "CS-Home-WET"
 
@@ -168,7 +169,7 @@ function CreateWebPage {
     # Logic to determine if this is the home page
     # Check the name or ID against known values for the home page
     $isHomePage = $false
-    if ($name -eq "themes-dist-14.1.0-gcweb" -or $parentPageId -eq $null) {
+    if ($name -eq "$themeRootFolderName" -or $parentPageId -eq $null) {
         $isHomePage = $true
         Write-Host "Page Name: $name, Parent Page ID: $parentPageId, Is Home Page: $isHomePage"
     }
@@ -239,7 +240,7 @@ function CreateWebFile {
     $partialUrl = $fileName.Replace(" ", "").ToLower()
     $mimeType = [System.Web.MimeMapping]::GetMimeMapping($filePath)
     $fileContent = [Convert]::ToBase64String([System.IO.File]::ReadAllBytes($filePath))
-    $relativePath = Get-RelativePath ($extractionPath + "\themes-dist-14.1.0-gcweb") $filePath
+    $relativePath = Get-RelativePath ($extractionPath + "\$themeRootFolderName") $filePath
 
     # Construct the blob storage URL
     $blobUrl = "$blobAddress$relativePath$partialUrl"
