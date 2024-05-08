@@ -597,7 +597,7 @@ function RunPortalTemplateInstall {
     
     Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
     Write-Host $extractionPath
-    WriteHierarchy -path '$extractionPath + $themeRootFolderName' -parentPageId $homePageId        
+    WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId        
     CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
     UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
