@@ -414,12 +414,12 @@ function CreateWebTemplate {
             # Check the response
             if ($null -ne $webresponse) {
                 Write-Host "mspp_webtemplate created successfully with ID: $($webresponse.mspp_webtemplateid)"
-
+                $updateUrl = $apiUrl + "mspp_websites(" + $websiteId + ")"
                 if (($filename -eq $webTemplateHeader) -or ($filename -eq $webTemplateFooter)  ) {
                     $websiteRecord = @{                        
                         "mspp_headerwebtemplateid@odata.bind" = "/mspp_webtemplates($webresponse.mspp_webtemplateid)"
                     } | ConvertTo-Json
-                    Invoke-RestMethod -Uri ($apiUrl + "mspp_websites") -Method PATCH -Body $websiteRecord -Headers $updateHeaders -ContentType "application/json; charset=utf-8"                       
+                    Invoke-RestMethod -Uri ($updateUrl + "mspp_websites") -Method Patch -Body $websiteRecord -Headers $updateHeaders -ContentType "application/json; charset=utf-8"                       
                 } else {
                     $pageTemplateId = $webresponse.mspp_webtemplateid
                     $pageTemplatePayload = @{
@@ -428,7 +428,7 @@ function CreateWebTemplate {
                         "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
                         "mspp_webtemplateid@odata.bind" = "/mspp_webtemplates($pageTemplateId)"
                     } | ConvertTo-Json
-                    Invoke-RestMethod -Uri ($apiUrl + "mspp_pagetemplates") -Method Post -Body $pageTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"                    
+                    Invoke-RestMethod -Uri ($apiUrl + "mspp_pagetemplates") -Method Patch -Body $pageTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"                    
                 }                
             } else {
                 Write-Host "Failed to create mspp_webtemplate"
@@ -605,13 +605,13 @@ function CreateSampleWeblinkSetWizard {
 
 function RunPortalTemplateInstall {
     
-    Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
-    Write-Host $extractionPath
-    WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId        
-    CreateSnippets    
+    # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+    # Write-Host $extractionPath
+    # WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId        
+    # CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
-    UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
-    UpdateBaselineStyles
+    # UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
+    # UpdateBaselineStyles
 }
 
 RunPortalTemplateInstall
