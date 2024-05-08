@@ -15,7 +15,7 @@ $themePath = $basePath + "theme.css"
 $bootstrapPath = $basePath + "bootstrap.min.css"
 $faviconPath = $basePath + "favicon.ico"
 $zipFilePath = "C:\themes-dist-15.0.0-gcweb.zip"
-$extractionPath = $basePath + "files\themes-dist-15.0.0-gcweb" 
+$extractionPath = $basePath + "files\" 
 $themeRootFolderName = "themes-dist-15.0.0-gcweb"
 $basePathTemplates = $basePath + "liquid\webtemplates"
 $pageTemplateNameNewHome = "CS-Home-WET"
@@ -597,7 +597,7 @@ function RunPortalTemplateInstall {
     
     Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
     Write-Host $extractionPath
-    WriteHierarchy -path $extractionPath -parentPageId $homePageId        
+    WriteHierarchy -path '$extractionPath + $themeRootFolderName' -parentPageId $homePageId        
     CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
     UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
