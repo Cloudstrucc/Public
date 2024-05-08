@@ -1,7 +1,6 @@
 ### TO DO ###
 # CLEAR HOME PAGE PAGE COPY
-# UPDDATE the breadcrumps webtemplate & the language toggle
-# SET HEADER AND FOOTER ON WEBSITE RECORD
+# UPDATE the breadcrumps webtemplate & the language toggle
 ##############
 
 #####################################
@@ -617,13 +616,13 @@ function CreateSampleWeblinkSetWizard {
 
 function RunPortalTemplateInstall {
     
-    # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
-    # Write-Host $extractionPath
-    # WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId        
-    # CreateSnippets    
+    Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+    Write-Host $extractionPath
+    WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId        
+    CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
-    # UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
-    # UpdateBaselineStyles
+    UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
+    UpdateBaselineStyles
 }
 
 RunPortalTemplateInstall
