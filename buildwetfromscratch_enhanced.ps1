@@ -1,6 +1,7 @@
 # CLEAR HOME PAGE PAGE COPY
 # SET HEADER AND FOOTER ON WEBSITE RECORD
 # SET bootstrap.min.css (home version) and create webfile for favicon.ico
+# Dont create child folder for root
 
 #####################################
 # GC WET RELEASES: https://github.com/wet-boew/GCWeb/releases
@@ -11,7 +12,7 @@ $basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
 $portalBasicThemePath = $basePath + "portalbasictheme.css"
 $themePath = $basePath + "theme.css"
 $zipFilePath = "C:\themes-dist-15.0.0-gcweb.zip"
-$extractionPath = $basePath + "files\themes-dist-15.0.0-gcweb" 
+$extractionPath = $basePath + "files\" #"files\themes-dist-15.0.0-gcweb" 
 $basePathTemplates = $basePath + "liquid\webtemplates"
 $pageTemplateNameNewHome = "CS-Home-WET"
 
