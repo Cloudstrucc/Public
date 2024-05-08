@@ -19,8 +19,8 @@ $extractionPath = $basePath + "files\"
 $themeRootFolderName = "themes-dist-15.0.0-gcweb"
 $basePathTemplates = $basePath + "liquid\webtemplates"
 $pageTemplateNameNewHome = "CS-Home-WET"
-$webTemplateHeader = "cs-header"
-$webTemplateFooter = "cs-footer"
+$webTemplateHeader = "CS-header"
+$webTemplateFooter = "CS-footer"
 
 ####################################
 
@@ -414,12 +414,23 @@ function CreateWebTemplate {
             # Check the response
             if ($null -ne $webresponse) {
                 Write-Host "mspp_webtemplate created successfully with ID: $($webresponse.mspp_webtemplateid)"
-                $updateUrl = $apiUrl + "mspp_websites(" + $websiteId + ")"
-                if (($filename -eq $webTemplateHeader) -or ($filename -eq $webTemplateFooter)  ) {
+                $updateUrlWT = $apiUrl + "mspp_websites(" + $websiteId + ")"
+                
+               
+                Write-Host $updateUrlWT
+                if (($filename -eq $webTemplateHeader) -or ($filename -eq $webTemplateFooter)){
+                    $templateId = $webresponse.mspp_webtemplateid
+                    $templateName = $webresponse.mspp_name
+                    $webTemplateLookupName = "mspp_headerwebtemplateid@odata.bind"
+                    if ($templateName -eq $webTemplateHeader) {
+                        $webTemplateLookupName = "mspp_headerwebtemplateid@odata.bind"
+                    } else {
+                        $webTemplateLookupName = "mspp_footerwebtemplateid@odata.bind"
+                    }
                     $websiteRecord = @{                        
-                        "mspp_headerwebtemplateid@odata.bind" = "/mspp_webtemplates($webresponse.mspp_webtemplateid)"
+                        "$webTemplateLookupName" = "/mspp_webtemplates($templateId)"
                     } | ConvertTo-Json
-                    Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $websiteRecord -Headers $updateHeaders -ContentType "application/json; charset=utf-8"                   
+                    Invoke-RestMethod -Uri $updateUrlWT -Method Patch -Body $websiteRecord -Headers $updateHeaders -ContentType "application/json; charset=utf-8"                   
                 } else {
                     $pageTemplateId = $webresponse.mspp_webtemplateid
                     $pageTemplatePayload = @{
@@ -428,7 +439,8 @@ function CreateWebTemplate {
                         "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
                         "mspp_webtemplateid@odata.bind" = "/mspp_webtemplates($pageTemplateId)"
                     } | ConvertTo-Json
-                    Invoke-RestMethod -Uri ($apiUrl + "mspp_pagetemplates") -Method Patch -Body $pageTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"                    
+                    $updateUrlWebTemp = $apiUrl + "mspp_webtemplates(" + $pageTemplateId + ")"
+                    Invoke-RestMethod -Uri $updateUrlWebTemp -Method Patch -Body $pageTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"                    
                 }                
             } else {
                 Write-Host "Failed to create mspp_webtemplate"
@@ -481,7 +493,7 @@ function CreateSnippets {
                 # Perform PATCH request to update the snippet
                 $snippetResponse = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $snippetPayloadEnglish -Headers $updateHeaders -ContentType "application/json; charset=utf-8"
 
-                if ($snippetResponse -ne $null) {
+                if ($null -ne $snippetResponse) {
                     Write-Host "Snippet UPDATED successfully with ID: $($existingSnippet.mspp_contentsnippetid)"
                 } else {
                     Write-Host "Failed to UPDATE snippet"
