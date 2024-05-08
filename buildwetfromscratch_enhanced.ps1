@@ -409,6 +409,15 @@ function CreateWebTemplate {
     } else {
             # Make the request to create the mspp_webtemplate record
             $webresponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_webtemplates") -Method Post -Body $webTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
+            $wtid = $webresponse.mspp_webtemplateid
+            $pageTemplatePayload = @{
+                "mspp_name" = $filename
+                "mspp_type" = "756150001"
+                "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
+                "mspp_webtemplateid@odata.bind" = "/mspp_webtemplates($wtid)"
+            } | ConvertTo-Json
+
+            Invoke-RestMethod -Uri ($apiUrl + "mspp_pagetemplates") -Method Post -Body $pageTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"
             
             # Check the response
             if ($null -ne $webresponse) {
@@ -431,15 +440,10 @@ function CreateWebTemplate {
                     } | ConvertTo-Json
                     Invoke-RestMethod -Uri $updateUrlWT -Method Patch -Body $websiteRecord -Headers $updateHeaders -ContentType "application/json; charset=utf-8"                   
                 } else {
-                    $pageTemplateId = $webresponse.mspp_webtemplateid
-                    $pageTemplatePayload = @{
-                        "mspp_name" = $filename
-                        "mspp_type" = "756150001"
-                        "mspp_websiteid@odata.bind" = "/mspp_websites($websiteId)"
-                        "mspp_webtemplateid@odata.bind" = "/mspp_webtemplates($pageTemplateId)"
-                    } | ConvertTo-Json
-                    $updateUrlWebTemp = $apiUrl + "mspp_webtemplates(" + $pageTemplateId + ")"
-                    Invoke-RestMethod -Uri $updateUrlWebTemp -Method Patch -Body $pageTemplatePayload -Headers $headers -ContentType "application/json; charset=utf-8"                    
+                    $webTemplateId = $webresponse.mspp_webtemplateid
+
+                    $updateUrlWebTemp = $apiUrl + "mspp_webtemplates(" + $webTemplateId + ")"
+                    Invoke-RestMethod -Uri $updateUrlWebTemp -Method Patch -Body $webTemplatePayload -updateHeaders $headers -ContentType "application/json; charset=utf-8"                    
                 }                
             } else {
                 Write-Host "Failed to create mspp_webtemplate"
@@ -616,13 +620,13 @@ function CreateSampleWeblinkSetWizard {
 
 function RunPortalTemplateInstall {
     
-    Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
-    Write-Host $extractionPath
-    WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId        
+    # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+    # Write-Host $extractionPath          
     CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
     UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
-    UpdateBaselineStyles
+    # WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId 
+    # UpdateBaselineStyles
 }
 
 RunPortalTemplateInstall
