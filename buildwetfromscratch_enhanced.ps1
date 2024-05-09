@@ -1,5 +1,4 @@
 ### TO DO ###
-# CLEAR HOME PAGE PAGE COPY
 # UPDATE the breadcrumps webtemplate & the language toggle
 ##############
 
@@ -20,8 +19,8 @@ $basePathTemplates = $basePath + "liquid\webtemplates"
 $pageTemplateNameNewHome = "CS-Home-WET"
 $webTemplateHeader = "CS-header"
 $webTemplateFooter = "CS-footer"
-$homeContentPageEN = "a7b98048-033b-4612-8e26-28f8de3e023a"
-$homeContentPageFR = "a7b98048-033b-4612-8e26-28f8de3e023a"
+$homeContentPageEN = "963951dd-ff46-41f2-b15c-2bb8024d0b9a"
+$homeContentPageFR = "963951dd-ff46-41f2-b15c-2bb8024d0b9a"
 
 ####################################
 
