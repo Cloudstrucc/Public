@@ -20,6 +20,8 @@ $basePathTemplates = $basePath + "liquid\webtemplates"
 $pageTemplateNameNewHome = "CS-Home-WET"
 $webTemplateHeader = "CS-header"
 $webTemplateFooter = "CS-footer"
+$homeContentPageEN = "a7b98048-033b-4612-8e26-28f8de3e023a"
+$homeContentPageFR = "a7b98048-033b-4612-8e26-28f8de3e023a"
 
 ####################################
 
@@ -577,14 +579,23 @@ function UpdateHomePage {
         } | ConvertTo-Json
         $webPageResponse = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webPagePayload -Headers $updateHeaders -ContentType "application/json; charset=utf-8;"
         # -ContentType "application/json; charset=utf-8"
-        if ($webPageResponse -ne $null) {
+        if ($null -ne $webPageResponse) {
             Write-Host "mspp_webpage UPDATED successfully"
         } else {
             Write-Host "Failed to UPDATE home page"
         }  
+        $updateUrlContentEN = $apiUrl + "mspp_webpages(" + $homeContentPageEN + ")"
+        $contentPagePayloadEN = @{
+            "mspp_copy" = ""
+        } | ConvertTo-Json
+        Invoke-RestMethod -Uri $updateUrlContentEN -Method Patch -Body $contentPagePayloadEN -Headers $updateHeaders -ContentType "application/json; charset=utf-8;"
+
+        $updateUrlContentFR = $apiUrl + "mspp_webpages(" + $homeContentPageFR + ")"
+        $contentPagePayloadFR = @{
+            "mspp_copy" = ""
+        } | ConvertTo-Json
+        Invoke-RestMethod -Uri $updateUrlContentFR -Method Patch -Body $contentPagePayloadFR -Headers $updateHeaders -ContentType "application/json; charset=utf-8;"
    
-        
-        
     }
 }
 
