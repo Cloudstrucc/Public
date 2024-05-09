@@ -1,8 +1,8 @@
 # Naming conventions
 
-| Power Apps data type   | Example                | Description        |
+| Power Apps data type   | Example Field Name               | Example Schema name        |
 |------------------------|------------------------|--------------------|
-| **Big Integer**        | **Time Stamp**         | `BigIntType`       |
+| **Big Integer**        | **Number of employees worldwide**         | `fintrac_numberEmployeesWorldwide`       |
 | **Choice**             | **Option Set**         | `PicklistType`     |
 | **Choices**            | **MultiSelect Field**  | `MultiSelectPicklistType` |
 | **Currency**           | **Currency**           | `MoneyType`        |
