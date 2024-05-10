@@ -1,5 +1,5 @@
 {
-    "CS/HOME/DESC": ["ENGLISH TEXT", "FRENCH LOREM"],
-    "CS/HOME/SUBTITLE": ["Client Portal","Portail"],
-    "CS/HOME/TITLE": ["Agency name", "Nom de l'Organisation"]
+    "CS/HOME/DESC": ["The Financial Transactions and Reports Analysis Centre of Canada (FINTRAC) is Canada's financial intelligence unit and anti-money laundering and anti-terrorist financing supervisor. Its mandate is to facilitate the detection, prevention and deterrence of money laundering and the financing of terrorist activities, while ensuring the protection of personal information under its control. ", "The Financial Transactions and Reports Analysis Centre of Canada (FINTRAC) is Canada's financial intelligence unit and anti-money laundering and anti-terrorist financing supervisor. Its mandate is to facilitate the detection, prevention and deterrence of money laundering and the financing of terrorist activities, while ensuring the protection of personal information under its control. "],
+    "CS/HOME/SUBTITLE": ["Enterprise Portal","Portail"],
+    "CS/HOME/TITLE": ["FINTRAC", "CANAFE"]
 }
