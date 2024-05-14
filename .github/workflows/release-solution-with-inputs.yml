@@ -14,7 +14,7 @@ jobs:
       #You can specify the solution name here
       solution_name: demo
       #Update your values here
-      BUILD_ENVIRONMENT_URL: https://ftnc-demo.crm3.dynamics.com
+      BUILD_ENVIRONMENT_URL: https://ftnc-demo-release.crm3.dynamics.com
       PRODUCTION_ENVIRONMENT_URL: https://ftnc-demo-release.crm3.dynamics.com
       CLIENT_ID: 66323902-24bb-43fa-8912-a311e6d73f2f
       TENANT_ID: 24a46daa-7b87-4566-9eea-281326a1b75c      
