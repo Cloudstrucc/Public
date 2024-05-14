@@ -16,6 +16,7 @@
   <EntityDataProviders />
   <connectionreferences>
     <connectionreference connectionreferencelogicalname="clds_sharedcommondataserviceforapps_a0b9a"></connectionreference>
+    <connectionreference connectionreferencelogicalname="new_sharedcommondataserviceforapps_12864"></connectionreference>
   </connectionreferences>
   <Languages>
     <Language>1033</Language>

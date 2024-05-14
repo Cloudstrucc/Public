@@ -1391,6 +1391,10 @@
         <Required type="connectionreference" displayName="clds_sharedcommondataserviceforapps_a0b9a" solution="flow (1.0.0.0)" id.connectionreferencelogicalname="clds_sharedcommondataserviceforapps_a0b9a" />
         <Dependent type="connectionreference" displayName="clds_sharedcommondataserviceforapps_a0b9a" id.connectionreferencelogicalname="clds_sharedcommondataserviceforapps_a0b9a" />
       </MissingDependency>
+      <MissingDependency>
+        <Required type="connectionreference" displayName="new_sharedcommondataserviceforapps_12864" solution="msdyn_Conversation_Intelligence (9.0.1.1213)" id.connectionreferencelogicalname="new_sharedcommondataserviceforapps_12864" />
+        <Dependent type="connectionreference" displayName="new_sharedcommondataserviceforapps_12864" id.connectionreferencelogicalname="new_sharedcommondataserviceforapps_12864" />
+      </MissingDependency>
     </MissingDependencies>
   </SolutionManifest>
 </ImportExportXml>
