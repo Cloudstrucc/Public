@@ -1387,6 +1387,10 @@
         <Required type="connectionreference" displayName="clds_sharedcommondataserviceforapps_a0b9a" solution="flow (1.0.0.0)" id.connectionreferencelogicalname="clds_sharedcommondataserviceforapps_a0b9a" />
         <Dependent type="29" displayName="ARC: Form (do not delete or rename)" id="{b63c5ef2-7b11-ef11-9f89-000d3a848ed6}" />
       </MissingDependency>
+      <MissingDependency>
+        <Required type="connectionreference" displayName="clds_sharedcommondataserviceforapps_a0b9a" solution="flow (1.0.0.0)" id.connectionreferencelogicalname="clds_sharedcommondataserviceforapps_a0b9a" />
+        <Dependent type="connectionreference" displayName="clds_sharedcommondataserviceforapps_a0b9a" id.connectionreferencelogicalname="clds_sharedcommondataserviceforapps_a0b9a" />
+      </MissingDependency>
     </MissingDependencies>
   </SolutionManifest>
 </ImportExportXml>

@@ -14,6 +14,9 @@
   <CustomControls />
   <AppModuleSiteMaps />
   <EntityDataProviders />
+  <connectionreferences>
+    <connectionreference connectionreferencelogicalname="clds_sharedcommondataserviceforapps_a0b9a"></connectionreference>
+  </connectionreferences>
   <Languages>
     <Language>1033</Language>
   </Languages>
