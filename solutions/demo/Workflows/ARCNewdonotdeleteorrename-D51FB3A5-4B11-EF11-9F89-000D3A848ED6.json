@@ -1,0 +1,201 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "impersonation": {
+          "source": "invoker"
+        },
+        "runtimeSource": "embedded",
+        "connection": {},
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "actions": {
+        "Identify email sender": {
+          "runAfter": {},
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Customer from email sender",
+                "type": "String"
+              }
+            ]
+          }
+        },
+        "Is this email sender a contact or an account": {
+          "runAfter": {
+            "Identify email sender": [
+              "Succeeded"
+            ]
+          },
+          "actions": {
+            "Is_email_sender_a_contact": {
+              "runAfter": {},
+              "actions": {
+                "Retrieve_sender_contact": {
+                  "runAfter": {},
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "GetItem"
+                    },
+                    "parameters": {
+                      "entityName": "contacts",
+                      "recordId": "@triggerOutputs()?['body/_emailsender_value']"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                },
+                "Set_parent_customer_of_sender_as_customer": {
+                  "runAfter": {
+                    "Retrieve_sender_contact": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Customer from email sender",
+                    "value": "@{if(equals(outputs('Retrieve_sender_contact')?['body/_parentcustomerid_value@Microsoft.Dynamics.CRM.lookuplogicalname'],'account'),concat('accounts(',outputs('Retrieve_sender_contact')?['body/_parentcustomerid_value'],')'),outputs('Retrieve_sender_contact')?['body/@odata.id'])}"
+                  }
+                }
+              },
+              "else": {
+                "actions": {
+                  "Set_account_as_customer": {
+                    "runAfter": {},
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "Customer from email sender",
+                      "value": "@{concat('accounts(',triggerOutputs()?['body/_emailsender_value'], ')')}"
+                    }
+                  }
+                }
+              },
+              "expression": {
+                "equals": [
+                  "@triggerOutputs()?['body/_emailsender_type']",
+                  "contacts"
+                ]
+              },
+              "type": "If"
+            }
+          },
+          "else": {
+            "actions": {
+              "Terminate_when_no_valid_customer_found": {
+                "runAfter": {},
+                "type": "Terminate",
+                "inputs": {
+                  "runStatus": "Cancelled"
+                }
+              }
+            }
+          },
+          "expression": {
+            "or": [
+              {
+                "equals": [
+                  "@triggerOutputs()?['body/_emailsender_type']",
+                  "contacts"
+                ]
+              },
+              {
+                "equals": [
+                  "@triggerOutputs()?['body/_emailsender_type']",
+                  "accounts"
+                ]
+              }
+            ]
+          },
+          "type": "If"
+        },
+        "Create a record (don't rename this step)": {
+          "runAfter": {
+            "Is this email sender a contact or an account": [
+              "Succeeded"
+            ]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "CreateRecord"
+            },
+            "parameters": {
+              "entityName": "incidents",
+              "item/title": "@triggerOutputs()?['body/subject']",
+              "item/primarycontactid@odata.bind": "@{if(contains(variables('Customer from email sender'),triggerOutputs()?['body/_emailsender_value']),string(''),concat('contacts(',triggerOutputs()?['body/_emailsender_value'], ')'))}",
+              "item/customerid_account@odata.bind": "@{if(startsWith(variables('Customer from email sender'),'accounts'),variables('Customer from email sender'),string(''))}",
+              "item/customerid_contact@odata.bind": "@{if(contains(variables('Customer from email sender'),'contacts'),variables('Customer from email sender'),string(''))}",
+              "item/caseorigincode": 2
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Connect the record to the incoming activity (don't edit or delete this step)": {
+          "runAfter": {
+            "Create a record (don't rename this step)": [
+              "Succeeded"
+            ]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "PerformUnboundAction"
+            },
+            "parameters": {
+              "actionName": "msdyn_ExecutePrimaryCreatePostActions",
+              "item/SourceEntityReference": "@{concat('emails(',triggerOutputs()?['body/activityid'], ')')}",
+              "item/PrimaryEntityReference": "@outputs('Create a record (don''t rename this step)')?['body/@odata.editLink']",
+              "item/RuleId": "c8a4218d-4b11-ef11-9f89-000d3a848ed6"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "When the incoming activity triggers the flow (don't edit or delete this step)": {
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "SubscribeWebhookTrigger"
+            },
+            "parameters": {
+              "subscriptionRequest/message": 3,
+              "subscriptionRequest/scope": 4,
+              "subscriptionRequest/filteringattributes": "importsequencenumber",
+              "subscriptionRequest/runas": 1,
+              "subscriptionRequest/entityname": "email"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}
