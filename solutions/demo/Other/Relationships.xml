@@ -13,6 +13,8 @@
   <EntityRelationship Name="entitlement_new_Portalformsubmissions" />
   <EntityRelationship Name="entitlementtemplate_new_Portalformsubmissions" />
   <EntityRelationship Name="incident_new_Portalformsubmissions" />
+  <EntityRelationship Name="incident_SharePointDocumentLocations" />
+  <EntityRelationship Name="incident_SharePointDocuments" />
   <EntityRelationship Name="interactionforemail_new_Portalformsubmissions" />
   <EntityRelationship Name="invoice_new_Portalformsubmissions" />
   <EntityRelationship Name="knowledgearticle_new_Portalformsubmissions" />
