@@ -85,6 +85,8 @@
       <RootComponent type="1" schemaName="incident" behavior="2" />
       <RootComponent type="1" schemaName="lead" behavior="2" />
       <RootComponent type="1" schemaName="new_portalformsubmission" behavior="0" />
+      <RootComponent type="1" schemaName="sharepointdocument" behavior="2" />
+      <RootComponent type="1" schemaName="sharepointdocumentlocation" behavior="2" />
       <RootComponent type="1" schemaName="subject" behavior="2" />
       <RootComponent type="154" id="{32e731de-7b11-ef11-9f89-000d3a848ed6}" behavior="0" />
       <RootComponent type="154" id="{c8a4218d-4b11-ef11-9f89-000d3a848ed6}" behavior="0" />
@@ -110,12 +112,6 @@
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="1" schemaName="contract" displayName="Contract" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="1" schemaName="incident" displayName="Case" solution="msdynce_Service (9.0.5.56)">
@@ -238,22 +234,10 @@
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="2" schemaName="caseorigincode" displayName="Origin" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="2" schemaName="casetypecode" displayName="Case Type" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="2" schemaName="casetypecode" displayName="Case Type" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="2" schemaName="companyname" displayName="Company Name" parentSchemaName="lead" parentDisplayName="Lead" solution="msdynce_LeadManagement (9.0.4.0066)">
@@ -286,12 +270,6 @@
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="2" schemaName="contractdetailid" displayName="Contract Line" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="2" schemaName="contractid" displayName="Contract" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
@@ -304,12 +282,6 @@
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="2" schemaName="contractid" displayName="Contract" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="2" schemaName="contractservicelevelcode" displayName="Service Level" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
@@ -320,12 +292,6 @@
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="2" schemaName="contractservicelevelcode" displayName="Service Level" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="2" schemaName="createdon" displayName="Created On" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
@@ -362,18 +328,6 @@
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="2" schemaName="customerid" displayName="Customer" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="2" schemaName="customersatisfactioncode" displayName="Satisfaction" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="2" schemaName="description" displayName="Description" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
@@ -550,12 +504,6 @@
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="2" schemaName="followupby" displayName="Follow Up By" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="2" schemaName="fullname" displayName="Name" parentSchemaName="lead" parentDisplayName="Lead" solution="msdynce_LeadManagement (9.0.4.0066)">
           <package>msdynce_LeadManagementAnchor (9.0.24045.10001)</package>
         </Required>
@@ -614,12 +562,6 @@
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="2" schemaName="kbarticleid" displayName="Knowledge Base Article" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="2" schemaName="lastname" displayName="Last Name" parentSchemaName="lead" parentDisplayName="Lead" solution="msdynce_LeadManagement (9.0.4.0066)">
@@ -720,12 +662,6 @@
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="2" schemaName="ownerid" displayName="Owner" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="2" schemaName="ownerid" displayName="Owner" parentSchemaName="lead" parentDisplayName="Lead" solution="msdynce_LeadManagement (9.0.4.0066)">
           <package>msdynce_LeadManagementAnchor (9.0.24045.10001)</package>
         </Required>
@@ -786,12 +722,6 @@
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="2" schemaName="prioritycode" displayName="Priority" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="2" schemaName="productid" displayName="Product" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
@@ -802,12 +732,6 @@
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="2" schemaName="productid" displayName="Product" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="2" schemaName="productserialnumber" displayName="Serial Number" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
@@ -826,12 +750,6 @@
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="2" schemaName="productserialnumber" displayName="Serial Number" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="2" schemaName="responseby" displayName="First Response By" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
@@ -906,12 +824,6 @@
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="2" schemaName="statuscode" displayName="Status Reason" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="2" schemaName="statuscode" displayName="Status Reason" parentSchemaName="lead" parentDisplayName="Lead" solution="msdynce_LeadManagement (9.0.4.0066)">
           <package>msdynce_LeadManagementAnchor (9.0.24045.10001)</package>
         </Required>
@@ -946,12 +858,6 @@
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="2" schemaName="subjectid" displayName="Subject" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="2" schemaName="telephone1" displayName="Business Phone" parentSchemaName="lead" parentDisplayName="Lead" solution="msdynce_LeadManagement (9.0.4.0066)">
@@ -1020,12 +926,6 @@
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="2" schemaName="title" displayName="Case Title" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="2" schemaName="transactioncurrencyid" displayName="Currency" parentSchemaName="lead" parentDisplayName="Lead" solution="msdynce_LeadManagement (9.0.4.0066)">
           <package>msdynce_LeadManagementAnchor (9.0.24045.10001)</package>
         </Required>
@@ -1086,12 +986,6 @@
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="26" schemaName="Active Contracts" displayName="Active Contracts" parentSchemaName="contract" parentDisplayName="Contract" solution="msdynce_Service (9.0.5.56)" id="{646de3ee-ebfb-4d19-8a44-4a619505e188}">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="26" schemaName="Active Products Lookup View" displayName="Active Products Lookup View" parentSchemaName="product" parentDisplayName="Product" solution="msdynce_ProductManagement (9.0.4.0066)" id="{58afc3c5-8add-4552-98cb-473bc8f75619}">
           <package>msdynce_ProductManagementAnchor (9.0.24045.10001)</package>
         </Required>
@@ -1102,12 +996,6 @@
           <package>msdynce_ProductManagementAnchor (9.0.24045.10001)</package>
         </Required>
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="26" schemaName="Active Products Lookup View" displayName="Active Products Lookup View" parentSchemaName="product" parentDisplayName="Product" solution="msdynce_ProductManagement (9.0.4.0066)" id="{58afc3c5-8add-4552-98cb-473bc8f75619}">
-          <package>msdynce_ProductManagementAnchor (9.0.24045.10001)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="26" schemaName="All Cases" displayName="All Cases" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)" id="{00000000-0000-0000-00aa-000010001030}">
@@ -1140,12 +1028,6 @@
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="26" schemaName="Contract Line With Allotments" displayName="Contract Line With Allotments" parentSchemaName="contractdetail" parentDisplayName="Contract Line" solution="msdynce_Service (9.0.5.56)" id="{8fa2705c-7e4c-4c0e-b611-4593b35a4c9e}">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="26" schemaName="Valid Entitlements for Cases" displayName="Valid Entitlements for Cases" parentSchemaName="entitlement" parentDisplayName="Entitlement" solution="msdynce_Service (9.0.5.56)" id="{e7ea283b-0490-4956-939b-3325e0798fb8}">
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
@@ -1158,22 +1040,6 @@
         <Dependent type="36" displayName="Case Auto Response" id="{dfd4fdf0-902e-450b-a4d6-71feb7bd0b41}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="60" displayName="Enhanced quick case form" parentDisplayName="Case" solution="msdyn_ModernCaseManagement (9.0.24041.1024)" id="{1bd69321-f7c5-ec11-a7b5-000d3a58b83a}" />
-        <Dependent type="60" displayName="Enhanced quick case form" parentDisplayName="Case" id="{1bd69321-f7c5-ec11-a7b5-000d3a58b83a}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="60" displayName="Case Quick Create" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)" id="{8e10b902-0b3e-441c-8b12-88e6c1793848}">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Case Quick Create" parentDisplayName="Case" id="{8e10b902-0b3e-441c-8b12-88e6c1793848}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="60" displayName="Case Reference Panel" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)" id="{8ed8553f-b520-4fe3-b2e7-59eef8301486}">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Case Reference Panel" parentDisplayName="Case" id="{8ed8553f-b520-4fe3-b2e7-59eef8301486}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="60" displayName="App for Outlook Lead Quick View" parentDisplayName="Lead" solution="AppforOutlook (1.2.13.0)" id="{95192c4e-f96e-4771-b10a-e6421c908533}" />
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
       </MissingDependency>
@@ -1184,10 +1050,6 @@
         <Dependent type="60" displayName="Information" parentDisplayName="Lead" id="{9886ead0-4fcc-4747-9a18-08e7a9a6de71}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="60" displayName="Case for Customer Card" parentDisplayName="Case" solution="OmnichannelPrime (1.10.0.42)" id="{a4af0b8e-8095-ed11-aad1-6045bd00698c}" />
-        <Dependent type="60" displayName="Case for Customer Card" parentDisplayName="Case" id="{a4af0b8e-8095-ed11-aad1-6045bd00698c}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="60" displayName="Enhanced full case form" parentDisplayName="Case" solution="msdyn_ModernCaseManagement (9.0.24041.1024)" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
       </MissingDependency>
@@ -1196,24 +1058,6 @@
           <package>msdynce_LeadManagementAnchor (9.0.24045.10001)</package>
         </Required>
         <Dependent type="60" displayName="Lead" parentDisplayName="Lead" id="{e3b6ddb7-8df0-4410-ac7b-fd32e5053d38}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="60" displayName="Case Card" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)" id="{e8f97346-4f58-47de-964f-cbd64a52011b}">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Case Card" parentDisplayName="Case" id="{e8f97346-4f58-47de-964f-cbd64a52011b}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="60" displayName="Case Quick Create for Multisession" parentDisplayName="Case" solution="msdynce_ServicePatch201911 (9.0.24045.1005)" id="{f43b46e9-17a4-4443-afc4-141d40a46f22}">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Case Quick Create for Multisession" parentDisplayName="Case" id="{f43b46e9-17a4-4443-afc4-141d40a46f22}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="60" displayName="Information" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)" id="{f658c846-f74c-459b-b591-b97558958106}">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="61" schemaName="LeadManagement/Lead/Lead_main_system_library.js" displayName="LeadManagement/Lead/Lead_main_system_library.js" solution="msdynce_LeadManagement (9.0.4.0066)">
@@ -1244,10 +1088,6 @@
         <Dependent type="60" displayName="Information" parentDisplayName="Lead" id="{9886ead0-4fcc-4747-9a18-08e7a9a6de71}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="61" schemaName="msdyn_/ActivityFeeds.Form.js" displayName="msdyn_/ActivityFeeds.Form.js" solution="ActivityFeedsCore (9.0.0.0009)" />
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="61" schemaName="msdyn_/Analytics/imgs/CustomerServiceInsights.svg" displayName="msdyn_/Analytics/imgs/CustomerServiceInsights.svg" solution="msdyn_AnalyticsForCS (9.0.24045.1001)">
           <package>msdyn_CustomerServiceAnalyticsAnchor (9.0.24045.1001)</package>
         </Required>
@@ -1268,10 +1108,6 @@
         <Dependent type="60" displayName="Information" parentDisplayName="Lead" id="{9886ead0-4fcc-4747-9a18-08e7a9a6de71}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="61" schemaName="msdyn_/RecordWall.htm" displayName="msdyn_/RecordWall.htm" solution="ActivityFeedsCore (9.0.0.0009)" />
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="61" schemaName="msdyn_CopilotCaseSummaryLibrary.js" displayName="msdyn_CopilotCaseSummaryLibrary.js" solution="msdyn_CSIntelligence (9.1.24041.1048)" />
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
       </MissingDependency>
@@ -1282,12 +1118,6 @@
         <Dependent type="60" displayName="Portal - Information - Sections" parentDisplayName="Case" id="{19b1afc4-7611-ef11-9f89-000d3a8441e7}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="61" schemaName="Service/Incident/Convert/Incident_convert_library.js" displayName="Service/Incident/Convert/Incident_convert_library.js" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="61" schemaName="Service/Incident/Incident_main_system_library.js" displayName="Service/Incident/Incident_main_system_library.js" solution="msdynce_Service (9.0.5.56)">
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
@@ -1300,12 +1130,6 @@
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="61" schemaName="Service/Incident/Incident_main_system_library.js" displayName="Service/Incident/Incident_main_system_library.js" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
-      </MissingDependency>
-      <MissingDependency>
         <Required type="61" schemaName="Service/Incident/Ribbon/Incident_ribbon_library.js" displayName="Service/Incident/Ribbon/Incident_ribbon_library.js" solution="msdynce_Service (9.0.5.56)">
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
@@ -1316,12 +1140,6 @@
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
         <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="61" schemaName="Service/Incident/Ribbon/Incident_ribbon_library.js" displayName="Service/Incident/Ribbon/Incident_ribbon_library.js" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Information" parentDisplayName="Case" id="{f658c846-f74c-459b-b591-b97558958106}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="61" schemaName="Service/ServiceCalendar/index.html" displayName="Service/ServiceCalendar/index.html" solution="msdynce_ServicePatch201911 (9.0.24045.1005)">
