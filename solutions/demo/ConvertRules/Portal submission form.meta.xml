@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ConvertRule ConvertRuleId="32e731de-7b11-ef11-9f89-000d3a848ed6" Name="Portal submission form" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ConvertRuleItems>
+    <ConvertRuleItem ConvertRuleItemId="b53c5ef2-7b11-ef11-9f89-000d3a848ed6" Name="Form">
+      <ConvertRuleItemId>{B53C5EF2-7B11-EF11-9F89-000D3A848ED6}</ConvertRuleItemId>
+      <ConvertRuleId>{32E731DE-7B11-EF11-9F89-000D3A848ED6}</ConvertRuleId>
+      <Name>Form</Name>
+      <Description></Description>
+      <ConditionXml>&lt;fetch version="1.0" output-format="xml-platform" mapping="logical"&gt;
+    &lt;entity name="new_portalformsubmission"&gt;
+        &lt;filter type="and"&gt;
+            &lt;condition attribute="new_customer" operator="not-null"/&gt;
+        &lt;/filter&gt;
+    &lt;/entity&gt;
+&lt;/fetch&gt;</ConditionXml>
+      <PropertiesXml></PropertiesXml>
+      <WorkflowId>{B63C5EF2-7B11-EF11-9F89-000D3A848ED6}</WorkflowId>
+      <PrimaryCreateEntityLogicalName>incident</PrimaryCreateEntityLogicalName>
+    </ConvertRuleItem>
+  </ConvertRuleItems>
+  <ConvertRuleId>{32e731de-7b11-ef11-9f89-000d3a848ed6}</ConvertRuleId>
+  <Name>Portal submission form</Name>
+  <SourceTypeCode>2</SourceTypeCode>
+  <AllowUnknownSender>0</AllowUnknownSender>
+  <SendAutomaticResponse>0</SendAutomaticResponse>
+  <CheckIfResolved>0</CheckIfResolved>
+  <CheckActiveEntitlement>0</CheckActiveEntitlement>
+  <CheckDirectMessages>0</CheckDirectMessages>
+  <CheckBlockedSocialProfile>0</CheckBlockedSocialProfile>
+  <WorkflowId>{3a6861d2-9111-ef11-9f89-000d3a848ed6}</WorkflowId>
+  <SourceChannelEntity>new_portalformsubmission</SourceChannelEntity>
+  <RecordVersion>9.2.24045.174</RecordVersion>
+  <ConvertRuleType>1</ConvertRuleType>
+  <SenderResolutionOption>0</SenderResolutionOption>
+</ConvertRule>

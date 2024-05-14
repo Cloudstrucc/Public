@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<EmailTemplates xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <emailtemplate>
+    <templateid>{dfd4fdf0-902e-450b-a4d6-71feb7bd0b41}</templateid>
+    <subject></subject>
+    <subjectpresentationxml></subjectpresentationxml>
+    <mimetype>text/html</mimetype>
+    <templatetypecode>112</templatetypecode>
+    <body></body>
+    <title>Case Auto Response</title>
+    <description>Use this template to send an autoresponse to customer when a case is created.</description>
+    <presentationxml></presentationxml>
+    <languagecode>1033</languagecode>
+    <generationtypecode>0</generationtypecode>
+    <IntroducedVersion>9.0.5.56</IntroducedVersion>
+  </emailtemplate>
+</EmailTemplates>

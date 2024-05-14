@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AppModuleSiteMap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SiteMapUniqueName>msdyn_CustomerServiceWorkspace</SiteMapUniqueName>
+  <EnableCollapsibleGroups>False</EnableCollapsibleGroups>
+  <ShowHome>True</ShowHome>
+  <ShowPinned>True</ShowPinned>
+  <ShowRecents>True</ShowRecents>
+  <SiteMap IntroducedVersion="7.0.0.0">
+    <Area Id="Service_Area" ResourceId="SitemapDesigner.NewArea" DescriptionResourceId="SitemapDesigner.NewArea" ShowGroups="true" IntroducedVersion="7.0.0.0" ordinalvalue="0">
+      <Group Id="App_Tabs_Group" ResourceId="SitemapDesigner.NewGroup" DescriptionResourceId="SitemapDesigner.NewGroup" IntroducedVersion="7.0.0.0" IsProfile="false" ToolTipResourseId="SitemapDesigner.Unknown" ordinalvalue="0">
+        <SubArea Id="New_SubArea" ResourceId="Homepage_Dashboards" DescriptionResourceId="Dashboards_Description" Icon="/_imgs/imagestrips/transparent_spacer.gif" Url="/workplace/home_dashboards.aspx" DefaultDashboard="338ea94a-8f9f-ea11-a812-000d3a31a607" IntroducedVersion="7.0.0.0" Client="All,Outlook,OutlookLaptopClient,OutlookWorkstationClient,Web" AvailableOffline="true" PassParams="false" Sku="All,OnPremise,Live,SPLA" ordinalvalue="0" solutionaction="Modified" />
+        <SubArea Id="CSHistoricalAnalyticsSubArea" Icon="/WebResources/msdyn_/Analytics/imgs/CustomerServiceInsights.svg" VectorIcon="$webresource:msdyn_/Analytics/imgs/CustomerServiceInsights.svg" Entity="msdyn_dataanalyticsreport_csrmanager" Client="Web" AvailableOffline="false" PassParams="false" Sku="All,OnPremise,Live,SPLA" ordinalvalue="1" />
+        <SubArea Id="KSIReportsSubArea" VectorIcon="$webresource:msdyn_/Analytics/imgs/KnowledgeSearchIcon.svg" Icon="/WebResources/msdyn_/Analytics/imgs/KnowledgeSearchIcon.svg" Entity="msdyn_dataanalyticsreport_ksinsights" Client="Web" AvailableOffline="false" PassParams="false" Sku="All,OnPremise,Live,SPLA" ordinalvalue="2" solutionaction="Modified" />
+        <SubArea Id="NewSubArea_145e2ad1" Icon="/_imgs/imagestrips/transparent_spacer.gif" Entity="msdyn_iotalert" Client="All,Outlook,OutlookLaptopClient,OutlookWorkstationClient,Web" AvailableOffline="true" PassParams="false" Sku="All,OnPremise,Live,SPLA" ordinalvalue="16" solutionaction="Modified" />
+        <SubArea Id="NewSubArea_c2a1d8f8" Icon="/_imgs/imagestrips/transparent_spacer.gif" Entity="msdyn_customerasset" Client="All,Outlook,OutlookLaptopClient,OutlookWorkstationClient,Web" AvailableOffline="true" PassParams="false" Sku="All,OnPremise,Live,SPLA" ordinalvalue="17" solutionaction="Modified" />
+        <SubArea Id="NewSubArea_df9705fd8" Icon="/_imgs/imagestrips/transparent_spacer.gif" Entity="lead" Client="All,Outlook,OutlookLaptopClient,OutlookWorkstationClient,Web" AvailableOffline="true" PassParams="false" Sku="All,OnPremise,Live,SPLA" ordinalvalue="20" solutionaction="Added">
+          <Titles>
+            <Title LCID="1033" Title="Submision forms" ordinalvalue="0" />
+          </Titles>
+        </SubArea>
+      </Group>
+    </Area>
+  </SiteMap>
+  <LocalizedNames>
+    <LocalizedName description="Customer Service workspace (Preview)" languagecode="1033" />
+  </LocalizedNames>
+</AppModuleSiteMap>

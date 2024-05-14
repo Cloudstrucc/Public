@@ -1,0 +1,17 @@
+﻿<template>
+  <slugs>
+    <slug>
+      <entity>incident</entity>
+      <attribute>title</attribute>
+    </slug>
+    <default></default>
+  </slugs>
+  <text><![CDATA[Case Number:]]></text>
+  <slugs>
+    <slug>
+      <entity>incident</entity>
+      <attribute>ticketnumber</attribute>
+    </slug>
+    <default></default>
+  </slugs>
+</template>

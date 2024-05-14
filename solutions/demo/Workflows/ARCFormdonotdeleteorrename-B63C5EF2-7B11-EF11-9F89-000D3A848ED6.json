@@ -1,0 +1,145 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "clds_sharedcommondataserviceforapps_a0b9a"
+        },
+        "runtimeSource": "embedded",
+        "impersonation": {
+          "source": "invoker"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "When the incoming activity triggers the flow (don't edit or delete this step)": {
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "parameters": {
+              "subscriptionRequest/message": 3,
+              "subscriptionRequest/entityname": "new_portalformsubmission",
+              "subscriptionRequest/scope": 4,
+              "subscriptionRequest/filteringattributes": "importsequencenumber",
+              "subscriptionRequest/runas": 1
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "SubscribeWebhookTrigger",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "1604a8f7-7de5-4169-a6bc-34e6f6f85dbc"
+          }
+        }
+      },
+      "actions": {
+        "Create a record (don't rename this step)": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "incidents",
+              "item/title": "@triggerOutputs()?['body/activitytypecode']",
+              "item/casetypecode": 3,
+              "item/customerid_account@odata.bind": "accounts(@{triggerBody()?['_new_customer_value']})",
+              "item/new_FormSubmissionId_new_portalformsubmission@odata.bind": "new_portalformsubmissions(@{triggerBody()?['activityid']})"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "CreateRecord",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "4dc4c871-c6e9-48f1-8ede-30d6a6883784"
+          }
+        },
+        "Connect the record to the incoming activity (don't edit or delete this step)": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "actionName": "msdyn_ExecutePrimaryCreatePostActions",
+              "item/SourceEntityReference": "@{concat('new_portalformsubmissions(',triggerOutputs()?['body/activityid'], ')')}",
+              "item/PrimaryEntityReference": "@outputs('Create a record (don''t rename this step)')?['body/@odata.editLink']",
+              "item/RuleId": "32e731de-7b11-ef11-9f89-000d3a848ed6"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "PerformUnboundAction",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Add_a_new_row_1": [
+              "SUCCEEDED"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d7dffbc6-772c-4327-9762-eab1398319bd"
+          }
+        },
+        "Add_a_new_row": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "tasks",
+              "item/subject": "@body('Create a record (don''t rename this step)')?['title']",
+              "item/description": "task1",
+              "item/regardingobjectid_incident_task@odata.bind": "incidents(@{body('Create a record (don''t rename this step)')?['incidentid']})"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "CreateRecord",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Create a record (don't rename this step)": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Add_a_new_row_1": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "entityName": "tasks",
+              "item/subject": "task 2",
+              "item/description": "task2",
+              "item/regardingobjectid_incident_task@odata.bind": "incidents(@{body('Create a record (don''t rename this step)')?['incidentid']})"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "CreateRecord",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          },
+          "runAfter": {
+            "Add_a_new_row": [
+              "SUCCEEDED"
+            ]
+          }
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ConvertRule ConvertRuleId="c8a4218d-4b11-ef11-9f89-000d3a848ed6" Name="Renewal" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ConvertRuleItems>
+    <ConvertRuleItem ConvertRuleItemId="cc1fb3a5-4b11-ef11-9f89-000d3a848ed6" Name="New">
+      <ConvertRuleItemId>{CC1FB3A5-4B11-EF11-9F89-000D3A848ED6}</ConvertRuleItemId>
+      <ConvertRuleId>{C8A4218D-4B11-EF11-9F89-000D3A848ED6}</ConvertRuleId>
+      <Name>New</Name>
+      <Description></Description>
+      <ConditionXml>&lt;fetch version="1.0" output-format="xml-platform" mapping="logical"&gt;
+    &lt;entity name="email"&gt;
+        &lt;filter type="and"&gt;
+            &lt;link-entity name="incident" link-type="not any" from="incidentid" to="regardingobjectid"/&gt;
+        &lt;/filter&gt;
+    &lt;/entity&gt;
+&lt;/fetch&gt;</ConditionXml>
+      <PropertiesXml></PropertiesXml>
+      <WorkflowId>{D51FB3A5-4B11-EF11-9F89-000D3A848ED6}</WorkflowId>
+      <PrimaryCreateEntityLogicalName>incident</PrimaryCreateEntityLogicalName>
+    </ConvertRuleItem>
+  </ConvertRuleItems>
+  <ConvertRuleId>{c8a4218d-4b11-ef11-9f89-000d3a848ed6}</ConvertRuleId>
+  <Name>Renewal</Name>
+  <SourceTypeCode>2</SourceTypeCode>
+  <AllowUnknownSender>1</AllowUnknownSender>
+  <SendAutomaticResponse>1</SendAutomaticResponse>
+  <CheckIfResolved>0</CheckIfResolved>
+  <CheckActiveEntitlement>0</CheckActiveEntitlement>
+  <CheckDirectMessages>0</CheckDirectMessages>
+  <CheckBlockedSocialProfile>0</CheckBlockedSocialProfile>
+  <ResponseTemplateId>{dfd4fdf0-902e-450b-a4d6-71feb7bd0b41}</ResponseTemplateId>
+  <WorkflowId>{f2167704-7311-ef11-9f89-000d3a84f7ba}</WorkflowId>
+  <SourceChannelEntity>email</SourceChannelEntity>
+  <RecordVersion>9.2.24045.174</RecordVersion>
+  <ConvertRuleType>1</ConvertRuleType>
+  <SenderResolutionOption>0</SenderResolutionOption>
+</ConvertRule>
