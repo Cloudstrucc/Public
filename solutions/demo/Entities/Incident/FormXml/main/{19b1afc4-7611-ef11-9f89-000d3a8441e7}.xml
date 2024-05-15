@@ -20,14 +20,6 @@
                   </labels>
                   <rows>
                     <row>
-                      <cell colspan="1" id="{7aebc69c-c3bb-4489-a1f2-9faf3c8b363c}" labelid="{327d473a-b149-40cd-9218-8b4406906ec0}" rowspan="1">
-                        <labels>
-                          <label description="Title" languagecode="1033" />
-                        </labels>
-                        <control id="title" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="title" />
-                      </cell>
-                    </row>
-                    <row>
                       <cell id="{c71cb72b-c485-4e61-a3d7-b849df214437}" locklevel="0" colspan="1" rowspan="1" labelid="{bf844b6b-f19f-4a75-94ec-5a4a72c2b5d4}">
                         <labels>
                           <label description="What would you like to do with your registration?" languagecode="1033" />
@@ -62,6 +54,14 @@
                   </labels>
                   <rows>
                     <row />
+                    <row>
+                      <cell colspan="1" id="{7aebc69c-c3bb-4489-a1f2-9faf3c8b363c}" labelid="{327d473a-b149-40cd-9218-8b4406906ec0}" rowspan="1">
+                        <labels>
+                          <label description="Title" languagecode="1033" />
+                        </labels>
+                        <control id="title" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="title" />
+                      </cell>
+                    </row>
                   </rows>
                 </section>
                 <section name="general_section_3" id="53cd5c20-ac09-428a-aa9c-52c3fb960466" IsUserDefined="0" locklevel="0" showlabel="true" showbar="false" layout="varwidth" celllabelalignment="Left" celllabelposition="Left" columns="1" labelwidth="115">
