@@ -396,6 +396,39 @@
             <Description description="Last SLA that was applied to this case. This field is for internal use only." languagecode="1033" />
           </Descriptions>
         </attribute>
+        <attribute PhysicalName="Title">
+          <Type>nvarchar</Type>
+          <Name>title</Name>
+          <LogicalName>title</LogicalName>
+          <RequiredLevel>none</RequiredLevel>
+          <DisplayMask>ActivityRegardingName|QueueItemTitle|ActivityPointerRegardingName|PrimaryName|ValidForAdvancedFind|ValidForForm|ValidForGrid|RequiredForGrid</DisplayMask>
+          <ImeMode>auto</ImeMode>
+          <ValidForUpdateApi>1</ValidForUpdateApi>
+          <ValidForReadApi>1</ValidForReadApi>
+          <ValidForCreateApi>1</ValidForCreateApi>
+          <IsCustomField>0</IsCustomField>
+          <IsAuditEnabled>1</IsAuditEnabled>
+          <IsSecured>0</IsSecured>
+          <IntroducedVersion>5.0.0.0</IntroducedVersion>
+          <SourceType>0</SourceType>
+          <IsGlobalFilterEnabled>0</IsGlobalFilterEnabled>
+          <IsSortableEnabled>1</IsSortableEnabled>
+          <IsDataSourceSecret>0</IsDataSourceSecret>
+          <AutoNumberFormat></AutoNumberFormat>
+          <IsSearchable>1</IsSearchable>
+          <IsFilterable>0</IsFilterable>
+          <IsRetrievable>1</IsRetrievable>
+          <IsLocalizable>0</IsLocalizable>
+          <Format>text</Format>
+          <MaxLength>200</MaxLength>
+          <Length>400</Length>
+          <displaynames>
+            <displayname description="Case Title" languagecode="1033" />
+          </displaynames>
+          <Descriptions>
+            <Description description="Type a subject or descriptive name, such as the request, issue, or company name, to identify the case in Microsoft Dynamics 365 views." languagecode="1033" />
+          </Descriptions>
+        </attribute>
       </attributes>
     </entity>
   </EntityInfo>

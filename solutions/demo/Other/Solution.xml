@@ -905,25 +905,7 @@
         <Required type="2" schemaName="title" displayName="Case Title" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
-        <Dependent type="36" displayName="Case Auto Response" id="{dfd4fdf0-902e-450b-a4d6-71feb7bd0b41}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="2" schemaName="title" displayName="Case Title" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Portal - Information - Sections" parentDisplayName="Case" id="{19b1afc4-7611-ef11-9f89-000d3a8441e7}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="2" schemaName="title" displayName="Case Title" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Portal - Information" parentDisplayName="Case" id="{1d088d60-e410-ef11-9f89-000d3a848ed6}" />
-      </MissingDependency>
-      <MissingDependency>
-        <Required type="2" schemaName="title" displayName="Case Title" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
-          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
-        </Required>
-        <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
+        <Dependent type="2" schemaName="title" displayName="Case Title" parentSchemaName="incident" parentDisplayName="Case" />
       </MissingDependency>
       <MissingDependency>
         <Required type="2" schemaName="transactioncurrencyid" displayName="Currency" parentSchemaName="lead" parentDisplayName="Lead" solution="msdynce_LeadManagement (9.0.4.0066)">
