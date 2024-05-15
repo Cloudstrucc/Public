@@ -35,6 +35,14 @@
                         <control id="description" classid="{E0DECE4B-6FC8-4A8F-A065-082708572369}" datafieldname="description" disabled="false" />
                       </cell>
                     </row>
+                    <row>
+                      <cell id="{4b4166f9-3f5a-41d9-97e7-189c402a8e23}" locklevel="0" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Case Number" languagecode="1033" />
+                        </labels>
+                        <control id="ticketnumber" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="ticketnumber" disabled="false" />
+                      </cell>
+                    </row>
                   </rows>
                 </section>
               </sections>
