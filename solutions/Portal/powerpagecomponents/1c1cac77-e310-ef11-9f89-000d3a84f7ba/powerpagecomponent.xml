@@ -1,0 +1,25 @@
+<powerpagecomponent powerpagecomponentid="1c1cac77-e310-ef11-9f89-000d3a84f7ba">
+  <content>{
+  "partialurl": "request",
+  "feedbackpolicy": 756150000,
+  "excludefromsearch": false,
+  "hiddenfromsitemap": false,
+  "enablerating": false,
+  "isroot": true,
+  "isofflinecached": false,
+  "publishingstateid": "8fc43945-179a-4c6a-9916-3eea95ad3989",
+  "pagetemplateid": "bf97a374-e510-ef11-9f89-000d3a84f7ba",
+  "parentpageid": "ed7bbc89-ef06-404a-9e11-dab8d697054b",
+  "sharedpageconfiguration": true,
+  "entityform": "cfffee33-5711-ef11-9f89-000d3a84f7ba"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Case - Create</name>
+  <powerpagecomponenttype>2</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>a612305c-4119-47ab-b479-ea9f78f7f027</powerpagesiteid>
+  </powerpagesiteid>
+  <searchcontent>Case - Create</searchcontent>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

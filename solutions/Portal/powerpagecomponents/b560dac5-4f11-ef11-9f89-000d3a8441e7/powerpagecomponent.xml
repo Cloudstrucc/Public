@@ -1,0 +1,26 @@
+<powerpagecomponent powerpagecomponentid="b560dac5-4f11-ef11-9f89-000d3a8441e7">
+  <content>{
+  "onsavevalue": "270bd3db-d9af-4782-9025-509e298dec0a",
+  "onsavetype": 100000000,
+  "attributelogicalname": "customerid",
+  "type": 100000000,
+  "fieldisrequired": false,
+  "useattributedescriptionproperty": true,
+  "descriptionposition": 100000000,
+  "adddescription": false,
+  "setvalueonsave": true,
+  "ignoredefaultvalue": false,
+  "randomizeoptionsetvalues": false,
+  "entityform": "15e7ca8a-e310-ef11-9f89-000d3a84f7ba",
+  "entityformforcreate": "15e7ca8a-e310-ef11-9f89-000d3a84f7ba",
+  "onsavefromattribute": "accountid"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Case - Create customerid</name>
+  <powerpagecomponenttype>16</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>a612305c-4119-47ab-b479-ea9f78f7f027</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

@@ -1,0 +1,51 @@
+<powerpagecomponent powerpagecomponentid="4fef4b57-7811-ef11-9f89-000d3a8441e7">
+  <content>{
+  "tabname": "general",
+  "formname": "Portal - Information",
+  "targetentitylogicalname": "incident",
+  "geolocation_displaymap": false,
+  "geolocation_enabled": false,
+  "createautonumber": false,
+  "loguser": false,
+  "attachfilerestrictaccept": false,
+  "attachfilerequired": false,
+  "allowmultiplefiles": false,
+  "attachfile": false,
+  "redirecturlappendentityidquerystring": false,
+  "appendquerystring": false,
+  "referenceentityshowreadonlyform": false,
+  "referencequerystringisprimarykey": true,
+  "referenceentitysourcetype": 100000001,
+  "populatereferenceentitylookupfield": false,
+  "setentityreference": false,
+  "hideformonsuccess": true,
+  "showcaptchaforauthenticatedusers": false,
+  "captcharequired": false,
+  "validationsummarylinksenabled": true,
+  "forceallfieldsrequired": false,
+  "recommendedfieldsrequired": false,
+  "showunsupportedfields": false,
+  "showownerfields": false,
+  "tooltipenabled": true,
+  "renderwebresourcesinline": false,
+  "portaluserlookupattributeisactivityparty": false,
+  "associatecurrentportaluser": false,
+  "autogeneratesteps": false,
+  "mode": 100000000,
+  "entitypermissionsenabled": true,
+  "movepreviouspermitted": false,
+  "type": 100000001,
+  "editexistingrecordpermitted": false,
+  "webform": "1be6521f-7811-ef11-9f89-000d3a8441e7",
+  "multiplerecordsperuserpermitted": false,
+  "geolocation_maptype": 756150000
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Step 1</name>
+  <powerpagecomponenttype>20</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>a612305c-4119-47ab-b479-ea9f78f7f027</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

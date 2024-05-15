@@ -1,0 +1,23 @@
+<powerpagecomponent powerpagecomponentid="e1ef979c-5511-ef11-9f89-000d3a84f7ba">
+  <content>{
+  "parentrelationship": "incident_customer_accounts",
+  "scope": 756150003,
+  "entitylogicalname": "account",
+  "entityname": "Account",
+  "appendto": true,
+  "append": true,
+  "delete": true,
+  "create": true,
+  "write": true,
+  "read": true,
+  "parententitypermission": "164ff484-4d11-ef11-9f89-000d3a848ed6"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Account</name>
+  <powerpagecomponenttype>18</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>a612305c-4119-47ab-b479-ea9f78f7f027</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

@@ -1,0 +1,47 @@
+<powerpagecomponent powerpagecomponentid="cfffee33-5711-ef11-9f89-000d3a84f7ba">
+  <content>{
+  "tabname": "General",
+  "formname": "Portal - Information",
+  "entityname": "new_portalformsubmission",
+  "referenceentityshowreadonlyform": false,
+  "referencequerystringisprimarykey": true,
+  "populatereferenceentitylookupfield": false,
+  "setentityreference": false,
+  "geolocation_displaymap": false,
+  "geolocation_enabled": false,
+  "attachfilerestrictaccept": false,
+  "attachfilerequired": false,
+  "attachfileallowmultiple": false,
+  "attachfile": false,
+  "portaluserlookupattributeisactivityparty": false,
+  "associatecurrentportaluser": false,
+  "redirecturlappendentityidquerystring": false,
+  "appendquerystring": false,
+  "hideformonsuccess": true,
+  "onsuccess": 756150001,
+  "validationsummarylinksenabled": true,
+  "forceallfieldsrequired": false,
+  "recommendedfieldsrequired": false,
+  "showunsupportedfields": false,
+  "showownerfields": false,
+  "tooltipenabled": true,
+  "renderwebresourcesinline": false,
+  "autogeneratesteps": false,
+  "showcaptchaforauthenticatedusers": false,
+  "captcharequired": false,
+  "recordsourceallowcreateonnull": false,
+  "entitypermissionsenabled": true,
+  "mode": 100000000,
+  "geolocation_maptype": 756150000,
+  "settings": "{\"$type\":\"Adxstudio.Xrm.Web.UI.JsonConfiguration.FormActionMetadata, Adxstudio.Xrm\",\"Actions\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.JsonConfiguration.SubmitAction, Adxstudio.Xrm\",\"ButtonBusyLabel\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"SuccessMessage\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"Thank you for the request. FINTRAC may contact you from 8:00 a.m. - 4:00 p.m. (Eastern time - CANADA) within the next 48 hours.\"}],\"ButtonLabel\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"ButtonTooltip\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"ButtonCssClass\":\"\",\"ActionButtonStyle\":0,\"ActionButtonPlacement\":1,\"ActionButtonAlignment\":0,\"ShowModal\":0,\"Confirmation\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"FilterCriteria\":\"\"}],\"DeleteDialog\":{\"$type\":\"Adxstudio.Xrm.Web.UI.JsonConfiguration.DeleteModal, Adxstudio.Xrm\",\"Title\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"PrimaryButtonText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"CloseButtonText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"DismissButtonSrText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"Size\":0,\"CssClass\":\"\",\"TitleCssClass\":\"\",\"PrimaryButtonCssClass\":\"\",\"CloseButtonCssClass\":\"\"},\"WorkflowDialog\":{\"$type\":\"Adxstudio.Xrm.Web.UI.JsonConfiguration.WorkflowModal, Adxstudio.Xrm\",\"Title\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"PrimaryButtonText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"CloseButtonText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"DismissButtonSrText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"Size\":0,\"CssClass\":\"\",\"TitleCssClass\":\"\",\"PrimaryButtonCssClass\":\"\",\"CloseButtonCssClass\":\"\"},\"ActionDropDownButtonLabel\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"TopContainerCssClass\":\"\",\"BottomContainerCssClass\":\"\",\"ShowSaveChangesWarningOnExit\":false,\"SaveChangesWarningMessage\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"ActivateDialog\":{\"$type\":\"Adxstudio.Xrm.Web.UI.JsonConfiguration.ActivateModal,\\tAdxstudio.Xrm\",\"Title\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"PrimaryButtonText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"CloseButtonText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"DismissButtonSrText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"Size\":0,\"CssClass\":\"\",\"TitleCssClass\":\"\",\"PrimaryButtonCssClass\":\"\",\"CloseButtonCssClass\":\"\"},\"DeactivateDialog\":{\"$type\":\"Adxstudio.Xrm.Web.UI.JsonConfiguration.DeactivateModal,\\tAdxstudio.Xrm\",\"Title\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"PrimaryButtonText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"CloseButtonText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"DismissButtonSrText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"Size\":0,\"CssClass\":\"\",\"TitleCssClass\":\"\",\"PrimaryButtonCssClass\":\"\",\"CloseButtonCssClass\":\"\"},\"CreateRelatedRecordDialog\":{\"$type\":\"Adxstudio.Xrm.Web.UI.JsonConfiguration.CreateRelatedRecordModal, Adxstudio.Xrm\",\"PrimaryButtonText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"CloseButtonText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"PrimaryButtonCssClass\":\"\",\"CloseButtonCssClass\":\"\",\"Title\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"DismissButtonSrText\":[{\"$type\":\"Adxstudio.Xrm.Web.UI.WebForms.LanguageResources, Adxstudio.Xrm\",\"LCID\":1033,\"Value\":\"\"}],\"Size\":0,\"CssClass\":\"\",\"TitleCssClass\":\"\"}}",
+  "redirectwebpage": "ed7bbc89-ef06-404a-9e11-dab8d697054b"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Submission form</name>
+  <powerpagecomponenttype>15</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>a612305c-4119-47ab-b479-ea9f78f7f027</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

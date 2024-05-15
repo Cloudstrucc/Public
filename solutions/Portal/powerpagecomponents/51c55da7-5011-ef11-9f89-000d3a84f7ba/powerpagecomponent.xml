@@ -1,0 +1,25 @@
+<powerpagecomponent powerpagecomponentid="51c55da7-5011-ef11-9f89-000d3a84f7ba">
+  <content>{
+  "onsavevalue": "3",
+  "onsavetype": 100000000,
+  "attributelogicalname": "caseorigincode",
+  "type": 100000000,
+  "fieldisrequired": false,
+  "useattributedescriptionproperty": true,
+  "descriptionposition": 100000000,
+  "adddescription": false,
+  "setvalueonsave": true,
+  "ignoredefaultvalue": false,
+  "randomizeoptionsetvalues": false,
+  "entityform": "15e7ca8a-e310-ef11-9f89-000d3a84f7ba",
+  "entityformforcreate": "15e7ca8a-e310-ef11-9f89-000d3a84f7ba"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Case - Create caseorigincode</name>
+  <powerpagecomponenttype>16</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>a612305c-4119-47ab-b479-ea9f78f7f027</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

@@ -1,0 +1,13 @@
+<powerpagecomponent powerpagecomponentid="fef44c0a-920e-ef11-9f89-002248b364ca">
+  <content>{
+  "source": "{% include 'CS-Wizard-Style' %}  &lt;main property=\"mainContentOfPage\"&gt; &lt;!-- &lt;div class=\"wrapper-body\"&gt; --&gt;     &lt;div class=\"container\"&gt;       \r\n  &lt;div class=\"page-heading\"&gt;           {% block breadcrumbs %}             {% include 'Breadcrumbs' %}        \r\n     {% endblock %}            {% block title %}             {% assign parentPageTitle = page.parent.title %}           \r\n       {% include 'Page Header' title: parentPageTitle %}           {% endblock %}         &lt;/div&gt;                      &lt;div class=\"col-md-3\"&gt;      \r\n              {% block navigation %}             {% endblock %}             &lt;/div&gt;             &lt;div class=\"col-md-9\"&gt;             {% block main %}                         \r\n                 {% endblock %}              {% block nextPrevious %}             \r\n                  {% endblock %}             &lt;/div&gt;              &lt;/div&gt;           &lt;div class =\"push\"&gt;&lt;/div&gt; &lt;!-- &lt;/div&gt; --&gt; &lt;/main&gt;  "
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>CS-Layout-1-Column-with-Left-Nav</name>
+  <powerpagecomponenttype>8</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>a612305c-4119-47ab-b479-ea9f78f7f027</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>
