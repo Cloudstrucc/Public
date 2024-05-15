@@ -1,0 +1,19 @@
+<powerpagecomponent powerpagecomponentid="81c5171c-930e-ef11-9f89-000d3a84f7ba">
+  <content>{
+  "partialurl": "2021-03-trial.js",
+  "parentpageid": "a27dce17-930e-ef11-9f89-002248b364ca",
+  "publishingstateid": "8fc43945-179a-4c6a-9916-3eea95ad3989",
+  "contentdisposition": 756150000,
+  "excludefromsearch": false,
+  "hiddenfromsitemap": false
+}</content>
+  <filecontent mimetype="application/javascript">2021-03-trial.js</filecontent>
+  <iscustomizable>1</iscustomizable>
+  <name>2021-03-trial.js</name>
+  <powerpagecomponenttype>3</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>a612305c-4119-47ab-b479-ea9f78f7f027</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

@@ -1,0 +1,13 @@
+<powerpagecomponent powerpagecomponentid="d10dd408-920e-ef11-9f89-000d3a84f7ba">
+  <content>{
+  "source": "{% assign weblink_set_name = weblink_set_name %}  {% if weblink_set_name %}   {% assign weblink_set = weblinks[weblink_set_name] %}   {% if weblink_set %}       {% assign i = 0 %}       {% for link in weblink_set.weblinks %}         {% if i != 0 %}             {% assign i_minus_1 = i | minus: 1 %}             {% assign previousLink = weblink_set.weblinks[i_minus_1] %}         {% endif %}          {% if link.url == request.path %}             {% break %}         {% endif %}          {% assign i = i | plus: 1 %}       {% endfor %}           {% assign i_plus_1 = i | plus: 1 %}       {% if weblink_set.weblinks.size != i_plus_1 %}         {% assign nextLink = weblink_set.weblinks[i_plus_1] %}       {% endif %}            &lt;ul class=\"pager\"&gt;       &lt;li class=\"previous{% if previousLink %}{% else %} disabled{% endif %}\"&gt;&lt;a href=\"{{ previousLink.url }}{{ request.query }}\" rel=\"prev\"&gt;Previous&lt;/a&gt;&lt;/li&gt;       &lt;li class=\"next{% if nextLink %}{% else %} disabled{% endif %}\"&gt;&lt;a href=\"{{ nextLink.url }}{{ request.query }}\" rel=\"next\"&gt;Next&lt;/a&gt;&lt;/li&gt;     &lt;/ul&gt;  {% endif %} {% endif %}  "
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>CS-Web-Link-Button</name>
+  <powerpagecomponenttype>8</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>a612305c-4119-47ab-b479-ea9f78f7f027</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

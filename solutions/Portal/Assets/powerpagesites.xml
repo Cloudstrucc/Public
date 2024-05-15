@@ -1,14 +1,15 @@
 <powerpagesites>
-  <powerpagesite powerpagesiteid="27ad7a40-e299-ee11-be37-0022483c04c3">
+  <powerpagesite powerpagesiteid="a612305c-4119-47ab-b479-ea9f78f7f027">
     <content>{
-  "defaultlanguage": "2ead7a40-e299-ee11-be37-0022483c04c3",
-  "footerwebtemplateid": "99e0b841-e299-ee11-be37-000d3aff3da3",
-  "headerwebtemplateid": "33ad7a40-e299-ee11-be37-0022483c04c3",
+  "defaultlanguage": "36565d6b-fb5e-458e-a5a0-7c54d72861e2",
+  "footerwebtemplateid": "2cb33504-920e-ef11-9f89-002248b364ca",
+  "headerwebtemplateid": "31b33504-920e-ef11-9f89-002248b364ca",
   "website_language": 1033
 }</content>
     <datamodelversion>2.0</datamodelversion>
     <iscustomizable>1</iscustomizable>
-    <name>RE Portal</name>
+    <name>ftnc-demo - ftnc-demo</name>
+    <primarydomainname>ftnc-demo.powerappsportals.com</primarydomainname>
     <statecode>0</statecode>
     <statuscode>1</statuscode>
   </powerpagesite>

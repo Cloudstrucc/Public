@@ -1,0 +1,19 @@
+<powerpagecomponent powerpagecomponentid="5a4d3821-920e-ef11-9f89-000d3a84f7ba">
+  <content>{
+  "partialurl": "chatwizard-json-en.html",
+  "parentpageid": "8f5d0d1c-920e-ef11-9f89-002248b364ca",
+  "publishingstateid": "8fc43945-179a-4c6a-9916-3eea95ad3989",
+  "contentdisposition": 756150000,
+  "excludefromsearch": false,
+  "hiddenfromsitemap": false
+}</content>
+  <filecontent mimetype="text/html">chatwizard-json-en.html</filecontent>
+  <iscustomizable>1</iscustomizable>
+  <name>chatwizard-json-en.html</name>
+  <powerpagecomponenttype>3</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>a612305c-4119-47ab-b479-ea9f78f7f027</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

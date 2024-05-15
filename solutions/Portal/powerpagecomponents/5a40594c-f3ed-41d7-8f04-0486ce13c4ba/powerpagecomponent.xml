@@ -1,0 +1,11 @@
+<powerpagecomponent powerpagecomponentid="5a40594c-f3ed-41d7-8f04-0486ce13c4ba">
+  <content>{"pageid":"df51d24d-fd1d-46db-b050-354f33ac2c30"}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Access Denied</name>
+  <powerpagecomponenttype>13</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>a612305c-4119-47ab-b479-ea9f78f7f027</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>
