@@ -28,7 +28,7 @@
   <CheckDirectMessages>0</CheckDirectMessages>
   <CheckBlockedSocialProfile>0</CheckBlockedSocialProfile>
   <ResponseTemplateId>{dfd4fdf0-902e-450b-a4d6-71feb7bd0b41}</ResponseTemplateId>
-  <WorkflowId>{f2167704-7311-ef11-9f89-000d3a84f7ba}</WorkflowId>
+  <WorkflowId>{74e83049-7012-ef11-9f89-000d3a84f7ba}</WorkflowId>
   <SourceChannelEntity>email</SourceChannelEntity>
   <RecordVersion>9.2.24045.174</RecordVersion>
   <ConvertRuleType>1</ConvertRuleType>

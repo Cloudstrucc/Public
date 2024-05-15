@@ -6,7 +6,9 @@
           "source": "invoker"
         },
         "runtimeSource": "embedded",
-        "connection": {},
+        "connection": {
+          "connectionReferenceLogicalName": "clds_sharedcommondataserviceforapps_a0b9a"
+        },
         "api": {
           "name": "shared_commondataserviceforapps"
         }
@@ -15,9 +17,45 @@
     "definition": {
       "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
       "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "When the incoming activity triggers the flow (don't edit or delete this step)": {
+          "metadata": {
+            "operationMetadataId": "bd238ba8-a3a6-4222-b125-32fb6a943d90"
+          },
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "SubscribeWebhookTrigger",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "subscriptionRequest/message": 3,
+              "subscriptionRequest/entityname": "email",
+              "subscriptionRequest/scope": 4,
+              "subscriptionRequest/filteringattributes": "importsequencenumber",
+              "subscriptionRequest/runas": 1
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
       "actions": {
         "Identify email sender": {
           "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "61cf6215-dac5-4f01-8955-5af80f3636d4"
+          },
           "type": "InitializeVariable",
           "inputs": {
             "variables": [
@@ -29,23 +67,20 @@
           }
         },
         "Is this email sender a contact or an account": {
-          "runAfter": {
-            "Identify email sender": [
-              "Succeeded"
-            ]
-          },
           "actions": {
             "Is_email_sender_a_contact": {
-              "runAfter": {},
               "actions": {
                 "Retrieve_sender_contact": {
                   "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "e5b6f475-ef85-4d0d-bc5b-0f1484798a74"
+                  },
                   "type": "OpenApiConnection",
                   "inputs": {
                     "host": {
-                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
                       "connectionName": "shared_commondataserviceforapps",
-                      "operationId": "GetItem"
+                      "operationId": "GetItem",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
                     },
                     "parameters": {
                       "entityName": "contacts",
@@ -60,6 +95,9 @@
                       "Succeeded"
                     ]
                   },
+                  "metadata": {
+                    "operationMetadataId": "ba3be5cb-7dd1-4691-afef-2df7c8c8989d"
+                  },
                   "type": "SetVariable",
                   "inputs": {
                     "name": "Customer from email sender",
@@ -67,10 +105,14 @@
                   }
                 }
               },
+              "runAfter": {},
               "else": {
                 "actions": {
                   "Set_account_as_customer": {
                     "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "ac76be63-fc0d-4aa1-99b9-78b5584d5376"
+                    },
                     "type": "SetVariable",
                     "inputs": {
                       "name": "Customer from email sender",
@@ -85,13 +127,24 @@
                   "contacts"
                 ]
               },
+              "metadata": {
+                "operationMetadataId": "7d37748b-2b62-4260-9990-758d25e40738"
+              },
               "type": "If"
             }
+          },
+          "runAfter": {
+            "Identify email sender": [
+              "Succeeded"
+            ]
           },
           "else": {
             "actions": {
               "Terminate_when_no_valid_customer_found": {
                 "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "5528faa2-3ed4-4b47-a6be-b2a9545d2d1f"
+                },
                 "type": "Terminate",
                 "inputs": {
                   "runStatus": "Cancelled"
@@ -115,6 +168,9 @@
               }
             ]
           },
+          "metadata": {
+            "operationMetadataId": "5c873b51-823a-40fd-896d-c5fb9e9bfb2e"
+          },
           "type": "If"
         },
         "Create a record (don't rename this step)": {
@@ -123,19 +179,22 @@
               "Succeeded"
             ]
           },
+          "metadata": {
+            "operationMetadataId": "d99d9fbb-9081-4865-a794-bd1adc717c0a"
+          },
           "type": "OpenApiConnection",
           "inputs": {
             "host": {
-              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
               "connectionName": "shared_commondataserviceforapps",
-              "operationId": "CreateRecord"
+              "operationId": "CreateRecord",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
             },
             "parameters": {
               "entityName": "incidents",
               "item/title": "@triggerOutputs()?['body/subject']",
-              "item/primarycontactid@odata.bind": "@{if(contains(variables('Customer from email sender'),triggerOutputs()?['body/_emailsender_value']),string(''),concat('contacts(',triggerOutputs()?['body/_emailsender_value'], ')'))}",
               "item/customerid_account@odata.bind": "@{if(startsWith(variables('Customer from email sender'),'accounts'),variables('Customer from email sender'),string(''))}",
               "item/customerid_contact@odata.bind": "@{if(contains(variables('Customer from email sender'),'contacts'),variables('Customer from email sender'),string(''))}",
+              "item/primarycontactid@odata.bind": "@{if(contains(variables('Customer from email sender'),triggerOutputs()?['body/_emailsender_value']),string(''),concat('contacts(',triggerOutputs()?['body/_emailsender_value'], ')'))}",
               "item/caseorigincode": 2
             },
             "authentication": "@parameters('$authentication')"
@@ -147,12 +206,15 @@
               "Succeeded"
             ]
           },
+          "metadata": {
+            "operationMetadataId": "79aa8d11-6545-44b2-b26a-d108833f1567"
+          },
           "type": "OpenApiConnection",
           "inputs": {
             "host": {
-              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
               "connectionName": "shared_commondataserviceforapps",
-              "operationId": "PerformUnboundAction"
+              "operationId": "PerformUnboundAction",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
             },
             "parameters": {
               "actionName": "msdyn_ExecutePrimaryCreatePostActions",
@@ -163,39 +225,9 @@
             "authentication": "@parameters('$authentication')"
           }
         }
-      },
-      "parameters": {
-        "$connections": {
-          "defaultValue": {},
-          "type": "Object"
-        },
-        "$authentication": {
-          "defaultValue": {},
-          "type": "SecureObject"
-        }
-      },
-      "triggers": {
-        "When the incoming activity triggers the flow (don't edit or delete this step)": {
-          "type": "OpenApiConnectionWebhook",
-          "inputs": {
-            "host": {
-              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
-              "connectionName": "shared_commondataserviceforapps",
-              "operationId": "SubscribeWebhookTrigger"
-            },
-            "parameters": {
-              "subscriptionRequest/message": 3,
-              "subscriptionRequest/scope": 4,
-              "subscriptionRequest/filteringattributes": "importsequencenumber",
-              "subscriptionRequest/runas": 1,
-              "subscriptionRequest/entityname": "email"
-            },
-            "authentication": "@parameters('$authentication')"
-          }
-        }
       }
     },
-    "templateName": null
+    "templateName": ""
   },
   "schemaVersion": "1.0.0.0"
 }

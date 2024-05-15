@@ -91,9 +91,9 @@
       <RootComponent type="154" id="{32e731de-7b11-ef11-9f89-000d3a848ed6}" behavior="0" />
       <RootComponent type="154" id="{c8a4218d-4b11-ef11-9f89-000d3a848ed6}" behavior="0" />
       <RootComponent type="29" id="{4018902e-9011-ef11-9f89-000d3a848ed6}" behavior="0" />
+      <RootComponent type="29" id="{5928b7d3-6e12-ef11-9f89-000d3a848ed6}" behavior="0" />
       <RootComponent type="29" id="{b63c5ef2-7b11-ef11-9f89-000d3a848ed6}" behavior="0" />
       <RootComponent type="29" id="{d51fb3a5-4b11-ef11-9f89-000d3a848ed6}" behavior="0" />
-      <RootComponent type="29" id="{f2167704-7311-ef11-9f89-000d3a84f7ba}" behavior="0" />
       <RootComponent type="36" id="{dfd4fdf0-902e-450b-a4d6-71feb7bd0b41}" behavior="0" />
       <RootComponent type="62" behavior="0" />
       <RootComponent type="62" schemaName="Customerservicehub" behavior="0" />
@@ -899,6 +899,12 @@
         <Required type="2" schemaName="ticketnumber" displayName="Case Number" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
           <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
         </Required>
+        <Dependent type="60" displayName="Portal - Information - Sections" parentDisplayName="Case" id="{19b1afc4-7611-ef11-9f89-000d3a8441e7}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="ticketnumber" displayName="Case Number" parentSchemaName="incident" parentDisplayName="Case" solution="msdynce_Service (9.0.5.56)">
+          <package>msdynce_ServiceAnchor (9.0.24045.1005)</package>
+        </Required>
         <Dependent type="60" displayName="Enhanced full case form" parentDisplayName="Case" id="{cd0d48a0-10c6-ec11-a7b5-000d3a58b83a}" />
       </MissingDependency>
       <MissingDependency>
@@ -1185,7 +1191,15 @@
       </MissingDependency>
       <MissingDependency>
         <Required type="connectionreference" displayName="clds_sharedcommondataserviceforapps_a0b9a" solution="flow (1.0.0.0)" id.connectionreferencelogicalname="clds_sharedcommondataserviceforapps_a0b9a" />
+        <Dependent type="29" displayName="When a row is added, modified or deleted -&gt; Email Body,Email Step 1..." id="{5928b7d3-6e12-ef11-9f89-000d3a848ed6}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="connectionreference" displayName="clds_sharedcommondataserviceforapps_a0b9a" solution="flow (1.0.0.0)" id.connectionreferencelogicalname="clds_sharedcommondataserviceforapps_a0b9a" />
         <Dependent type="29" displayName="ARC: Form (do not delete or rename)" id="{b63c5ef2-7b11-ef11-9f89-000d3a848ed6}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="connectionreference" displayName="clds_sharedcommondataserviceforapps_a0b9a" solution="flow (1.0.0.0)" id.connectionreferencelogicalname="clds_sharedcommondataserviceforapps_a0b9a" />
+        <Dependent type="29" displayName="ARC: New (do not delete or rename)" id="{d51fb3a5-4b11-ef11-9f89-000d3a848ed6}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="connectionreference" displayName="clds_sharedcommondataserviceforapps_a0b9a" solution="flow (1.0.0.0)" id.connectionreferencelogicalname="clds_sharedcommondataserviceforapps_a0b9a" />
@@ -1194,6 +1208,10 @@
       <MissingDependency>
         <Required type="connectionreference" displayName="new_sharedcommondataserviceforapps_12864" solution="msdyn_Conversation_Intelligence (9.0.1.1213)" id.connectionreferencelogicalname="new_sharedcommondataserviceforapps_12864" />
         <Dependent type="connectionreference" displayName="new_sharedcommondataserviceforapps_12864" id.connectionreferencelogicalname="new_sharedcommondataserviceforapps_12864" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="connectionreference" displayName="new_sharedconversionservice_21be9" solution="Active" id.connectionreferencelogicalname="new_sharedconversionservice_21be9" />
+        <Dependent type="29" displayName="When a row is added, modified or deleted -&gt; Email Body,Email Step 1..." id="{5928b7d3-6e12-ef11-9f89-000d3a848ed6}" />
       </MissingDependency>
     </MissingDependencies>
   </SolutionManifest>
