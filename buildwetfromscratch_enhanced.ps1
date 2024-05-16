@@ -496,8 +496,15 @@ function CreateSnippets {
 
                 # Perform PATCH request to update the snippet
                 $snippetResponse = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $snippetPayloadEnglish -Headers $updateHeaders -ContentType "application/json; charset=utf-8"
+                 # Perform PATCH request to update the snippet
+                 $snippetResponseFR = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $snippetPayloadFrench -Headers $updateHeaders -ContentType "application/json; charset=utf-8"
 
                 if ($null -ne $snippetResponse) {
+                    Write-Host "Snippet UPDATED successfully with ID: $($existingSnippet.mspp_contentsnippetid)"
+                } else {
+                    Write-Host "Failed to UPDATE snippet"
+                }
+                if ($null -ne $snippetResponseFR) {
                     Write-Host "Snippet UPDATED successfully with ID: $($existingSnippet.mspp_contentsnippetid)"
                 } else {
                     Write-Host "Failed to UPDATE snippet"
@@ -507,8 +514,16 @@ function CreateSnippets {
             # Make the request to create the snippet record
             $snippetResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_contentsnippets") -Method Post -Body $snippetPayloadEnglish -Headers $headers -ContentType "application/json; charset=utf-8"
 
+            $snippetResponseFR = Invoke-RestMethod -Uri ($apiUrl + "mspp_contentsnippets") -Method Post -Body $snippetPayloadFrench -Headers $headers -ContentType "application/json; charset=utf-8"
+
             # Check the response
-            if ($snippetResponse -ne $null) {
+            if ($null -ne $snippetResponse) {
+                Write-Host "Snippet created successfully with ID: $($snippetResponse.mspp_contentsnippetid)"
+            } else {
+                Write-Host "Failed to create snippet"
+            }
+            # Check the response
+            if ($null -ne $snippetResponseFR) {
                 Write-Host "Snippet created successfully with ID: $($snippetResponse.mspp_contentsnippetid)"
             } else {
                 Write-Host "Failed to create snippet"
