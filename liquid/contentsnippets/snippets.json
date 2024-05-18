@@ -1,5 +1,11 @@
 {
-    "CS/HOME/DESC": ["Theme-portal lorem ipseum. "],
-    "CS/HOME/SUBTITLE": ["Enterprise Portal","Portail"],
-    "CS/HOME/TITLE": ["Health Canada", "Sante Canada"]
+    "CS/HOME/DESC": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."],
+    "CS/HOME/SUBTITLE": ["Enterprise Portal","Portail d’entreprise"],
+    "CS/HOME/TITLE": ["Health Canada", "Sante Canada"],
+    "CS/HOME/SIGNIN": ["Sign in", "Se connecter"],
+    "CS/HOME/MOSTREQ": ["Most requested", "Plus demandés"],
+    "CS/HOME/YOURGOV": ["Your government", "Votre gouvernement"],
+    "CS/HOME/FOCUSON": ["Focus on", "Focus sur"],
+    "CS/HOME/GOVINITIATIVES": ["Government initiatives", "Initiatives gouvernementales"],
+    "CS/GLOBAL/GOVCANADA": ["Government of Canada", "Gouvernement du Canada"]
 }
