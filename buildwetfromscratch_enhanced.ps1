@@ -19,8 +19,8 @@ $basePathTemplates = $basePath + "liquid\webtemplates"
 $pageTemplateNameNewHome = "CS-Home-WET"
 $webTemplateHeader = "CS-header"
 $webTemplateFooter = "CS-footer"
-$homeContentPageEN = "64ae8011-d214-ef11-9f8a-000d3af43335"
-$homeContentPageFR = "5eb34114-d214-ef11-9f89-6045bdcd283"
+$homeContentPageEN = "1a360aba-a1d2-4150-b572-7993e70d9a1a"
+$homeContentPageFR = "64ae8011-d214-ef11-9f8a-000d3af43335"
 
 ####################################
 
