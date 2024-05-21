@@ -12,7 +12,7 @@ The primary objectives include improving data management, automating workflows, 
 
 ### Scope of the Implementation
 
-The implementation covers the deployment and configuration of Dynamics 365 Customer Service Application installed in a Dataverse environment, Power Automate for workflow automation, and Model Driven Apps for custom applications. Additionally, it includes integrations with Azure services and compliance with federal security standards. 
+The implementation covers the deployment and configuration of Dynamics 365 Customer Service Application installed in a Dataverse environment, Power Automate for workflow automation, and Model Driven Apps for custom applications. Additionally, it includes integrations with Azure services and compliance with FINTRAC (and Federal Government)) security standards.
 
 ## 2. System Architecture
 
@@ -20,7 +20,7 @@ This section provides an overview of the system architecture, highlighting the i
 
 ### 2.1 High-Level Architecture Diagram
 
-The architecture diagram illustrates the integration of Power Platform components with Azure services. It shows how Power Pages, Dataverse, Power Automate, and Power Apps interact with Azure B2C for authentication, Azure Blob Storage for data storage, and REST APIs for extending functionalities.
+The architecture diagram illustrates the integration of Power Platform components with Azure services. It shows how Power Pages, Dataverse, Power Automate, and Power Apps interact with Azure B2C for authentication, Azure Blob Storage for data storage, SharePoint online for attachments, and a REST API for retrieving organization data (reporting entities).
 
 ### 2.2 Detailed Architecture Components
 
