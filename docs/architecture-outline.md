@@ -42,8 +42,8 @@ Integration points between Power Platform components and Azure services ensure s
 This section covers the security measures and configurations implemented to protect the Power Platform environment. It includes identity and access management, data security, and compliance with governance standards.
 
 ### 3.1 Identity and Access Management
-#### Azure AD Integration
-Azure AD integrates with the Power Platform to manage user identities, roles, and groups, providing secure access control across all components. This integration ensures that only authorized users can access specific resources and perform actions based on their roles.
+#### Entra ID Integration
+Entra ID integrates with the Power Platform to manage user identities, roles, and groups, providing secure access control across all components. This integration ensures that only authorized users can access specific resources and perform actions based on their roles.
 
 ### 3.2 Data Security
 #### Data Security in D365 CRM
@@ -54,6 +54,21 @@ Power Pages use table and column permissions to secure data, ensuring that users
 
 ### 3.3 Compliance and Governance
 Power Platform meets federal compliance requirements by implementing robust security and governance measures. These include data encryption, regular audits, and adherence to regulatory standards, ensuring that all data and processes are secure and compliant.
+
+### 3.4 Enterprise Security with Power Platform
+This section elaborates on the enterprise security features of Power Platform as outlined in the white paper.
+
+#### Cybersecurity Landscape
+Power Platform's built-in security capabilities address the sophisticated cybersecurity challenges faced by organizations today.
+
+#### Microsoft Security Foundation
+Power Platform builds on Microsoft's comprehensive security foundation, leveraging products like Microsoft Defender, Microsoft Sentinel, Microsoft Entra, Microsoft Purview, Microsoft Priva, and Microsoft Intune to protect data and infrastructure.
+
+#### Zero Trust Strategy
+Power Platform supports a Zero Trust strategy, which includes verifying identities explicitly, using least privilege access, and assuming breach to minimize the impact of security incidents.
+
+#### Security Development Lifecycle (SDL)
+SDL in Power Platform involves phases such as requirements, design, implementation, verification, and release, supported by training and response activities to ensure secure application development.
 
 ## 4. Integrations
 This section describes the various integrations between Power Platform components and external services. It explains how these integrations enhance functionality and ensure seamless data flow.
@@ -104,7 +119,9 @@ The data backup strategy for Power Platform involves regular backups, retention 
 The disaster recovery plan includes Recovery Point Objectives (RPO) and Recovery Time Objectives (RTO) to minimize downtime and data loss. Regular testing of the disaster recovery plan ensures readiness in case of an actual disaster.
 
 ## 8. Data at Rest using Customer Managed Keys (CMK) for Dataverse
-This section explains the use of Customer Managed Keys (CMK) for encrypting data at rest in Dataverse, enhancing data security and control.
+This section explains the use of Customer Managed Keys (CMK) for encrypting data at
+
+ rest in Dataverse, enhancing data security and control.
 
 ### 8.1 Overview of CMK
 Customer Managed Keys (CMK) provide enhanced data security by allowing the agency to manage its own encryption keys. This ensures that data at rest in Dataverse is protected and that the agency retains control over key management.
@@ -112,19 +129,23 @@ Customer Managed Keys (CMK) provide enhanced data security by allowing the agenc
 ### 8.2 CMK Configuration
 Configuring CMK involves setting up key vaults in Azure, assigning encryption keys to Dataverse, and managing key rotation policies. This ensures that data encryption is robust and compliant with security standards.
 
-## 9. CRM Security
-This section covers the security configurations specific to D365 CRM, ensuring data protection and access control.
+## 9. User Security & Access
+This section details the security measures and access controls for both internal and external users, ensuring secure access to the Power Platform components.
 
-### 9.1 Security Roles
-Security roles in D365 CRM define user access to various
+### 9.1 Internal Users
+#### CRM Security Features
+- **Security Roles**: Define user access to various entities and functionalities in D365 CRM. Roles are configured to ensure that users can only access data and perform actions necessary for their job functions.
+- **Column Permissions**: Restrict access to specific data fields within entities. This ensures that sensitive information is only accessible to authorized users.
+- **Teams and Entra ID Group Integration**: Integration with Entra ID groups and the use of teams in CRM allows for efficient management of user permissions and collaboration.
 
- entities and functionalities. Roles are configured to ensure that users can only access data and perform actions necessary for their job functions, enhancing data security.
+#### Entra ID Integration
+Entra ID integrates with the Power Platform to manage internal user identities, roles, and groups. This integration ensures that only authorized users can access specific resources and perform actions based on their roles.
 
-### 9.2 Column Permissions
-Column permissions restrict access to specific data fields within entities. This granular level of control ensures that sensitive information is only accessible to authorized users, protecting data privacy.
-
-### 9.3 Teams and AD Group Integration
-Integration with Azure AD groups and the use of teams in CRM allows for efficient management of user permissions and collaboration. Teams and AD groups simplify user administration and ensure that access controls are consistently applied.
+### 9.2 External Users
+#### Power Pages User Security Features
+- **Table Permissions**: Control access to entire tables of data in Power Pages, ensuring that users only see the data relevant to their role.
+- **Column Permissions**: Provide fine-grained access control to individual data fields in Power Pages. This ensures that sensitive information is protected.
+- **Web API Security**: Enforces authentication and authorization mechanisms to control access to data and operations through the API.
 
 ## 10. Power Pages Security
 This section describes the security measures implemented in Power Pages to protect data and ensure secure operations.
@@ -138,83 +159,125 @@ Column permissions provide fine-grained access control to individual data fields
 ### 10.3 Web API Security
 Web API security in Power Pages involves authentication and authorization mechanisms to control access to data and operations. This ensures that API calls are secure and that only authorized applications can interact with the data.
 
-## 11. SDLC / ALM Using Azure DevOps
-This section outlines the software development lifecycle (SDLC) and application lifecycle management (ALM) practices using Azure DevOps.
+### 10.4 IP Restrictions
+IP restrictions in Power Pages allow limiting access to the application based on IP addresses. This feature helps ensure that only users from specified IP ranges (e.g., internal network) can access the development and staging environments, while the production site remains publicly accessible.
 
-### 11.1 Azure DevOps Overview
-Azure DevOps provides tools for managing the Software Development Lifecycle (SDLC) and Application Lifecycle Management (ALM). It integrates with Power Platform to facilitate version control, build automation, and continuous integration and deployment (CI/CD).
+### 10.5 Entra ID Integration
+Entra ID is used to scope access to Power Pages, ensuring that only users within the internal domain and network have access to non-production environments, while the production site can be accessed publicly.
 
-### 11.2 GIT Repositories
-GIT repositories in Azure DevOps enable version control and collaboration on code and configurations. This ensures that changes are tracked, and multiple developers can work on the project simultaneously.
-
-### 11.3 Pipelines
-CI/CD pipelines in Azure DevOps automate the build, test, and deployment processes. This ensures that updates to Power Platform components are consistently and reliably deployed across development, staging, and production environments.
-
-### 11.4 Solutions Management
-Solutions management involves using unmanaged solutions for development and managed solutions for non-development environments. This approach ensures that development changes are tested and validated before being deployed to production, reducing the risk of issues.
-
-### 11.5 App Users and App Registrations
-App users and app registrations in Azure AD ensure that service accounts are used for Power Automate flows and deployments. This enhances security by controlling access and ensuring that automated processes are executed with appropriate permissions.
-
-## 12. Monitoring and Maintenance
-This section details the monitoring and maintenance procedures to ensure optimal performance and reliability of the Power Platform.
-
-### 12.1 Performance Monitoring
-Performance monitoring involves using tools and metrics to track system performance, ensuring optimal operation and quick issue resolution. Regular monitoring helps identify and address performance bottlenecks.
-
-### 12.2 Maintenance Procedures
-Maintenance procedures include regular updates, patch management, and system health checks. These procedures ensure that the platform remains secure, up-to-date, and reliable.
-
-## 13. Documentation and Training
-This section outlines the documentation and training resources available to end-users and administrators, ensuring effective use and management of the Power Platform.
-
-### 13.1 User Guides
-User guides provide detailed instructions for end-users on how to effectively use Power Platform features and functionalities. These guides help users navigate the system and maximize its benefits.
-
-### 13.2 Administrator Guides
-Administrator guides offer comprehensive configuration and administration instructions for system administrators. These guides include best practices for managing and maintaining the platform.
-
-### 13.3 Training Programs
-Training programs include schedules, materials, and ongoing support resources to ensure that users and administrators are well-versed in using and managing the Power Platform. These programs help build proficiency and ensure successful adoption.
-
-## 14. Appendices
-This section includes additional resources, definitions, and change logs to support the implementation and ongoing management of the Power Platform.
-
-### 14.1 Glossary
-The glossary includes definitions of key terms and acronyms used throughout the document, providing clarity and reference for readers.
-
-### 14.2 References
-References list documents and resources that provide additional context and information related to the implementation. This section includes links and citations to supporting materials.
-
-### 14.3 Change Log
-The change log maintains a record of changes and updates to the document, ensuring transparency and traceability of modifications. This helps track the evolution of the document over time.
-
-### 14.4 Configuration of Power Platform Tenant and Dataverse Environments
-This section provides detailed descriptions of the configuration steps for the Power Platform tenant and setting up multiple Dataverse environments for development, testing, and production. It ensures a consistent and structured setup process.
-
-## 15. Power Platform Environment Management
+## 11. Power Platform Environment Management
 This section details the management of Power Platform environments, including descriptions of each environment and their configurations. Managed environments ensure that all critical issues are addressed, and Data Loss Prevention (DLP) policies are enforced.
 
-### 15.1 Environment Overview
-Provide an overview of the different environments used in the implementation, including development, staging, QA, UAT, release, and production environments. Each environment serves a specific purpose and ensures a structured approach to development and deployment.
+### 11.1 Environment Overview
+Environments are containers where you can store and control Power Platform resources, such as apps, automations, and connections. They help protect resources and data from unauthorized access and are tied to a geographic location, which can help comply with data location requirements. Each environment can have only one Dataverse database. Environments help apply detailed security controls, such as complex business application security models.
 
-### 15.2 Environment Table
-A table listing all environments with details such as name, purpose, B2C app registration ID, SharePoint subsite, Blob Storage URL, Power Pages site URL, Dataverse URL, Azure AD group, and GIT branch in DevOps.
+### 11.2 Environment Types
+Different types of environments can be created to manage Power Platform resources according to security, compliance, governance, and user needs:
+- **Default**: All new users can create resources in this environment.
+- **Developer**: Personal environments only for the owner’s use.
+- **Dataverse for Teams**: Linked to a specific team the first time an app is installed or created in it.
 
-| Environment | Purpose        | B2C App Registration ID | SharePoint Subsite | Blob Storage URL      | Power Pages Site URL         | Dataverse URL           | Azure AD Group | GIT Branch         |
+### 11.3 Environment Management
+Steps to manage environments include:
+- Assigning admins to Power Platform and Dynamics 365 roles.
+- Restricting creation of new environments.
+- Establishing a process for users to request new environments.
+- Using security groups to protect environments.
+- Establishing DLP policies at both the tenant and environment level.
+- Minimizing the use of the default environment by using environment routing.
+- Using environment groups and rules to apply settings to many environments at once.
+
+### 11.4 Environment Table
+A table listing all environments with details such as name, purpose, B2C app registration ID, SharePoint subsite, Blob Storage URL, Power Pages site URL, Dataverse URL, Entra ID group, and GIT branch in DevOps.
+
+| Environment | Purpose        | B2C App Registration ID | SharePoint Subsite | Blob Storage URL      | Power Pages Site URL         | Dataverse URL           | Entra ID Group | GIT Branch         |
 |-------------|----------------|-------------------------|---------------------|-----------------------|------------------------------|-------------------------|----------------|---------------------|
-| Dev         | Development    | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | dev                |
-| Staging     | Staging        | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | staging            |
-| QA          | QA             | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | qa                 |
-| UAT         | User Acceptance Testing | [B2C App ID]  | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | uat                |
-| Release     | Release        | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | release            |
-| Prod        | Production     | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | main               |
+| Dev         | Development    | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [Entra ID Group] | dev                |
+| Staging     | Staging        | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [Entra ID Group] | staging            |
+| QA          | QA             | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [Entra ID Group] | qa                 |
+| UAT         | User Acceptance Testing | [B2C App ID]  | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [Entra ID Group] | uat                |
+| Release     | Release        | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [Entra ID Group] | release            |
+| Prod        | Production     | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [Entra ID Group] | main               |
 
-### 15.3 Managed Environments
-Discuss how managed environments are configured to use the solution and portal checker settings to block any found critical issues. Managed environments help maintain a high level of quality and security by automatically identifying and addressing potential problems.
+### 11.5 Managed Environments
+Managed Environments is a set of premium features that you can turn on in an environment to make it easier to manage at scale. When you turn on Managed Environments, you can use the premium governance and security features of Power Platform to get more visibility and control with less effort.
+Managed Environments isn’t a separate license. It’s an entitlement that’s included in the standalone Power Platform licenses. Managed Environments is turned off by default. When you turn it on, you unlock several security and compliance features, such as:
+- Limit sharing
+- Data policies
+- IP firewall
+- IP cookie binding
+- Customer-managed keys
+- Lockbox
+- Data loss prevention policies for desktop flows
+- Extended backups
+- Solution checker enforcement
 
-### 15.4 Data Loss Prevention (DLP) Policies
-Describe the DLP policies configured in Power Platform both globally and by environment. These policies ensure that sensitive data is protected and that data handling practices comply with regulatory requirements.
+### 11.6 Environment Groups
+When you activate Power Platform in your organization, you can create different environments for different purposes. You might want to group some environments together and apply the same rules to them. Environment groups allow you to place environments into logical groups and apply a common set of rules. This feature helps maintain consistency and security for environments.
 
-### 15.5 Environment Configuration
-Detail the specific configurations for each environment, including how they are set up, managed, and maintained. This ensures consistency across environments and facilitates efficient transitions from development to production.
+### 11.7 Environment Strategy
+You should have a strategy for how to create and manage your Power Platform environments. Your strategy should meet both security and compliance requirements and operational and administrative needs. It should support the application lifecycle management (ALM) processes of the different solutions you build on Power Platform. Key steps include:
+- Assigning admins to Power Platform and Dynamics 365 roles.
+- Restricting creation of new environments.
+- Establishing a process for users to request new environments.
+- Using security groups to protect environments.
+- Establishing DLP policies at both the tenant and environment level.
+- Minimizing the use of the default environment.
+- Using environment groups and rules to apply settings to many environments at once.
+- Using pipelines to automate and control the promotion of resources from development to other environments.
+
+## 12. SDLC / ALM Using Azure DevOps
+This section outlines the software development lifecycle (SDLC) and application lifecycle management (ALM) practices using Azure DevOps.
+
+### 12.1 Azure DevOps Overview
+Azure DevOps provides tools for managing the Software Development Lifecycle (SDLC) and Application Lifecycle Management (ALM). It integrates with Power Platform to facilitate version control, build automation, and continuous integration and deployment (CI/CD).
+
+### 12.2 GIT Repositories
+GIT repositories in Azure DevOps enable version control and collaboration on code and configurations. This ensures that changes are tracked, and multiple developers can work on the project simultaneously.
+
+### 12.3 Pipelines
+CI/CD pipelines in Azure DevOps automate the build, test, and deployment processes. This ensures that updates to Power Platform components are consistently and reliably deployed across development, staging, and production environments.
+
+### 12.4 Solutions Management
+Solutions management involves using unmanaged solutions for development and managed solutions for non-development environments. This approach ensures that
+
+ development changes are tested and validated before being deployed to production, reducing the risk of issues.
+
+### 12.5 App Users and App Registrations
+App users and app registrations in Entra ID ensure that service accounts are used for Power Automate flows and deployments. This enhances security by controlling access and ensuring that automated processes are executed with appropriate permissions.
+
+## 13. Monitoring and Maintenance
+This section details the monitoring and maintenance procedures to ensure optimal performance and reliability of the Power Platform.
+
+### 13.1 Performance Monitoring
+Performance monitoring involves using tools and metrics to track system performance, ensuring optimal operation and quick issue resolution. Regular monitoring helps identify and address performance bottlenecks.
+
+### 13.2 Maintenance Procedures
+Maintenance procedures include regular updates, patch management, and system health checks. These procedures ensure that the platform remains secure, up-to-date, and reliable.
+
+## 14. Documentation and Training
+This section outlines the documentation and training resources available to end-users and administrators, ensuring effective use and management of the Power Platform.
+
+### 14.1 User Guides
+User guides provide detailed instructions for end-users on how to effectively use Power Platform features and functionalities. These guides help users navigate the system and maximize its benefits.
+
+### 14.2 Administrator Guides
+Administrator guides offer comprehensive configuration and administration instructions for system administrators. These guides include best practices for managing and maintaining the platform.
+
+### 14.3 Training Programs
+Training programs include schedules, materials, and ongoing support resources to ensure that users and administrators are well-versed in using and managing the Power Platform. These programs help build proficiency and ensure successful adoption.
+
+## 15. Appendices
+This section includes additional resources, definitions, and change logs to support the implementation and ongoing management of the Power Platform.
+
+### 15.1 Glossary
+The glossary includes definitions of key terms and acronyms used throughout the document, providing clarity and reference for readers.
+
+### 15.2 References
+References list documents and resources that provide additional context and information related to the implementation. This section includes links and citations to supporting materials.
+
+### 15.3 Change Log
+The change log maintains a record of changes and updates to the document, ensuring transparency and traceability of modifications. This helps track the evolution of the document over time.
+
+### 15.4 Configuration of Power Platform Tenant and Dataverse Environments
+This section provides detailed descriptions of the configuration steps for the Power Platform tenant and setting up multiple Dataverse environments for development, testing, and production. It ensures a consistent and structured setup process.
