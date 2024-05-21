@@ -1,16 +1,14 @@
 # Architecture and Build Book for Power Platform Implementation
 
-## 1. Executive Summary
-
-### Overview of the Project
+## Overview of the Project
 
 This Power Platform implementation project is designed to enhance the operational efficiency of a federal government agency. The project leverages the comprehensive capabilities of Power Platform components such as Power Pages, Dataverse, Power Automate, and Power Apps to create a robust, secure, and scalable solution tailored to the agency's needs.
 
-### Objectives and Goals
+## Objectives and Goals
 
 The primary objectives include improving data management, automating workflows, and providing secure, user-friendly CRM application. Key goals are to increase productivity, ensure data security, and enhance user experience by integrating various Power Platform features seamlessly.
 
-### Scope of the Implementation
+## Scope of the Implementation
 
 The implementation covers the deployment and configuration of Dynamics 365 Customer Service Application installed in a Dataverse environment, Power Automate for workflow automation, and Model Driven Apps for custom applications. Additionally, it includes integrations with Azure services and compliance with FINTRAC (and Federal Government)) security standards.
 
