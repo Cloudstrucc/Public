@@ -116,9 +116,9 @@ Configuring CMK involves setting up key vaults in Azure, assigning encryption ke
 This section covers the security configurations specific to D365 CRM, ensuring data protection and access control.
 
 ### 9.1 Security Roles
-Security roles in D365 CRM define user access to various entities and functionalities. Roles are configured to ensure that users can only access data and
+Security roles in D365 CRM define user access to various
 
- perform actions necessary for their job functions, enhancing data security.
+ entities and functionalities. Roles are configured to ensure that users can only access data and perform actions necessary for their job functions, enhancing data security.
 
 ### 9.2 Column Permissions
 Column permissions restrict access to specific data fields within entities. This granular level of control ensures that sensitive information is only accessible to authorized users, protecting data privacy.
@@ -191,3 +191,30 @@ The change log maintains a record of changes and updates to the document, ensuri
 
 ### 14.4 Configuration of Power Platform Tenant and Dataverse Environments
 This section provides detailed descriptions of the configuration steps for the Power Platform tenant and setting up multiple Dataverse environments for development, testing, and production. It ensures a consistent and structured setup process.
+
+## 15. Power Platform Environment Management
+This section details the management of Power Platform environments, including descriptions of each environment and their configurations. Managed environments ensure that all critical issues are addressed, and Data Loss Prevention (DLP) policies are enforced.
+
+### 15.1 Environment Overview
+Provide an overview of the different environments used in the implementation, including development, staging, QA, UAT, release, and production environments. Each environment serves a specific purpose and ensures a structured approach to development and deployment.
+
+### 15.2 Environment Table
+A table listing all environments with details such as name, purpose, B2C app registration ID, SharePoint subsite, Blob Storage URL, Power Pages site URL, Dataverse URL, Azure AD group, and GIT branch in DevOps.
+
+| Environment | Purpose        | B2C App Registration ID | SharePoint Subsite | Blob Storage URL      | Power Pages Site URL         | Dataverse URL           | Azure AD Group | GIT Branch         |
+|-------------|----------------|-------------------------|---------------------|-----------------------|------------------------------|-------------------------|----------------|---------------------|
+| Dev         | Development    | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | dev                |
+| Staging     | Staging        | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | staging            |
+| QA          | QA             | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | qa                 |
+| UAT         | User Acceptance Testing | [B2C App ID]  | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | uat                |
+| Release     | Release        | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | release            |
+| Prod        | Production     | [B2C App ID]            | [SharePoint URL]    | [Blob Storage URL]    | [Power Pages URL]            | [Dataverse URL]         | [AD Group]     | main               |
+
+### 15.3 Managed Environments
+Discuss how managed environments are configured to use the solution and portal checker settings to block any found critical issues. Managed environments help maintain a high level of quality and security by automatically identifying and addressing potential problems.
+
+### 15.4 Data Loss Prevention (DLP) Policies
+Describe the DLP policies configured in Power Platform both globally and by environment. These policies ensure that sensitive data is protected and that data handling practices comply with regulatory requirements.
+
+### 15.5 Environment Configuration
+Detail the specific configurations for each environment, including how they are set up, managed, and maintained. This ensures consistency across environments and facilitates efficient transitions from development to production.
