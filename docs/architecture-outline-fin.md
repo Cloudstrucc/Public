@@ -228,9 +228,10 @@ Environments are containers where you can store and control Power Platform resou
 
 Different types of environments can be created to manage Power Platform resources according to security, compliance, governance, and user needs:
 
-- **Default**: All new users can create resources in this environment.
-- **Developer**: Personal environments only for the owner’s use.
-- **Dataverse for Teams**: Linked to a specific team the first time an app is installed or created in it.
+- **default**: All new users can create resources in this environment. This environment is not being used.
+- **Developer**: Personal environments only for the owner’s use. Used by developers.
+- **sandbox**:  Sandbox environments are used in this implementation for non production environments.
+- **production**: Linked t implementation for production.
 
 ### 11.3 Environment Management
 
