@@ -317,14 +317,14 @@ Steps to manage environments include:
 
 A table listing all environments with details such as name, purpose, B2C app registration ID, SharePoint subsite, Blob Storage URL, Power Pages site URL, Dataverse URL, Entra ID group, and GIT branch in DevOps.
 
-| Environment | Purpose                 | B2C App Registration ID | SharePoint Subsite | Blob Storage URL   | Power Pages Site URL | Dataverse URL   | Entra ID Group   | GIT Branch |
-| ----------- | ----------------------- | ----------------------- | ------------------ | ------------------ | -------------------- | --------------- | ---------------- | ---------- |
-| Dev         | Development             | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | [Dataverse URL] | [Entra ID Group] | dev        |
-| Staging     | Staging                 | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | [Dataverse URL] | [Entra ID Group] | staging    |
-| QA          | QA                      | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | [Dataverse URL] | [Entra ID Group] | qa         |
-| UAT         | User Acceptance Testing | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | [Dataverse URL] | [Entra ID Group] | uat        |
-| Release     | Release                 | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | [Dataverse URL] | [Entra ID Group] | release    |
-| Prod        | Production              | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | [Dataverse URL] | [Entra ID Group] | main       |
+| Environment | Purpose                 | B2C App Registration ID | SharePoint Subsite | Blob Storage URL   | Power Pages Site URL | Dataverse URL                              | Entra ID Group   | GIT Branch |
+| ----------- | ----------------------- | ----------------------- | ------------------ | ------------------ | -------------------- | ------------------------------------------ | ---------------- | ---------- |
+| Dev         | Development             | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc-crm-dev.crm3.dynamics.com     | [Entra ID Group] | dev        |
+| Staging     | Staging                 | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc-crm-staging.crm3.dynamics.com | [Entra ID Group] | staging    |
+| QA          | QA                      | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc-crm-qa.crm3.dynamics.com      | [Entra ID Group] | qa         |
+| UAT         | User Acceptance Testing | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc-crm-uat.crm3.dynamics.com     | [Entra ID Group] | uat        |
+| Release     | Release                 | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc-crm-release.crm3.dynamics.com | [Entra ID Group] | release    |
+| Prod        | Production              | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc.crm3.dynamics.com             | [Entra ID Group] | main       |
 
 ### 11.5 Managed Environments
 
