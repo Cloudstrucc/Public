@@ -21,6 +21,8 @@ $webTemplateHeader = "CS-header"
 $webTemplateFooter = "CS-footer"
 $homeContentPageEN = "1a360aba-a1d2-4150-b572-7993e70d9a1a"
 $homeContentPageFR = "64ae8011-d214-ef11-9f8a-000d3af43335"
+$englishLanguageCode = 1033  # Example language code for English
+$frenchLanguageCode = 1036  # Example language code for French
 
 ####################################
 
@@ -80,6 +82,17 @@ $config = if ($null -ne $jsonConfig) {
     }
 }
 
+
+function GetPublishingStateID {
+    $publishedStateName = "Published"   
+    $filter += "mspp_name eq '$publishedStateName'"
+    $publishingStateQuery = $apiUrl + "mspp_publishingstates?" + "`$filter=$filter"
+    Write-Host $publishingStateQuery
+    $publishingState = GetRecordAPI -url $publishingStateQuery
+    $publishingStateId = $publishingState.value[0].mspp_publishingstateid
+    return $publishingStateId
+}
+
 # Set the variables based on the configuration
 $clientId = $config.clientId
 $tenantId = $config.tenantId
@@ -89,7 +102,7 @@ $redirectUri = $config.redirectUri
 $tokenEndpoint = "$authority/oauth2/v2.0/token"
 $websiteId = $config.websiteId
 $pageTemplateId = $config.pageTemplateId
-$publishingStateId = $config.publishingStateId
+$publishingStateId = GetPublishingStateID # $config.publishingStateId
 $homePageId = $config.homePageId
 $secret = $config.clientSecret
 $blobAddress = $config.blobAddress
@@ -98,6 +111,8 @@ $frenchLanguageId = $config.FRWebsiteLanguageId
 $webFileFlowURL = $config.FlowURL
 
 
+
+GetPublishingStateID
 
 
 # Prepare the body for the token request
@@ -654,7 +669,8 @@ function RunPortalTemplateInstall {
     UpdateBaselineStyles
 }
 
-RunPortalTemplateInstall
+# RunPortalTemplateInstall
+
 
 
 ## END SETUP POST THEME INSTALL ##
