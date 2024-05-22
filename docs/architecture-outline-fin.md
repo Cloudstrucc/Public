@@ -323,17 +323,17 @@ A table listing all environments with details such as name, purpose, B2C app reg
 ### 11.5 Managed Environments
 
 Managed Environments is a set of premium features that you can turn on in an environment to make it easier to manage at scale. When you turn on Managed Environments, you can use the premium governance and security features of Power Platform to get more visibility and control with less effort.
-Managed Environments isn’t a separate license. It’s an entitlement that’s included in the standalone Power Platform licenses. Managed Environments is turned off by default. When you turn it on, you unlock several security and compliance features, such as:
+Managed Environments isn’t a separate license. It’s an entitlement that’s included in the standalone Power Platform licenses. Managed Environments is turned off by default. Managed environments have been turned on by default thereby activating the following compliance features:
 
 - Limit sharing
-- Data policies
+- **Data policies**
 - IP firewall
-- IP cookie binding
+- **IP cookie binding**
 - Customer-managed keys
-- Lockbox
-- Data loss prevention policies for desktop flows
-- Extended backups
-- Solution checker enforcement
+- **Lockbox**
+- **Data loss prevention policies for desktop flows**
+- **Extended backups**
+- **Solution checker enforcement**
 
 ### 11.6 Environment Groups
 
@@ -351,6 +351,24 @@ You should have a strategy for how to create and manage your Power Platform envi
 - Minimizing the use of the default environment.
 - Using environment groups and rules to apply settings to many environments at once.
 - Using pipelines to automate and control the promotion of resources from development to other environments.
+
+### Data Loss Prevention (DLP) Configuration
+
+The following connectors have been assigned to the "business" category. This is a subset of over 1000 connectors that are blocked by default. The business connectors are allowed since these provide the necessary functionality required to automate business processes. All business connectors are built and maintained by Microsoft (thus are first party connectors). 
+
+
+| Name                                         |
+| -------------------------------------------- |
+| Power Automate Management                    |
+| Office 365 Outlook                           |
+| Office 365 Users                             |
+| Power Apps for Makers                        |
+| Power Automate for Admins                    |
+| Power Apps for Admins                        |
+| Microsoft Teams                              |
+| Microsoft Dataverse                          |
+| Power Platform for Admins                    |
+| HTTP with Microsoft Entra ID (preauthorized) |
 
 ## 12. SDLC / ALM Using Azure DevOps
 

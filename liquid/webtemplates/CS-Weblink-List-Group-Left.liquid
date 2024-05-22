@@ -17,7 +17,15 @@
                             <a style="{% if link.url == request.path %} background-color: #243850; color: #fff; {% endif %}"  href="{{ link.url | h }}{{ request.query }}" class="list-group-item {% if link.url == request.path %} active hover {% endif %}">
                               {{ link.name | escape }}
                             </a>
-                        </li>               
+                            {% for sublink in link.weblinks %}  
+                              <li>                                                            
+                                  <a style="{% if sublink.url == request.path %} background-color: #243850; color: #fff; {% endif %}"  href="{{ sublink.url | h }}{{ request.query }}" class="list-group-item {% if sublink.url == request.path %} active hover {% endif %}">
+                                    {{ sublink.name | escape }}
+                                  </a>
+                              </li>               
+                            {% endfor %}   
+                        </li>  
+                                      
                     {% endfor %}                                         
                     </ul>
                 </section>
