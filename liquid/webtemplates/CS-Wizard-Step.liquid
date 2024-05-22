@@ -3,7 +3,7 @@
 {% block navigation %} 
 
 {% assign current_page = current_page | default: page %}
-{% assign parent_page = current_page.mspp_parentpageid %}
+{% assign parent_page = current_page.parent %}
 
 {% if parent_page %}
 {% assign weblink_set_name = parent_page.name %}
