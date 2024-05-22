@@ -36,7 +36,7 @@
           </nav>
           {% editable weblink_set %}      
       {% else %}
-        <div class="panel panel-default {% if weblink_set.editable %}xrm-entity xrm-editable-adx_weblinkset{% endif %}">
+        <div class="panel panel-default {% if weblink_set.editable %}xrm-entity xrm-editable-mspp_weblinkset{% endif %}">
           <div class="panel-heading">
             <div class="panel-title"><span class="fa fa-bars" aria-hidden="true" style="font-size: 14px;"></span>&nbsp; {{ snippets["Related Links Navigation Heading"] | default:"Related Links" | h }}</div>
           </div>
@@ -60,33 +60,3 @@
    {% endif %}
   {% endif %}
   
-  {% comment %}
-  <div class="container">
-     <div class="row">
-          <div class="col-md-3">
-              {% assign wizard = weblinks["Risk Questionnaire Report"] %}
-              {% if wizard %}
-              <ol class="usa-process-list" >
-              {% for link in wizard.weblinks %}
-              
-                <li class="usa-process-list__item padding-bottom-4 {% if request.params.url == link.url %}active{% endif %}">
-                  <a class="usa-process-list__heading font-sans-xl line-height-sans-1 {% if request.params.url == link.url %}active{% endif %}" style='font-size:16px' href="{{ link.url | escape }}{% if idparam %}?id={{idparam}}{% endif %}">
-                   {{ link.name | escape }}
-                </li>
-  
-              {% endfor %} 
-              </ol>
-  
-              {% endif %}
-              
-          </div>
-  
-          <div class="col-md-9">
-  
-              {% assign id = entities['adx_webpage'][page.id].adx_entityform.id %}
-              {% entityform id: id %}
-            
-          </div>
-    </div>
-  </div>
-  {% endcomment %}

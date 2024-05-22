@@ -3,12 +3,12 @@
 {% block navigation %} 
 
 {% assign current_page = current_page | default: page %}
-{% assign parent_page = current_page.adx_parentpageid %}
+{% assign parent_page = current_page.mspp_parentpageid %}
 
 {% if parent_page %}
 {% assign weblink_set_name = parent_page.name %}
   
-      {% assign weblink_set_name = page.adx_navigation.name %}
+      {% assign weblink_set_name = page.mspp_navigation.name %}
       {% include "CS-Weblink-List-Group-Left" weblink_set_name: parent_page.name showdescriptions: true %}
   
 {% endif %}
@@ -19,11 +19,11 @@
   {% include 'CS-Validation-Wizard-Step'%}
   {% include 'Page Copy' %}   
 
-  {% if page.adx_entitylist %}
-    {% include 'entity_list' key: page.adx_entitylist.id %}
+  {% if page.mspp_entitylist %}
+    {% include 'entity_list' key: page.mspp_entitylist.id %}
   {% endif %}
   
-  {% if page.adx_entityform %}
+  {% if page.mspp_entityform %}
   <style>
   h2 {
     display: block;
@@ -36,7 +36,7 @@
   }
 </style>
     
-    {% entityform id: page.adx_entityform.id %}
+    {% entityform id: page.mspp_entityform.id %}
 
  <script>
        
@@ -47,8 +47,8 @@
  
   {% endif %}
   
-  {% if page.adx_webform %}
-    {% webform id: page.adx_webform.id %}
+  {% if page.mspp_webform %}
+    {% webform id: page.mspp_webform.id %}
   {% endif %}
 
 {% endblock %}
