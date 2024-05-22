@@ -10,7 +10,7 @@ The primary objectives include improving data management, automating workflows, 
 
 ## Scope of the Implementation
 
-The implementation covers the deployment and configuration of Dynamics 365 Customer Service Application installed in a Dataverse environment, Power Automate for workflow automation, and Model Driven Apps for custom applications. Additionally, it includes integrations with Azure services and compliance with FINTRAC (and Federal Government)) security standards. 
+The implementation covers the deployment and configuration of Dynamics 365 Customer Service Application installed in a Dataverse environment, Power Automate for workflow automation, and Model Driven Apps for custom applications. Additionally, it includes integrations with Azure services and compliance with FINTRAC (and Federal Government)) security standards.
 
 **Release 1: MVP**
 
@@ -321,15 +321,13 @@ A table listing all environments with details such as name, purpose, B2C app reg
 | ----------- | ----------------------- | ----------------------- | ------------------ | ------------------ | -------------------- | ------------------------------------------ | ---------------- | ---------- |
 | Dev         | Development             | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc-crm-dev.crm3.dynamics.com     | [Entra ID Group] | dev        |
 | Staging     | Staging                 | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc-crm-staging.crm3.dynamics.com | [Entra ID Group] | staging    |
-| QA          | QA                      | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc-crm-qa.crm3.dynamics.com      | [Entra ID Group] | qa         |
 | UAT         | User Acceptance Testing | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc-crm-uat.crm3.dynamics.com     | [Entra ID Group] | uat        |
 | Release     | Release                 | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc-crm-release.crm3.dynamics.com | [Entra ID Group] | release    |
 | Prod        | Production              | [B2C App ID]            | [SharePoint URL]   | [Blob Storage URL] | [Power Pages URL]    | https://ftnc.crm3.dynamics.com             | [Entra ID Group] | main       |
 
 ### 11.5 Managed Environments
 
-Managed Environments is a set of premium features that you can turn on in an environment to make it easier to manage at scale. When you turn on Managed Environments, you can use the premium governance and security features of Power Platform to get more visibility and control with less effort.
-Managed Environments isn’t a separate license. It’s an entitlement that’s included in the standalone Power Platform licenses. Managed Environments is turned off by default. Managed environments have been turned on by default thereby activating the following compliance features:
+Managed Environments is a set of premium features that you can turn on in an environment to make it easier to manage at scale. The agency's Power Platform tenant has a policy to activate managed environments for all sandbox and production Dataverse environments including the environments listed in the environment table. The managed environment governance and security features applied to all environments are listed below.
 
 #### Limit sharing
 
@@ -337,26 +335,13 @@ Managed Environments isn’t a separate license. It’s an entitlement that’s 
 
 #### **IP firewall**
 
-The IP firewall helps to protect the agency's organizational data by limiting
-user access to Microsoft Dataverse from only allowed IP locations. The
-IP firewall analyzes the IP address of each request in real time. This is applied to sandbox, trial and developer environments.   When a request is made to Dataverse, the request IP address is evaluated
- in real time against the IP ranges configured for the Power Platform
-environment. If the IP address is in the allowed ranges, the request is
-allowed. If the IP address is outside the IP ranges configured for the
-environment, the IP firewall denies the request with an error message: *The request you are trying to make is rejected as access to your IP is blocked. Contact your administrator for more information*
+The IP firewall helps to protect the agency's organizational data by limiting user access to Microsoft Dataverse from only allowed IP locations. The IP firewall analyzes the IP address of each request in real time. This is applied to sandbox, trial and developer environments.   When a request is made to Dataverse, the request IP address is evaluated in real time against the IP ranges configured for the Power Platform environment. If the IP address is in the allowed ranges, the request is allowed. If the IP address is outside the IP ranges configured for the environment, the IP firewall denies the request with an error message: *The request you are trying to make is rejected as access to your IP is blocked. Contact your administrator for more information*
 
 ![1716359663042](image/architecture-outline-fin/1716359663042.png)
 
 #### **IP cookie binding**
 
-Prevent session hijacking exploits in Dataverse with IP address-based
-cookie binding. Let's say that a malicious user copies a valid session
-cookie from an authorized computer that has cookie IP binding enabled.
-The user then tries to use the cookie on a different computer to gain
-unauthorized access to Dataverse. In real time, Dataverse compares the
-IP address of the cookie's origin against the IP address of the computer
- making the request. If the two are different, the attempt is blocked,
-and an error message is shown.
+Prevent session hijacking exploits in Dataverse with IP address-based cookie binding. Let's say that a malicious user copies a valid session cookie from an authorized computer that has cookie IP binding enabled. The user then tries to use the cookie on a different computer to gain unauthorized access to Dataverse. In real time, Dataverse compares the IP address of the cookie's origin against the IP address of the computer making the request. If the two are different, the attempt is blocked, and an error message is shown.
 
 #### Customer-managed keys
 
