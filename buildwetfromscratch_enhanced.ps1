@@ -19,8 +19,6 @@ $basePathTemplates = $basePath + "liquid\webtemplates"
 $pageTemplateNameNewHome = "CS-Home-WET"
 $webTemplateHeader = "CS-header"
 $webTemplateFooter = "CS-footer"
-$homeContentPageEN = "1a360aba-a1d2-4150-b572-7993e70d9a1a"
-$homeContentPageFR = "64ae8011-d214-ef11-9f8a-000d3af43335"
 $englishLanguageCode = 1033  # Example language code for English
 $frenchLanguageCode = 1036  # Example language code for French
 
@@ -43,12 +41,7 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
     `"crmInstance`": `"<crm instance>`",
     `"redirectUri`": `"https://login.onmicrosoft.com`",
     `"websiteId`": `"<website id>`",
-    `"pageTemplateId`": `"<page template id>`",
-    `"publishingStateId`": `"<publishing state id>`",
-    `"homePageId`": `"<home page's webpage id value>`",   
     `"blobAddress`" = `"<blob address>`"
-    `"ENWebsiteLanguageId`" = `"<lang id EN>`"
-    `"FRWebsiteLanguageId`" = `"<lang id FR>`"
     `"FlowURL`" = `"<flow URL>`"
 }"
     # Exit the script
@@ -62,9 +55,8 @@ $defaultConfig = @{
     "crmInstance" = "<crm instance>"
     "redirectUri" = "https://login.onmicrosoft.com"
     "websiteId" = "<website id>"
-    "pageTemplateId" = "<page template id>"
-    "publishingStateId" = "<publishing state id>"
-    "homePageId" = "<home page's webpage id value>"
+    "blobAddress" = "<blob address>"
+    "FlowURL" = "<flow url>"
 }
 
 # Use user-provided JSON or default values
@@ -83,16 +75,6 @@ $config = if ($null -ne $jsonConfig) {
 }
 
 
-function GetPublishingStateID {
-    $publishedStateName = "Published"   
-    $filter += "mspp_name eq '$publishedStateName'"
-    $publishingStateQuery = $apiUrl + "mspp_publishingstates?" + "`$filter=$filter"
-    Write-Host $publishingStateQuery
-    $publishingState = GetRecordAPI -url $publishingStateQuery
-    $publishingStateId = $publishingState.value[0].mspp_publishingstateid
-    return $publishingStateId
-}
-
 # Set the variables based on the configuration
 $clientId = $config.clientId
 $tenantId = $config.tenantId
@@ -101,19 +83,9 @@ $resource = "https://$($config.crmInstance).api.crm3.dynamics.com"
 $redirectUri = $config.redirectUri
 $tokenEndpoint = "$authority/oauth2/v2.0/token"
 $websiteId = $config.websiteId
-$pageTemplateId = $config.pageTemplateId
-$publishingStateId = GetPublishingStateID # $config.publishingStateId
-$homePageId = $config.homePageId
 $secret = $config.clientSecret
 $blobAddress = $config.blobAddress
-$englishLanguageId = $config.ENWebsiteLanguageId 
-$frenchLanguageId = $config.FRWebsiteLanguageId
 $webFileFlowURL = $config.FlowURL
-
-
-
-GetPublishingStateID
-
 
 # Prepare the body for the token request
 $body = @{
@@ -174,6 +146,105 @@ function GetRecordAPI {
     $response = Invoke-RestMethod -Uri $url -Method Get -Headers $headers
     return $response
 }
+
+
+function GetPageTemplateID {
+
+    $filter += "_mspp_websiteid_value eq '$websiteId' and mspp_name eq 'Access Denied'"
+    # Get Website Language IDs by Language Code
+    $pageTemplateQuery = $apiUrl + "mspp_pagetemplates?" + "`$filter=$filter"
+    Write-Host $pageTemplateQuery
+    $pageTemplate = GetRecordAPI -url $pageTemplateQuery
+    $pageTemplateId = $pageTemplate.value[0].mspp_pagetemplateid
+    Write-Host "Page Template ID: $pageTemplateId"
+    return $pageTemplateId
+}
+
+$pageTemplateId = GetPageTemplateID
+
+function GetPublishingStateID {
+    $publishedStateName = "Published"   
+    $filter += "mspp_name eq '$publishedStateName'"
+    $publishingStateQuery = $apiUrl + "mspp_publishingstates?" + "`$filter=$filter"
+    Write-Host $publishingStateQuery
+    $publishingState = GetRecordAPI -url $publishingStateQuery
+    $publishingStateId = $publishingState.value[0].mspp_publishingstateid
+    return $publishingStateId
+}
+
+$publishingStateId = GetPublishingStateID # $config.publishingStateId
+
+function GetPublishingStateID {
+    $publishedStateName = "Published"   
+    $filter += "mspp_name eq '$publishedStateName'"
+    $publishingStateQuery = $apiUrl + "mspp_publishingstates?" + "`$filter=$filter"
+    Write-Host $publishingStateQuery
+    $publishingState = GetRecordAPI -url $publishingStateQuery
+    $publishingStateId = $publishingState.value[0].mspp_publishingstateid
+    return $publishingStateId
+}
+$publishingStateId = GetPublishingStateID
+
+function GetEnglishLanguageID {
+
+    $filter += "mspp_lcid eq $englishLanguageCode"
+    # Get Website Language IDs by Language Code
+    $languageQuery = $apiUrl + "mspp_websitelanguages?" + "`$filter=$filter"
+    Write-Host $languageQuery
+    $englishLanguage = GetRecordAPI -url $languageQuery
+    $englishLanguageId = $englishLanguage.value[0].mspp_websitelanguageid
+    Write-Host "English Language ID: $englishLanguageId"
+    return $englishLanguageId
+}
+$englishLanguageId = GetEnglishLanguageID
+function GetFrenchLanguageID {
+    $filter += "mspp_lcid eq $frenchLanguageCode"
+    # Get Website Language IDs by Language Code
+    $languageQuery = $apiUrl + "mspp_websitelanguages?" + "`$filter=$filter"
+    $frenchLanguage = GetRecordAPI -url $languageQuery
+    $frenchLanguageId = $frenchLanguage.value[0].mspp_websitelanguageid
+    Write-Host "English Language ID: $frenchLanguageId"
+    return $frenchLanguageId
+}
+$frenchLanguageId = GetFrenchLanguageID
+
+function GetRootHomePageID {
+
+    $filter += "_mspp_websiteid_value eq '$websiteId' and mspp_isroot eq true"
+    # Get Website Language IDs by Language Code
+    $homePageQuery = $apiUrl + "mspp_webpages?" + "`$filter=$filter"
+    $homePage = GetRecordAPI -url $homePageQuery
+    $homePageId = $homePage.value[0].mspp_webpageid
+    Write-Host "Home Web Page ID: $homePageId"
+    return $homePageId
+}
+$homePageId = GetRootHomePageID
+
+function GetEnglishHomePageID {
+
+    $filter += "_mspp_websiteid_value eq '$websiteId' and mspp_name eq 'Home' and _mspp_webpagelanguageid_value eq '$englishLanguageId'"
+    # Get Website Language IDs by Language Code
+    $homePageQuery = $apiUrl + "mspp_webpages?" + "`$filter=$filter"
+    Write-Host $homePageQuery
+    $homePage = GetRecordAPI -url $homePageQuery
+    $homePageEnId = $homePage.value[0].mspp_webpageid
+    Write-Host "EN Home Web Page ID: $homePageEnId"
+    return $homePageEnId
+}
+$homeContentPageEN = GetEnglishHomePageID
+
+function GetFrenchHomePageID {
+
+    $filter += "_mspp_websiteid_value eq '$websiteId' and mspp_name eq 'Home' and _mspp_webpagelanguageid_value eq '$frenchLanguageId'"
+    # Get Website Language IDs by Language Code
+    $homePageQuery = $apiUrl + "mspp_webpages?" + "`$filter=$filter"
+    $homePage = GetRecordAPI -url $homePageQuery
+    $homePageFrId = $homePage.value[0].mspp_webpageid
+    Write-Host "EN Home Web Page ID: $homePageFrId"
+    return $homePageFrId
+}
+$homeContentPageFR = GetFrenchHomePageID
+
 function UpdateBaselineStyles {
     CreateWebFile -filePath $portalBasicThemePath -parentPageId $homePageId
     CreateWebFile -filePath $themePath -parentPageId $homePageId
@@ -669,7 +740,7 @@ function RunPortalTemplateInstall {
     UpdateBaselineStyles
 }
 
-RunPortalTemplateInstall
+# RunPortalTemplateInstall
 
 
 
