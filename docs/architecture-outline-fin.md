@@ -32,6 +32,10 @@ This section dives into the specific components of the Power Platform and Azure 
 
 #### Power Platform
 
+The Power Platform security model lets users do the work they need to do with the least amount of friction, while still protecting the data and services. It operates with multiple layers of defense, as shown in the following diagram. This section will describe how each layer is configured in the agency's tenant.
+
+![1716361089247](image/architecture-outline-fin/1716361089247.png)
+
 ##### **Tenant settings in the Power Platform**
 
 Tenant settings provide administrators with the ability to manage and control various aspects of the Power Platform environment within their organization. These settings are critical for ensuring security, compliance, and efficient management of resources and user access. Here is an overview of what tenant settings typically encompass:
