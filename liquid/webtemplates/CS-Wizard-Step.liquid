@@ -5,13 +5,12 @@
 {% assign current_page = current_page | default: page %}
 {% assign parent_page = current_page.adx_parentpageid %}
 
-{% if parent_page %}
-{% assign weblink_set_name = parent_page.name %}
+
+
   
-      {% assign weblink_set_name = page.adx_navigation.name %}
-      {% include "CS-Weblink-List-Group-Left" weblink_set_name: parent_page.name showdescriptions: true %}
+      {% include "CS-Weblink-List-Group-Left" weblink_set_name: 'Profile Wizard Example' showdescriptions: true %}
   
-{% endif %}
+
 
 {% endblock %}
 
