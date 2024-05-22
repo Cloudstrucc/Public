@@ -26,6 +26,68 @@ This section dives into the specific components of the Power Platform and Azure 
 
 #### Power Platform
 
+##### **Tenant settings in the Power Platform**
+
+Tenant settings provide administrators with the ability to manage and control various aspects of the Power Platform environment within their organization. These settings are critical for ensuring security, compliance, and efficient management of resources and user access. Here is an overview of what tenant settings typically encompass:
+
+1. **Access and Permissions Management** :
+
+* Control who can create and manage different types of environments (developer, production, trial).
+* Assign specific roles and permissions to users and groups, ensuring that only authorized personnel have access to sensitive features and data.
+
+2. **Capacity and Resource Management** :
+
+* Manage and allocate add-on capacities such as storage and processing power to different environments.
+* View and control tenant capacity summaries, providing insights into resource usage and availability.
+
+3. **Data and Analytics** :
+
+* Enable or disable tenant-level analytics to monitor usage patterns and performance.
+* Configure data sharing settings for AI features, allowing Microsoft to use the data to improve machine learning models and services while ensuring compliance with privacy policies.
+
+4. **Environment and App Insights** :
+
+* Allow collection of insights for canvas apps, helping developers understand how their apps are being used and where improvements can be made.
+* Implement environment routing to automatically direct users to appropriate environments based on their roles and needs.
+
+5. **Security and Compliance** :
+
+* Enable features like Customer Lockbox to ensure that any data access by Microsoft support requires explicit approval from the customer, enhancing data security.
+* Configure settings for sharing feedback and data with Microsoft, controlling how much information is shared and for what purpose.
+
+5. **User and Support Management** :
+
+* Manage visibility of support requests within the organization, allowing designated users to view and manage support tickets.
+* Enable weekly digest emails for Managed Environments, keeping administrators informed about important updates and changes.
+
+###### Configured tenant settings (as of Q2 2024)
+
+| Name                                               | Description                                                                                                                    | On/Off |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------ |
+| Copilot in Power Apps (preview)                    | Enable Copilot preview features for people who make apps.                                                                      |        |
+| Copilot feedback                                   | When using Copilot in Power Apps, allow users to submit feedback to Microsoft.                                                 |        |
+| Copilot data collection                            | When using Copilot in Power Apps, allow users to share their prompts, questions, and requests with Microsoft.                  |        |
+| Environment routing (Preview)                      | Guide makers to specific environments based on defined rules.                                                                  |        |
+| Weekly digest                                      | Manage additional recipients for the weekly digest email for Managed Environments.                                             |        |
+| Canvas app insights                                | Allow people to collect insights for individual canvas apps.                                                                   |        |
+| Developer environment assignments                  | Control who can create and manage developer environments.                                                                      |        |
+| Tenant capacity summary view                       | Control who can view the tenant capacity summary.                                                                              |        |
+| Tenant licensing summary view                      | Control who can view the tenant licensing summary.                                                                             |        |
+| Auto-claim policies for Power Apps                 | Control where license auto-claim policies for Power Apps should be applied.                                                    |        |
+| Production environment assignments                 | Control who can create and manage production and sandbox environments.                                                         |        |
+| Trial environment assignments                      | Control who can create and manage trial environments.                                                                          |        |
+| Add-on capacity assignments                        | Control who can allocate add-on capacity to an environment.                                                                    |        |
+| Analytics                                          | Enable tenant level analytics.                                                                                                 |        |
+| Customer Lockbox                                   | Control Microsoft operator access to customer content.                                                                         |        |
+| Publish Copilots with AI features                  | Allow Copilots to publish bots with AI features enabled.                                                                       |        |
+| Desktop flow actions in DLP                        | Show or hide desktop flow action groups in data loss prevention (DLP) policies.                                                |        |
+| AI Builder credits                                 | Control use of unassigned AI Builder credits.                                                                                  |        |
+| Copilot help assistance in Power Automate via Bing | Allow the Copilot-enhanced help feature within Power Automate to enhance answers on product documentation through Bing Search. |        |
+| Support requests visibility                        | Show support requests to all users in the tenant.                                                                              |        |
+| Product Feedback                                   | Configure settings for product feedback.                                                                                       |        |
+
+###### Power Platform Application Types & Automation
+
 - **Power Pages**: Power Pages are used to create secure, accessible web portals that integrate with Azure B2C for authentication, ensuring user data protection and compliance with federal accessibility standards.
 - **Dataverse**: Dataverse serves as a centralized data storage solution that supports relational data management, advanced security, and integration with other Power Platform components. Additionally, it includes the Dynamics 365 Customer Service app to enhance customer service management.
   - **Dynamics 365 Customer Service App**: This application provides comprehensive customer service capabilities, including case management, client management, and activity tracking. It integrates seamlessly with Dataverse to offer a robust CRM system.
