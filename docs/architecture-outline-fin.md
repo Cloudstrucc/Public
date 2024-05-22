@@ -10,7 +10,11 @@ The primary objectives include improving data management, automating workflows, 
 
 ## Scope of the Implementation
 
-The implementation covers the deployment and configuration of Dynamics 365 Customer Service Application installed in a Dataverse environment, Power Automate for workflow automation, and Model Driven Apps for custom applications. Additionally, it includes integrations with Azure services and compliance with FINTRAC (and Federal Government)) security standards.
+The implementation covers the deployment and configuration of Dynamics 365 Customer Service Application installed in a Dataverse environment, Power Automate for workflow automation, and Model Driven Apps for custom applications. Additionally, it includes integrations with Azure services and compliance with FINTRAC (and Federal Government)) security standards. 
+
+**Release 1: MVP**
+
+This release will be scoped to implementation of the Dynamics Customer Service Application with the agency's Power Platform tenant. Integrations will include email synchronization with a shared mailbox and a API to retrieve organization information (GET requests only).
 
 ## 2. System Architecture
 
