@@ -62,29 +62,29 @@ Tenant settings provide administrators with the ability to manage and control va
 
 ###### Configured tenant settings (as of Q2 2024)
 
-| Name                                               | Description                                                                                                                    | On/Off |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------ |
-| Copilot in Power Apps (preview)                    | Enable Copilot preview features for people who make apps.                                                                      |        |
-| Copilot feedback                                   | When using Copilot in Power Apps, allow users to submit feedback to Microsoft.                                                 |        |
-| Copilot data collection                            | When using Copilot in Power Apps, allow users to share their prompts, questions, and requests with Microsoft.                  |        |
-| Environment routing (Preview)                      | Guide makers to specific environments based on defined rules.                                                                  |        |
-| Weekly digest                                      | Manage additional recipients for the weekly digest email for Managed Environments.                                             |        |
-| Canvas app insights                                | Allow people to collect insights for individual canvas apps.                                                                   |        |
-| Developer environment assignments                  | Control who can create and manage developer environments.                                                                      |        |
-| Tenant capacity summary view                       | Control who can view the tenant capacity summary.                                                                              |        |
-| Tenant licensing summary view                      | Control who can view the tenant licensing summary.                                                                             |        |
-| Auto-claim policies for Power Apps                 | Control where license auto-claim policies for Power Apps should be applied.                                                    |        |
-| Production environment assignments                 | Control who can create and manage production and sandbox environments.                                                         |        |
-| Trial environment assignments                      | Control who can create and manage trial environments.                                                                          |        |
-| Add-on capacity assignments                        | Control who can allocate add-on capacity to an environment.                                                                    |        |
-| Analytics                                          | Enable tenant level analytics.                                                                                                 |        |
-| Customer Lockbox                                   | Control Microsoft operator access to customer content.                                                                         |        |
-| Publish Copilots with AI features                  | Allow Copilots to publish bots with AI features enabled.                                                                       |        |
-| Desktop flow actions in DLP                        | Show or hide desktop flow action groups in data loss prevention (DLP) policies.                                                |        |
-| AI Builder credits                                 | Control use of unassigned AI Builder credits.                                                                                  |        |
-| Copilot help assistance in Power Automate via Bing | Allow the Copilot-enhanced help feature within Power Automate to enhance answers on product documentation through Bing Search. |        |
-| Support requests visibility                        | Show support requests to all users in the tenant.                                                                              |        |
-| Product Feedback                                   | Configure settings for product feedback.                                                                                       |        |
+| Name                                               | Description                                                                                                                    | Setting detail |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | -------------- |
+| Copilot in Power Apps (preview)                    | Enable Copilot preview features for people who make apps.                                                                      |                |
+| Copilot feedback                                   | When using Copilot in Power Apps, allow users to submit feedback to Microsoft.                                                 |                |
+| Copilot data collection                            | When using Copilot in Power Apps, allow users to share their prompts, questions, and requests with Microsoft.                  |                |
+| Environment routing (Preview)                      | Guide makers to specific environments based on defined rules.                                                                  |                |
+| Weekly digest                                      | Manage additional recipients for the weekly digest email for Managed Environments.                                             |                |
+| Canvas app insights                                | Allow people to collect insights for individual canvas apps.                                                                   |                |
+| Developer environment assignments                  | Control who can create and manage developer environments.                                                                      |                |
+| Tenant capacity summary view                       | Control who can view the tenant capacity summary.                                                                              |                |
+| Tenant licensing summary view                      | Control who can view the tenant licensing summary.                                                                             |                |
+| Auto-claim policies for Power Apps                 | Control where license auto-claim policies for Power Apps should be applied.                                                    |                |
+| Production environment assignments                 | Control who can create and manage production and sandbox environments.                                                         |                |
+| Trial environment assignments                      | Control who can create and manage trial environments.                                                                          |                |
+| Add-on capacity assignments                        | Control who can allocate add-on capacity to an environment.                                                                    |                |
+| Analytics                                          | Enable tenant level analytics.                                                                                                 |                |
+| Customer Lockbox                                   | Control Microsoft operator access to customer content.                                                                         |                |
+| Publish Copilots with AI features                  | Allow Copilots to publish bots with AI features enabled.                                                                       |                |
+| Desktop flow actions in DLP                        | Show or hide desktop flow action groups in data loss prevention (DLP) policies.                                                |                |
+| AI Builder credits                                 | Control use of unassigned AI Builder credits.                                                                                  |                |
+| Copilot help assistance in Power Automate via Bing | Allow the Copilot-enhanced help feature within Power Automate to enhance answers on product documentation through Bing Search. |                |
+| Support requests visibility                        | Show support requests to all users in the tenant.                                                                              |                |
+| Product Feedback                                   | Configure settings for product feedback.                                                                                       |                |
 
 ###### Power Platform Application Types & Automation
 
