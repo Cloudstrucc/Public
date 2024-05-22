@@ -331,15 +331,42 @@ A table listing all environments with details such as name, purpose, B2C app reg
 Managed Environments is a set of premium features that you can turn on in an environment to make it easier to manage at scale. When you turn on Managed Environments, you can use the premium governance and security features of Power Platform to get more visibility and control with less effort.
 Managed Environments isn’t a separate license. It’s an entitlement that’s included in the standalone Power Platform licenses. Managed Environments is turned off by default. Managed environments have been turned on by default thereby activating the following compliance features:
 
-- Limit sharing
-- **Data policies**
-- IP firewall
-- **IP cookie binding**
-- Customer-managed keys
-- **Lockbox**
-- **Data loss prevention policies for desktop flows**
-- **Extended backups**
-- **Solution checker enforcement**
+#### Limit sharing
+
+#### **Data policies**
+
+#### **IP firewall**
+
+The IP firewall helps to protect the agency's organizational data by limiting
+user access to Microsoft Dataverse from only allowed IP locations. The
+IP firewall analyzes the IP address of each request in real time. This is applied to sandbox, trial and developer environments.   When a request is made to Dataverse, the request IP address is evaluated
+ in real time against the IP ranges configured for the Power Platform
+environment. If the IP address is in the allowed ranges, the request is
+allowed. If the IP address is outside the IP ranges configured for the
+environment, the IP firewall denies the request with an error message: *The request you are trying to make is rejected as access to your IP is blocked. Contact your administrator for more information*
+
+![1716359663042](image/architecture-outline-fin/1716359663042.png)
+
+#### **IP cookie binding**
+
+Prevent session hijacking exploits in Dataverse with IP address-based
+cookie binding. Let's say that a malicious user copies a valid session
+cookie from an authorized computer that has cookie IP binding enabled.
+The user then tries to use the cookie on a different computer to gain
+unauthorized access to Dataverse. In real time, Dataverse compares the
+IP address of the cookie's origin against the IP address of the computer
+ making the request. If the two are different, the attempt is blocked,
+and an error message is shown.
+
+#### Customer-managed keys
+
+#### **Lockbox**
+
+#### **Data loss prevention policies for desktop flows**
+
+#### **Extended backups**
+
+#### **Solution checker enforcement**
 
 ### 11.6 Environment Groups
 
