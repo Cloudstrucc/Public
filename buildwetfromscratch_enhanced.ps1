@@ -669,7 +669,7 @@ function RunPortalTemplateInstall {
     UpdateBaselineStyles
 }
 
-# RunPortalTemplateInstall
+RunPortalTemplateInstall
 
 
 
