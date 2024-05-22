@@ -356,8 +356,7 @@ You should have a strategy for how to create and manage your Power Platform envi
 
 ### Data Loss Prevention (DLP) Configuration
 
-The following connectors have been assigned to the "business" category. This is a subset of over 1000 connectors that are blocked by default. The business connectors are allowed since these provide the necessary functionality required to automate business processes. All business connectors are built and maintained by Microsoft (thus are first party connectors). 
-
+The following connectors have been assigned to the "business" category. This is a subset of over 1000 connectors that are blocked by default. The business connectors are allowed since these provide the necessary functionality required to automate business processes. All business connectors are built and maintained by Microsoft (thus are first party connectors).
 
 | Name                                         |
 | -------------------------------------------- |
