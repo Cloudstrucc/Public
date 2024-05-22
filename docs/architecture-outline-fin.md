@@ -20,6 +20,8 @@ This section provides an overview of the system architecture, highlighting the i
 
 The architecture diagram illustrates the integration of Power Platform components with Azure services. It shows how Power Pages, Dataverse, Power Automate, and Power Apps interact with Azure B2C for authentication, Azure Blob Storage for data storage, SharePoint online for attachments, and a REST API for retrieving organization data (reporting entities).
 
+![1716357071447](image/architecture-outline-fin/1716357071447.png)
+
 ### 2.2 Detailed Architecture Components
 
 This section dives into the specific components of the Power Platform and Azure services, explaining their roles and how they integrate to form a comprehensive solution.
@@ -377,6 +379,8 @@ This section outlines the software development lifecycle (SDLC) and application 
 ### 12.1 Azure DevOps Overview
 
 Azure DevOps provides tools for managing the Software Development Lifecycle (SDLC) and Application Lifecycle Management (ALM). It integrates with Power Platform to facilitate version control, build automation, and continuous integration and deployment (CI/CD).
+
+![1716357143016](image/architecture-outline-fin/1716357143016.png)
 
 ### 12.2 GIT Repositories
 
