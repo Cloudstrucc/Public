@@ -8,9 +8,9 @@
 
 $basePath = "C:\Users\Fred\source\repos\pub\Public\"
 $basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
-$portalBasicThemePath = $basePath + "portalbasictheme.css"
-$themePath = $basePath + "theme.css"
-$bootstrapPath = $basePath + "bootstrap.min.css"
+$portalBasicThemePath = $basePath + "portalbasictheme(6).css"
+$themePath = $basePath + "theme(5).css"
+$bootstrapPath = $basePath + "bootstrap.min(3).css"
 $faviconPath = $basePath + "favicon.ico"
 $zipFilePath = "C:\themes-dist-15.0.0-gcweb.zip"
 $extractionPath = $basePath + "files\" 
@@ -485,7 +485,7 @@ function CreateWebTemplate {
             } | ConvertTo-Json
             $webtresponse = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $webTemplatePayloadUpdate -Headers $updateHeaders -ContentType "application/json; charset=utf-8;"
             # -ContentType "application/json; charset=utf-8"
-            if ($webtresponse -ne $null) {
+            if ($null -ne $webtresponse) {
                 Write-Host "mspp_webtemplate UPDATED successfully with ID: $($response.mspp_webtemplateid)"
             } else {
                 Write-Host "Failed to UPDATE mspp_webtemplate"
