@@ -210,7 +210,7 @@ $frenchLanguageId = GetFrenchLanguageID
 
 function GetRootHomePageID {
 
-    $filter += "_mspp_websiteid_value eq '$websiteId' and mspp_isroot eq true"
+    $filter += "_mspp_websiteid_value eq '$websiteId' and mspp_isroot eq true and mspp_name eq Home"
     # Get Website Language IDs by Language Code
     $homePageQuery = $apiUrl + "mspp_webpages?" + "`$filter=$filter"
     $homePage = GetRecordAPI -url $homePageQuery
