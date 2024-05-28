@@ -566,14 +566,15 @@ function CreateSnippets {
 
         # Check if the snippet already exists
         # $filter = "mspp_name eq '$snippetName' and _contentsnippetlanguageid_value eq $englishLanguageId"
-        $filter = "(mspp_name eq '$snippetName' and _mspp_contentsnippetlanguageid_value eq $englishLanguageId) or (mspp_name eq '$snippetName' and _mspp_contentsnippetlanguageid_value eq $frenchLanguageId)"
+        $filterEN = "(mspp_name eq '$snippetName' and _mspp_contentsnippetlanguageid_value eq $englishLanguageId)"
+        $filterFR = "(mspp_name eq '$snippetName' and _mspp_contentsnippetlanguageid_value eq $frenchLanguageId)"
 
-        $checkSnippetExists = $apiUrl + "mspp_contentsnippets?" + "`$filter=$filter"
-        $existingSnippets = Invoke-RestMethod -Uri $checkSnippetExists -Method Get -Headers $headers -ContentType "application/json; charset=utf-8"
+        $checkENSnippetExists = $apiUrl + "mspp_contentsnippets?" + "`$filter=$filterEN"
+        $existingENSnippets = Invoke-RestMethod -Uri $checkENSnippetExists -Method Get -Headers $headers -ContentType "application/json; charset=utf-8"
 
-        if ($existingSnippets.value.Count -gt 0) {
+        if ($existingENSnippets.value.Count -gt 0) {
             Write-Host "Snippet already exists: $snippetName"
-            $existingSnippet = $existingSnippets.value[0]  # Access first item in the array
+            $existingSnippet = $existingENSnippets.value[0]  # Access first item in the array
 
             # Check if 'mspp_contentsnippetid' property exists in the existing snippet
             if ($existingSnippet.PSObject.Properties["mspp_contentsnippetid"]) {
@@ -583,13 +584,48 @@ function CreateSnippets {
                 # Perform PATCH request to update the snippet
                 $snippetResponse = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $snippetPayloadEnglish -Headers $updateHeaders -ContentType "application/json; charset=utf-8"
                  # Perform PATCH request to update the snippet
-                 $snippetResponseFR = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $snippetPayloadFrench -Headers $updateHeaders -ContentType "application/json; charset=utf-8"
+                
 
                 if ($null -ne $snippetResponse) {
                     Write-Host "Snippet UPDATED successfully with ID: $($existingSnippet.mspp_contentsnippetid)"
                 } else {
                     Write-Host "Failed to UPDATE snippet"
                 }
+                
+            }
+        } else {
+            # Make the request to create the snippet record
+            $snippetResponse = Invoke-RestMethod -Uri ($apiUrl + "mspp_contentsnippets") -Method Post -Body $snippetPayloadEnglish -Headers $headers -ContentType "application/json; charset=utf-8"
+
+            $snippetResponseFR = Invoke-RestMethod -Uri ($apiUrl + "mspp_contentsnippets") -Method Post -Body $snippetPayloadFrench -Headers $headers -ContentType "application/json; charset=utf-8"
+
+            # Check the response
+            if ($null -ne $snippetResponse) {
+                Write-Host "Snippet created successfully with ID: $($snippetResponse.mspp_contentsnippetid)"
+            } else {
+                Write-Host "Failed to create snippet"
+            }
+            # Check the response
+            if ($null -ne $snippetResponseFR) {
+                Write-Host "Snippet created successfully with ID: $($snippetResponse.mspp_contentsnippetid)"
+            } else {
+                Write-Host "Failed to create snippet"
+            }
+        }
+        $checkFRSnippetExists = $apiUrl + "mspp_contentsnippets?" + "`$filter=$filterFR"
+        $existingFRSnippets = Invoke-RestMethod -Uri $checkFRSnippetExists -Method Get -Headers $headers -ContentType "application/json; charset=utf-8"
+        if ($existingFRSnippets.value.Count -gt 0) {
+            Write-Host "Snippet already exists: $snippetName"
+            $existingSnippet = $existingFRSnippets.value[0]  # Access first item in the array
+
+            # Check if 'mspp_contentsnippetid' property exists in the existing snippet
+            if ($existingSnippet.PSObject.Properties["mspp_contentsnippetid"]) {
+                $updateUrl = $apiUrl + "mspp_contentsnippets(" + $existingSnippet.mspp_contentsnippetid + ")"
+               
+                 # Perform PATCH request to update the snippet
+                 $snippetResponseFR = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $snippetPayloadFrench -Headers $updateHeaders -ContentType "application/json; charset=utf-8"
+
+               
                 if ($null -ne $snippetResponseFR) {
                     Write-Host "Snippet UPDATED successfully with ID: $($existingSnippet.mspp_contentsnippetid)"
                 } else {
@@ -736,7 +772,7 @@ function RunPortalTemplateInstall {
     CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
     UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
-    WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId 
+    # WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId 
     UpdateBaselineStyles
 }
 
