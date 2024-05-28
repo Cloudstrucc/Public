@@ -6,6 +6,19 @@
 # GC WET RELEASES: https://github.com/wet-boew/GCWeb/releases
 #####################################
 
+#Dataverse environment
+# 1 Solution Installs
+#Languages Packs
+#System Settings -> email file size (100000), file restrictions (delete all, re-ad post script)
+# 2 Deploy website
+# 3 add the french website language
+#Set the connection paramemters in a JSON file (to run the script with a JSON config rather than manually)
+#Set the variables at the top of the buildwetfromscratch_enhanced.ps1 (to be updated)
+#(optional) Update the web templates (and add new ones if needed), (Optional) set the snippets values for each language in the snippets JSON.
+#Run the script 
+#Go to power pages site and press Sync
+#
+
 $basePath = "C:\Users\Fred\source\repos\pub\Public\"
 $basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
 $portalBasicThemePath = $basePath + "portalbasictheme(6).css"
@@ -20,7 +33,7 @@ $pageTemplateNameNewHome = "CS-Home-WET"
 $webTemplateHeader = "CS-header"
 $webTemplateFooter = "CS-footer"
 $englishLanguageCode = 1033  # Example language code for English
-$frenchLanguageCode = 1036  # Example language code for French
+$frenchLanguageCode = 1036  # Example language code for French #2052 for chinese
 
 ####################################
 
@@ -203,7 +216,7 @@ function GetFrenchLanguageID {
     $languageQuery = $apiUrl + "mspp_websitelanguages?" + "`$filter=$filter"
     $frenchLanguage = GetRecordAPI -url $languageQuery
     $frenchLanguageId = $frenchLanguage.value[0].mspp_websitelanguageid
-    Write-Host "English Language ID: $frenchLanguageId"
+    Write-Host "French Language ID: $frenchLanguageId"
     return $frenchLanguageId
 }
 $frenchLanguageId = GetFrenchLanguageID
@@ -240,7 +253,7 @@ function GetFrenchHomePageID {
     $homePageQuery = $apiUrl + "mspp_webpages?" + "`$filter=$filter"
     $homePage = GetRecordAPI -url $homePageQuery
     $homePageFrId = $homePage.value[0].mspp_webpageid
-    Write-Host "EN Home Web Page ID: $homePageFrId"
+    Write-Host "FR Home Web Page ID: $homePageFrId"
     return $homePageFrId
 }
 $homeContentPageFR = GetFrenchHomePageID
@@ -771,9 +784,9 @@ function RunPortalTemplateInstall {
     Write-Host $extractionPath          
     CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
-   # UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
-    # WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId 
-   # UpdateBaselineStyles
+   UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
+    WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId 
+   UpdateBaselineStyles
 }
 
 RunPortalTemplateInstall
