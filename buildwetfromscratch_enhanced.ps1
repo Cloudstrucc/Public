@@ -58,8 +58,11 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
     }" else {
         exit
     }
+        
+    }
     exit
 }
+
   
 
 

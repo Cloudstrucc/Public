@@ -1,14 +1,4 @@
-#  Exmmple JSON file
-# {
-#     "clientId": "`````",
-#     "tenantId": "````",
-#     "crmInstance": "cloudstrucc",
-#     "redirectUri": "https://login.onmicrosoft.com",
-#     "websiteId": "f1b61453-af8f-47f5-b169-d78ec29cc103",
-#     "clientSecret": "---",
-#     "blobAddress": "https://csenterprise.blob.core.windows.net/wet141/",
-#     "FlowURL": "https://prod-07.cana"
-# }
+
 
 $useJsonConfig = Read-Host "Do you want to provide a JSON configuration file? (Y/N/H) [H for Help]"
 $jsonConfig = $null
@@ -31,8 +21,11 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
     }" else {
         exit
     }
+        
+    }
     exit
 }
+   
   
 
 
