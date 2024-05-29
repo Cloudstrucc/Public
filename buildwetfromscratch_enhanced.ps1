@@ -21,9 +21,9 @@
 
 $basePath = "C:\Users\Fred\source\repos\pub\Public\"
 $basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
-$portalBasicThemePath = $basePath + "portalbasictheme(6).css"
-$themePath = $basePath + "theme(5).css"
-$bootstrapPath = $basePath + "bootstrap.min(3).css"
+$portalBasicThemePath = $basePath + "portalbasictheme.css"
+$themePath = $basePath + "theme.css"
+$bootstrapPath = $basePath + "bootstrap.min.css"
 $faviconPath = $basePath + "favicon.ico"
 $zipFilePath = "C:\themes-dist-15.0.0-gcweb.zip"
 $extractionPath = $basePath + "files\" 
@@ -784,9 +784,9 @@ function RunPortalTemplateInstall {
     Write-Host $extractionPath          
     CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
-   UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
+    UpdateHomePage -pageTemplateName $pageTemplateNameNewHome
     WriteHierarchy -path $($extractionPath + $themeRootFolderName) -parentPageId $homePageId 
-   UpdateBaselineStyles
+    UpdateBaselineStyles
 }
 
 RunPortalTemplateInstall
