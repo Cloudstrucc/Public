@@ -44,22 +44,24 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
     $jsonFilePath = Read-Host "Enter the path to the JSON configuration file"
     if (Test-Path -Path $jsonFilePath -PathType Leaf) {
         $jsonConfig = Get-Content $jsonFilePath | ConvertFrom-Json
+    } elseif ($useJsonConfig -eq "H" -or $useJsonConfig -eq "h") {
+        # Display a brief description of how the JSON object should be created
+        Write-Host "JSON Configuration File Format:"
+        Write-Host "{
+        `"clientId`": `"<client id>`",
+        `"tenantId`": `"<tenant id>`",
+        `"crmInstance`": `"<crm instance>`",
+        `"redirectUri`": `"https://login.onmicrosoft.com`",
+        `"websiteId`": `"<website id>`",
+        `"blobAddress`" = `"<blob address>`"
+        `"FlowURL`" = `"<flow URL>`"
+    }" else {
+        exit
     }
-} elseif ($useJsonConfig -eq "H" -or $useJsonConfig -eq "h") {
-    # Display a brief description of how the JSON object should be created
-    Write-Host "JSON Configuration File Format:"
-    Write-Host "{
-    `"clientId`": `"<client id>`",
-    `"tenantId`": `"<tenant id>`",
-    `"crmInstance`": `"<crm instance>`",
-    `"redirectUri`": `"https://login.onmicrosoft.com`",
-    `"websiteId`": `"<website id>`",
-    `"blobAddress`" = `"<blob address>`"
-    `"FlowURL`" = `"<flow URL>`"
-}"
-    # Exit the script
     exit
 }
+  
+
 
 # Define default values
 $defaultConfig = @{
