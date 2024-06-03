@@ -1,269 +1,230 @@
 #!/bin/bash
 
+# Update the breadcrumbs web template & the language toggle
+# GC WET RELEASES: https://github.com/wet-boew/GCWeb/releases
+
+# Dataverse environment
+# 1 Solution Installs
+# Languages Packs
+# System Settings -> email file size (100000), file restrictions (delete all, re-add post script)
+# 2 Deploy website
+# 3 add the french website language
+# Set the connection parameters in a JSON file (to run the script with a JSON config rather than manually)
+# Set the variables at the top of the buildwetfromscratch_enhanced.ps1 (to be updated)
+# (optional) Update the web templates (and add new ones if needed), (Optional) set the snippets values for each language in the snippets JSON.
+# Run the script 
+# Go to power pages site and press Sync
+
+basePath="/home/username/source/repos/pub/Public/"
+basePathSnippets="${basePath}liquid/contentsnippets/snippets.json"
+portalBasicThemePath="${basePath}portalbasictheme.css"
+themePath="${basePath}theme.css"
+bootstrapPath="${basePath}bootstrap.min.css"
+faviconPath="${basePath}favicon.ico"
+zipFilePath="/home/username/themes-dist-15.0.0-gcweb.zip"
+extractionPath="${basePath}files/"
+themeRootFolderName="themes-dist-15.0.0-gcweb"
+basePathTemplates="${basePath}liquid/webtemplates"
+pageTemplateNameNewHome="CS-Home-WET"
+webTemplateHeader="CS-header"
+webTemplateFooter="CS-footer"
+englishLanguageCode=1033
+frenchLanguageCode=1036
+
+# Default configuration
+defaultConfig='{
+  "clientId": "<client id>",
+  "tenantId": "<tenant id>",
+  "crmInstance": "<crm instance>",
+  "redirectUri": "https://login.onmicrosoft.com",
+  "websiteId": "<website id>",
+  "blobAddress": "<blob address>",
+  "FlowURL": "<flow url>"
+}'
+
+# Read user input for JSON configuration file
 read -p "Do you want to provide a JSON configuration file? (Y/N/H) [H for Help]: " useJsonConfig
+
 jsonConfig=""
 
-if [[ $useJsonConfig =~ ^[Yy]$ ]]; then
-    read -p "Enter the path to the JSON configuration file: " jsonFilePath
-    if [ -f "$jsonFilePath" ]; then
-        jsonConfig=$(jq -c '.' "$jsonFilePath")
-    fi
-elif [[ $useJsonConfig =~ ^[Hh]$ ]]; then
-    # Display a brief description of how the JSON object should be created
-    echo "JSON Configuration File Format:"
-#     echo '{
-#     "clientId": "<client id>",
-#     "tenantId": "<tenant id>",
-#     "crmInstance": "<crm instance>",
-#     "redirectUri": "https://login.onmicrosoft.com",
-#     "websiteId": "<website id>",
-#     "pageTemplateId": "<page template id>",
-#     "publishingStateId": "<publishing state id>",
-#     "homePageId": "<home page's webpage id value>",   
-#     "blobAddress": "<blob address>"
-# }'"
-    # Exit the script
-    exit
-fi
-
-# Define default values
-declare -A defaultConfig=(
-    ["clientId"]="<client id>"
-    ["tenantId"]="<tenant id>"
-    ["crmInstance"]="<crm instance>"
-    ["redirectUri"]="https://login.onmicrosoft.com"
-    ["websiteId"]="<website id>"
-    ["pageTemplateId"]="<page template id>"
-    ["publishingStateId"]="<publishing state id>"
-    ["homePageId"]="<home page's webpage id value>"
-    ["clientSecret"]="<client secret>"
-    ["blobAddress"]="<blob address>"
-)
-
-# Use user-provided JSON or default values
-if [ -n "$jsonConfig" ]; then
-    config="$jsonConfig"
+if [[ "$useJsonConfig" == "Y" || "$useJsonConfig" == "y" ]]; then
+  read -p "Enter the path to the JSON configuration file: " jsonFilePath
+  if [[ -f "$jsonFilePath" ]]; then
+    jsonConfig=$(cat "$jsonFilePath")
+  else
+    echo "Invalid file path."
+    exit 1
+  fi
+elif [[ "$useJsonConfig" == "H" || "$useJsonConfig" == "h" ]]; then
+  echo "JSON Configuration File Format:"
+  echo '{
+    "clientId": "<client id>",
+    "tenantId": "<tenant id>",
+    "crmInstance": "<crm instance>",
+    "redirectUri": "https://login.onmicrosoft.com",
+    "websiteId": "<website id>",
+    "blobAddress": "<blob address>",
+    "FlowURL": "<flow URL>"
+  }'
+  exit 0
 else
-    config=""
-    for key in "${!defaultConfig[@]}"; do
-        read -p "Enter the value for $key (Default: ${defaultConfig[$key]}): " value
-        if [ -z "$value" ]; then
-            value="${defaultConfig[$key]}"
-        fi
-        config+="$key=$value"$'\n'
-    done
+  jsonConfig="$defaultConfig"
 fi
 
-# Set the variables based on the configuration
-clientId=$(echo "$config" | grep -oP '(?<=clientId=).*' | tr -d '\n\r')
-tenantId=$(echo "$config" | grep -oP '(?<=tenantId=).*' | tr -d '\n\r')
+config=$(echo "$jsonConfig" | jq -r 'to_entries[] | .key + "=" + .value')
+for entry in $config; do
+  eval "$entry"
+done
+
+# Authentication
 authority="https://login.microsoftonline.com/$tenantId"
-crmInstance=$(echo "$config" | grep -oP '(?<=crmInstance=).*' | tr -d '\n\r')
-resource="https://$crmInstance.api.crm3.dynamics.com"
-redirectUri=$(echo "$config" | grep -oP '(?<=redirectUri=).*' | tr -d '\n\r')
+resource="https://${crmInstance}.api.crm3.dynamics.com"
 tokenEndpoint="$authority/oauth2/v2.0/token"
-websiteId=$(echo "$config" | grep -oP '(?<=websiteId=).*' | tr -d '\n\r')
-pageTemplateId=$(echo "$config" | grep -oP '(?<=pageTemplateId=).*' | tr -d '\n\r')
-publishingStateId=$(echo "$config" | grep -oP '(?<=publishingStateId=).*' | tr -d '\n\r')
-homePageId=$(echo "$config" | grep -oP '(?<=homePageId=).*' | tr -d '\n\r')
-clientSecret=$(echo "$config" | grep -oP '(?<=clientSecret=).*' | tr -d '\n\r')
-blobAddress=$(echo "$config" | grep -oP '(?<=blobAddress=).*' | tr -d '\n\r')
 
-# Prepare the body for the token request
-body="client_id=$clientId&scope=$resource/.default&grant_type=client_credentials&redirect_uri=$redirectUri&client_secret=$clientSecret"
-# Acquire the token
-authResponse=$(curl -s -X POST -d "$body" -H "Content-Type: application/x-www-form-urlencoded" "$tokenEndpoint")
-token=$(echo "$authResponse" | jq -r '.access_token')
+# Get token
+response=$(curl -X POST "$tokenEndpoint" -d "client_id=$clientId&scope=${resource}/.default&grant_type=client_credentials&redirect_uri=$redirectUri&client_secret=$secret" -H "Content-Type: application/x-www-form-urlencoded")
+token=$(echo "$response" | jq -r .access_token)
 
-# Set up the HTTP client headers
-headers=(
-    "Authorization: Bearer $token"
-    "OData-MaxVersion: 4.0"
-    "OData-Version: 4.0"
-    "Accept: application/json"
-    "Prefer: return=representation"
-)
+# Set headers
+headers="Authorization: Bearer $token"
+updateHeaders="Authorization: Bearer $token"
+headers+=" OData-MaxVersion: 4.0 OData-Version: 4.0 Accept: application/json Prefer: return=representation"
+updateHeaders+=" OData-MaxVersion: 4.0 OData-Version: 4.0 Accept: application/json Prefer: return=representation If-Match: *"
 
 # Define the Dataverse API URL
-apiUrl="$resource/api/data/v9.2/"
+apiUrl="${resource}/api/data/v9.2/"
 
-# Function to create or update a web page
-function CreateWebPage {
-    local name=$1
-    local parentPageId=$2
-    
-    # Logic to determine if this is the home page
-    # Check the name or ID against known values for the home page
-    local isHomePage=false
-    if [ "$name" = "themes-dist-14.1.0-gcweb" ] || [ -z "$parentPageId" ]; then
-        isHomePage=true
-        echo "Page Name: $name, Parent Page ID: $parentPageId, Is Home Page: $isHomePage"
-    fi
-
-    local partialUrl=$(echo "$name" | tr '[:upper:]' '[:lower:]')
-
-    echo "Page Name: $name, Parent Page ID: $parentPageId, Is Home Page: $isHomePage"
-    
-    if [ "$isHomePage" = true ]; then
-        echo "$homePageId"
-        return
-    fi
-
-    # Include the website ID in the filter condition
-    local filter="mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value eq '$websiteId'"
-
-    if [ -n "$parentPageId" ]; then
-        filter+=" and _mspp_parentpageid_value eq $parentPageId"
-    fi
-
-    local checkUrl="$apiUrl/mspp_webpages?\$filter=$filter"
-    
-    echo "Checking URL: $checkUrl"  # Debugging statement
-    existingPage=$(curl -s -H "${headers[@]}" "$checkUrl" | jq -r '.value[0]')
-
-    local webPageJson='{
-        "mspp_name": "'"$name"'",
-        "mspp_partialurl": "'"$partialUrl"'",
-        "mspp_parentpageid@odata.bind": "/mspp_webpages($parentPageId)",
-        "mspp_pagetemplateid@odata.bind": "/mspp_pagetemplates($pageTemplateId)",
-        "mspp_websiteid@odata.bind": "/mspp_websites($websiteId)",
-        "mspp_publishingstateid@odata.bind": "/mspp_publishingstates($publishingStateId)"
-    }'
-
-    if [ -n "$parentPageId" ]; then
-        webPageJson=$(echo "$webPageJson" | jq -c '.mspp_parentpageid@odata.bind = "/mspp_webpages($parentPageId)"')
-    fi
-
-    echo "Checking URL: $checkUrl"  # Debugging statement
-
-    if [ -n "$existingPage" ]; then
-        echo "Web page already exists. Updating existing page."
-        updateUrl="$apiUrl/mspp_webpages/$(echo "$existingPage" | jq -r '.mspp_webpageid')"
-        curl -s -X PATCH -d "$webPageJson" -H "${headers[@]}" -H "Content-Type: application/json; charset=utf-8" "$updateUrl"
-        echo "$(echo "$existingPage" | jq -r '.mspp_webpageid')"
-    else
-        try {
-            webPageResponse=$(curl -s -X POST -d "$webPageJson" -H "${headers[@]}" -H "Content-Type: application/json; charset=utf-8" "$apiUrl/mspp_webpages")
-            newWebPage=$(echo "$webPageResponse" | jq -r '.mspp_webpageid')
-            echo "$newWebPage"
-        } catch {
-            echo "API call failed with $_.Exception.Message"
-        }
-    fi
+# Functions
+create_record() {
+  url=$1
+  body=$2
+  curl -X POST "$url" -d "$body" -H "$headers" -H "Content-Type: application/json; charset=utf-8"
 }
 
-
-# Function to create or update a web file with the parent web page ID
-function CreateWebFile {
-    local filePath=$1
-    local parentPageId=$2
-
-    fileName=$(basename "$filePath")
-    partialUrl=$(echo "$fileName" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
-    mimeType=$(file -b --mime-type "$filePath")
-    fileContent=$(base64 -w 0 "$filePath")
-    relativePath=$(realpath --relative-to="$extractionPath/themes-dist-14.1.0-gcweb" "$filePath")
-
-    # Construct the blob storage URL
-    blobUrl="$blobAddress$relativePath$partialUrl"
-
-    filter="mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value eq '$websiteId'"
-
-    if [ -n "$parentPageId" ]; then
-        filter+=" and _mspp_parentpageid_value eq $parentPageId"
-    fi
-
-    checkUrl="$apiUrl/mspp_webfiles?\$filter=$filter"
-    existingFiles=$(curl -s -H "${headers[@]}" "$checkUrl")
-
-    webFile='{
-        "mspp_name": "'"$fileName"'",
-        "mspp_partialurl": "'"$partialUrl"'",
-        "mspp_websiteid@odata.bind": "/mspp_websites($websiteId)",
-        "mspp_publishingstateid@odata.bind": "/mspp_publishingstates($publishingStateId)"
-    }'
-
-    if [ -n "$parentPageId" ]; then
-        webFile=$(echo "$webFile" | jq -c '.mspp_parentpageid@odata.bind = "/mspp_webpages($parentPageId)"')
-    fi
-
-    webFileJson=$(echo "$webFile" | jq -c '.')
-
-    if [ "${existingFiles['value']}" ]; then
-        echo "Web file already exists: $filePath"
-        existingFile=$(echo "${existingFiles['value'][0]}")
-        updateUrl="$apiUrl/mspp_webfiles/$(echo "$existingFile" | jq -r '.mspp_webfileid')"
-        curl -s -X PATCH -d "$webFileJson" -H "${headers[@]}" -H "Content-Type: application/json; charset=utf-8" "$updateUrl"
-        webFileId=$(echo "$existingFile" | jq -r '.mspp_webfileid')
-    else
-        webFileResponse=$(curl -s -X POST -d "$webFileJson" -H "${headers[@]}" -H "Content-Type: application/json; charset=utf-8" "$apiUrl/mspp_webfiles")
-        webFileId=$(echo "$webFileResponse" | jq -r '.mspp_webfileid')
-
-        if [ -z "$webFileId" ]; then
-            echo "Failed to create web file for $fileName"
-            return
-        fi
-    fi
-
-    existingRow=$(curl -s -H "${headers[@]}" "$apiUrl/powerpagecomponents/$webFileId")
-
-    echo "File Name: $(echo "$existingRow" | jq -r '.name')"
-    existingRow=$(echo "$existingRow" | jq -c '. + {"filecontent": "'"$fileContent"'"}')
-
-    # Set this to the url, of your automation, which places the file
-    apiUrl="https://prod-16.canadacentral.logic.azure.com:443/workflows/d0266af9e24b457e81d042e204f1c990/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=cnCrDBP18LAb40X3H7E_dtydKWbGK9GpdL0tK68_z8s"
-
-    curl -s -X POST -d "$existingRow" -H "Content-Type: application/json; charset=utf-8" "$apiUrl"
+update_record() {
+  url=$1
+  body=$2
+  curl -X PATCH "$url" -d "$body" -H "$updateHeaders" -H "Content-Type: application/json; charset=utf-8"
 }
 
-function Get-RelativePath {
-    local basePath=$1
-    local targetPath=$2
+get_record() {
+  url=$1
+  curl -X GET "$url" -H "$headers"
+}
 
-    basePath=$(realpath "$basePath")
-    targetPath=$(realpath "$targetPath")
+get_page_template_id() {
+  filter="_mspp_websiteid_value eq '$websiteId' and mspp_name eq 'Access Denied'"
+  pageTemplateQuery="${apiUrl}mspp_pagetemplates?\$filter=$filter"
+  pageTemplate=$(get_record "$pageTemplateQuery")
+  pageTemplateId=$(echo "$pageTemplate" | jq -r '.value[0].mspp_pagetemplateid')
+  echo "$pageTemplateId"
+}
 
-    if [[ $targetPath == $basePath* ]]; then
-        relativePath=${targetPath#$basePath}
-        echo "${relativePath#/}"
-    else
-        echo "$targetPath"
+pageTemplateId=$(get_page_template_id)
+
+# (Similar functions for other parts can be created following the above pattern)
+
+# Example of creating a webpage
+create_webpage() {
+  name=$1
+  parentPageId=$2
+  partialUrl=$(echo "$name" | tr '[:upper:]' '[:lower:]')
+  webPage=$(jq -n --arg name "$name" --arg partialUrl "$partialUrl" --arg parentPageId "$parentPageId" --arg pageTemplateId "$pageTemplateId" --arg websiteId "$websiteId" --arg publishingStateId "$publishingStateId" \
+  '{
+    mspp_name: $name,
+    mspp_partialurl: $partialUrl,
+    "mspp_parentpageid@odata.bind": "/mspp_webpages($parentPageId)",
+    "mspp_pagetemplateid@odata.bind": "/mspp_pagetemplates($pageTemplateId)",
+    "mspp_websiteid@odata.bind": "/mspp_websites($websiteId)",
+    "mspp_publishingstateid@odata.bind": "/mspp_publishingstates($publishingStateId)"
+  }')
+
+  filter="mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value eq '$websiteId'"
+  if [[ -n "$parentPageId" ]]; then
+    filter+=" and _mspp_parentpageid_value eq $parentPageId"
+  fi
+
+  checkUrl="${apiUrl}mspp_webpages?\$filter=$filter"
+  existingPages=$(get_record "$checkUrl")
+  existingPage=$(echo "$existingPages" | jq -r '.value[0]')
+  webPageJson=$(echo "$webPage" | jq -c '.')
+
+  if [[ -n "$existingPage" ]]; then
+    updateUrl="${apiUrl}mspp_webpages(${existingPage.mspp_webpageid})"
+    update_record "$updateUrl" "$webPageJson"
+  else
+    create_record "${apiUrl}mspp_webpages" "$webPageJson"
+  fi
+}
+
+# Create or update baseline styles
+create_webfile() {
+  filePath=$1
+  parentPageId=$2
+
+  fileName=$(basename "$filePath")
+  partialUrl=$(echo "$fileName" | tr '[:upper:]' '[:lower:]' | tr -d ' ')
+  mimeType=$(file --mime-type -b "$filePath")
+  fileContent=$(base64 "$filePath")
+  relativePath=$(realpath --relative-to="$extractionPath/$themeRootFolderName" "$filePath")
+
+  blobUrl="$blobAddress$relativePath$partialUrl"
+  filter="mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value eq '$websiteId'"
+  if [[ -n "$parentPageId" ]]; then
+    filter+=" and _mspp_parentpageid_value eq $parentPageId"
+  fi
+
+  checkUrl="${apiUrl}mspp_webfiles?\$filter=$filter"
+  existingFiles=$(get_record "$checkUrl")
+
+  webFile=$(jq -n --arg fileName "$fileName" --arg partialUrl "$partialUrl" --arg websiteId "$websiteId" --arg publishingStateId "$publishingStateId" --arg parentPageId "$parentPageId" \
+  '{
+    mspp_name: $fileName,
+    mspp_partialurl: $partialUrl,
+    "mspp_websiteid@odata.bind": "/mspp_websites($websiteId)",
+    "mspp_publishingstateid@odata.bind": "/mspp_publishingstates($publishingStateId)"
+  }')
+
+  webFileJson=$(echo "$webFile" | jq -c '.')
+
+  if [[ $(echo "$existingFiles" | jq -r '.value | length') -gt 0 ]]; then
+    existingFile=$(echo "$existingFiles" | jq -r '.value[0]')
+    updateUrl="${apiUrl}mspp_webfiles(${existingFile.mspp_webfileid})"
+    update_record "$updateUrl" "$webFileJson"
+  else
+    create_record "${apiUrl}mspp_webfiles" "$webFileJson"
+  fi
+}
+
+# Process folder and create webpages + webfiles
+write_hierarchy() {
+  path=$1
+  indent=$2
+  parentPageId=$3
+
+  items=$(find "$path" -maxdepth 1)
+  for item in $items; do
+    if [[ -f "$item" ]]; then
+      if [[ -z "$parentPageId" ]]; then
+        parentPageId=$homePageId
+      fi
+      create_webfile "$item" "$parentPageId"
+    elif [[ -d "$item" ]]; then
+      newPageId=$(create_webpage "$(basename "$item")" "$parentPageId")
+      write_hierarchy "$item" "  $indent" "$newPageId"
     fi
+  done
 }
 
-# Function to process folder and create webpages + webfiles
-function WriteHierarchy {
-    local path=$1
-    local indent=$2
-    local parentPageId=$3
-
-    items=$(find "$path" -mindepth 1)
-
-    for item in $items; do
-        if [ ! -d "$item" ]; then
-            #Process files
-            
-            if [ -z "$parentPageId" ]; then
-                parentPageId=$homePageId
-            fi
-            echo "IS NOT FOLDER + $parentPageId + $item"
-            CreateWebFile "$item" "$parentPageId" 
-                   
-        else
-            # Process directories
-            echo "IS FOLDER + $parentPageId + $item"
-            newPageId=$(CreateWebPage "$(basename "$item")" "$parentPageId")
-
-            WriteHierarchy "$item" "  $indent" "$newPageId"
-        fi
-    done
+# Main function to run the script
+run_portal_template_install() {
+  # Uncomment the following line to extract the archive
+  # unzip "$zipFilePath" -d "$extractionPath"
+  create_snippets
+  write_templates "$basePathTemplates"
+  update_home_page "$pageTemplateNameNewHome"
+  write_hierarchy "$extractionPath$themeRootFolderName" "" "$homePageId"
+  update_baseline_styles
 }
 
-# Extract the zip file & runtime script calls
-zipFilePath="C:/themes-dist-14.1.0-gcweb.zip"
-extractionPath="/mnt/c/Users/Fred/source/repos/pub/Public/files/themes-dist-14.1.0-gcweb" 
-unzip -o "$zipFilePath" -d "$extractionPath"
-
-# Start processing the extracted folder
-echo "$extractionPath"
-WriteHierarchy "$extractionPath" "" "$homePageId"
+run_portal_template_install
