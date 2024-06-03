@@ -1,19 +1,8 @@
 #!/bin/bash
 
-# Update the breadcrumbs web template & the language toggle
+#####################################
 # GC WET RELEASES: https://github.com/wet-boew/GCWeb/releases
-
-# Dataverse environment
-# 1 Solution Installs
-# Languages Packs
-# System Settings -> email file size (100000), file restrictions (delete all, re-add post script)
-# 2 Deploy website
-# 3 add the french website language
-# Set the connection parameters in a JSON file (to run the script with a JSON config rather than manually)
-# Set the variables at the top of the buildwetfromscratch_enhanced.ps1 (to be updated)
-# (optional) Update the web templates (and add new ones if needed), (Optional) set the snippets values for each language in the snippets JSON.
-# Run the script 
-# Go to power pages site and press Sync
+#####################################
 
 basePath="/home/username/source/repos/pub/Public/"
 basePathSnippets="${basePath}liquid/contentsnippets/snippets.json"
@@ -87,9 +76,8 @@ token=$(echo "$response" | jq -r .access_token)
 
 # Set headers
 headers="Authorization: Bearer $token"
-updateHeaders="Authorization: Bearer $token"
 headers+=" OData-MaxVersion: 4.0 OData-Version: 4.0 Accept: application/json Prefer: return=representation"
-updateHeaders+=" OData-MaxVersion: 4.0 OData-Version: 4.0 Accept: application/json Prefer: return=representation If-Match: *"
+updateHeaders="$headers If-Match: *"
 
 # Define the Dataverse API URL
 apiUrl="${resource}/api/data/v9.2/"
@@ -122,42 +110,50 @@ get_page_template_id() {
 
 pageTemplateId=$(get_page_template_id)
 
-# (Similar functions for other parts can be created following the above pattern)
-
-# Example of creating a webpage
-create_webpage() {
-  name=$1
-  parentPageId=$2
-  partialUrl=$(echo "$name" | tr '[:upper:]' '[:lower:]')
-  webPage=$(jq -n --arg name "$name" --arg partialUrl "$partialUrl" --arg parentPageId "$parentPageId" --arg pageTemplateId "$pageTemplateId" --arg websiteId "$websiteId" --arg publishingStateId "$publishingStateId" \
-  '{
-    mspp_name: $name,
-    mspp_partialurl: $partialUrl,
-    "mspp_parentpageid@odata.bind": "/mspp_webpages($parentPageId)",
-    "mspp_pagetemplateid@odata.bind": "/mspp_pagetemplates($pageTemplateId)",
-    "mspp_websiteid@odata.bind": "/mspp_websites($websiteId)",
-    "mspp_publishingstateid@odata.bind": "/mspp_publishingstates($publishingStateId)"
-  }')
-
-  filter="mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value eq '$websiteId'"
-  if [[ -n "$parentPageId" ]]; then
-    filter+=" and _mspp_parentpageid_value eq $parentPageId"
-  fi
-
-  checkUrl="${apiUrl}mspp_webpages?\$filter=$filter"
-  existingPages=$(get_record "$checkUrl")
-  existingPage=$(echo "$existingPages" | jq -r '.value[0]')
-  webPageJson=$(echo "$webPage" | jq -c '.')
-
-  if [[ -n "$existingPage" ]]; then
-    updateUrl="${apiUrl}mspp_webpages(${existingPage.mspp_webpageid})"
-    update_record "$updateUrl" "$webPageJson"
-  else
-    create_record "${apiUrl}mspp_webpages" "$webPageJson"
-  fi
+get_publishing_state_id() {
+  filter="mspp_name eq 'Published'"
+  publishingStateQuery="${apiUrl}mspp_publishingstates?\$filter=$filter"
+  publishingState=$(get_record "$publishingStateQuery")
+  publishingStateId=$(echo "$publishingState" | jq -r '.value[0].mspp_publishingstateid')
+  echo "$publishingStateId"
 }
 
-# Create or update baseline styles
+publishingStateId=$(get_publishing_state_id)
+
+get_language_id() {
+  languageCode=$1
+  filter="mspp_lcid eq $languageCode"
+  languageQuery="${apiUrl}mspp_websitelanguages?\$filter=$filter"
+  language=$(get_record "$languageQuery")
+  languageId=$(echo "$language" | jq -r '.value[0].mspp_websitelanguageid')
+  echo "$languageId"
+}
+
+englishLanguageId=$(get_language_id "$englishLanguageCode")
+frenchLanguageId=$(get_language_id "$frenchLanguageCode")
+
+get_home_page_id() {
+  filter="_mspp_websiteid_value eq '$websiteId' and mspp_isroot eq true and mspp_name eq 'Home'"
+  homePageQuery="${apiUrl}mspp_webpages?\$filter=$filter"
+  homePage=$(get_record "$homePageQuery")
+  homePageId=$(echo "$homePage" | jq -r '.value[0].mspp_webpageid')
+  echo "$homePageId"
+}
+
+homePageId=$(get_home_page_id)
+
+get_home_content_page_id() {
+  languageId=$1
+  filter="_mspp_websiteid_value eq '$websiteId' and mspp_name eq 'Home' and _mspp_webpagelanguageid_value eq '$languageId'"
+  homePageQuery="${apiUrl}mspp_webpages?\$filter=$filter"
+  homePage=$(get_record "$homePageQuery")
+  homeContentPageId=$(echo "$homePage" | jq -r '.value[0].mspp_webpageid')
+  echo "$homeContentPageId"
+}
+
+homeContentPageEN=$(get_home_content_page_id "$englishLanguageId")
+homeContentPageFR=$(get_home_content_page_id "$frenchLanguageId")
+
 create_webfile() {
   filePath=$1
   parentPageId=$2
@@ -196,7 +192,38 @@ create_webfile() {
   fi
 }
 
-# Process folder and create webpages + webfiles
+create_webpage() {
+  name=$1
+  parentPageId=$2
+  partialUrl=$(echo "$name" | tr '[:upper:]' '[:lower:]')
+  webPage=$(jq -n --arg name "$name" --arg partialUrl "$partialUrl" --arg parentPageId "$parentPageId" --arg pageTemplateId "$pageTemplateId" --arg websiteId "$websiteId" --arg publishingStateId "$publishingStateId" \
+  '{
+    mspp_name: $name,
+    mspp_partialurl: $partialUrl,
+    "mspp_parentpageid@odata.bind": "/mspp_webpages($parentPageId)",
+    "mspp_pagetemplateid@odata.bind": "/mspp_pagetemplates($pageTemplateId)",
+    "mspp_websiteid@odata.bind": "/mspp_websites($websiteId)",
+    "mspp_publishingstateid@odata.bind": "/mspp_publishingstates($publishingStateId)"
+  }')
+
+  filter="mspp_partialurl eq '$partialUrl' and _mspp_websiteid_value eq '$websiteId'"
+  if [[ -n "$parentPageId" ]]; then
+    filter+=" and _mspp_parentpageid_value eq $parentPageId"
+  fi
+
+  checkUrl="${apiUrl}mspp_webpages?\$filter=$filter"
+  existingPages=$(get_record "$checkUrl")
+  existingPage=$(echo "$existingPages" | jq -r '.value[0]')
+  webPageJson=$(echo "$webPage" | jq -c '.')
+
+  if [[ -n "$existingPage" ]]; then
+    updateUrl="${apiUrl}mspp_webpages(${existingPage.mspp_webpageid})"
+    update_record "$updateUrl" "$webPageJson"
+  else
+    create_record "${apiUrl}mspp_webpages" "$webPageJson"
+  fi
+}
+
 write_hierarchy() {
   path=$1
   indent=$2
@@ -216,14 +243,146 @@ write_hierarchy() {
   done
 }
 
-# Main function to run the script
+create_web_template() {
+  markup=$1
+  filename=$2
+
+  htmlString=$markup
+
+  webTemplatePayload=$(jq -n --arg filename "$filename" --arg websiteId "$websiteId" --arg htmlString "$htmlString" \
+  '{
+    mspp_name: $filename,
+    "mspp_websiteid@odata.bind": "/mspp_websites($websiteId)",
+    mspp_source: $htmlString
+  }')
+
+  filter="mspp_name eq '$filename'"
+  checkWebTemplateExists="${apiUrl}mspp_webtemplates?\$filter=$filter"
+  existingTemplates=$(get_record "$checkWebTemplateExists")
+
+  if [[ $(echo "$existingTemplates" | jq -r '.value | length') -gt 0 ]]; then
+    existingTemplate=$(echo "$existingTemplates" | jq -r '.value[0]')
+    if [[ -n "$existingTemplate" ]]; then
+      updateUrl="${apiUrl}mspp_webtemplates(${existingTemplate.mspp_webtemplateid})"
+      webTemplatePayloadUpdate=$(jq -n --arg htmlString "$htmlString" '{ mspp_source: $htmlString }')
+      update_record "$updateUrl" "$webTemplatePayloadUpdate"
+    fi
+  else
+    webresponse=$(create_record "${apiUrl}mspp_webtemplates" "$webTemplatePayload")
+    wtid=$(echo "$webresponse" | jq -r '.mspp_webtemplateid')
+    pageTemplatePayload=$(jq -n --arg filename "$filename" --arg websiteId "$websiteId" --arg wtid "$wtid" \
+    '{
+      mspp_name: $filename,
+      mspp_type: "756150001",
+      "mspp_websiteid@odata.bind": "/mspp_websites($websiteId)",
+      "mspp_webtemplateid@odata.bind": "/mspp_webtemplates($wtid)"
+    }')
+    create_record "${apiUrl}mspp_pagetemplates" "$pageTemplatePayload"
+  fi
+}
+
+create_snippets() {
+  snippetsJson=$(cat "$basePathSnippets" | jq -c '.')
+  snippets=$(echo "$snippetsJson" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"')
+
+  for snippet in $snippets; do
+    snippetName=$(echo "$snippet" | cut -d '=' -f 1)
+    snippetContent=$(echo "$snippet" | cut -d '=' -f 2-)
+    snippetContentEnglish=$(echo "$snippetContent" | jq -r '.[0]')
+    snippetContentFrench=$(echo "$snippetContent" | jq -r '.[1]')
+
+    snippetPayloadEnglish=$(jq -n --arg snippetName "$snippetName" --arg websiteId "$websiteId" --arg snippetContentEnglish "$snippetContentEnglish" --arg englishLanguageId "$englishLanguageId" \
+    '{
+      mspp_name: $snippetName,
+      "mspp_websiteid@odata.bind": "/mspp_websites($websiteId)",
+      mspp_value: $snippetContentEnglish,
+      "mspp_contentsnippetlanguageid@odata.bind": "/mspp_websitelanguages($englishLanguageId)"
+    }')
+
+    snippetPayloadFrench=$(jq -n --arg snippetName "$snippetName" --arg websiteId "$websiteId" --arg snippetContentFrench "$snippetContentFrench" --arg frenchLanguageId "$frenchLanguageId" \
+    '{
+      mspp_name: $snippetName,
+      "mspp_websiteid@odata.bind": "/mspp_websites($websiteId)",
+      mspp_value: $snippetContentFrench,
+      "mspp_contentsnippetlanguageid@odata.bind": "/mspp_websitelanguages($frenchLanguageId)"
+    }')
+
+    filterEN="(mspp_name eq '$snippetName' and _mspp_contentsnippetlanguageid_value eq $englishLanguageId)"
+    filterFR="(mspp_name eq '$snippetName' and _mspp_contentsnippetlanguageid_value eq $frenchLanguageId)"
+
+    checkENSnippetExists="${apiUrl}mspp_contentsnippets?\$filter=$filterEN"
+    existingENSnippets=$(get_record "$checkENSnippetExists")
+
+    if [[ $(echo "$existingENSnippets" | jq -r '.value | length') -gt 0 ]]; then
+      existingSnippet=$(echo "$existingENSnippets" | jq -r '.value[0]')
+      if [[ -n "$existingSnippet" ]]; then
+        updateUrl="${apiUrl}mspp_contentsnippets(${existingSnippet.mspp_contentsnippetid})"
+        update_record "$updateUrl" "$snippetPayloadEnglish"
+      fi
+    else
+      create_record "${apiUrl}mspp_contentsnippets" "$snippetPayloadEnglish"
+      create_record "${apiUrl}mspp_contentsnippets" "$snippetPayloadFrench"
+    fi
+
+    checkFRSnippetExists="${apiUrl}mspp_contentsnippets?\$filter=$filterFR"
+    existingFRSnippets=$(get_record "$checkFRSnippetExists")
+
+    if [[ $(echo "$existingFRSnippets" | jq -r '.value | length') -gt 0 ]]; then
+      existingSnippet=$(echo "$existingFRSnippets" | jq -r '.value[0]')
+      if [[ -n "$existingSnippet" ]]; then
+        updateUrl="${apiUrl}mspp_contentsnippets(${existingSnippet.mspp_contentsnippetid})"
+        update_record "$updateUrl" "$snippetPayloadFrench"
+      fi
+    else
+      create_record "${apiUrl}mspp_contentsnippets" "$snippetPayloadEnglish"
+      create_record "${apiUrl}mspp_contentsnippets" "$snippetPayloadFrench"
+    fi
+  done
+}
+
+write_templates() {
+  folderPath=$1
+  indent=$2
+
+  files=$(find "$folderPath" -type f)
+  for file in $files; do
+    html=$(cat "$file")
+    create_web_template "$html" "$(basename "$file" .${file##*.})"
+  done
+}
+
+update_home_page() {
+  pageTemplateName=$1
+
+  filter="mspp_name eq '$pageTemplateName'"
+  checkPageTemplateExists="${apiUrl}mspp_pagetemplates?\$filter=$filter"
+  existingTemplates=$(get_record "$checkPageTemplateExists")
+
+  if [[ $(echo "$existingTemplates" | jq -r '.value | length') -gt 0 ]]; then
+    existingTemplate=$(echo "$existingTemplates" | jq -r '.value[0]')
+    pageTemplateId=$(echo "$existingTemplate" | jq -r '.mspp_pagetemplateid')
+
+    updateUrl="${apiUrl}mspp_webpages(${homePageId})"
+    webPagePayload=$(jq -n --arg pageTemplateId "$pageTemplateId" '{ "mspp_pagetemplateid@odata.bind": "/mspp_pagetemplates($pageTemplateId)" }')
+    update_record "$updateUrl" "$webPagePayload"
+
+    updateUrlContentEN="${apiUrl}mspp_webpages(${homeContentPageEN})"
+    contentPagePayloadEN=$(jq -n '{ mspp_copy: "" }')
+    update_record "$updateUrlContentEN" "$contentPagePayloadEN"
+
+    updateUrlContentFR="${apiUrl}mspp_webpages(${homeContentPageFR})"
+    contentPagePayloadFR=$(jq -n '{ mspp_copy: "" }')
+    update_record "$updateUrlContentFR" "$contentPagePayloadFR"
+  fi
+}
+
 run_portal_template_install() {
   # Uncomment the following line to extract the archive
   # unzip "$zipFilePath" -d "$extractionPath"
   create_snippets
   write_templates "$basePathTemplates"
   update_home_page "$pageTemplateNameNewHome"
-  write_hierarchy "$extractionPath$themeRootFolderName" "" "$homePageId"
+  write_hierarchy "$extractionPath$themeRootFolderName + $homePageId"
   update_baseline_styles
 }
 
