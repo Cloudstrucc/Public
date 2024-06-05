@@ -785,7 +785,7 @@ function CreateSampleWeblinkSetWizard {
 
 function RunPortalTemplateInstall {
     
-   # Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
+    Expand-Archive -Path $zipFilePath -DestinationPath $extractionPath -Force
     Write-Host $extractionPath          
     CreateSnippets    
     Write-Templates -folderPath $basePathTemplates
