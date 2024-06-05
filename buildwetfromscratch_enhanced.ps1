@@ -53,8 +53,8 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
         `"crmInstance`": `"<crm instance>`",
         `"redirectUri`": `"https://login.onmicrosoft.com`",
         `"websiteId`": `"<website id>`",
-        `"blobAddress`" = `"<blob address>`"
-        `"FlowURL`" = `"<flow URL>`"
+        `"blobAddress`": `"<blob address>`",
+        `"FlowURL`":`"<flow URL>`"
     }" else {
         exit
     }
