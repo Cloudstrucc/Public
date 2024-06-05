@@ -19,15 +19,15 @@
 #Go to power pages site and press Sync
 #
 
-$basePath = "C:\Users\Fred\source\repos\pub\Public\"
+$basePath = "C:\Users\pearsof\repos\Public\"
 $basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
 $portalBasicThemePath = $basePath + "portalbasictheme.css"
 $themePath = $basePath + "theme.css"
 $bootstrapPath = $basePath + "bootstrap.min.css"
 $faviconPath = $basePath + "favicon.ico"
-$zipFilePath = "C:\themes-dist-15.0.0-gcweb.zip"
+$zipFilePath = "C:\Users\pearsof\repos\Public\files\themes-dist-15.2.0-gcweb.zip"
 $extractionPath = $basePath + "files\" 
-$themeRootFolderName = "themes-dist-15.0.0-gcweb"
+$themeRootFolderName = "themes-dist-15.2.0-gcweb"
 $basePathTemplates = $basePath + "liquid\webtemplates"
 $pageTemplateNameNewHome = "CS-Home-WET"
 $webTemplateHeader = "CS-header"
