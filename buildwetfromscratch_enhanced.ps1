@@ -19,6 +19,8 @@
 #Go to power pages site and press Sync
 #
 
+Write-Host "test"
+
 $basePath = "C:\Users\pearsof\repos\Public\"
 $basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
 $portalBasicThemePath = $basePath + "portalbasictheme.css"
@@ -55,12 +57,10 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
         `"websiteId`": `"<website id>`",
         `"blobAddress`": `"<blob address>`",
         `"FlowURL`":`"<flow URL>`"
-    }" else {
+        }" 
+    } else {
         exit
     }
-        
-    }
-    exit
 }
 
   
