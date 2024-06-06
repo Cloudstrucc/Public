@@ -1,7 +1,7 @@
 {
     "CS/HOME/DESC": [" laboris nisi ut aliquip ex ea commodo consequat", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"],
     "CS/HOME/SUBTITLE": ["Enterprise Portal","Portail entreprise"],
-    "CS/HOME/TITLE": ["Elections Canada", "Election Canada"],
+    "CS/HOME/TITLE": ["FINTRAC", "CANAFE"],
     "CS/HOME/SIGNIN": ["Sign in", "Se connecter"],
     "CS/HOME/ACCOUNT": ["Create an account", "Creer un compte"],
     "CS/HOME/MOSTREQ": ["Most requested", "Plus demanders"],
