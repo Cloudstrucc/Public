@@ -171,10 +171,12 @@ function AdxWebTemplates {
     # Get Website Language IDs by Language Code
     $webTemplateQuery = $apiUrl + "adx_webtemplates?" + "`$filter=$filter"
     Write-Host $webTemplateQuery
-    $webTemplate = GetRecordAPI -url $webTemplateQuery
-    $webTemplateId = $webTemplate.value[10].adx_source
-    Write-Host "Web Template ID: $webTemplateId"
-    return $webTemplateId
+    $webTemplates = GetRecordAPI -url $webTemplateQuery
+    # $webTemplateId = $webTemplates.value[10].adx_source
+    foreach ($item in $webTemplates.value) {
+        Write-Host "Web Template ID: '$item.adx_webtemplateid'"
+    }
+    # return $webTemplateId
 }
 
 function MSPPWebTemplatesUpsert {
