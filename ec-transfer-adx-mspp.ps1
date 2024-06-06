@@ -174,7 +174,7 @@ function AdxWebTemplates {
     $webTemplates = GetRecordAPI -url $webTemplateQuery
     # $webTemplateId = $webTemplates.value[10].adx_source
     foreach ($item in $webTemplates.value) {
-        Write-Host "Web Template ID: '$item.adx_webtemplateid'"
+        Write-Host "Web Template ID:" $item[0].adx_webtemplateid
     }
     # return $webTemplateId
 }
