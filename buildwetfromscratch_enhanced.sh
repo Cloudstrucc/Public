@@ -4,15 +4,16 @@
 # GC WET RELEASES: https://github.com/wet-boew/GCWeb/releases
 #####################################
 
-basePath="/home/username/source/repos/pub/Public/"
+basePath="/Users/frederickpearson/Public/"
 basePathSnippets="${basePath}liquid/contentsnippets/snippets.json"
 portalBasicThemePath="${basePath}portalbasictheme.css"
 themePath="${basePath}theme.css"
 bootstrapPath="${basePath}bootstrap.min.css"
 faviconPath="${basePath}favicon.ico"
-zipFilePath="/home/username/themes-dist-15.0.0-gcweb.zip"
+zipFilePath="/Users/frederickpearson/Public/
+files/startbootstrap-landing-page-gh-pages.zip"
 extractionPath="${basePath}files/"
-themeRootFolderName="themes-dist-15.0.0-gcweb"
+themeRootFolderName="startbootstrap-landing-page-gh-pages"
 basePathTemplates="${basePath}liquid/webtemplates"
 pageTemplateNameNewHome="CS-Home-WET"
 webTemplateHeader="CS-header"
@@ -383,7 +384,7 @@ run_portal_template_install() {
   write_templates "$basePathTemplates"
   update_home_page "$pageTemplateNameNewHome"
   write_hierarchy "$extractionPath$themeRootFolderName + $homePageId"
-  update_baseline_styles
+  # update_baseline_styles
 }
 
 run_portal_template_install
