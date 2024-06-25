@@ -1,4 +1,4 @@
-[pDownload PDF](./Power-Platfrom-Tenant-Design-Baseline-Build.pdf)
+[Download PDF](./Power-Platfrom-Tenant-Design-Baseline-Build.pdf)
 
 # Architecture and Build Book for Power Platform Implementation
 
