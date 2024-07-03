@@ -1,2 +1,4 @@
 connectionparams.json
-.docs
+.devcontainer
+.github
+.vscode
