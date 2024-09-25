@@ -35,7 +35,7 @@ namespace CustomWorkflow
 
             // Get input arguments
             string tableName = TableName.Get(context);
-            string columnName = ColumnName.Get(context);5
+            string columnName = ColumnName.Get(context);
             int stepNumber = StepNumber.Get(context);
             EntityReference recordReference = RecordId.Get(context);
 
@@ -102,14 +102,14 @@ namespace CustomWorkflow
             EntityReference recordRef = RecordId.Get(context);
 
             // Retrieve the questionnaire record to get the parent case
-            Entity questionnaire = service.Retrieve(recordRef.LogicalName, recordRef.Id, new ColumnSet("fintrac_caseid"));
+            Entity questionnaire = service.Retrieve(recordRef.LogicalName, recordRef.Id, new ColumnSet("fintrac_case"));
 
-            if (!questionnaire.Contains("fintrac_caseid"))
+            if (!questionnaire.Contains("fintrac_case"))
             {
                 throw new InvalidPluginExecutionException("The questionnaire record does not have an associated case.");
             }
 
-            EntityReference caseRef = (EntityReference)questionnaire["fintrac_caseid"];
+            EntityReference caseRef = (EntityReference)questionnaire["fintrac_case"];
 
             // Retrieve the parent case to get the fintrac_questionnairetemplate (Web Link Set)
             Entity parentCase = service.Retrieve(caseRef.LogicalName, caseRef.Id, new ColumnSet("fintrac_questionnairetemplate"));
