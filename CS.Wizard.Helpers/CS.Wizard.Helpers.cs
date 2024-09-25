@@ -22,9 +22,10 @@ namespace CustomWorkflow
         [RequiredArgument]
         public InArgument<int> StepNumber { get; set; }
 
-        [Input("Record ID (as string)")]
+        [Input("Record")]
         [RequiredArgument]
-        public InArgument<string> RecordId { get; set; }
+        [ReferenceTarget("fintrac_questionnaire")]
+        public InArgument<EntityReference> RecordId { get; set; }
 
         protected override void Execute(CodeActivityContext context)
         {
@@ -36,16 +37,12 @@ namespace CustomWorkflow
             string tableName = TableName.Get(context);
             string columnName = ColumnName.Get(context);
             int stepNumber = StepNumber.Get(context);
-            string recordIdString = RecordId.Get(context);
+            EntityReference recordReference = RecordId.Get(context);
 
-            // Convert the record ID string to a Guid
-            if (!Guid.TryParse(recordIdString, out Guid recordId))
-            {
-                throw new InvalidPluginExecutionException("The provided Record ID is not a valid GUID.");
-            }
+            // Log the record details for debugging
 
             // Retrieve the record based on the provided ID and table name
-            Entity record = service.Retrieve(tableName, recordId, new ColumnSet(columnName));
+            Entity record = service.Retrieve(tableName, recordReference.Id, new ColumnSet(columnName));
 
             if (record != null && record.Contains(columnName))
             {
@@ -74,7 +71,7 @@ namespace CustomWorkflow
                         string updatedJson = JsonSerializer.Serialize(jsonDict);
 
                         // Update the record
-                        Entity updatedRecord = new Entity(tableName, recordId);
+                        Entity updatedRecord = new Entity(tableName, recordReference.Id);
                         updatedRecord[columnName] = updatedJson;
                         service.Update(updatedRecord);
                     }
@@ -84,6 +81,86 @@ namespace CustomWorkflow
                     }
                 }
             }
+        }
+    }
+    public class InitializeManifestFromWebLinkSet : CodeActivity
+    {
+        [Input("Record")]
+        [RequiredArgument]
+        [ReferenceTarget("fintrac_questionnaire")]
+        public InArgument<EntityReference> RecordId { get; set; }
+
+        [Input("Web Link Set Name")]
+        [RequiredArgument]
+        public InArgument<string> WebLinkSetName { get; set; }
+
+        [Output("Manifest JSON")]
+        public OutArgument<string> ManifestJson { get; set; }
+
+        protected override void Execute(CodeActivityContext context)
+        {
+            IWorkflowContext workflowContext = context.GetExtension<IWorkflowContext>();
+            IOrganizationService service = context.GetExtension<IOrganizationServiceFactory>().CreateOrganizationService(workflowContext.UserId);
+
+            EntityReference recordRef = RecordId.Get(context);
+            string webLinkSetName = WebLinkSetName.Get(context);
+
+            // Query for the Web Link Set by name
+            QueryExpression webLinkSetQuery = new QueryExpression("adx_weblinkset")
+            {
+                ColumnSet = new ColumnSet("adx_weblinksetid"),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                {
+                    new ConditionExpression("adx_name", ConditionOperator.Equal, webLinkSetName)
+                }
+                }
+            };
+
+            EntityCollection webLinkSets = service.RetrieveMultiple(webLinkSetQuery);
+
+            if (webLinkSets.Entities.Count == 0)
+            {
+                throw new InvalidPluginExecutionException($"No Web Link Set found with the name '{webLinkSetName}'.");
+            }
+
+            EntityReference webLinkSetRef = webLinkSets.Entities[0].ToEntityReference();
+
+            // Query for child web links
+            QueryExpression query = new QueryExpression("adx_weblink")
+            {
+                ColumnSet = new ColumnSet("adx_displayordernumber"),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                {
+                    new ConditionExpression("adx_weblinksetid", ConditionOperator.Equal, webLinkSetRef.Id)
+                }
+                },
+                Orders = { new OrderExpression("adx_displayordernumber", OrderType.Ascending) }
+            };
+
+            EntityCollection webLinks = service.RetrieveMultiple(query);
+
+            // Create the JSON array
+            Dictionary<string, bool> manifestDict = new Dictionary<string, bool>();
+            foreach (var webLink in webLinks.Entities)
+            {
+                int displayOrder = webLink.GetAttributeValue<int>("adx_displayordernumber");
+                manifestDict.Add(displayOrder.ToString(), false);
+            }
+
+            // Serialize the dictionary to JSON
+            string json = JsonSerializer.Serialize(manifestDict);
+
+            // Set the output argument
+            ManifestJson.Set(context, json);
+
+            // Update the record with the new manifest
+            Entity updateRecord = new Entity(recordRef.LogicalName, recordRef.Id);
+            updateRecord["fintrac_portalformmanifest"] = json;
+            service.Update(updateRecord);
         }
     }
 }
