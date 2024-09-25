@@ -35,7 +35,7 @@ namespace CustomWorkflow
 
             // Get input arguments
             string tableName = TableName.Get(context);
-            string columnName = ColumnName.Get(context);
+            string columnName = ColumnName.Get(context);5
             int stepNumber = StepNumber.Get(context);
             EntityReference recordReference = RecordId.Get(context);
 
@@ -83,16 +83,13 @@ namespace CustomWorkflow
             }
         }
     }
+
     public class InitializeManifestFromWebLinkSet : CodeActivity
     {
         [Input("Record")]
         [RequiredArgument]
         [ReferenceTarget("fintrac_questionnaire")]
         public InArgument<EntityReference> RecordId { get; set; }
-
-        [Input("Web Link Set Name")]
-        [RequiredArgument]
-        public InArgument<string> WebLinkSetName { get; set; }
 
         [Output("Manifest JSON")]
         public OutArgument<string> ManifestJson { get; set; }
@@ -103,29 +100,26 @@ namespace CustomWorkflow
             IOrganizationService service = context.GetExtension<IOrganizationServiceFactory>().CreateOrganizationService(workflowContext.UserId);
 
             EntityReference recordRef = RecordId.Get(context);
-            string webLinkSetName = WebLinkSetName.Get(context);
 
-            // Query for the Web Link Set by name
-            QueryExpression webLinkSetQuery = new QueryExpression("adx_weblinkset")
+            // Retrieve the questionnaire record to get the parent case
+            Entity questionnaire = service.Retrieve(recordRef.LogicalName, recordRef.Id, new ColumnSet("fintrac_caseid"));
+
+            if (!questionnaire.Contains("fintrac_caseid"))
             {
-                ColumnSet = new ColumnSet("adx_weblinksetid"),
-                Criteria = new FilterExpression
-                {
-                    Conditions =
-                {
-                    new ConditionExpression("adx_name", ConditionOperator.Equal, webLinkSetName)
-                }
-                }
-            };
-
-            EntityCollection webLinkSets = service.RetrieveMultiple(webLinkSetQuery);
-
-            if (webLinkSets.Entities.Count == 0)
-            {
-                throw new InvalidPluginExecutionException($"No Web Link Set found with the name '{webLinkSetName}'.");
+                throw new InvalidPluginExecutionException("The questionnaire record does not have an associated case.");
             }
 
-            EntityReference webLinkSetRef = webLinkSets.Entities[0].ToEntityReference();
+            EntityReference caseRef = (EntityReference)questionnaire["fintrac_caseid"];
+
+            // Retrieve the parent case to get the fintrac_questionnairetemplate (Web Link Set)
+            Entity parentCase = service.Retrieve(caseRef.LogicalName, caseRef.Id, new ColumnSet("fintrac_questionnairetemplate"));
+
+            if (!parentCase.Contains("fintrac_questionnairetemplate"))
+            {
+                throw new InvalidPluginExecutionException("The parent case does not have a fintrac_questionnairetemplate (Web Link Set) specified.");
+            }
+
+            EntityReference webLinkSetRef = (EntityReference)parentCase["fintrac_questionnairetemplate"];
 
             // Query for child web links
             QueryExpression query = new QueryExpression("adx_weblink")
@@ -163,4 +157,5 @@ namespace CustomWorkflow
             service.Update(updateRecord);
         }
     }
+
 }
