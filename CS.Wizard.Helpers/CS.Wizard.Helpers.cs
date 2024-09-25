@@ -111,7 +111,7 @@ namespace CustomWorkflow
 
             EntityReference caseRef = (EntityReference)questionnaire["fintrac_case"];
 
-            // Retrieve the parent case to get the fintrac_questionnairetemplate (Web Link Set)
+            // Retrieve the parent case to get the fintrac_questionnairetemplate
             Entity parentCase = service.Retrieve(caseRef.LogicalName, caseRef.Id, new ColumnSet("fintrac_questionnairetemplate"));
 
             if (!parentCase.Contains("fintrac_questionnairetemplate"))
@@ -122,17 +122,17 @@ namespace CustomWorkflow
             EntityReference webLinkSetRef = (EntityReference)parentCase["fintrac_questionnairetemplate"];
 
             // Query for child web links
-            QueryExpression query = new QueryExpression("adx_weblink")
+            QueryExpression query = new QueryExpression("mspp_weblink")
             {
-                ColumnSet = new ColumnSet("adx_displayordernumber"),
+                ColumnSet = new ColumnSet("mspp_displayordernumber"),
                 Criteria = new FilterExpression
                 {
                     Conditions =
                 {
-                    new ConditionExpression("adx_weblinksetid", ConditionOperator.Equal, webLinkSetRef.Id)
+                    new ConditionExpression("mspp_weblinksetid", ConditionOperator.Equal, webLinkSetRef.Id)
                 }
                 },
-                Orders = { new OrderExpression("adx_displayordernumber", OrderType.Ascending) }
+                Orders = { new OrderExpression("mspp_displayordernumber", OrderType.Ascending) }
             };
 
             EntityCollection webLinks = service.RetrieveMultiple(query);
@@ -141,7 +141,7 @@ namespace CustomWorkflow
             Dictionary<string, bool> manifestDict = new Dictionary<string, bool>();
             foreach (var webLink in webLinks.Entities)
             {
-                int displayOrder = webLink.GetAttributeValue<int>("adx_displayordernumber");
+                int displayOrder = webLink.GetAttributeValue<int>("mspp_displayordernumber");
                 manifestDict.Add(displayOrder.ToString(), false);
             }
 
