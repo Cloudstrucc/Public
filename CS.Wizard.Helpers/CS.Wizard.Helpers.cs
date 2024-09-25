@@ -137,12 +137,23 @@ namespace CustomWorkflow
 
             EntityCollection webLinks = service.RetrieveMultiple(query);
 
-            // Create the JSON array
+            // Create the JSON array with unique keys
             Dictionary<string, bool> manifestDict = new Dictionary<string, bool>();
+            int stepCounter = 1;
             foreach (var webLink in webLinks.Entities)
             {
                 int displayOrder = webLink.GetAttributeValue<int>("mspp_displayordernumber");
-                manifestDict.Add(displayOrder.ToString(), false);
+                string key = stepCounter.ToString();
+
+                // Ensure the key is unique
+                while (manifestDict.ContainsKey(key))
+                {
+                    stepCounter++;
+                    key = stepCounter.ToString();
+                }
+
+                manifestDict.Add(key, false);
+                stepCounter++;
             }
 
             // Serialize the dictionary to JSON
@@ -157,5 +168,4 @@ namespace CustomWorkflow
             service.Update(updateRecord);
         }
     }
-
 }
