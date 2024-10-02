@@ -19,8 +19,6 @@
 #Go to power pages site and press Sync
 #
 
-Write-Host "test"
-
 $basePath = "C:\Users\pearsof\repos\Public\"
 $basePathSnippets = $basePath + "liquid\contentsnippets\snippets.json"
 $portalBasicThemePath = $basePath + "portalbasictheme.css"
