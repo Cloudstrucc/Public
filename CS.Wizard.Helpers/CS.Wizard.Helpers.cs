@@ -122,15 +122,31 @@ namespace CustomWorkflow
             EntityReference webLinkSetRef = (EntityReference)parentCase["fintrac_questionnairetemplate"];
 
             // Query for child web links
+            //QueryExpression query = new QueryExpression("mspp_weblink")
+            //{
+            //    ColumnSet = new ColumnSet("mspp_displayordernumber"),
+            //    Criteria = new FilterExpression
+            //    {
+            //        Conditions =
+            //    {
+            //        new ConditionExpression("mspp_weblinksetid", ConditionOperator.Equal, webLinkSetRef.Id)
+            //    }
+            //    },
+            //    Orders = { new OrderExpression("mspp_displayordernumber", OrderType.Ascending) }
+            //};
+
+            // Query for child web links (only active ones)
             QueryExpression query = new QueryExpression("mspp_weblink")
             {
                 ColumnSet = new ColumnSet("mspp_displayordernumber"),
                 Criteria = new FilterExpression
                 {
+                    FilterOperator = LogicalOperator.And,
                     Conditions =
-                {
-                    new ConditionExpression("mspp_weblinksetid", ConditionOperator.Equal, webLinkSetRef.Id)
-                }
+                    {
+                        new ConditionExpression("mspp_weblinksetid", ConditionOperator.Equal, webLinkSetRef.Id),
+                        new ConditionExpression("statecode", ConditionOperator.Equal, 0) // 0 represents the Active state
+                    }
                 },
                 Orders = { new OrderExpression("mspp_displayordernumber", OrderType.Ascending) }
             };
