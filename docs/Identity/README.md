@@ -196,8 +196,96 @@ sequenceDiagram
 
 By using DID and blockchain anchoring, you can implement a robust solution that verifies both the user and the device, ensuring secure, authorized access to your network. Blockchain provides a tamper-proof trust layer, and Microsoft Entra Verified ID can be extended to incorporate device credentials for enhanced security and seamless second-factor authentication.
 
-```sql
+## Unified Identity Management Using Microsoft Entra Verified ID
 
-This markdown file contains all the requested information and includes Mermaid.js diagrams under the appropriate sections. The diagrams visualize the flows for system-to-system interactions and user interactions throughout the authentication and verification process. Let me know if you need further adjustments!
+### Concept Overview
+
+To streamline identity management and improve security across the Canadian federal government, **Microsoft Entra Verified ID** can be used to create a **single, unified identity** for each employee. This identity can be used across all federal agencies, eliminating the current issue where employees may have multiple identities across different Azure AD (Entra) tenants.
+
+### How Entra Verified ID Works
+
+**Microsoft Entra Verified ID** is based on decentralized identity principles, allowing users to own and manage their credentials in a secure digital wallet, while organizations can issue, validate, and revoke these credentials. In this scenario, the government could centralize the issuance of identities and associate them with employees' devices (laptops and mobile phones) to create a secure and unified authentication experience.
+
+#### Key Components:
+
+1. **Central Azure Tenant for Verified ID** :
+   One Azure tenant (e.g., managed by a central federal IT authority) would act as the trusted issuer of  **Verified IDs** . This tenant would issue **Verified IDs** to all government employees.
+2. **Verified IDs Stored in Digital Wallets** :
+   Employees would receive a Verified ID that is stored in a **digital wallet** (such as Microsoft Authenticator or another decentralized identity wallet). This wallet holds their identity credentials securely, allowing them to use a single identity across all agencies.
+3. **Cross-Tenant Collaboration** :
+   Each federal agency would retain its own Azure AD (Entra ID) tenant, but through  **Azure AD Cross-Tenant Collaboration** , these tenants would trust the centrally issued Verified IDs for authentication. This ensures that an employee can use their single identity across all government agencies, even when transitioning between departments.
+4. **Device-Based Credential Anchoring** :
+   Devices (laptops and mobile phones) assigned to employees would be registered with the central Azure tenant and anchored to the employee’s Verified ID. This ensures that employees use a **single set of devices** across agencies, and the devices themselves are trusted and verified using blockchain anchoring for tamper-proof trust.
+
+### Integration with Current Infrastructure
+
+ **Current State** :
+Each federal agency operates its own Azure AD tenant, managing identities locally. Employees working across different departments or agencies often have **multiple identities** and potentially **multiple devices** (e.g., laptops from different agencies), leading to inefficiencies and security vulnerabilities.
+
+ **Proposed Future State** :
+
+* A **single, unified identity** is issued from a central Azure tenant.
+* Employees have one identity and one set of devices, allowing for cross-agency work without the need for multiple accounts or additional devices.
+* The central Azure tenant would manage the issuance and revocation of Verified IDs and devices.
+* Each agency’s Azure AD tenant would trust the central Verified ID tenant for authentication.
+
+### Key Benefits
+
+1. **Single Identity Across All Agencies** :
+   Employees will use a **single identity** across the entire federal government, reducing the complexity of managing multiple Azure AD accounts and streamlining onboarding/offboarding processes when employees transition between departments.
+2. **Improved Security** :
+   By anchoring employee identities and devices in a  **centralized Verified ID system** , the government can reduce the risk of identity duplication or tampering, while enhancing overall security through blockchain-based verification. Devices linked to an employee’s Verified ID will provide an extra layer of trust for secure access.
+3. **Cross-Tenant Trust Using Azure AD** :
+   The **cross-tenant collaboration** feature in Azure AD allows different federal agencies to accept credentials from the central Verified ID tenant. Employees will be able to seamlessly work across agencies using their centralized Verified ID without needing separate logins or credentials for each department.
+4. **Device Consolidation** :
+   Instead of issuing multiple devices (one per agency), employees can use **one laptop and one mobile device** for their entire career, regardless of which department they are working with. These devices will be pre-registered with their identity and trusted by all federal departments.
+
+### Proposed Architecture
+
+```mermaid
+graph LR
+    A[Central Azure Tenant with Verified ID] --> B[Federal Agency 1 Azure AD]
+    A --> C[Federal Agency 2 Azure AD]
+    A --> D[Federal Agency 3 Azure AD]
+  
+    E[Employee Digital Wallet with Verified ID] --> A
+    E --> B
+    E --> C
+    E --> D
+  
+    F[Trusted Device Anchored to Employee Identity] --> A
+    F --> B
+    F --> C
+    F --> D
 
 ```
+
+1. **Central Azure Tenant with Verified ID** :
+   This central tenant issues, manages, and verifies employees' identities, serving as the source of trust for all federal agencies.
+2. **Cross-Tenant Collaboration** :
+   Federal agency Azure AD tenants are connected to the central tenant, allowing them to trust the Verified IDs issued by the central system. Employees are authenticated across these agencies using a single identity.
+3. **Device Trust** :
+   Devices (laptops, phones) are trusted based on their registration with the central tenant and linked to the employee’s Verified ID. This ensures that employees have secure, verified devices for accessing government systems.
+
+### Example Workflow for Identity and Device Usage
+
+1. **Onboarding of a New Employee** :
+
+* The employee is issued a **Verified ID** by the central Azure tenant.
+* The employee's devices (laptop and mobile) are registered and linked to their Verified ID.
+* The employee can now use the same Verified ID and devices to work across all federal agencies that trust the central Azure tenant.
+
+2. **Authentication for Agency Resources** :
+
+* The employee attempts to access resources at  **Federal Agency 1** .
+* The agency’s Azure AD tenant checks the employee’s Verified ID with the central Azure tenant.
+* Once verified, the employee gains access without needing a new identity.
+
+3. **Device Trust Verification** :
+
+* Before accessing sensitive resources, the system verifies that the employee is using a trusted, registered device linked to their Verified ID.
+* The device is verified using blockchain anchoring to prevent tampering or unauthorized device usage.
+
+### Conclusion
+
+By utilizing **Microsoft Entra Verified ID** and  **Azure AD cross-tenant collaboration** , the Canadian federal government can implement a **unified identity** system, streamlining access, increasing security, and reducing costs by eliminating the need for multiple identities and devices across agencies. This future-state system enhances collaboration and simplifies device management while ensuring that identities and devices are securely managed and verifiable.
