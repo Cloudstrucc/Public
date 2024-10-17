@@ -5,7 +5,7 @@
 - Overview of the Power Platform implementation initiative
 - Alignment with Elections Canada's mandate and strategic objectives
 - Key benefits and expected outcomes
-- **Emphasis on robust compliance monitoring and governance enforcement**
+- *Compliance monitoring and governance enforcement**
 
 ## 2. Introduction
 
@@ -13,7 +13,6 @@
 
 - Objectives of the Power Platform implementation
 - Scope of application within Elections Canada
-- **Highlight on the critical nature of compliance and governance in the electoral process**
 
 ### 2.2 Document Control
 
@@ -87,7 +86,7 @@
 
 - Use of the Data Loss Prevention (DLP) Editor to enforce data privacy policies
 - Implementation of the Admin Audit History to track access to sensitive information
-- **Automated PIA tracking and renewal process using Power Apps and Power Automate**
+- **Automated PIA tracking and renewal process using Power Apps and Power Automate (e.g PIA data retention policy alignment to CoE privary controls**
 
 ### 4.3 Data Classification and Handling
 
