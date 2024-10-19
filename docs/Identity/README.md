@@ -2,7 +2,140 @@
 
 ## Overview
 
-To replace Entrust PKI and implement a second-factor authentication for users before VPN access, this design explores the use of Decentralized Identity (DID) and blockchain anchoring. This ensures that both the user and the device are verified before accessing the network, enhancing security by tying device trust to user credentials.
+To replace Entrust PKI and implement a second-factor authentication for users before VPN access, this design explores the use of Decentralized Identity (DID) and blockchain anchoring. This ensures that both the user and the device are verified before accessing the network, enhancing security by tying device trust to user credentials. Traditional Public Key Infrastructure (PKI) systems, such as those provided by Entrust, rely on centralized Certificate Authorities (CAs) to issue and manage digital certificates. While effective, this centralized approach can present single points of failure and potential security vulnerabilities. Decentralized Public Key Infrastructure (DPKI) aims to address these issues by leveraging blockchain technology and Decentralized Identifiers (DIDs).
+
+## DPKI Concept
+
+DPKI distributes the responsibilities of traditional PKI across a decentralized network, typically using blockchain technology. This approach eliminates the need for a central trusted authority, instead relying on consensus mechanisms and cryptographic proofs to ensure the integrity and authenticity of identities and credentials.
+
+## Key Components of DPKI
+
+1. **Blockchain**: Serves as a distributed ledger for storing and verifying identity information.
+2. **Decentralized Identifiers (DIDs)**: Unique identifiers that enable verifiable, decentralized digital identity.
+3. **Verifiable Credentials**: Cryptographically secure claims about the identity holder.
+4. **DID Wallets**: Software for managing DIDs and credentials on user devices.
+
+## Replacing Entrust PKI with DPKI
+
+### Overview
+
+The proposed design aims to replace the Entrust PKI system with a DPKI solution, implementing a second-factor authentication for users before VPN access. This approach leverages Decentralized Identity (DID) and blockchain anchoring to enhance security by verifying both the user and the device before granting network access.
+
+### Key Aspects
+
+1. **User and Device Verification**:
+
+   - Each user is assigned a DID, stored on the blockchain.
+   - Devices are also assigned DIDs, creating a cryptographic link between user and device.
+   - This dual verification ensures that only authorized users on approved devices can access the network.
+2. **Enhanced Security**:
+
+   - By tying device trust to user credentials, the system creates a more robust authentication mechanism.
+   - Compromising a single factor (user credentials or device) is insufficient for gaining unauthorized access.
+3. **Decentralized Trust**:
+
+   - Instead of relying on Entrust as a centralized authority, trust is distributed across the blockchain network.
+   - This reduces the risk associated with a single point of failure or compromise.
+4. **Flexible Authentication Flow**:
+
+   - User initiates VPN connection.
+   - System requests proof of user DID and device DID.
+   - User provides credentials through their DID wallet.
+   - System verifies credentials against the blockchain.
+   - Upon successful verification, VPN access is granted.
+5. **Scalability and Interoperability**:
+
+   - The DPKI system can easily scale to accommodate growing numbers of users and devices.
+   - Standards-based approach (using W3C DID and Verifiable Credentials standards) ensures interoperability with other systems and potential future enhancements.
+
+## Benefits Over Traditional PKI
+
+1. **Increased Security**: Eliminates vulnerabilities associated with centralized CAs.
+2. **Greater Control**: Organizations have more direct control over their identity infrastructure.
+3. **Improved Privacy**: Selective disclosure and zero-knowledge proofs can enhance user privacy.
+4. **Auditability**: All transactions are recorded on the blockchain, providing a transparent audit trail.
+5. **Resilience**: Decentralized nature makes the system more resistant to attacks and outages.
+
+## Challenges and Considerations
+
+1. **Performance**: Blockchain operations may introduce latency compared to traditional PKI.
+2. **Adoption**: Requires significant changes to existing infrastructure and user education.
+3. **Regulatory Compliance**: Must ensure alignment with government regulations and standards.
+4. **Key Management**: Secure management of private keys is crucial and potentially complex.
+
+This DPKI-based approach represents a significant advancement in secure authentication for VPN access, offering enhanced security, flexibility, and control compared to traditional PKI systems like Entrust.
+
+## Key considerations for solutions
+
+### 1. Security
+
+- Implement robust encryption for DID wallet storage on end-user devices
+- Utilize hardware-backed key storage (e.g., TPM) where available
+- Employ multi-factor authentication for DID wallet access
+- Implement regular security audits of the blockchain network
+
+### 2. Performance
+
+- Optimize blockchain read operations for minimal latency during credential verification
+- Implement caching mechanisms for frequently accessed DIDs and credentials
+- Consider using Layer 2 solutions or sidechains for improved transaction throughput
+- Benchmark VPN connection times against current PKI solution
+
+### 3. Compliance
+
+- Ensure alignment with NIST SP 800-63 guidelines for digital identity
+- Verify compliance with FIPS 140-2 for cryptographic modules
+- Address requirements specified in OMB Memorandum M-19-17 for federal identity management
+- Conduct regular compliance audits and maintain detailed documentation
+
+### 4. Integration
+
+- Develop API interfaces for VPN software to interact with DID verification systems
+- Create OS-level integrations for seamless DID management (e.g., Windows CNG extensions)
+- Implement DPKI-aware network access control systems
+- Ensure compatibility with existing identity and access management (IAM) systems
+
+### 5. Key Recovery
+
+- Design a secure key escrow system for government-managed DIDs
+- Implement M-of-N multi-signature schemes for distributed key recovery
+- Develop procedures for secure key regeneration and re-issuance
+- Create user guidelines for personal recovery phrase management
+
+### 6. Scalability
+
+- Implement sharding or similar techniques to ensure blockchain scalability
+- Design a hierarchical DID structure to manage large numbers of identities
+- Utilize efficient consensus mechanisms (e.g., Proof of Authority for permissioned networks)
+- Plan for horizontal scaling of verification nodes
+
+### 7. Transition Strategy
+
+- Develop a phased rollout plan with specific milestones and success criteria
+- Create parallel running capability for DPKI and traditional PKI during transition
+- Implement automated migration tools for converting existing digital identities to DIDs
+- Establish KPIs for measuring the effectiveness of the transition
+
+### 8. Interoperability
+
+- Adhere to W3C standards for DIDs and Verifiable Credentials
+- Implement support for multiple DID methods to ensure cross-platform compatibility
+- Develop bridge services for interaction with legacy PKI systems
+- Create standardized APIs for identity verification across different government systems
+
+### 9. Privacy
+
+- Implement zero-knowledge proofs for credential verification where applicable
+- Design data minimization techniques into the credential issuance and verification processes
+- Ensure compliance with relevant privacy regulations (e.g., Privacy Act of 1974)
+- Implement fine-grained user consent mechanisms for credential sharing
+
+### 10. Revocation
+
+- Design an efficient revocation broadcasting system using the blockchain
+- Implement short-lived credentials with automatic expiration to reduce reliance on revocation
+- Create a real-time revocation checking service with high availability
+- Develop procedures for immediate revocation in case of security incidents
 
 ## Solution Components
 
