@@ -1,0 +1,23 @@
+{
+    "auth": {
+        "clientId": "your-client-id",
+        "tenantId": "your-tenant-id",
+        "crmInstance": "your-instance",
+        "redirectUri": "https://login.onmicrosoft.com",
+        "clientSecret": "your-client-secret"
+    },
+    "lookup": {
+        "entityName": "new_customentity",
+        "name": "new_regardingobject",
+        "displayName": "Regarding",
+        "description": "Polymorphic lookup to reference multiple entities",
+        "schemaName": "new_RegardingObject",
+        "required": false,
+        "searchable": true,
+        "targetEntities": [
+            "account",
+            "contact",
+            "opportunity"
+        ]
+    }
+}
