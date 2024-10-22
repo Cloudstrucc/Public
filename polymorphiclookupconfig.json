@@ -7,6 +7,7 @@
         "clientSecret": "your-client-secret"
     },
     "lookup": {
+        "operation": "update",  // Can be "create" or "update" (make sure to delete this comment in your file)
         "entityName": "new_customentity",
         "name": "new_regardingobject",
         "displayName": "Regarding",
@@ -17,7 +18,7 @@
         "targetEntities": [
             "account",
             "contact",
-            "opportunity"
+            "opportunity"            
         ]
     }
 }
