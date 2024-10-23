@@ -10,19 +10,14 @@
         "uniqueName": "YourSolutionUniqueName"
     },
     "lookup": {
-        "operation": "create",  // Can be "create" or "update (delete this comment in your copy)"
-        "entityName": "new_customentity",
-        "name": "new_regardingobject",
-        "displayName": "Regarding",
-        "description": "Polymorphic lookup to reference multiple entities",
-        "schemaName": "new_RegardingObject",
-        "required": false,
-        "searchable": true,
+        "operation": "create",
+        "entityName": "new_fptest",
+        "name": "new_fptpoly",
+        "schemaName": "new_FptPoly",
+        "displayName": "FPt Poly",
         "targetEntities": [
             "account",
-            "contact",
-            "opportunity",
-            "lead"
+            "contact"
         ]
     }
 }
