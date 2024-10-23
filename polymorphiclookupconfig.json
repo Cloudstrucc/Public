@@ -10,14 +10,20 @@
         "uniqueName": "YourSolutionUniqueName"
     },
     "lookup": {
-        "operation": "create",
+        "operation": "create",  // or "update" for adding new relationships (delete this comment in your real file)
         "entityName": "new_fptest",
-        "name": "new_fptpoly",
-        "schemaName": "new_FptPoly",
-        "displayName": "FPt Poly",
+        "name": "new_fppoly",
+        "schemaName": "new_FpPoly",
+        "displayName": "FP Poly",
         "targetEntities": [
             "account",
             "contact"
-        ]
+        ],
+        "update": {
+            "newTargetEntities": [  // Only used when operation is "update" (delete this comment in your real file)
+                "opportunity",
+                "lead"
+            ]
+        }
     }
 }
