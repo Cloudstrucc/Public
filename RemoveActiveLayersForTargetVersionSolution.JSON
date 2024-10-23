@@ -1,0 +1,22 @@
+{
+    "auth": {
+        "clientId": "your-client-id",
+        "clientSecret": "your-client-secret",
+        "tenantId": "your-tenant-id"
+    },
+    "environments": {
+        "source": {
+            "url": "your-source-environment",
+            "friendlyName": "Development"
+        },
+        "target": {
+            "url": "your-target-environment",
+            "friendlyName": "Production"
+        }
+    },
+    "solution": {
+        "uniqueName": "YourSolutionUniqueName",
+        "displayName": "Your Solution Display Name",
+        "version": "1.0.0.0"
+    }
+}
