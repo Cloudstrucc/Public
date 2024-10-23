@@ -1,5 +1,6 @@
 connectionparams.json
 connection.json
+polymorphiclookupconfig-real.json
 .devcontainer
 .github
 .vscode
