@@ -6,8 +6,11 @@
         "redirectUri": "https://login.onmicrosoft.com",
         "clientSecret": "your-client-secret"
     },
+    "solution": {
+        "uniqueName": "YourSolutionUniqueName"
+    },
     "lookup": {
-        "operation": "update",  
+        "operation": "create",  // Can be "create" or "update (delete this comment in your copy)"
         "entityName": "new_customentity",
         "name": "new_regardingobject",
         "displayName": "Regarding",
@@ -18,7 +21,8 @@
         "targetEntities": [
             "account",
             "contact",
-            "opportunity"            
+            "opportunity",
+            "lead"
         ]
     }
 }

@@ -58,6 +58,51 @@ $updateHeaders = @{
 # API URL
 $apiUrl = $resource + "/api/data/v9.2/"
 
+# Function to get solution by unique name
+function Get-Solution {
+    param (
+        [string]$solutionUniqueName
+    )
+    
+    $getSolutionUrl = $apiUrl + "solutions?`$filter=uniquename eq '$solutionUniqueName'"
+    try {
+        $response = Invoke-RestMethod -Uri $getSolutionUrl -Method Get -Headers $headers
+        if ($response.value.Count -gt 0) {
+            return $response.value[0]
+        }
+        return $null
+    } catch {
+        Write-Host "Error getting solution: $_"
+        return $null
+    }
+}
+
+# Function to add component to solution
+function Add-ComponentToSolution {
+    param (
+        [string]$solutionId,
+        [string]$componentId,
+        [int]$componentType
+    )
+    
+    $addComponentUrl = $apiUrl + "AddSolutionComponent"
+    $addComponentBody = @{
+        ComponentId = $componentId
+        ComponentType = $componentType  # 2 for entity attributes
+        SolutionUniqueName = $solutionId
+        AddRequiredComponents = $true
+    } | ConvertTo-Json
+
+    try {
+        $response = Invoke-RestMethod -Uri $addComponentUrl -Method Post -Body $addComponentBody -Headers $headers -ContentType "application/json"
+        Write-Host "Component added to solution successfully!"
+        return $true
+    } catch {
+        Write-Host "Error adding component to solution: $_"
+        return $false
+    }
+}
+
 # Function to get existing attribute
 function Get-ExistingAttribute {
     param (
@@ -147,6 +192,23 @@ if ($shouldCreate) {
     try {
         $response = Invoke-RestMethod -Uri $createUrl -Method Post -Body $lookupDefinitionJson -Headers $headers -ContentType "application/json"
         Write-Host "Polymorphic lookup created successfully!"
+        
+        # Add to solution if specified
+        if ($jsonConfig.solution -and $jsonConfig.solution.uniqueName) {
+            Write-Host "Adding new attribute to solution..."
+            $solution = Get-Solution -solutionUniqueName $jsonConfig.solution.uniqueName
+            if ($solution) {
+                $addResult = Add-ComponentToSolution -solutionId $jsonConfig.solution.uniqueName `
+                                                   -componentId $response.MetadataId `
+                                                   -componentType 2
+                if ($addResult) {
+                    Write-Host "Attribute successfully added to solution $($jsonConfig.solution.uniqueName)"
+                }
+            } else {
+                Write-Host "Solution $($jsonConfig.solution.uniqueName) not found!"
+            }
+        }
+        
         $response
     } catch {
         Write-Host "Error creating polymorphic lookup: $_"
