@@ -8,10 +8,57 @@ if ($useJsonConfig -eq "Y" -or $useJsonConfig -eq "y") {
         $jsonConfig = Get-Content $jsonFilePath | ConvertFrom-Json
     } elseif ($useJsonConfig -eq "H" -or $useJsonConfig -eq "h") {
         Write-Host "Please see configuration.json example for the required format"
+        Write-Host "JSON Configuration File Format:"
+        Write-Host "{
+            `"auth`": {
+                `"clientId`": `"your-client-id`",
+                `"tenantId`": `"your-tenant-id`",
+                `"crmInstance`": `"your-instance`",
+                `"redirectUri`": `"https://login.onmicrosoft.com`",
+                `"clientSecret`": `"your-client-secret`"
+            },
+            `"solution`": {
+                `"uniqueName`": `"YourSolutionUniqueName`"
+            },
+            `"lookup`": {
+                `"operation`": `"create`",
+                `"entityName`": `"new_fptest`",
+                `"name`": `"new_fppoly`",
+                `"schemaName`": `"new_FpPoly`",
+                `"displayName`": `"FP Poly`",
+                `"targetEntities`": [`"account`", `"contact`"]
+            }
+        }"
         exit
     } else {
         exit
     }
+}
+
+# Validate configuration
+if (-not $jsonConfig.lookup.entityName) {
+    Write-Host "Error: entityName is required in the configuration."
+    exit
+}
+
+if (-not $jsonConfig.lookup.name) {
+    Write-Host "Error: name is required in the configuration."
+    exit
+}
+
+if (-not $jsonConfig.lookup.schemaName) {
+    Write-Host "Error: schemaName is required in the configuration."
+    exit
+}
+
+if (-not $jsonConfig.lookup.displayName) {
+    Write-Host "Error: displayName is required in the configuration."
+    exit
+}
+
+if (-not $jsonConfig.lookup.targetEntities -or $jsonConfig.lookup.targetEntities.Count -eq 0) {
+    Write-Host "Error: targetEntities array is required and must not be empty."
+    exit
 }
 
 # Set up authentication parameters
@@ -33,8 +80,14 @@ $body = @{
 }
 
 # Get token
-$authResponse = Invoke-RestMethod -Method Post -Uri $tokenEndpoint -Body $body -ContentType "application/x-www-form-urlencoded"
-$token = $authResponse.access_token
+try {
+    $authResponse = Invoke-RestMethod -Method Post -Uri $tokenEndpoint -Body $body -ContentType "application/x-www-form-urlencoded"
+    $token = $authResponse.access_token
+    Write-Host "Authentication successful!"
+} catch {
+    Write-Host "Authentication failed: $_"
+    exit
+}
 
 # Set up headers
 $headers = @{
@@ -45,18 +98,45 @@ $headers = @{
     Prefer = "return=representation"
 }
 
-# Headers for update operations
-$updateHeaders = @{
-    Authorization = "Bearer $token"
-    "OData-MaxVersion" = "4.0"
-    "OData-Version" = "4.0"
-    Accept = "application/json"
-    "If-Match" = "*"
-    Prefer = "return=representation"
-}
-
 # API URL
 $apiUrl = $resource + "/api/data/v9.2/"
+
+# Function to get attribute metadata
+function Get-AttributeMetadata {
+    param (
+        [string]$entityName,
+        [string]$attributeName
+    )
+    
+    $getUrl = $apiUrl + "EntityDefinitions(LogicalName='$entityName')/Attributes(LogicalName='$attributeName')"
+    try {
+        Write-Host "Getting attribute metadata for $attributeName..."
+        $response = Invoke-RestMethod -Uri $getUrl -Method Get -Headers $headers
+        return $response
+    } catch {
+        Write-Host "Error getting attribute metadata: $_"
+        return $null
+    }
+}
+
+# Function to get existing relationship
+function Get-ExistingRelationship {
+    param (
+        [string]$relationshipName
+    )
+    
+    $getUrl = $apiUrl + "RelationshipDefinitions?`$filter=SchemaName eq '$relationshipName'"
+    try {
+        $response = Invoke-RestMethod -Uri $getUrl -Method Get -Headers $headers
+        if ($response.value.Count -gt 0) {
+            return $response.value[0]
+        }
+        return $null
+    } catch {
+        Write-Host "Error getting relationship: $_"
+        return $null
+    }
+}
 
 # Function to get solution by unique name
 function Get-Solution {
@@ -88,12 +168,15 @@ function Add-ComponentToSolution {
     $addComponentUrl = $apiUrl + "AddSolutionComponent"
     $addComponentBody = @{
         ComponentId = $componentId
-        ComponentType = $componentType  # 2 for entity attributes
+        ComponentType = $componentType  # 2 for attributes, 10 for relationships
         SolutionUniqueName = $solutionId
         AddRequiredComponents = $true
     } | ConvertTo-Json
 
     try {
+        Write-Host "Adding component to solution with payload:"
+        Write-Host $addComponentBody
+        
         $response = Invoke-RestMethod -Uri $addComponentUrl -Method Post -Body $addComponentBody -Headers $headers -ContentType "application/json"
         Write-Host "Component added to solution successfully!"
         return $true
@@ -103,133 +186,169 @@ function Add-ComponentToSolution {
     }
 }
 
-# Function to get existing attribute
-function Get-ExistingAttribute {
+# Function to create polymorphic lookup
+function New-PolymorphicLookup {
     param (
-        [string]$entityName,
-        [string]$attributeName
+        [PSCustomObject]$config
     )
     
-    $getUrl = $apiUrl + "EntityDefinitions(LogicalName='$entityName')/Attributes(LogicalName='$attributeName')"
-    try {
-        $response = Invoke-RestMethod -Uri $getUrl -Method Get -Headers $headers
-        return $response
-    } catch {
-        if ($_.Exception.Response.StatusCode -eq 404) {
-            return $null
+    $createUrl = $apiUrl + "CreatePolymorphicLookupAttribute"
+    
+    # Build the relationships array
+    $relationships = @()
+    foreach ($targetEntity in $config.lookup.targetEntities) {
+        $relationships += @{
+            SchemaName = "$($config.lookup.name.ToLower())_$targetEntity"
+            ReferencedEntity = $targetEntity
+            ReferencingEntity = $config.lookup.entityName
+            CascadeConfiguration = @{
+                Assign = "NoCascade"
+                Delete = "RemoveLink"
+                Merge = "NoCascade"
+                Reparent = "NoCascade"
+                Share = "NoCascade"
+                Unshare = "NoCascade"
+            }
         }
-        throw $_
     }
-}
 
-# Function to create lookup definition
-function New-LookupDefinition {
-    param (
-        [PSCustomObject]$config,
-        [bool]$isUpdate
-    )
-
-    $lookupDefinition = @{
-        "@odata.type" = "Microsoft.Dynamics.CRM.LookupAttributeMetadata"
-        SchemaName = $config.lookup.schemaName
-        LogicalName = $config.lookup.name.ToLower()
-        DisplayName = @{
-            "@odata.type" = "Microsoft.Dynamics.CRM.Label"
-            LocalizedLabels = @(
-                @{
+    # Build the complete request payload
+    $lookupRequest = @{
+        OneToManyRelationships = $relationships
+        Lookup = @{
+            AttributeType = "Lookup"
+            AttributeTypeName = @{
+                Value = "LookupType"
+            }
+            Description = @{
+                "@odata.type" = "Microsoft.Dynamics.CRM.Label"
+                LocalizedLabels = @(
+                    @{
+                        "@odata.type" = "Microsoft.Dynamics.CRM.LocalizedLabel"
+                        Label = "$($config.lookup.displayName) Polymorphic Lookup Attribute"
+                        LanguageCode = 1033
+                    }
+                )
+                UserLocalizedLabel = @{
+                    "@odata.type" = "Microsoft.Dynamics.CRM.LocalizedLabel"
+                    Label = "$($config.lookup.displayName) Polymorphic Lookup Attribute"
+                    LanguageCode = 1033
+                }
+            }
+            DisplayName = @{
+                "@odata.type" = "Microsoft.Dynamics.CRM.Label"
+                LocalizedLabels = @(
+                    @{
+                        "@odata.type" = "Microsoft.Dynamics.CRM.LocalizedLabel"
+                        Label = $config.lookup.displayName
+                        LanguageCode = 1033
+                    }
+                )
+                UserLocalizedLabel = @{
                     "@odata.type" = "Microsoft.Dynamics.CRM.LocalizedLabel"
                     Label = $config.lookup.displayName
                     LanguageCode = 1033
                 }
-            )
+            }
+            SchemaName = $config.lookup.schemaName
+            "@odata.type" = "Microsoft.Dynamics.CRM.ComplexLookupAttributeMetadata"
         }
-        Description = @{
-            "@odata.type" = "Microsoft.Dynamics.CRM.Label"
-            LocalizedLabels = @(
-                @{
-                    "@odata.type" = "Microsoft.Dynamics.CRM.LocalizedLabel"
-                    Label = $config.lookup.description
-                    LanguageCode = 1033
-                }
-            )
-        }
-        RequiredLevel = @{
-            Value = if ($config.lookup.required) { "Required" } else { "None" }
-            "@odata.type" = "Microsoft.Dynamics.CRM.AttributeRequiredLevelManagedProperty"
-        }
-        Targets = $config.lookup.targetEntities
-        IsSearchable = $config.lookup.searchable
-        IsCustomField = $true
     }
 
-    # Remove properties that can't be updated if this is an update operation
-    if ($isUpdate) {
-        $lookupDefinition.Remove("SchemaName")
-        $lookupDefinition.Remove("LogicalName")
-        $lookupDefinition.Remove("IsCustomField")
-    }
+    $createBody = $lookupRequest | ConvertTo-Json -Depth 10
 
-    return $lookupDefinition
+    try {
+        Write-Host "Creating polymorphic lookup with payload:"
+        Write-Host $createBody
+
+        $response = Invoke-RestMethod -Uri $createUrl -Method Post -Body $createBody -Headers $headers -ContentType "application/json"
+        return $response
+    } catch {
+        Write-Host "Error creating polymorphic lookup: $_"
+        $errorResponse = $_.ErrorDetails.Message
+        if ($errorResponse) {
+            Write-Host "Error details: $errorResponse"
+        }
+        Write-Host "Response status code: $($_.Exception.Response.StatusCode.value__)"
+        Write-Host "Response status description: $($_.Exception.Response.StatusDescription)"
+        
+        try {
+            $rawError = $_.Exception.Response.GetResponseStream()
+            $reader = New-Object System.IO.StreamReader($rawError)
+            $rawErrorContent = $reader.ReadToEnd()
+            Write-Host "Raw error content: $rawErrorContent"
+        } catch {
+            Write-Host "Could not read detailed error message"
+        }
+        return $null
+    }
 }
 
 # Main execution
-$entityName = $jsonConfig.lookup.entityName
-$attributeName = $jsonConfig.lookup.name.ToLower()
-
-# Check if the attribute exists
-$existingAttribute = Get-ExistingAttribute -entityName $entityName -attributeName $attributeName
-
-# Determine if we should create or update based on both existence and configuration
-$shouldCreate = ($jsonConfig.lookup.operation -eq "create") -or ($null -eq $existingAttribute)
-$shouldUpdate = ($jsonConfig.lookup.operation -eq "update") -and ($null -ne $existingAttribute)
-
-if ($shouldCreate) {
+if ($jsonConfig.lookup.operation -eq "create") {
     Write-Host "Creating new polymorphic lookup..."
-    $lookupDefinition = New-LookupDefinition -config $jsonConfig -isUpdate $false
-    $lookupDefinitionJson = $lookupDefinition | ConvertTo-Json -Depth 10
-    $createUrl = $apiUrl + "EntityDefinitions(LogicalName='$entityName')/Attributes"
+    $response = New-PolymorphicLookup -config $jsonConfig
     
-    try {
-        $response = Invoke-RestMethod -Uri $createUrl -Method Post -Body $lookupDefinitionJson -Headers $headers -ContentType "application/json"
+    if ($response) {
         Write-Host "Polymorphic lookup created successfully!"
         
         # Add to solution if specified
         if ($jsonConfig.solution -and $jsonConfig.solution.uniqueName) {
             Write-Host "Adding new attribute to solution..."
             $solution = Get-Solution -solutionUniqueName $jsonConfig.solution.uniqueName
+            
             if ($solution) {
-                $addResult = Add-ComponentToSolution -solutionId $jsonConfig.solution.uniqueName `
-                                                   -componentId $response.MetadataId `
-                                                   -componentType 2
-                if ($addResult) {
-                    Write-Host "Attribute successfully added to solution $($jsonConfig.solution.uniqueName)"
+                # Wait for attribute creation to complete
+                Write-Host "Waiting for attribute creation to complete..."
+                Start-Sleep -Seconds 10
+                
+                # Get the attribute metadata to get the correct ID
+                $attributeMetadata = Get-AttributeMetadata -entityName $jsonConfig.lookup.entityName -attributeName $jsonConfig.lookup.name.ToLower()
+                
+                if ($attributeMetadata -and $attributeMetadata.MetadataId) {
+                    $addResult = Add-ComponentToSolution -solutionId $jsonConfig.solution.uniqueName `
+                                                       -componentId $attributeMetadata.MetadataId `
+                                                       -componentType 2
+                    if ($addResult) {
+                        Write-Host "Attribute added to solution successfully"
+                        
+                        # Add relationships to solution
+                        Write-Host "Adding relationships to solution..."
+                        foreach ($targetEntity in $jsonConfig.lookup.targetEntities) {
+                            $relationshipName = "$($jsonConfig.lookup.name.ToLower())_$targetEntity"
+                            Write-Host "Getting relationship metadata for $relationshipName..."
+                            Start-Sleep -Seconds 2  # Give time for relationship to be available
+                            
+                            $relationship = Get-ExistingRelationship -relationshipName $relationshipName
+                            if ($relationship -and $relationship.MetadataId) {
+                                $addRelResult = Add-ComponentToSolution -solutionId $jsonConfig.solution.uniqueName `
+                                                                      -componentId $relationship.MetadataId `
+                                                                      -componentType 10
+                                if ($addRelResult) {
+                                    Write-Host "Relationship $relationshipName added to solution successfully"
+                                }
+                            } else {
+                                Write-Host "Could not find relationship $relationshipName"
+                            }
+                        }
+                    }
+                } else {
+                    Write-Host "Could not get attribute metadata"
                 }
             } else {
                 Write-Host "Solution $($jsonConfig.solution.uniqueName) not found!"
             }
         }
-        
-        $response
-    } catch {
-        Write-Host "Error creating polymorphic lookup: $_"
-        Write-Host $_.Exception.Response.GetResponseStream()
+    } else {
+        Write-Host "Failed to create polymorphic lookup."
     }
 }
-elseif ($shouldUpdate) {
-    Write-Host "Updating existing polymorphic lookup..."
-    $lookupDefinition = New-LookupDefinition -config $jsonConfig -isUpdate $true
-    $lookupDefinitionJson = $lookupDefinition | ConvertTo-Json -Depth 10
-    $updateUrl = $apiUrl + "EntityDefinitions(LogicalName='$entityName')/Attributes(LogicalName='$attributeName')"
-    
-    try {
-        $response = Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $lookupDefinitionJson -Headers $updateHeaders -ContentType "application/json"
-        Write-Host "Polymorphic lookup updated successfully!"
-        $response
-    } catch {
-        Write-Host "Error updating polymorphic lookup: $_"
-        Write-Host $_.Exception.Response.GetResponseStream()
-    }
+elseif ($jsonConfig.lookup.operation -eq "update") {
+    Write-Host "Update operation for polymorphic lookups is not supported."
+    Write-Host "Please create new relationships using the 'create' operation."
 }
 else {
-    Write-Host "Invalid operation specified in configuration or attribute state mismatch."
+    Write-Host "Invalid operation specified in configuration. Use 'create'."
 }
+
+Write-Host "Script execution completed."
