@@ -4,3 +4,60 @@ polymorphiclookupconfig-real.json
 .devcontainer
 .github
 .vscode
+
+# .NET build outputs
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Hockey Stats specific files
+Sandboxing/Stats/HockeyStats/
+*.zip
+merged_shots_data.csv
+download_log.txt
+
+# Sensitive configuration files
+polymorphiclookupconfig-ec.json
+**/polymorphiclookupconfig-ec.json    # Matches in any subdirectory
+*-ec.json                             # Matches any file ending with -ec.json
+**/*-ec.json                          # Matches -ec.json files in any subdirectory
+
+polymorphiclookupconfig-lab.json
+**/polymorphiclookupconfig-lab.json    # Matches in any subdirectory
+*-lab.json                             # Matches any file ending with -lab.json
+**/*-lab.json                          # Matches -lab.json files in any subdirectory
+
+# Azure and other secrets
+**/*[Ss]ecret*.json                   # Matches any JSON file with 'secret' in the name
+**/*[Cc]onfig*-ec*.json              # Matches config files with -ec in the name
+**/*[Cc]redential*.json              # Matches any JSON file with 'credential' in the name
+**/*.secrets                          # Matches any .secrets files
+**/*[Kk]ey*.json                     # Matches any JSON file with 'key' in the name
+
+# Local configuration files that might contain secrets
+**/appsettings.*.json                # Matches any non-template appsettings files
+**/appsettings.Development.json
+**/appsettings.Production.json
+**/appsettings.Staging.json
+local.settings.json
+
+# Keep template files
+!appsettings.template.json
+!**/appsettings.template.json
+
+# Rest of standard ignores remain the same...
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+[Oo]ut/
+.vs/
+.vscode/
+# ... (rest of your existing ignores)
