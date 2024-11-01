@@ -1,0 +1,6 @@
+﻿{
+    // Template structure - replace sensitive values with placeholders
+    "connectionString": "YOUR_CONNECTION_STRING_HERE",
+    "clientId": "YOUR_CLIENT_ID",
+    "clientSecret": "YOUR_CLIENT_SECRET"
+}
