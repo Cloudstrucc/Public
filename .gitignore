@@ -61,3 +61,6 @@ build/
 .vs/
 .vscode/
 # ... (rest of your existing ignores)
+# Sensitive configuration files
+Scripts/CustomTools/polymorphiclookupconfig-ec.prod.json
+Scripts/GCWebTemplateInstallPowerPagesBlankSite/connectionparams.prod.json
