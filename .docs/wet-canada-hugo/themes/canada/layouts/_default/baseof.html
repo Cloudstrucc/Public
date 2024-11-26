@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="{{ or site.Language.LanguageCode site.Language.Lang }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body vocab="http://schema.org/" typeof="WebPage">
+
+  {{ partial "header.html" . }}
+  <div class="container-fluid">
+    <div class="row flex-xl-nowrap">
+      <div class="col-12 col-md-1 col-xl-1 bd-sidebar"> 
+        <nav>
+          <ul class="menu">
+            <li><a href="#">Menu Item 1</a></li>
+            <li>
+              <a href="#">Menu Item 2</a>
+              <ul class="submenu">
+                <li><a href="#">Submenu Item 1</a></li>
+                <li><a href="#">Submenu Item 2</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Menu Item 3</a></li>
+            <li>
+              <a href="#">Menu Item 4</a>
+              <ul class="submenu">
+                <li><a href="#">Submenu Item 3</a></li>
+                <li><a href="#">Submenu Item 4</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <main class="col-12 col-md-11 col-xl-11 py-md-3 pl-md-5 bd-content" property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
+        {{ block "main" . }}{{ end }}
+      </main>
+      
+    </div>
+  </div>
+  <footer class="" id="wb-info">
+    {{ partial "footer.html" . }}
+  </footer>
+</body>
+</html>
