@@ -85,11 +85,11 @@ stages:
               targetPath: "$(Build.ArtifactStagingDirectory)/tools/pacTool"
               artifact: "pac-cli"
               publishLocation: "pipeline"
-      - stage: PreChecks
-        dependsOn: Setup
-        variables:
-          PacToolPath: $[ stageDependencies.Setup.PrepareTools.outputs['PackageDownload.PacToolPath'] ]
-        jobs:
+  - stage: PreChecks
+    dependsOn: Setup
+    variables:
+      PacToolPath: $[ stageDependencies.Setup.PrepareTools.outputs['PackageDownload.PacToolPath'] ]
+    jobs:
           - job: ValidateInputs
             steps:
               - task: DownloadPipelineArtifact@2
@@ -126,12 +126,12 @@ stages:
                 displayName: "Validate Data Export Size"
                 condition: ne('${{ parameters.dataFile }}', '-')
 
-      - stage: ProcessSolutionPatch
-        dependsOn: Setup
-        variables:
-          PacToolPath: $[ stageDependencies.Setup.PrepareTools.outputs['PackageDownload.PacToolPath'] ]
-        condition: ne('${{ parameters.patchName }}', '-')
-        jobs:
+  - stage: ProcessSolutionPatch
+    dependsOn: Setup
+    variables:
+      PacToolPath: $[ stageDependencies.Setup.PrepareTools.outputs['PackageDownload.PacToolPath'] ]
+    condition: ne('${{ parameters.patchName }}', '-')
+    jobs:
           - job: HandlePatch
             steps:
               - task: DownloadPipelineArtifact@2
@@ -141,6 +141,112 @@ stages:
 
               - checkout: self
                 persistCredentials: true
+              - powershell: |
+                  # Initialize PAC path
+                  $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
+                  $pacExe = Get-ChildItem -Path $pacPath -Recurse -Filter "pac.exe" | Select-Object -First 1 -ExpandProperty FullName
+                  # Configure Git
+                  git config --global user.email "azure-pipeline@yourorg.com"
+                  git config --global user.name "Azure Pipeline"
+                  # Create required directories
+                  New-Item -ItemType Directory -Force -Path ".\solutions" | Out-Null
+                  $solutionPath = "./solutions/${{ parameters.patchName }}"
+                  New-Item -ItemType Directory -Force -Path $solutionPath | Out-Null
+                  New-Item -ItemType Directory -Force -Path "./solution-checker-results" | Out-Null
+
+                  # Sanitize solution name for branch
+
+                  $safePatchName = "${{ parameters.patchName }}".Replace(' ', '-').Replace('.', '-')
+                  $branchName = "solution/${safePatchName}_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+                  git checkout -b $branchName
+
+                  & $pacExe auth create --url "$(sourceEnvironmentUrl)" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
+
+                  # Export patch
+                  & $pacExe solution export --path "./${{ parameters.patchName }}.zip" --name "${{ parameters.patchName }}" --managed false
+
+                  # Unpack solution
+                  & $pacExe solution unpack --zipfile "./${{ parameters.patchName }}.zip" --folder "$solutionPath"
+
+                  # Run solution checker
+                  & $pacExe solution check --path "./${{ parameters.patchName }}.zip" --outputDirectory "./solution-checker-results" --errorLevel "High"
+                  # Pack as managed
+                  & $pacExe solution pack --folder "$solutionPath" --zipfile "./${{ parameters.patchName }}_managed.zip" --managed true
+                  # Git operations with proper path handling
+                  git add "$solutionPath"
+                  git status
+                  git commit -m "feat: Update solution ${{ parameters.patchName }} [skip ci]"
+                  # Push changes
+                  git push origin $branchName
+                  if ($LASTEXITCODE -ne 0) {
+                      Write-Error "Failed to push changes. Exit code: $LASTEXITCODE"
+                      exit 1
+                  }
+                  # Create PR
+                  $url = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=6.0"
+                  $body = @{
+                    title = "Solution Update: ${{ parameters.patchName }}"
+                    sourceRefName = "refs/heads/$branchName"
+                    targetRefName = "refs/heads/${{ parameters.branchName }}"
+                    description = "Automated PR for solution update"
+                  } | ConvertTo-Json            
+                  $headers = @{
+                      'Content-Type' = 'application/json'
+                      'Authorization' = "Bearer $(System.AccessToken)"
+                  }            
+                displayName: "Process Solution Patch and Create PR"
+              - powershell: |
+                  $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
+                  $pacExe = Get-ChildItem -Path $pacPath -Recurse -Filter "pac.exe" | Select-Object -First 1 -ExpandProperty FullName
+
+                  & $pacExe auth create --url "$(targetEnvironmentUrl)" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
+                  & $pacExe solution import --path "./${{ parameters.patchName }}_managed.zip" --async false
+                displayName: "Import Managed Solution to Target"
+              - task: PublishBuildArtifacts@1
+                inputs:
+                  PathtoPublish: "./solution-checker-results"
+                  ArtifactName: "solution-checker-report"
+                displayName: "Publish Solution Checker Results"
+  - stage: ProcessData
+    dependsOn: Setup
+    variables:
+      PacToolPath: $[ stageDependencies.Setup.PrepareTools.outputs['PackageDownload.PacToolPath'] ]
+    condition: ne('${{ parameters.dataFile }}', '-')
+    jobs:
+      - job: MigrateData
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: "pac-cli"
+              targetPath: '$(Pipeline.Workspace)\pac-cli'
+
+          - powershell: |
+              $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
+              $pacExe = Get-ChildItem -Path $pacPath -Recurse -Filter "pac.exe" | Select-Object -First 1 -ExpandProperty FullName
+
+              & $pacExe auth create --url "$(sourceEnvironmentUrl)" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
+              & $pacExe data export --schemaFile "${{ parameters.dataFile }}" --dataFile "./exported-data.zip"
+
+              & $pacExe auth create --url "$(targetEnvironmentUrl)" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
+              & $pacExe data import --dataFile "./exported-data.zip"
+            displayName: "Migrate Data"
+
+  - stage: DeployPortal
+    dependsOn: Setup
+    variables:
+      PacToolPath: $[ stageDependencies.Setup.PrepareTools.outputs['PackageDownload.PacToolPath'] ]
+    condition: eq('${{ parameters.deployPortal }}', true)
+    jobs:
+      - job: PortalDeployment
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: "pac-cli"
+              targetPath: '$(Pipeline.Workspace)\pac-cli'
+
+          - checkout: self
+            persistCredentials: true
+
           - powershell: |
               # Initialize PAC path
               $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
@@ -151,48 +257,40 @@ stages:
               git config --global user.name "Azure Pipeline"
 
               # Create required directories
-              New-Item -ItemType Directory -Force -Path ".\solutions" | Out-Null
-              $solutionPath = "./solutions/${{ parameters.patchName }}"
-              New-Item -ItemType Directory -Force -Path $solutionPath | Out-Null
-              New-Item -ItemType Directory -Force -Path "./solution-checker-results" | Out-Null
+              New-Item -ItemType Directory -Force -Path "./portals/website" | Out-Null
+              New-Item -ItemType Directory -Force -Path "./portal-checker-results" | Out-Null
 
-              # Sanitize solution name for branch
-              $safePatchName = "${{ parameters.patchName }}".Replace(' ', '-').Replace('.', '-')
-              $branchName = "solution/${safePatchName}_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
-              git checkout -b $branchName
+              # Create feature branch for portal
+              $portalBranchName = "portal/update_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+              git checkout -b $portalBranchName
 
+              # Download portal from source
               & $pacExe auth create --url "$(sourceEnvironmentUrl)" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
 
-              # Export patch
-              & $pacExe solution export --path "./${{ parameters.patchName }}.zip" --name "${{ parameters.patchName }}" --managed false
+              $portalPath = "./portals/website"
+              & $pacExe paportal download --path $portalPath --excludeTables mspp_sitesetting,adx_sitesetting --overwrite --modelVersion 2
 
-              # Unpack solution
-              & $pacExe solution unpack --zipfile "./${{ parameters.patchName }}.zip" --folder "$solutionPath"
+              # Run Portal Checker
+              & $pacExe paportal check --path $portalPath --outputDirectory "./portal-checker-results"
 
-              # Run solution checker
-              & $pacExe solution check --path "./${{ parameters.patchName }}.zip" --outputDirectory "./solution-checker-results" --errorLevel "High"
-
-              # Pack as managed
-              & $pacExe solution pack --folder "$solutionPath" --zipfile "./${{ parameters.patchName }}_managed.zip" --managed true
-
-              # Git operations with proper path handling
-              git add "$solutionPath"
-              git status
-              git commit -m "feat: Update solution ${{ parameters.patchName }} [skip ci]"
+              # Git operations
+              Write-Host "Committing portal changes..."
+              git add "$portalPath"
+              git commit -m "feat: Update portal content [skip ci]"
 
               # Push changes
-              git push origin $branchName
+              git push origin $portalBranchName
               if ($LASTEXITCODE -ne 0) {
-                  Write-Error "Failed to push changes. Exit code: $LASTEXITCODE"
+                  Write-Error "Failed to push portal changes. Exit code: $LASTEXITCODE"
                   exit 1
               }
 
-              # Create PR
+              # Create PR for portal changes
               $body = @{
-                  title = "Solution Update: ${{ parameters.patchName }}"
-                  sourceRefName = "refs/heads/$branchName"
+                  title = "Portal Update $(Get-Date -Format 'yyyy-MM-dd')"
+                  sourceRefName = "refs/heads/$portalBranchName"
                   targetRefName = "refs/heads/${{ parameters.branchName }}"
-                  description = "Automated PR for solution update"
+                  description = "Automated PR for portal update"
               } | ConvertTo-Json
 
               $url = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=6.0"
@@ -202,122 +300,14 @@ stages:
               }
 
               Invoke-RestMethod -Uri $url -Method Post -Body $body -Headers $headers
-            displayName: "Process Solution Patch and Create PR"
 
-          - powershell: |
-              $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
-              $pacExe = Get-ChildItem -Path $pacPath -Recurse -Filter "pac.exe" | Select-Object -First 1 -ExpandProperty FullName
-
+              # Upload to target
               & $pacExe auth create --url "$(targetEnvironmentUrl)" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
-              & $pacExe solution import --path "./${{ parameters.patchName }}_managed.zip" --async false
-            displayName: "Import Managed Solution to Target"
+              & $pacExe paportal upload --path $portalPath --modelVersion 2
+            displayName: "Deploy Power Pages Portal and Create PR"
 
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "./solution-checker-results"
-              ArtifactName: "solution-checker-report"
-            displayName: "Publish Solution Checker Results"
-      - stage: ProcessData
-        dependsOn: Setup
-        variables:
-          PacToolPath: $[ stageDependencies.Setup.PrepareTools.outputs['PackageDownload.PacToolPath'] ]
-        condition: ne('${{ parameters.dataFile }}', '-')
-        jobs:
-          - job: MigrateData
-            steps:
-              - task: DownloadPipelineArtifact@2
-                inputs:
-                  artifactName: "pac-cli"
-                  targetPath: '$(Pipeline.Workspace)\pac-cli'
-
-              - powershell: |
-                  $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
-                  $pacExe = Get-ChildItem -Path $pacPath -Recurse -Filter "pac.exe" | Select-Object -First 1 -ExpandProperty FullName
-
-                  & $pacExe auth create --url "$(sourceEnvironmentUrl)" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
-                  & $pacExe data export --schemaFile "${{ parameters.dataFile }}" --dataFile "./exported-data.zip"
-
-                  & $pacExe auth create --url "$(targetEnvironmentUrl)" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
-                  & $pacExe data import --dataFile "./exported-data.zip"
-                displayName: "Migrate Data"
-
-      - stage: DeployPortal
-        dependsOn: Setup
-        variables:
-          PacToolPath: $[ stageDependencies.Setup.PrepareTools.outputs['PackageDownload.PacToolPath'] ]
-        condition: eq('${{ parameters.deployPortal }}', true)
-        jobs:
-          - job: PortalDeployment
-            steps:
-              - task: DownloadPipelineArtifact@2
-                inputs:
-                  artifactName: "pac-cli"
-                  targetPath: '$(Pipeline.Workspace)\pac-cli'
-
-              - checkout: self
-                persistCredentials: true
-
-              - powershell: |
-                  # Initialize PAC path
-                  $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
-                  $pacExe = Get-ChildItem -Path $pacPath -Recurse -Filter "pac.exe" | Select-Object -First 1 -ExpandProperty FullName
-
-                  # Configure Git
-                  git config --global user.email "azure-pipeline@yourorg.com"
-                  git config --global user.name "Azure Pipeline"
-
-                  # Create required directories
-                  New-Item -ItemType Directory -Force -Path "./portals/website" | Out-Null
-                  New-Item -ItemType Directory -Force -Path "./portal-checker-results" | Out-Null
-
-                  # Create feature branch for portal
-                  $portalBranchName = "portal/update_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
-                  git checkout -b $portalBranchName
-
-                  # Download portal from source
-                  & $pacExe auth create --url "$(sourceEnvironmentUrl)" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
-
-                  $portalPath = "./portals/website"
-                  & $pacExe paportal download --path $portalPath --excludeTables mspp_sitesetting,adx_sitesetting --overwrite --modelVersion 2
-
-                  # Run Portal Checker
-                  & $pacExe paportal check --path $portalPath --outputDirectory "./portal-checker-results"
-
-                  # Git operations
-                  Write-Host "Committing portal changes..."
-                  git add "$portalPath"
-                  git commit -m "feat: Update portal content [skip ci]"
-
-                  # Push changes
-                  git push origin $portalBranchName
-                  if ($LASTEXITCODE -ne 0) {
-                      Write-Error "Failed to push portal changes. Exit code: $LASTEXITCODE"
-                      exit 1
-                  }
-
-                  # Create PR for portal changes
-                  $body = @{
-                      title = "Portal Update $(Get-Date -Format 'yyyy-MM-dd')"
-                      sourceRefName = "refs/heads/$portalBranchName"
-                      targetRefName = "refs/heads/${{ parameters.branchName }}"
-                      description = "Automated PR for portal update"
-                  } | ConvertTo-Json
-
-                  $url = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=6.0"
-                  $headers = @{
-                      'Content-Type' = 'application/json'
-                      'Authorization' = "Bearer $(System.AccessToken)"
-                  }
-
-                  Invoke-RestMethod -Uri $url -Method Post -Body $body -Headers $headers
-
-                  # Upload to target
-                  & $pacExe auth create --url "$(targetEnvironmentUrl)" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
-                  & $pacExe paportal upload --path $portalPath --modelVersion 2
-                displayName: "Deploy Power Pages Portal and Create PR"
-
-              - task: PublishBuildArtifacts@1
-                inputs:
-                  PathtoPublish: "./portal-checker-results"
-                  ArtifactName: "portal-checker-report"
-                displayName: "Publish Portal Checker Results"
+              PathtoPublish: "./portal-checker-results"
+              ArtifactName: "portal-checker-report"
+            displayName: "Publish Portal Checker Results"
