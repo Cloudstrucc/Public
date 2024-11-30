@@ -198,10 +198,26 @@ stages:
               - powershell: |
                   $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
                   $pacExe = Get-ChildItem -Path $pacPath -Recurse -Filter "pac.exe" | Select-Object -First 1 -ExpandProperty FullName
-
+                  Write-Host "Current directory: $(Get-Location)"
+                  Write-Host "Listing all zip files in current directory:"
+                  Get-ChildItem -Path . -Filter "*.zip" -Recurse | ForEach-Object {
+                      Write-Host "Found zip file: $($_.FullName)"
+                  }
+                  # Look for the managed solution file
+                  $managedSolutionFile = Get-ChildItem -Path . -Filter "*_managed.zip" -Recurse | Select-Object -First 1
+                  if ($null -eq $managedSolutionFile) {
+                      Write-Error "No managed solution file found in the workspace"
+                      exit 1
+                  }
+                  $fullPath = $managedSolutionFile.FullName
+                  Write-Host "Using managed solution file: $fullPath"
                   & $pacExe auth create --url "$(targetEnvironmentUrl)" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
-                  & $pacExe solution import --path "./${{ parameters.patchName }}_managed.zip" --async false
-                displayName: "Import Managed Solution to Target"
+                  & $pacExe solution import --path "$fullPath" --async false --activate-plugins true --force-overwrite true --publish-changes true
+                  if ($LASTEXITCODE -ne 0) {
+                      Write-Error "Failed to import solution. Exit code: $LASTEXITCODE"
+                      exit 1
+                  }
+                displayName: 'Import Managed Solution to Target'
               - task: PublishBuildArtifacts@1
                 inputs:
                   PathtoPublish: "./solution-checker-results"
