@@ -1,0 +1,495 @@
+trigger:
+  - none
+
+parameters:
+  - name: variableGroupName
+    type: string
+    default: "d365-clone-solution-major-release-dev"
+    displayName: "Variable Group Name"
+  - name: sourceSolution
+    type: string
+    displayName: "Source Solution to Clone"
+  - name: newVersion
+    type: string
+    displayName: "New Solution Version (x.x.x.x)"
+  - name: patchList
+    type: string
+    default: ""
+    displayName: 'Comma-separated list of patch abbreviations (e.g., "fp,qf,hotfix")'
+  - name: publisherPrefix
+    type: string
+    displayName: "Publisher Prefix"
+    default: "cs"
+
+variables:
+  - group: ${{ parameters.variableGroupName }}
+  - name: sourceEnv
+    value: "$(dataverseDevUrl)"
+  - name: targetEnv
+    value: "$(funcStagingUrl)"
+
+pool:
+  vmImage: "windows-2022"
+
+stages:
+  - stage: ValidateInputs
+    jobs:
+      - job: Validation
+        steps:
+          - powershell: |
+              $version = "${{ parameters.newVersion }}"
+              if ($version -notmatch '^\d+\.\d+\.\d+\.\d+$') {
+                  Write-Error "Invalid version format. Must be x.x.x.x"
+                  exit 1
+              }
+              Write-Host "Version format validation passed for $version"
+              Write-Host "Input validation:"
+              Write-Host "Source Solution: ${{ parameters.sourceSolution }}"
+              Write-Host "Using variable group: ${{ parameters.variableGroupName }}"
+            displayName: "Validate Inputs"
+
+  - stage: Setup
+    jobs:
+      - job: PrepareTools
+        steps:
+          - powershell: |
+              Write-Host "Configuring environment..."
+              Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+              $toolsPath = "$(Build.ArtifactStagingDirectory)\tools"
+              New-Item -ItemType Directory -Force -Path $toolsPath | Out-Null
+              Set-Location $toolsPath
+
+              Write-Host "Downloading NuGet..."
+              $sourceNugetExe = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
+              $targetNugetExe = ".\nuget.exe"
+              Invoke-WebRequest $sourceNugetExe -OutFile $targetNugetExe
+
+              Write-Host "Installing PowerApps CLI..."
+              .\nuget.exe install Microsoft.PowerApps.CLI -Version '1.30.6' -O .
+
+              $pacPath = Get-ChildItem -Path . -Recurse -Filter "pac.exe" | Select-Object -First 1 -ExpandProperty FullName
+              if (-not $pacPath) {
+                  Write-Error "Failed to find pac.exe"
+                  exit 1
+              }
+
+              $pacDirectory = Split-Path $pacPath -Parent
+              Write-Host "PAC CLI found at: $pacPath"
+
+              $pacToolDir = "$(Build.ArtifactStagingDirectory)\tools\pacTool"
+              New-Item -ItemType Directory -Force -Path $pacToolDir | Out-Null
+              Copy-Item -Path "$pacDirectory\*" -Destination $pacToolDir -Recurse
+
+              Set-Location $pacToolDir
+              .\pac.exe help
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "PAC CLI verification failed"
+                  exit 1
+              }
+
+              Write-Host "##vso[task.setvariable variable=PacToolPath;isOutput=true]$pacToolDir"
+            displayName: "Install PAC CLI via NuGet"
+            name: PackageDownload
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: "$(Build.ArtifactStagingDirectory)/tools/pacTool"
+              artifact: "pac-cli"
+              publishLocation: "pipeline"
+            displayName: "Publish PAC CLI"
+
+  - stage: CloneSolution
+    dependsOn: Setup
+    variables:
+      PacToolPath: $[ stageDependencies.Setup.PrepareTools.outputs['PackageDownload.PacToolPath'] ]
+    jobs:
+      - job: CloneAndDeploy
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: "pac-cli"
+              targetPath: '$(Pipeline.Workspace)\pac-cli'
+            displayName: "Download PAC CLI"
+
+          - checkout: self
+            persistCredentials: true
+
+          - powershell: |
+              # Use Windows-style path separators
+              $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
+              $pacExe = Join-Path -Path $pacPath -ChildPath "pac.exe"
+
+              Write-Host "Verifying PAC CLI..."
+              Write-Host "PAC Path: $pacExe"
+
+              # Test if file exists
+              if (-not (Test-Path $pacExe)) {
+                  Write-Error "PAC CLI not found at: $pacExe"
+                  Write-Host "Directory contents:"
+                  Get-ChildItem -Path $pacPath -Recurse
+                  exit 1
+              }
+
+              # Try to execute PAC
+              & $pacExe help
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "PAC CLI verification failed"
+                  exit 1
+              }
+
+              Write-Host "##vso[task.setvariable variable=PacExe]$pacExe"
+
+              # Create solutions directory
+              New-Item -ItemType Directory -Force -Path ".\solutions" | Out-Null
+
+              # Configure Git
+              git config --global user.email "azure-pipeline@yourorg.com"
+              git config --global user.name "Azure Pipeline"
+
+              # Sanitize solution name for branch
+              $safeSolutionName = "${{ parameters.sourceSolution }}".Replace(' ', '-').Replace('.', '-')
+              $branchName = "solution/clone_${safeSolutionName}_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+              git checkout -b $branchName
+              Write-Host "Created branch: $branchName"
+
+              Write-Host "##vso[task.setvariable variable=BranchName]$branchName"
+            displayName: "Initialize Environment"
+          - powershell: |
+              $pacExe = "$(PacExe)"
+              $branchName = "$(BranchName)"
+
+              Write-Host "Using PAC CLI from: $pacExe"
+              Write-Host "Connecting to source environment: $env:sourceEnv"
+
+              # Clear any existing auth profiles and create new one
+              & $pacExe auth clear
+              & $pacExe auth create --url "$env:sourceEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Failed to authenticate to source environment"
+                  exit 1
+              }
+
+              # Create new solution name (remove dots and underscores)
+              $newSolutionName = "${{ parameters.sourceSolution }}${{ parameters.newVersion }}".Replace('.', '').Replace('_', '')
+              $displayName = "${{ parameters.sourceSolution }} ${{ parameters.newVersion }}"  # Keep readable display name
+              $tempDir = ".\temp_clone"
+              Write-Host "Cloning solution to: $newSolutionName (Display Name: $displayName)"
+
+              # Export the source solution with clone approach
+              New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
+              & $pacExe solution clone --name "${{ parameters.sourceSolution }}" --outputDirectory $tempDir --async false
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Solution clone export failed"
+                  exit 1
+              }
+
+              # The clone command creates a directory structure like: temp_clone/solutionname/src
+              $sourcePath = Join-Path -Path (Join-Path -Path $tempDir -ChildPath "${{ parameters.sourceSolution }}") -ChildPath "src"
+              if (-not (Test-Path $sourcePath)) {
+                  Write-Error "Source path not found: $sourcePath"
+                  exit 1
+              }
+
+              # Update solution version and name
+              $solutionXmlPath = Join-Path -Path $sourcePath -ChildPath "Other\Solution.xml"
+              [xml]$solutionXml = Get-Content $solutionXmlPath
+              $solutionXml.ImportExportXml.SolutionManifest.Version = "${{ parameters.newVersion }}"
+              $solutionXml.ImportExportXml.SolutionManifest.UniqueName = $newSolutionName
+              $solutionXml.ImportExportXml.SolutionManifest.LocalizedNames.LocalizedName.description = $displayName
+              $solutionXml.Save($solutionXmlPath)
+
+              # Pack the updated solution
+              New-Item -ItemType Directory -Force -Path ".\solutions" | Out-Null
+              & $pacExe solution pack --folder $sourcePath --zipfile ".\solutions\$newSolutionName.zip" --packagetype Unmanaged --allowWrite true --allowDelete true
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Solution pack failed"
+                  exit 1
+              }
+
+              # Import the updated solution
+              & $pacExe solution import --path ".\solutions\$newSolutionName.zip" --async false --activate-plugins true --force-overwrite true
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Solution import failed"
+                  exit 1
+              }
+
+              # Export managed version for deployment
+              & $pacExe solution export --path ".\solutions\${newSolutionName}_managed.zip" --name "$newSolutionName" --managed true --async false
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Managed solution export failed"
+                  exit 1
+              }
+              # Create solution checker results directory and run check
+              $solutionCheckerDir = ".\solution-checker-results"
+              New-Item -ItemType Directory -Force -Path $solutionCheckerDir | Out-Null
+
+              Write-Host "Running solution checker..."
+              & $pacExe solution check --path ".\solutions\$newSolutionName.zip" --outputDirectory $solutionCheckerDir --errorLevel "High"
+              $solutionCheckerExitCode = $LASTEXITCODE
+              Write-Host "Solution checker completed with exit code: $solutionCheckerExitCode"
+
+              # Copy the source files for source control
+              $destinationPath = ".\solutions\$newSolutionName"
+              New-Item -ItemType Directory -Force -Path $destinationPath | Out-Null
+              Copy-Item -Path "$sourcePath\*" -Destination $destinationPath -Recurse -Force
+
+              # Clean up temp directory
+              Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
+
+              # Git operations
+              Write-Host "Staging solution files..."
+              git add ".\solutions\$newSolutionName" --force
+
+              if (Test-Path "$solutionCheckerDir\*") {
+                  Write-Host "Staging solution checker results..."
+                  git add $solutionCheckerDir --force
+              }
+
+              Write-Host "Committing changes..."
+              git commit -m "feat: Clone solution ${{ parameters.sourceSolution }} to version ${{ parameters.newVersion }} [skip ci]"
+
+              Write-Host "Pushing changes..."
+              try {
+                  git push origin $branchName 2>&1
+                  if ($LASTEXITCODE -ne 0) {
+                      Write-Error "Failed to push changes. Exit code: $LASTEXITCODE"
+                      exit 1
+                  }
+              } catch {
+                  Write-Error "Error during git push: $_"
+                  exit 1
+              }
+
+              Write-Host "Creating pull request..."
+              $body = @{
+                  title = "Solution Clone: ${{ parameters.sourceSolution }} to ${{ parameters.newVersion }}"
+                  sourceRefName = "refs/heads/$branchName"
+                  targetRefName = "refs/heads/main"
+                  description = "Automated PR for solution clone with solution checker results"
+              } | ConvertTo-Json
+
+              $url = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=6.0"
+              $headers = @{
+                  'Content-Type' = 'application/json'
+                  'Authorization' = "Bearer $(System.AccessToken)"
+              }
+
+              try {
+                  Invoke-RestMethod -Uri $url -Method Post -Body $body -Headers $headers
+              } catch {
+                  Write-Warning "Failed to create PR: $_"
+                  Write-Warning "Continuing pipeline as solution is already pushed..."
+              }
+            displayName: "Clone, Export and Process Solution"
+            env:
+              sourceEnv: $(sourceEnv)
+          - powershell: |
+              $pacExe = "$(PacExe)"
+
+              Write-Host "Connecting to target environment: $env:targetEnv"
+              # Clear any existing auth profiles and create new one
+              & $pacExe auth clear
+              & $pacExe auth create --url "$env:targetEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Failed to authenticate to target environment"
+                  exit 1
+              }
+
+              # Use the same naming convention as in the clone script
+              $newSolutionName = "${{ parameters.sourceSolution }}${{ parameters.newVersion }}".Replace('.', '').Replace('_', '')
+
+              Write-Host "Importing managed solution to target..."
+              $managedSolutionPath = ".\solutions\${newSolutionName}_managed.zip"
+              Write-Host "Looking for solution file: $managedSolutionPath"
+
+              # Check if solution exists and delete if found
+              Write-Host "Checking for existing solution in target..."
+              $solutions = & $pacExe solution list | Out-String
+              if ($solutions -match $newSolutionName) {
+                  Write-Host "Existing solution found, deleting..."
+                  & $pacExe solution delete --solution-name $newSolutionName
+                  if ($LASTEXITCODE -ne 0) {
+                      Write-Error "Failed to delete existing solution: $newSolutionName"
+                      exit 1
+                  }
+                  Write-Host "Existing solution deleted successfully"
+              }
+
+              if (-not (Test-Path $managedSolutionPath)) {
+                  Write-Error "Managed solution file not found at: $managedSolutionPath"
+                  Get-ChildItem -Path ".\solutions" -Recurse
+                  exit 1
+              }
+
+              & $pacExe solution import --path $managedSolutionPath --async false --activate-plugins true --force-overwrite true --publish-changes true
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Solution import failed"
+                  exit 1
+              }
+            displayName: "Deploy to Target Environment"
+            env:
+              targetEnv: $(targetEnv)
+          - powershell: |
+              if ("${{ parameters.patchList }}" -ne "") {
+                  $pacExe = "$(PacExe)"
+                  $branchName = "$(BranchName)"
+                  $patches = "${{ parameters.patchList }}".Split(',') | ForEach-Object { $_.Trim() }
+                  $parentSolutionName = "${{ parameters.sourceSolution }}${{ parameters.newVersion }}".Replace('.', '').Replace('_', '')
+                  
+                  Write-Host "Creating patches for solution: $parentSolutionName"
+                  Write-Host "Using publisher prefix: $env:publisherPrefix"
+                  
+                  New-Item -ItemType Directory -Force -Path ".\patches" | Out-Null
+                  
+                  foreach ($patch in $patches) {
+                      if ($patch) {
+                          # Create patch name using same naming convention
+                          $patchName = "${patch}${{ parameters.newVersion }}".Replace('.', '').Replace('_', '')
+                          $patchDisplayName = "$patch ${{ parameters.newVersion }}"
+                          Write-Host "Creating patch: $patchName (Display Name: $patchDisplayName)"
+                          
+                          # Create patch directory structure
+                          $patchFolder = ".\patches\$patchName"
+                          New-Item -ItemType Directory -Force -Path "$patchFolder\Other" | Out-Null
+                          
+                          # Generate solution.xml and customizations.xml content
+                          [xml]$solutionXml = @"
+                            <?xml version="1.0" encoding="utf-8"?>
+                            <ImportExportXml version="9.2.23093.248" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                              <SolutionManifest>
+                                <UniqueName>$patchName</UniqueName>
+                                <LocalizedNames>
+                                  <LocalizedName description="$patchDisplayName" languagecode="1033" />
+                                </LocalizedNames>
+                                <Descriptions />
+                                <Version>${{ parameters.newVersion }}</Version>
+                                <Managed>0</Managed>
+                                <Publisher>
+                                  <UniqueName>$env:publisherPrefix</UniqueName>
+                                  <CustomizationPrefix>$env:publisherPrefix</CustomizationPrefix>
+                                  <LocalizedNames>
+                                    <LocalizedName description="$env:publisherPrefix" languagecode="1033" />
+                                  </LocalizedNames>
+                                </Publisher>
+                                <RootComponents />
+                                <MissingDependencies />
+                                <Dependencies>
+                                  <Dependency solution="$parentSolutionName">
+                                    <Required key="$parentSolutionName" solution="$parentSolutionName" />
+                                  </Dependency>
+                                </Dependencies>
+                              </SolutionManifest>
+                            </ImportExportXml>
+                            "@
+
+                          [xml]$customizationsXml = @"
+                            <?xml version="1.0" encoding="utf-8"?>
+                            <ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                              <Entities></Entities>
+                              <Roles></Roles>
+                              <Workflows></Workflows>
+                              <FieldSecurityProfiles></FieldSecurityProfiles>
+                              <Templates></Templates>
+                              <EntityMaps></EntityMaps>
+                              <EntityRelationships></EntityRelationships>
+                              <OrganizationSettings></OrganizationSettings>
+                              <optionsets></optionsets>
+                              <CustomControls></CustomControls>
+                              <EntityDataProviders></EntityDataProviders>
+                              <Languages>
+                                <Language>
+                                  <LocalizedName>
+                                    <Label description="English" languagecode="1033" />
+                                  </LocalizedName>
+                                  <IsLocked>0</IsLocked>
+                                </Language>
+                              </Languages>
+                            </ImportExportXml>
+                            "@
+
+                          # Save XML files
+                          $solutionXml.Save("$patchFolder\Other\Solution.xml")
+                          $customizationsXml.Save("$patchFolder\Other\Customizations.xml")
+                          
+                          # Pack and process patch solution
+                          & $pacExe solution pack --folder $patchFolder --zipfile ".\patches\$patchName.zip" --packagetype Unmanaged --allowWrite true --allowDelete true
+                          if ($LASTEXITCODE -ne 0) {
+                              Write-Error "Failed to pack patch solution: $patchName"
+                              exit 1
+                          }
+                          
+                          # Authenticate to source environment
+                          & $pacExe auth clear
+                          & $pacExe auth create --url "$env:sourceEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
+                          if ($LASTEXITCODE -ne 0) {
+                              Write-Error "Failed to authenticate to source environment"
+                              exit 1
+                          }
+                          
+                          # Import patch to source
+                          & $pacExe solution import --path ".\patches\$patchName.zip" --async false --activate-plugins true --force-overwrite true
+                          if ($LASTEXITCODE -ne 0) {
+                              Write-Error "Failed to import patch to source: $patchName"
+                              exit 1
+                          }
+                          
+                          # Export managed version
+                          & $pacExe solution export --path ".\patches\${patchName}_managed.zip" --name "$patchName" --managed true --async false
+                          if ($LASTEXITCODE -ne 0) {
+                              Write-Error "Failed to export managed patch: $patchName"
+                              exit 1
+                          }
+                          
+                          # Deploy to target
+                          & $pacExe auth clear
+                          & $pacExe auth create --url "$env:targetEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
+                          
+                          Write-Host "Importing managed patch solution to target..."
+                          & $pacExe solution import --path ".\patches\${patchName}_managed.zip" --async false --activate-plugins true --force-overwrite true --publish-changes true
+                          if ($LASTEXITCODE -ne 0) {
+                              Write-Error "Failed to import patch to target: $patchName"
+                              exit 1
+                          }
+                          
+                          # Add to source control
+                          git add ".\patches\$patchName\*" --force
+                          git add ".\patches\${patchName}_managed.zip" --force
+                          git commit -m "feat: Add patch $patchName [skip ci]"
+                      }
+                  }
+                  
+                  # Push all changes at once
+                  Write-Host "Pushing all patch changes..."
+                  try {
+                      git push origin $branchName
+                      if ($LASTEXITCODE -ne 0) {
+                          Write-Error "Failed to push patch changes. Exit code: $LASTEXITCODE"
+                          exit 1
+                      }
+                  } catch {
+                      Write-Error "Error pushing patch changes: $_"
+                      exit 1
+                  }
+              }
+            displayName: "Create and Deploy Patches"
+            condition: ne('${{ parameters.patchList }}', '')
+            env:
+              sourceEnv: $(sourceEnv)
+              targetEnv: $(targetEnv)
+              publisherPrefix: ${{ parameters.publisherPrefix }}
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "./solutions"
+              ArtifactName: "solutions"
+            displayName: "Publish Solutions"
+            condition: succeededOrFailed()
+            continueOnError: true
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "./solution-checker-results"
+              ArtifactName: "solution-checker-report"
+            displayName: "Publish Solution Checker Results"
+            condition: succeededOrFailed()
+            continueOnError: true
