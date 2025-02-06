@@ -1,138 +1,206 @@
-# ✅ Power BI Cloud Guardrails for E5 Licensed Users
+# ✅ Power BI Cloud Security Guardrails & Governance Framework
 
-When using Power BI in the cloud with E5 licenses, it's important to implement both **technical guardrails** and **governance policies** to ensure security, compliance, and efficient use. Here’s what you should consider:
+## 📌 Introduction
+
+This document outlines the necessary **security guardrails, governance policies, and automation scripts** to enforce best practices in **Power BI Cloud** for organizations with **E5-licensed users**.
 
 ---
 
 ## ✅ **Licensing Considerations**
-- **E5 License Coverage:** Power BI Pro is included with Microsoft 365 E5, allowing for sharing and collaboration.
-- **Premium Capacity (Optional):** For larger datasets, performance needs, or advanced features (e.g., paginated reports), you may require Power BI Premium capacity (per user or per capacity licensing).
-- **Audit Advanced Features:** If you plan to use AI capabilities, large data models, or deployment pipelines extensively, confirm if E5 suffices or if Premium Per User (PPU) licenses are needed.
+
+- **Power BI Pro is included** in Microsoft 365 E5, allowing for report sharing and collaboration.
+- **Power BI Premium Capacity** (optional) is needed for:
+  - Large datasets exceeding **1GB per dataset**.
+  - Advanced AI capabilities.
+  - Deployment pipelines with **managed storage**.
 
 ---
 
 ## 🚀 **Step-by-Step Implementation Process**
 
-### **🔐 1. Data Protection Configuration**
-1. **Enable Microsoft Purview Sensitivity Labels:**
-   - Go to **Microsoft Purview Compliance Portal** > **Information Protection** > **Labels**.
-   - Create sensitivity labels (e.g., Confidential, Internal Only).
-   - Publish the labels and enable Power BI integration under **Power BI Tenant Settings**.
+### **🔐 1. Data Protection & Compliance**
 
-2. **Configure Encryption Settings (if required):**
-   - Power BI encrypts data at rest and in transit by default.
-   - For advanced compliance, enable **Customer Managed Keys (CMK)** in the Azure Key Vault.
+1. **Enable Microsoft Purview Sensitivity Labels:**
+
+   - Navigate to **Microsoft Purview Compliance Portal** → **Information Protection** → **Labels**.
+   - Create labels such as **Confidential, Internal Only**.
+   - Publish labels and enable **Power BI integration**.
+2. **Enable Customer Managed Keys (CMK) for Encryption (if needed):**
+
+   - Power BI encrypts **data at rest and in transit** by default.
+   - If higher compliance is needed, enable **CMK with Azure Key Vault**.
 
 ---
 
 ### **📤 2. External Sharing Controls**
-1. **Restrict External Sharing:**
-   - Go to the **Power BI Admin Portal** > **Tenant Settings** > **Export and Sharing Settings**.
-   - Disable **“Share content with external users”** unless business needs require it.
-   - If sharing is needed, whitelist specific domains.
 
-2. **Disable “Publish to Web” (if not required):**
-   - Under **Tenant Settings**, disable **“Publish to web”** to prevent public exposure of reports.
+1. **Restrict External Sharing:**
+
+   - **Power BI Admin Portal** → **Tenant Settings** → **Export and Sharing Settings**.
+   - Disable **“Share content with external users”** unless business justification exists.
+2. **Disable “Publish to Web” (if not needed):**
+
+   - Navigate to **Tenant Settings** → **Disable Publish to Web**.
+   - This prevents **public URL exposure** of reports.
 
 ---
 
-### **🔎 3. Data Security Policies (RLS & OLS)**
-1. **Implement Row-Level Security (RLS):**
-   - In Power BI Desktop, go to **Modeling** > **Manage Roles**.
-   - Define roles (e.g., Sales, HR) and DAX filters to control data visibility.
-   - Publish the dataset and test role assignments in the Power BI Service.
+### **🔎 3. Data Security Policies**
 
-2. **Set Up Object-Level Security (OLS) [if applicable]:**
-   - In Power BI Desktop, define OLS rules to hide tables entirely for certain roles.
-   - Deploy and verify access restrictions in Power BI Service.
+1. **Implement Row-Level Security (RLS):**
+
+   - In **Power BI Desktop**, navigate to **Modeling** → **Manage Roles**.
+   - Define **DAX filters** to restrict access based on user roles.
+2. **Implement Object-Level Security (OLS) (if needed):**
+
+   - In **Power BI Desktop**, define **table-level visibility restrictions**.
 
 ---
 
 ### **📊 4. Monitoring & Auditing Setup**
-1. **Enable Audit Logs (Microsoft Purview):**
-   - Navigate to **Microsoft 365 Compliance Center** > **Audit** > **Audit log search**.
-   - Enable auditing for Power BI activities like report views, sharing, data exports.
 
-2. **Review Usage Metrics:**
-   - In the **Power BI Admin Portal**, monitor reports under **Usage Metrics**.
-   - Analyze workspace activities, dataset refresh failures, and user access patterns.
+1. **Enable Audit Logs (Microsoft Purview):**
+
+   - Navigate to **Microsoft 365 Compliance Center** → **Audit**.
+   - Track **data exports, report access, and sharing activity**.
+2. **Monitor Usage Metrics:**
+
+   - In **Power BI Admin Portal**, review **Usage Metrics** for:
+     - **Dataset refresh failures**
+     - **User access patterns**
+     - **Workspace activities**
 
 ---
 
 ### **🔄 5. Dataflow & Dataset Governance**
+
 1. **Promote Certified Datasets:**
-   - In Power BI Service, navigate to **Datasets** > Select dataset > **Settings**.
-   - Mark datasets as “**Certified**” to encourage reuse of trusted data sources.
 
-2. **Manage Dataflows:**
-   - Establish guidelines for dataflows to ensure data consistency.
-   - Implement dataflow refresh schedules to align with business hours.
+   - **Power BI Service** → **Datasets** → Mark **Trusted** datasets as **Certified**.
+2. **Standardize Dataflows:**
 
----
-
-### **🚀 6. Deployment Pipelines (DevOps Integration)**
-1. **Create Deployment Pipelines:**
-   - Go to **Power BI Service** > **Deployment Pipelines**.
-   - Set up stages: **Development → Test → Production**.
-   - Assign appropriate workspaces to each stage for controlled report deployment.
-
-2. **Automate Deployments (Optional):**
-   - Use PowerShell or Azure DevOps Pipelines for CI/CD automation if needed.
+   - Implement **scheduled refreshes** to ensure **data consistency**.
 
 ---
 
-### ⚠️ **Access Control Note**
-Access control is **inherited from Entra ID (formerly Azure AD)**:
-- Leverage **Conditional Access Policies** and **MFA** enforced via Entra ID.
-- Power BI relies on these settings for secure authentication and authorization.
+### **🚀 6. Deployment Pipelines**
+
+1. **Create Deployment Pipelines in Power BI Service:**
+
+   - Navigate to **Deployment Pipelines**.
+   - Define stages: **Development → Test → Production**.
+2. **Automate Deployments using DevOps (Optional):**
+
+   - Use **Azure DevOps Pipelines** for Power BI deployments.
 
 ---
 
-## 🚩 **Security Guardrails**
+## 🔐 **Security Guardrails Overview**
 
-### 1. **Data Protection**
-- **Sensitivity Labels (Microsoft Purview):** Enforce data classification within Power BI reports/dashboards using MIP labels.
-- **Encryption:** Power BI encrypts data at rest and in transit. Use Customer Managed Keys (CMK) if required for compliance.
-
-### 2. **Sharing Controls**
-- **Tenant Settings:** Restrict sharing externally unless explicitly allowed. Use whitelisting if external sharing is required.
-- **Publish to Web Restrictions:** Disable this unless there's a clear business need—it exposes reports publicly.
-
-### 3. **Row-Level Security (RLS) & Object-Level Security (OLS)**
-- Implement RLS to control data visibility based on user roles.
-- Use OLS if users shouldn’t even know certain tables exist.
+| Feature                     | Recommended Setting            |
+| --------------------------- | ------------------------------ |
+| Sensitivity Labels          | ✅ Enabled (Microsoft Purview) |
+| External Sharing            | ❌ Disabled (unless required)  |
+| Publish to Web              | ❌ Disabled (by default)       |
+| Row-Level Security (RLS)    | ✅ Implemented                 |
+| Object-Level Security (OLS) | ✅ Enabled (if needed)         |
+| Audit Logs                  | ✅ Enabled (Microsoft Purview) |
+| Dataset Certifications      | ✅ Enforced                    |
 
 ---
 
-## 📊 **Governance & Monitoring**
+## ⚠️ **Access Control Note**
 
-### 1. **Audit Logs (Microsoft Purview)**
-- Enable and monitor Power BI audit logs to track access, sharing, data exports, etc.
+Access control is **inherited from Entra ID**:
 
-### 2. **Usage Metrics**
-- Use the Power BI Admin Portal for monitoring report usage, dataset refreshes, and resource consumption.
-
-### 3. **Dataflow Governance**
-- Enforce policies for certified datasets to promote reuse of trusted data sources.
-
-### 4. **Deployment Pipelines**
-- For DevOps practices, manage report deployments across dev, test, and production environments.
+- **Use Conditional Access Policies** for MFA enforcement.
+- **Power BI respects Entra ID authentication and role assignments**.
 
 ---
 
-## ⚙️ **Operational Guardrails**
+# ⚙️ **Build - Scripts (DevSecOps Automation)**
 
-### 1. **Workspace Management**
-- Limit who can create workspaces.
-- Use naming conventions for workspaces to improve discoverability.
+## 📌 **1️⃣ PowerShell Script for Security Configuration**
 
-### 2. **Dataset Refresh Policies**
-- Set automatic refresh schedules.
-- Limit frequency to avoid unnecessary resource strain.
+```powershell
+# Authenticate to Azure
+Connect-AzAccount
 
-### 3. **DAX and Performance Optimization**
-- Encourage performance best practices in DAX queries and data modeling.
+# Set Power BI Tenant Security Settings
+$settings = @{
+    "disableExportData" = $true
+    "disablePublishToWeb" = $true
+    "enableAuditLogs" = $true
+}
+
+foreach ($setting in $settings.GetEnumerator()) {
+    Write-Output "Applying $($setting.Key)..."
+    Set-PowerBIServiceTenantSetting -Name $setting.Key -Value $setting.Value
+}
+```
 
 ---
 
-Would you like help with setting up specific security configurations or governance frameworks in Power BI?
+## 📌 **2️⃣ Bicep Template for Power BI Governance**
+
+```bicep
+param tenantId string
+param environmentUrl string
+param auditEnabled bool = true
+param externalSharing bool = false
+
+resource powerBI 'Microsoft.PowerPlatform/powerbi@2022-03-01' = {
+  name: 'powerbi-settings'
+  location: 'global'
+  properties: {
+    tenantId: tenantId
+    environmentUrl: environmentUrl
+    security: {
+      externalSharing: externalSharing
+      auditLogging: auditEnabled
+    }
+  }
+}
+```
+
+---
+
+## 📌 **3️⃣ Azure DevOps Pipeline YAML for Deployment**
+
+```yaml
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Your-Service-Connection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az login --service-principal -u $(clientId) -p $(clientSecret) --tenant $(tenantId)
+      az deployment sub create \
+        --location eastus \
+        --template-file ./powerbi-governance.bicep \
+        --parameters tenantId=$(tenantId) environmentUrl=$(environmentUrl)
+```
+
+---
+
+## 🔍 **Governance Checklist**
+
+- [ ] Sensitivity Labels Configured
+- [ ] External Sharing Disabled (unless required)
+- [ ] Audit Logs Enabled
+- [ ] Certified Datasets Defined
+- [ ] Deployment Pipelines Set Up
+- [ ] Governance Committee Established
+
+---
+
+# 🎯 **Conclusion**
+
+This guide provides a **secure and governed approach** to Power BI Cloud for E5-licensed users, incorporating **security policies, governance strategies, and DevSecOps automation**.
