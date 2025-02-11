@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PowerAppsTargetsPath>\Microsoft\VisualStudio\v\PowerApps</PowerAppsTargetsPath>
+  </PropertyGroup>
+
+  <Import Project="\\Microsoft.Common.props" />
+  <Import Project="\Microsoft.PowerApps.VisualStudio.Pcf.props" Condition="Exists('\Microsoft.PowerApps.VisualStudio.Pcf.props')" />
+
+  <PropertyGroup>
+    <Name>HeaderControl</Name>
+    <ProjectGuid>00000000-0000-0000-0000-000000000000</ProjectGuid>
+    <OutputPath>out\controls</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFramework>net462</TargetFramework>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.PowerApps.MSBuild.Pcf" Version="1.*" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ExcludeDirectories Include="\.gitignore" />
+    <ExcludeDirectories Include="\bin\**" />
+    <ExcludeDirectories Include="\obj\**" />
+    <ExcludeDirectories Include="\**" />
+    <ExcludeDirectories Include="\*.pcfproj" />
+    <ExcludeDirectories Include="\*.pcfproj.user" />
+    <ExcludeDirectories Include="\*.sln" />
+    <ExcludeDirectories Include="\node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="\**" Exclude="@(ExcludeDirectories)" />
+  </ItemGroup>
+
+  <Import Project="\Microsoft.Common.targets" />
+  <Import Project="\Microsoft.PowerApps.VisualStudio.Pcf.targets" Condition="Exists('\Microsoft.PowerApps.VisualStudio.Pcf.targets')" />
+</Project>
