@@ -1,4 +1,3 @@
-
 # **Comprehensive Guide: Augmenting Services with D365/Power Platform Call Centre & Voice Features for Elections Canada**
 
 ## **1. Introduction**
@@ -251,12 +250,12 @@ By migrating to **Microsoft Azure Communication Services (ACS)** and  **Microsof
 
 ```mermaid
 graph TD
-    A[Customer Calls 1800 Number] -->|Telecom Network| B[Azure Communication Services (ACS)]
-    B -->|IVR & AI Call Routing| C[Power Virtual Agents]
-    C -->|Self-Service Resolution| D[Automated IVR Responses]
-    C -->|Live Agent Transfer| E[Omnichannel for Customer Service]
-    E -->|Call Handling| F[Agent Console in D365]
-    F -->|Logging & Reporting| G[Power Automate + Power BI]
+    A("Customer Calls 1800 Number") -->|"Telecom Network"| B("Azure Communication Services (ACS)")
+    B -->|"IVR & AI Call Routing"| C("Power Virtual Agents")
+    C -->|"Self-Service Resolution"| D("Automated IVR Responses")
+    C -->|"Live Agent Transfer"| E("Omnichannel for Customer Service")
+    E -->|"Call Handling"| F("Agent Console in D365")
+    F -->|"Logging & Reporting"| G("Power Automate + Power BI")
 ```
 
 ### **Core Components**
@@ -270,14 +269,14 @@ graph TD
 
 ## **5. Telco Integration Options**
 
-### **Option 1: SIP Trunking via SBC (Session Border Controller)**
+### **Option 1: SIP Trunking via SBC (Session Border Controller) - using Telus/Bell as example (not required)**
 
 ```mermaid
 graph TD
-    A[Bell/Telus SIP Trunk] --> B[Session Border Controller (SBC)]
-    B --> C[Azure Communication Services (ACS)]
-    C --> D[Omnichannel for Customer Service]
-    D --> E[Agent Dashboard in D365]
+    A("Bell/Telus SIP Trunk") --> B("Session Border Controller (SBC)")
+    B --> C("Azure Communication Services (ACS)")
+    C --> D("Omnichannel for Customer Service")
+    D --> E("Agent Dashboard in D365")
 ```
 
 ✅ **Retains existing telco contracts**
