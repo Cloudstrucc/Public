@@ -120,21 +120,21 @@ graph TD;
 
 ### **📌 Baseline Monthly Costs (Non-Election Period, 100 Agents)**
 
-| **Cost Category**                   | **Unit Cost**                | **Users** | **Total Cost** |
-| ----------------------------------------- | ---------------------------------- | --------------- | -------------------- |
-| D365 Customer Service Enterprise          | $105         | 100       | $10,500 |                 |                      |
-| Omnichannel for Customer Service          | $95          | 100       | $9,500  |                 |                      |
-| ACS Inbound Calls (500K mins)             | $0.008/min   | 500K mins | $4,000  |                 |                      |
-| AI Chatbot & Analytics                    | Fixed                              | -               | $1,500               |
-| **Total Non-Election Monthly Cost** |                                    |                 | **$25,500**    |
+| **Cost Category**                   | **Unit Cost**               | **Users/unit** | **Total Cost** |
+| ----------------------------------------- | --------------------------------- | -------------------- | -------------------- |
+| D365 Customer Service Enterprise          | $105         |  | $10,500        | 100                  | $10,500              |
+| Omnichannel for Customer Service          | $95          | 100       | $9,500 | 100                  | $9,500               |
+| ACS Inbound Calls (500K mins)             | $0.008/min   | 500K mins | $4,000 | 500k                 | $4,000               |
+| AI Chatbot & Analytics                    | Fixed                             | -                    | $1,500               |
+| **Total Non-Election Monthly Cost** |                                   |                      | **$25,500**    |
 
 ### **📌 Peak Election Period Costs (600 Agents)**
 
 | **Cost Category**             | **Unit Cost**                | **Users** | **Total Cost** |
 | ----------------------------------- | ---------------------------------- | --------------- | -------------------- |
-| D365 Customer Service Enterprise    | $105         | 600       | $63,000 |                 |                      |
-| Omnichannel for Customer Service    | $95          | 600       | $57,000 |                 |                      |
-| ACS Inbound Calls (1.5M mins)       | $0.008/min   | 1.5M mins | $12,000 |                 |                      |
+| D365 Customer Service Enterprise    | $105         | 600       | $63,000 | 600             | $63,000              |
+| Omnichannel for Customer Service    | $95          | 600       | $57,000 | 600             | $57,000              |
+| ACS Inbound Calls (1.5M mins)       | $0.008/min   | 1.5M mins | $12,000 | 1.5M            | $12,000              |
 | AI Chatbot & Analytics              | Fixed                              | -               | $2,500               |
 | **Total Election Month Cost** |                                    |                 | **$134,500**   |
 
@@ -163,12 +163,3 @@ graph TD;
 ✅ Use **temporary licenses** to scale up for **general & by-elections**.
 ✅ Reduce costs through **AI-driven automation** (IVR, chatbots).
 ✅ Monitor and **optimize operations with Power BI analytics**.
-
-### **Next Steps:**
-
-1. **Deploy a 3-month pilot (100 agents).**
-2. **Test AI-driven automation & IVR.**
-3. **Develop an election readiness strategy for scaling.**
-4. **Optimize for cost savings & efficiency.**
-
-🚀 **This dynamic Microsoft solution ensures cost-effectiveness, scalability, and AI-driven automation for election inquiry management.** Would you like assistance with a **pilot deployment roadmap or cost-saving optimization plan**?
