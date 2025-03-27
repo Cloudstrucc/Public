@@ -1,12 +1,17 @@
 # MICROSOFT ENTRA EXTERNAL ID
 
+<div align="center">
+  <img src="./entra-infographic.png" alt="Microsoft Entra External ID Infographic" width="800">
+  <p><i>Microsoft Entra External ID - Secure Identity Management for External Users</i></p>
+</div>
+
 ## PREFACE
 
-This document describes the implementation and operationalization of Microsoft Entra External ID for secure single sign-on (SSO) for portals and API authorization. Microsoft Entra External ID is Microsoft's dedicated identity service for external users, providing business-to-customer identity as a service and offering a streamlined way to secure external-facing web applications and APIs.
+This document describes the implementation and operationalization of Microsoft Entra External ID for secure single sign-on (SSO) for portals and API authorization. Microsoft Entra External ID is Microsoft's dedicated identity service for external users, providing business-to-customer identity as a service and offering a streamlined way to secure external-facing web applications and APIs. 
 
 It should be noted that Azure B2C was Microsoft's official external-facing SSO service offering until Entra External ID was introduced as part of Microsoft's rebranding and enhancement of their identity services. Entra External ID exists as its own dedicated Microsoft Entra tenant, separate from an organization's internal Entra ID (formerly Azure AD) tenant, providing a clear separation between employee and external user identities.
 
-Entra External ID has been chosen as the right tool as it provides secure identity management to enable single sign-on access to web applications and APIs while supporting integration with external identity providers through industry-standard protocols like OpenID Connect (OIDC) and SAML 2.0. This is particularly beneficial for organizations leveraging Microsoft Power Pages for external portals, as the integration between Power Pages and Entra External ID is seamless and built-in, requiring minimal configuration while providing enterprise-grade security.
+Entra External ID has been chosen as the right tool as it provides secure identity management to enable single sign-on access to web applications and APIs while supporting integration with external identity providers through industry-standard protocols like OpenID Connect (OIDC) and SAML 2.0. This is particularly beneficial for organizations leveraging Microsoft Power Pages for external portals, as the integration between Power Pages and Entra External ID is seamless and built-in, requiring minimal configuration while providing enterprise-grade security. 
 
 By using this technology, the organization benefits by centralizing its authentication services into a platform that specializes in this domain while leveraging Microsoft's robust identity toolset including conditional access policies, MFA, groups, monitoring, and automated release pipeline integration. This approach helps the organization meet Canadian digital security requirements such as Protected B, Medium Integrity, Medium Availability (PBMM) compliance and supports the implementation of security controls required by ITSG-33 standards from the Communications Security Establishment (CSE).
 
@@ -71,7 +76,7 @@ Federation with other organizational tenants enables true cross-organization col
 
 ### DOMAIN CONFIGURATION
 
-When provisioning Entra External ID, a new dedicated directory tenant is created with a default domain (tenantname.onmicrosoft.com), which is used for authentication endpoints (tenantname.b2clogin.com).
+When provisioning Entra External ID, a new dedicated directory tenant is created with a default domain (tenantname.onmicrosoft.com), which is used for authentication endpoints (tenantname.b2clogin.com). 
 
 There are two primary options for custom domain configuration:
 
@@ -91,7 +96,6 @@ For secure certificate and secret management, Azure Key Vault integration is rec
 ### APP REGISTRATIONS
 
 Each application integrating with Entra External ID requires an App Registration which provides:
-
 - A Client ID (unique identifier)
 - Authentication credentials (secret or certificate)
 - Reply URLs (authorized redirect endpoints)
@@ -99,10 +103,9 @@ Each application integrating with Entra External ID requires an App Registration
 
 ## STANDARDIZED AUTHENTICATION WITH OPENID CONNECT
 
-Entra External ID fully implements the OpenID Connect (OIDC) protocol, which is built on OAuth 2.0 and provides a standardized way to authenticate users and obtain basic profile information.
+Entra External ID fully implements the OpenID Connect (OIDC) protocol, which is built on OAuth 2.0 and provides a standardized way to authenticate users and obtain basic profile information. 
 
 The key benefits of OIDC include:
-
 - Industry-standard protocol supported by most modern platforms
 - Simple REST/JSON based implementation
 - Designed for modern web and mobile applications
@@ -252,7 +255,6 @@ Beyond Power Pages, Entra External ID can integrate with any application platfor
 - **APIs**: OAuth 2.0 bearer tokens
 
 For each integration, the basic pattern involves:
-
 1. Creating an app registration in Entra External ID
 2. Configuring the application with client ID, tenant, and endpoints
 3. Implementing the authorization code flow for web apps
