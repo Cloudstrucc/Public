@@ -1,11 +1,10 @@
-# MICROSOFT ENTRA EXTERNAL ID
+<!-- Document Header with Canadian Flag and Icon -->
 
-<div align="center">
-  <img src="./entra-infographic.png" alt="Microsoft Entra External ID Infographic" width="800">
-  <p><i>Microsoft Entra External ID - Secure Identity Management for External Users</i></p>
-</div>
+<!-- Page Break (for print/PDF) -->
 
-## PREFACE
+<div style="page-break-after: always;"></div>
+
+## PREFACE `<i class="fa fa-info-circle" aria-hidden="true"></i>`
 
 This document describes the implementation and operationalization of Microsoft Entra External ID for secure single sign-on (SSO) for portals and API authorization. Microsoft Entra External ID is Microsoft's dedicated identity service for external users, providing business-to-customer identity as a service and offering a streamlined way to secure external-facing web applications and APIs.
 
@@ -15,9 +14,13 @@ Entra External ID has been chosen as the right tool as it provides secure identi
 
 By using this technology, the organization benefits by centralizing its authentication services into a platform that specializes in this domain while leveraging Microsoft's robust identity toolset including conditional access policies, MFA, groups, monitoring, and automated release pipeline integration. This approach helps the organization meet Canadian digital security requirements such as Protected B, Medium Integrity, Medium Availability (PBMM) compliance and supports the implementation of security controls required by ITSG-33 standards from the Communications Security Establishment (CSE).
 
-## IMPLEMENTATION OPTIONS
+<!-- Page Break -->
 
-### OPTION 1: ENTRA EXTERNAL ID WITH CUSTOM DOMAIN USING FRONT DOOR
+<div style="page-break-after: always;"></div>
+
+## IMPLEMENTATION OPTIONS `<i class="fa fa-cogs" aria-hidden="true"></i>`
+
+### OPTION 1: ENTRA EXTERNAL ID WITH CUSTOM DOMAIN USING FRONT DOOR `<i class="fa fa-globe" aria-hidden="true"></i>`
 
 ```mermaid
 graph TD
@@ -28,7 +31,7 @@ graph TD
     C -->|OIDC/SAML| F[External Identity Providers]
 ```
 
-### OPTION 2: ENTRA EXTERNAL ID WITHOUT CUSTOM DOMAIN
+### OPTION 2: ENTRA EXTERNAL ID WITHOUT CUSTOM DOMAIN `<i class="fa fa-cloud" aria-hidden="true"></i>`
 
 ```mermaid
 graph TD
@@ -38,7 +41,11 @@ graph TD
     B -->|OIDC/SAML| E[External Identity Providers]
 ```
 
-## ALIGNMENT TO CLOUD CONNECTION PATTERNS
+<!-- Page Break -->
+
+<div style="page-break-after: always;"></div>
+
+## ALIGNMENT TO CLOUD CONNECTION PATTERNS `<i class="fa fa-cloud-upload" aria-hidden="true"></i>`
 
 Entra External ID is considered a SAAS-based technology and therefore, only a subset of the standard cloud usage profiles and connection patterns apply:
 
@@ -46,9 +53,9 @@ Entra External ID is considered a SAAS-based technology and therefore, only a su
 2. **Service/Application Interoperability**: Service and application communications with cloud-based services
 3. **Cloud Administration and Management**: Management of cloud-based components and support for operations activities
 
-## ENTRA EXTERNAL ID CONNECTION PATTERNS
+## ENTRA EXTERNAL ID CONNECTION PATTERNS `<i class="fa fa-network-wired" aria-hidden="true"></i>`
 
-### Web Applications & APIs
+### Web Applications & APIs `<i class="fa fa-desktop" aria-hidden="true"></i>`
 
 For web applications (any platform that supports OIDC), the application initiates authentication by redirecting users to Entra External ID. The result is an id_token containing identity claims. This applies to all modern application platforms including:
 
@@ -60,7 +67,7 @@ For web applications (any platform that supports OIDC), the application initiate
 
 For APIs, OAuth 2.0 is leveraged to secure endpoints with access tokens, enabling secure machine-to-machine and delegated access scenarios.
 
-### Identity Federation Options
+### Identity Federation Options `<i class="fa fa-share-alt" aria-hidden="true"></i>`
 
 Entra External ID provides extensive identity federation options:
 
@@ -72,9 +79,13 @@ Entra External ID provides extensive identity federation options:
 
 Federation with other organizational tenants enables true cross-organization collaboration where users can leverage their existing organizational credentials to access your applications, enhancing the user experience while maintaining security boundaries.
 
-## IMPLEMENTATION ARCHITECTURE COMPONENTS
+<!-- Page Break -->
 
-### DOMAIN CONFIGURATION
+<div style="page-break-after: always;"></div>
+
+## IMPLEMENTATION ARCHITECTURE COMPONENTS `<i class="fa fa-sitemap" aria-hidden="true"></i>`
+
+### DOMAIN CONFIGURATION `<i class="fa fa-globe" aria-hidden="true"></i>`
 
 When provisioning Entra External ID, a new dedicated directory tenant is created with a default domain (tenantname.onmicrosoft.com), which is used for authentication endpoints (tenantname.b2clogin.com).
 
@@ -85,7 +96,7 @@ There are two primary options for custom domain configuration:
 
 The custom domain feature enables a branded, consistent user experience that aligns with your organization's web presence.
 
-### KEY VAULT & CERTIFICATES
+### KEY VAULT & CERTIFICATES `<i class="fa fa-lock" aria-hidden="true"></i>`
 
 For secure certificate and secret management, Azure Key Vault integration is recommended. Entra External ID supports certificates for:
 
@@ -93,7 +104,7 @@ For secure certificate and secret management, Azure Key Vault integration is rec
 - App authentication (instead of secrets)
 - TLS for custom domains
 
-### APP REGISTRATIONS
+### APP REGISTRATIONS `<i class="fa fa-user-plus" aria-hidden="true"></i>`
 
 Each application integrating with Entra External ID requires an App Registration which provides:
 
@@ -102,7 +113,11 @@ Each application integrating with Entra External ID requires an App Registration
 - Reply URLs (authorized redirect endpoints)
 - Logout URLs for single sign-out
 
-## STANDARDIZED AUTHENTICATION WITH OPENID CONNECT
+<!-- Page Break -->
+
+<div style="page-break-after: always;"></div>
+
+## STANDARDIZED AUTHENTICATION WITH OPENID CONNECT `<i class="fa fa-key" aria-hidden="true"></i>`
 
 Entra External ID fully implements the OpenID Connect (OIDC) protocol, which is built on OAuth 2.0 and provides a standardized way to authenticate users and obtain basic profile information.
 
@@ -115,7 +130,7 @@ The key benefits of OIDC include:
 
 For applications that must integrate with legacy SAML 2.0 identity providers, Entra External ID provides federation capabilities to bridge these technologies while still presenting a modern OIDC interface to applications.
 
-### Integration with External OIDC Providers
+### Integration with External OIDC Providers `<i class="fa fa-external-link-alt" aria-hidden="true"></i>`
 
 Entra External ID can integrate with any OIDC-compliant provider, including:
 
@@ -125,7 +140,11 @@ Entra External ID can integrate with any OIDC-compliant provider, including:
 
 This enables a true federation hub architecture where Entra External ID serves as the central authentication service while delegating actual identity verification to trusted external providers.
 
-## MONITORING AND SECURITY
+<!-- Page Break -->
+
+<div style="page-break-after: always;"></div>
+
+## MONITORING AND SECURITY `<i class="fa fa-shield-alt" aria-hidden="true"></i>`
 
 Entra External ID includes comprehensive monitoring and security features:
 
@@ -135,7 +154,7 @@ Entra External ID includes comprehensive monitoring and security features:
 - **Azure Monitor Integration**: Extended log retention and analytics
 - **Microsoft Sentinel Integration**: Advanced security analysis
 
-## MULTI-FACTOR AUTHENTICATION SUPPORT
+## MULTI-FACTOR AUTHENTICATION SUPPORT `<i class="fa fa-mobile-alt" aria-hidden="true"></i>`
 
 Entra External ID supports multiple MFA methods to secure user authentication:
 
@@ -147,7 +166,7 @@ Entra External ID supports multiple MFA methods to secure user authentication:
 
 MFA can be enforced conditionally based on risk level, application sensitivity, or global policies.
 
-## COST EFFICIENCY
+## COST EFFICIENCY `<i class="fa fa-dollar-sign" aria-hidden="true"></i>`
 
 Entra External ID offers a cost-effective identity solution with transparent, predictable pricing:
 
@@ -158,7 +177,11 @@ Entra External ID offers a cost-effective identity solution with transparent, pr
 
 The P1 tier includes core identity management, MFA, branding, and federation capabilities, while P2 adds advanced security features like Identity Protection, risk-based authentication, and Conditional Access.
 
-## GUARDRAILS AND SECURITY BEST PRACTICES
+<!-- Page Break -->
+
+<div style="page-break-after: always;"></div>
+
+## GUARDRAILS AND SECURITY BEST PRACTICES `<i class="fa fa-check-circle" aria-hidden="true"></i>`
 
 Key security recommendations for Entra External ID implementation:
 
@@ -177,7 +200,7 @@ Key security recommendations for Entra External ID implementation:
 | Multiple Environments | Create dev/test and production environments            | Yes         |
 | Log Retention         | Extend audit log retention with Azure Monitor          | Recommended |
 
-## CONFIGURING MICROSOFT ENTRA EXTERNAL ID
+## CONFIGURING MICROSOFT ENTRA EXTERNAL ID `<i class="fa fa-cog" aria-hidden="true"></i>`
 
 ### BASIC SETUP STEPS
 
@@ -190,7 +213,7 @@ Key security recommendations for Entra External ID implementation:
 7. Configure Azure Front Door for advanced networking (optional)
 8. Create app registrations for applications
 
-### INTEGRATION WITH IDENTITY PROVIDERS
+### INTEGRATION WITH IDENTITY PROVIDERS `<i class="fa fa-user-friends" aria-hidden="true"></i>`
 
 For government identity providers like GCKey, the process typically involves:
 
@@ -207,7 +230,11 @@ For integration with other organizational Entra ID/Azure AD tenants:
 3. Set up user attributes mapping
 4. Create user flows leveraging the external tenant
 
-## ROLES AND RESPONSIBILITIES
+<!-- Page Break -->
+
+<div style="page-break-after: always;"></div>
+
+## ROLES AND RESPONSIBILITIES `<i class="fa fa-users" aria-hidden="true"></i>`
 
 | Role                                     | Description                                 | Responsibility   |
 | ---------------------------------------- | ------------------------------------------- | ---------------- |
@@ -221,9 +248,9 @@ For integration with other organizational Entra ID/Azure AD tenants:
 | Global Reader                            | Read-only access to tenant settings         | Monitoring team  |
 | Domain Administrator                     | Manage custom domains                       | Cloud Ops        |
 
-## INTEGRATION WITH WEB APPLICATIONS
+## INTEGRATION WITH WEB APPLICATIONS `<i class="fa fa-laptop" aria-hidden="true"></i>`
 
-### Power Pages Integration
+### Power Pages Integration `<i class="fa fa-puzzle-piece" aria-hidden="true"></i>`
 
 Microsoft Power Pages (formerly Power Apps Portals) offers exceptional integration with Entra External ID, making it the premier choice for Canadian government agencies looking to rapidly deploy secure external portals:
 
@@ -242,9 +269,7 @@ The integration helps satisfy key security controls defined in ITSG-33, includin
 - IA-5: Authenticator Management
 - AU-2: Audit Events
 
-Power Pages with Entra External ID provides a rapid path to delivering secure, compliant external portals while minimizing development and security overhead.
-
-### Other Application Platforms
+### Other Application Platforms `<i class="fa fa-th" aria-hidden="true"></i>`
 
 Beyond Power Pages, Entra External ID can integrate with any application platform that supports OIDC or SAML protocols, including:
 
@@ -263,7 +288,11 @@ For each integration, the basic pattern involves:
 3. Implementing the authorization code flow for web apps
 4. Setting up token validation and claims processing
 
-## BENEFITS OF ENTRA EXTERNAL ID
+<!-- Page Break -->
+
+<div style="page-break-after: always;"></div>
+
+## BENEFITS OF ENTRA EXTERNAL ID `<i class="fa fa-star" aria-hidden="true"></i>`
 
 1. **Standards-Based**: Built on OIDC and OAuth 2.0 protocols for maximum compatibility with modern security standards
 2. **Unified Identity**: One centralized identity service for all external applications
@@ -278,7 +307,7 @@ For each integration, the basic pattern involves:
 11. **Customizable Experience**: Brandable login experiences that maintain organizational identity
 12. **Continuous Improvement**: Regular updates and new features from Microsoft
 
-### CANADIAN DIGITAL SECURITY ALIGNMENT
+## CANADIAN DIGITAL SECURITY ALIGNMENT `<i class="fa fa-flag" aria-hidden="true"></i>`
 
 Entra External ID supports key Canadian security requirements:
 
@@ -289,3 +318,12 @@ Entra External ID supports key Canadian security requirements:
 - **Privacy by Design**: Supports privacy principles required by Canadian privacy regulations
 
 By implementing Entra External ID following the approach outlined in this document, organizations can create a secure, scalable, and user-friendly authentication system for external users while meeting security requirements and leveraging industry standards.
+
+---
+
+### Notes
+
+- **Icons:**The `<i class="fa fa-..." aria-hidden="true"></i>` tags are used to inject Font Awesome icons. Ensure your environment loads the Font Awesome CSS (for example, via a link in your HTML `<head>`).
+- **Canadian Flag:**The Canadian flag image is pulled from Wikimedia Commons. Adjust the URL or styling as needed.
+- **Page Breaks:**
+  The `<div style="page-break-after: always;"></div>` tags will force a page break in print/PDF output. If your Markdown processor supports a different syntax (such as `<!-- pagebreak -->`), feel free to modify accordingly.
