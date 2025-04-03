@@ -978,27 +978,13 @@ For a Case with related Case Documents:
 4. Ensure Global Access is set up correctly for child entities
 5. Validate security model with penetration testing
 
-```mermaid
-graph TD
-    A[Portal User] -->|Has Access To| B[Parent Record]
-    B -->|Grants Access To| C[Child Records]
-    B -->|Denies Access To| D[Unrelated Records]
-  
-    A -->|Cannot Access| D
-    A -->|Cannot "Sniff"| E[Other Users' Records]
-  
-    classDef user fill:#f9f9f9,stroke:#333,stroke-width:1px
-    classDef parent fill:#d5e8d4,stroke:#333,stroke-width:1px
-    classDef child fill:#d4f1f9,stroke:#333,stroke-width:1px
-    classDef unauthorized fill:#f8cecc,stroke:#333,stroke-width:1px
-  
-    class A user
-    class B parent
-    class C child
-    class D,E unauthorized
-```
+**Parent-Child Table Permission Model:**
 
-### Additional Security Measures
+Portal User has access to Parent Records, which grant access to Child Records.
+Parent Records deny access to Unrelated Records.
+Portal Users cannot access Unrelated Records or "sniff" Other Users' Records.
+
+##### Additional Security Measures
 
 **Web Role Configuration:**
 
@@ -1540,3 +1526,5 @@ Regular review and updates to these standards will ensure they remain current wi
 **Document Version:** 1.1
 **Last Updated:** March 2025
 **Approved By:** Elections Canada Power Platform CoE
+
+<style>#mermaid-1743707628054{font-family:sans-serif;font-size:16px;fill:#333;}#mermaid-1743707628054 .error-icon{fill:#552222;}#mermaid-1743707628054 .error-text{fill:#552222;stroke:#552222;}#mermaid-1743707628054 .edge-thickness-normal{stroke-width:2px;}#mermaid-1743707628054 .edge-thickness-thick{stroke-width:3.5px;}#mermaid-1743707628054 .edge-pattern-solid{stroke-dasharray:0;}#mermaid-1743707628054 .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-1743707628054 .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-1743707628054 .marker{fill:#333333;}#mermaid-1743707628054 .marker.cross{stroke:#333333;}#mermaid-1743707628054 svg{font-family:sans-serif;font-size:16px;}#mermaid-1743707628054 .label{font-family:sans-serif;color:#333;}#mermaid-1743707628054 .label text{fill:#333;}#mermaid-1743707628054 .node rect,#mermaid-1743707628054 .node circle,#mermaid-1743707628054 .node ellipse,#mermaid-1743707628054 .node polygon,#mermaid-1743707628054 .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#mermaid-1743707628054 .node .label{text-align:center;}#mermaid-1743707628054 .node.clickable{cursor:pointer;}#mermaid-1743707628054 .arrowheadPath{fill:#333333;}#mermaid-1743707628054 .edgePath .path{stroke:#333333;stroke-width:1.5px;}#mermaid-1743707628054 .flowchart-link{stroke:#333333;fill:none;}#mermaid-1743707628054 .edgeLabel{background-color:#e8e8e8;text-align:center;}#mermaid-1743707628054 .edgeLabel rect{opacity:0.5;background-color:#e8e8e8;fill:#e8e8e8;}#mermaid-1743707628054 .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#mermaid-1743707628054 .cluster text{fill:#333;}#mermaid-1743707628054 div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:sans-serif;font-size:12px;background:hsl(80,100%,96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-1743707628054:root{--mermaid-font-family:sans-serif;}#mermaid-1743707628054:root{--mermaid-alt-font-family:sans-serif;}#mermaid-1743707628054 flowchart{fill:apa;}</style>
