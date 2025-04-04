@@ -1,291 +1,426 @@
-# MICROSOFT ENTRA EXTERNAL ID
-
 <div align="center">
   <img src="./entra-infographic.png" alt="Microsoft Entra External ID Infographic" width="800">
   <p><i>Microsoft Entra External ID - Secure Identity Management for External Users</i></p>
 </div>
 
-## PREFACE
+# Elections Canada: External ID Integration with Microsoft Entra ID
 
-This document describes the implementation and operationalization of Microsoft Entra External ID for secure single sign-on (SSO) for portals and API authorization. Microsoft Entra External ID is Microsoft's dedicated identity service for external users, providing business-to-customer identity as a service and offering a streamlined way to secure external-facing web applications and APIs.
+This document outlines the integration between Elections Canada's Microsoft Entra External ID solution for managing external identities. The implementation provides secure access to applications for various external clients while maintaining strict security standards.
 
-It should be noted that Azure B2C was Microsoft's official external-facing SSO service offering until Entra External ID was introduced as part of Microsoft's rebranding and enhancement of their identity services. Entra External ID exists as its own dedicated Microsoft Entra tenant, separate from an organization's internal Entra ID (formerly Azure AD) tenant, providing a clear separation between employee and external user identities.
+## Overview
 
-Entra External ID has been chosen as the right tool as it provides secure identity management to enable single sign-on access to web applications and APIs while supporting integration with external identity providers through industry-standard protocols like OpenID Connect (OIDC) and SAML 2.0. This is particularly beneficial for organizations leveraging Microsoft Power Pages for external portals, as the integration between Power Pages and Entra External ID is seamless and built-in, requiring minimal configuration while providing enterprise-grade security.
-
-By using this technology, the organization benefits by centralizing its authentication services into a platform that specializes in this domain while leveraging Microsoft's robust identity toolset including conditional access policies, MFA, groups, monitoring, and automated release pipeline integration. This approach helps the organization meet Canadian digital security requirements such as Protected B, Medium Integrity, Medium Availability (PBMM) compliance and supports the implementation of security controls required by ITSG-33 standards from the Communications Security Establishment (CSE).
-
-## IMPLEMENTATION OPTIONS
-
-### OPTION 1: ENTRA EXTERNAL ID WITH CUSTOM DOMAIN USING FRONT DOOR
+Elections Canada requires a secure identity solution that allows external users to access specific applications while maintaining strict security standards mandated by federal regulations. This document describes the implementation of Microsoft Entra External ID (formerly Azure AD B2C) for managing external identities.
 
 ```mermaid
 graph TD
-    A[External User] -->|Internet| B[Azure Front Door]
-    B -->|Custom Domain| C[Entra External ID]
-    C -->|OIDC/OAUTH| D[Web Applications]
-    C -->|OIDC/OAUTH| E[APIs]
-    C -->|OIDC/SAML| F[External Identity Providers]
+    A[External User] -->|Authentication Request| B[Application Portal]
+    B -->|Redirect to Identity Provider| C[Microsoft Entra External ID]
+    C -->|User Authentication| D{Authentication Type}
+    D -->|Social Identity| E[Social Identity Provider]
+    D -->|Local Account| G[Entra External ID Store]
+    E -->|Authentication Response| C
+    G -->|Authentication Response| C
+    C -->|Token Issuance| B
+    B -->|Access Granted| H[Protected Applications]
+    
+    style C fill:#f9f,stroke:#333,stroke-width:2px
+    style H fill:#bbf,stroke:#333,stroke-width:2px
 ```
 
-### OPTION 2: ENTRA EXTERNAL ID WITHOUT CUSTOM DOMAIN
+## Key Components
+
+### 1. Microsoft Entra External ID Tenant
+
+Elections Canada utilizes a dedicated Microsoft Entra External ID tenant (`electcan2.onmicrosoft.com`) for managing external identities. This tenant is separate from the organizational Entra ID used for internal staff.
+
+### 2. User Flows
+
+The implementation uses the standard "Sign up and sign in" user flow that facilitates the external client authentication process:
+
+```mermaid
+graph LR
+    A[External User] --> B[Sign Up and Sign In User Flow]
+    B --> C[Email Verification]
+    C --> D[Credential Creation/Validation]
+    D --> E[Claims Collection]
+    E --> F[Application Access]
+```
+
+#### Sign Up and Sign In User Flow
+- Email and password authentication
+- Email-based verification during registration
+- Collection of key user attributes:
+  - Email address
+  - First name
+  - Last name
+  - Phone number
+- Multi-factor authentication via email for sensitive operations
+- Bilingual support (English and French)
+
+### 3. Identity Provider Configuration
+
+Elections Canada's implementation uses the default local account identity provider to manage external client accounts:
 
 ```mermaid
 graph TD
-    A[External User] -->|Internet| B[Entra External ID Default Domain]
-    B -->|OIDC/OAUTH| C[Web Applications]
-    B -->|OIDC/OAUTH| D[APIs]
-    B -->|OIDC/SAML| E[External Identity Providers]
+    A[Authentication Request] --> B[Entra External ID]
+    B --> C[Local Account Provider]
+    C --> D[Token Issuance]
+    D --> E[Application Access]
 ```
 
-## ALIGNMENT TO CLOUD CONNECTION PATTERNS
-
-Entra External ID is considered a SAAS-based technology and therefore, only a subset of the standard cloud usage profiles and connection patterns apply:
-
-1. **External user access to cloud-based service**: Non-organizational users accessing cloud-based services
-2. **Service/Application Interoperability**: Service and application communications with cloud-based services
-3. **Cloud Administration and Management**: Management of cloud-based components and support for operations activities
-
-## ENTRA EXTERNAL ID CONNECTION PATTERNS
-
-### Web Applications & APIs
-
-For web applications (any platform that supports OIDC), the application initiates authentication by redirecting users to Entra External ID. The result is an id_token containing identity claims. This applies to all modern application platforms including:
-
-- ASP.NET Core, Java, Ruby, Python, PHP
-- Node.js and Express
-- Single Page Applications (React, Angular, Vue)
-- Mobile applications (iOS, Android)
-- Power Pages and other Microsoft platforms
-
-For APIs, OAuth 2.0 is leveraged to secure endpoints with access tokens, enabling secure machine-to-machine and delegated access scenarios.
-
-### Identity Federation Options
-
-Entra External ID provides extensive identity federation options:
-
-1. **Social Identity Providers**: Microsoft, Google, Facebook, etc.
-2. **Enterprise Identity Providers**: Any OIDC or SAML 2.0 compatible IdP
-3. **Government Services**: GCKey, Sign In Canada, etc. via OIDC federation
-4. **Other Entra ID/Azure AD tenants**: Enable seamless SSO with partner organizations
-5. **Local accounts**: Email/password for users without external identities
-
-Federation with other organizational tenants enables true cross-organization collaboration where users can leverage their existing organizational credentials to access your applications, enhancing the user experience while maintaining security boundaries.
-
-## IMPLEMENTATION ARCHITECTURE COMPONENTS
-
-### DOMAIN CONFIGURATION
-
-When provisioning Entra External ID, a new dedicated directory tenant is created with a default domain (tenantname.onmicrosoft.com), which is used for authentication endpoints (tenantname.b2clogin.com).
-
-There are two primary options for custom domain configuration:
-
-1. **Azure Front Door (Recommended for GC)**: Provides CDN capabilities, TLS enforcement, and custom domain support (e.g., signin.agency.canada.ca)
-2. **Native Custom Domain**: Entra External ID supports direct custom domain configuration without Front Door
-
-The custom domain feature enables a branded, consistent user experience that aligns with your organization's web presence.
-
-### KEY VAULT & CERTIFICATES
-
-For secure certificate and secret management, Azure Key Vault integration is recommended. Entra External ID supports certificates for:
-
-- Token signing and encryption
-- App authentication (instead of secrets)
-- TLS for custom domains
-
-### APP REGISTRATIONS
-
-Each application integrating with Entra External ID requires an App Registration which provides:
-
-- A Client ID (unique identifier)
-- Authentication credentials (secret or certificate)
-- Reply URLs (authorized redirect endpoints)
-- Logout URLs for single sign-out
-
-## STANDARDIZED AUTHENTICATION WITH OPENID CONNECT
-
-Entra External ID fully implements the OpenID Connect (OIDC) protocol, which is built on OAuth 2.0 and provides a standardized way to authenticate users and obtain basic profile information.
-
-The key benefits of OIDC include:
-
-- Industry-standard protocol supported by most modern platforms
-- Simple REST/JSON based implementation
-- Designed for modern web and mobile applications
-- Well-defined security practices and validation mechanisms
-
-For applications that must integrate with legacy SAML 2.0 identity providers, Entra External ID provides federation capabilities to bridge these technologies while still presenting a modern OIDC interface to applications.
-
-### Integration with External OIDC Providers
-
-Entra External ID can integrate with any OIDC-compliant provider, including:
-
-1. **Government Identity Services**: GCKey, Sign In Canada
-2. **Other Microsoft Entra Tenants**: Partner organization directories
-3. **Third-party Identity Providers**: Any provider supporting OIDC
-
-This enables a true federation hub architecture where Entra External ID serves as the central authentication service while delegating actual identity verification to trusted external providers.
-
-## MONITORING AND SECURITY
-
-Entra External ID includes comprehensive monitoring and security features:
-
-- **Sign-in Logs**: Track all authentication activities
-- **Audit Logs**: Record administrative actions
-- **Risk Detection**: Identify suspicious authentication patterns (P2)
-- **Azure Monitor Integration**: Extended log retention and analytics
-- **Microsoft Sentinel Integration**: Advanced security analysis
-
-## MULTI-FACTOR AUTHENTICATION SUPPORT
-
-Entra External ID supports multiple MFA methods to secure user authentication:
-
-1. **Email One-Time Passcode**: Verification codes sent via email
-2. **SMS One-Time Passcode**: Codes sent to mobile devices
-3. **Time-based One-Time Password (TOTP)**: Authenticator apps like Microsoft Authenticator
-4. **Phone Call Verification**: Voice calls for authentication
-5. **Custom Factors**: Integration with third-party MFA providers via OIDC claims
-
-MFA can be enforced conditionally based on risk level, application sensitivity, or global policies.
-
-## COST EFFICIENCY
-
-Entra External ID offers a cost-effective identity solution with transparent, predictable pricing:
-
-- **Per MAU (Monthly Active User) Pricing**: Only pay for actual usage
-- **Tiered Pricing**: Volume discounts for larger deployments
-- **P1 vs P2**: Choose features based on your security requirements
-- **No Hidden Costs**: Included authentications, no per-transaction fees
-
-The P1 tier includes core identity management, MFA, branding, and federation capabilities, while P2 adds advanced security features like Identity Protection, risk-based authentication, and Conditional Access.
-
-## GUARDRAILS AND SECURITY BEST PRACTICES
-
-Key security recommendations for Entra External ID implementation:
-
-| Guardrail             | Description                                            | Required    |
-| --------------------- | ------------------------------------------------------ | ----------- |
-| Global Admins         | Have a minimum of 2 Global Admins with MFA enabled     | Yes         |
-| Administrator Roles   | Assign least-privilege roles to administrators         | Yes         |
-| Security Groups       | Create Security Group for each application             | Yes         |
-| TLS Version           | Enforce TLS 1.2+ by deploying AFD                      | Yes         |
-| Custom Domain         | Use a branded domain (block the Microsoft domain)      | Recommended |
-| Certificates          | Use trusted certificates for domains and token signing | Yes         |
-| Encryption Keys       | Use RSA 2056 or higher for encryption                  | Yes         |
-| Authentication Flows  | Avoid implicit flows except where necessary            | Yes         |
-| Logout Implementation | Enforce Front Channel Logout                           | Yes         |
-| Risk Detection        | Use Identity Protection monitoring services            | Yes (P2)    |
-| Multiple Environments | Create dev/test and production environments            | Yes         |
-| Log Retention         | Extend audit log retention with Azure Monitor          | Recommended |
-
-## CONFIGURING MICROSOFT ENTRA EXTERNAL ID
-
-### BASIC SETUP STEPS
-
-1. Provision the Entra External ID tenant in Azure Portal
-2. Configure administrator access and role assignments
-3. Set up branding and company information
-4. Configure user flows for authentication patterns
-5. Integrate identity providers (social, enterprise, government)
-6. Set up custom domains if required
-7. Configure Azure Front Door for advanced networking (optional)
-8. Create app registrations for applications
-
-### INTEGRATION WITH IDENTITY PROVIDERS
-
-For government identity providers like GCKey, the process typically involves:
-
-1. Creating a new OIDC identity provider in Entra External ID
-2. Configuring metadata, client ID and secret
-3. Creating a user flow that uses this identity provider
-4. Providing your metadata endpoint to the identity provider service
-5. Testing and validating the integration
-
-For integration with other organizational Entra ID/Azure AD tenants:
-
-1. Register an application in the external tenant
-2. Configure OIDC provider settings in Entra External ID
-3. Set up user attributes mapping
-4. Create user flows leveraging the external tenant
-
-## ROLES AND RESPONSIBILITIES
-
-| Role                                     | Description                                 | Responsibility   |
-| ---------------------------------------- | ------------------------------------------- | ---------------- |
-| Application Administrator                | Register applications and app registrations | Integration team |
-| External Identity Provider Administrator | Configure identity providers                | Integration team |
-| External ID User Flow Administrator      | Manage user flows and attributes            | Integration team |
-| User Administrator                       | Manage user accounts                        | Admin team       |
-| Global Administrator                     | Manage tenant-wide settings and roles       | Cloud Ops        |
-| TENANT IEF Policy Administrator          | Manage identity experience framework        | Integration team |
-| TENANT IEF Keyset Administrator          | Manage encryption keys and certificates     | Security team    |
-| Global Reader                            | Read-only access to tenant settings         | Monitoring team  |
-| Domain Administrator                     | Manage custom domains                       | Cloud Ops        |
-
-## INTEGRATION WITH WEB APPLICATIONS
-
-### Power Pages Integration
-
-Microsoft Power Pages (formerly Power Apps Portals) offers exceptional integration with Entra External ID, making it the premier choice for Canadian government agencies looking to rapidly deploy secure external portals:
-
-- **Native Integration**: Power Pages includes built-in providers specifically for Entra External ID
-- **No-Code Configuration**: Authentication setup is managed through a simple admin interface
-- **Security Compliance**: The combined solution supports PBMM (Protected B, Medium Integrity, Medium Availability) requirements
-- **Claims Mapping**: Automatically maps identity claims to portal user profiles
-- **Session Management**: Integrated session handling with secure token storage
-- **Multi-Step Registration**: Support for progressive profiling and structured registration
-
-The integration helps satisfy key security controls defined in ITSG-33, including:
-
-- AC-2: Account Management
-- AC-3: Access Enforcement
-- IA-2: Identification and Authentication
-- IA-5: Authenticator Management
-- AU-2: Audit Events
-
-Power Pages with Entra External ID provides a rapid path to delivering secure, compliant external portals while minimizing development and security overhead.
-
-### Other Application Platforms
-
-Beyond Power Pages, Entra External ID can integrate with any application platform that supports OIDC or SAML protocols, including:
-
-- **ASP.NET Core**: Microsoft Identity Web library
-- **Node.js**: Passport.js with OIDC
-- **Java**: Spring Security or other OIDC libraries
-- **Python**: Flask-OIDC, Django OIDC, etc.
-- **SPA Frameworks**: MSAL.js, Auth0.js, etc.
-- **Mobile**: MSAL for iOS/Android, AppAuth
-- **APIs**: OAuth 2.0 bearer tokens
-
-For each integration, the basic pattern involves:
-
-1. Creating an app registration in Entra External ID
-2. Configuring the application with client ID, tenant, and endpoints
-3. Implementing the authorization code flow for web apps
-4. Setting up token validation and claims processing
-
-## BENEFITS OF ENTRA EXTERNAL ID
-
-1. **Standards-Based**: Built on OIDC and OAuth 2.0 protocols for maximum compatibility with modern security standards
-2. **Unified Identity**: One centralized identity service for all external applications
-3. **Enhanced Security**: MFA, Conditional Access, and risk-based policies to meet PBMM requirements
-4. **Seamless Federation**: Integrate with any identity provider (including GCKey and other government services)
-5. **Cross-Organization SSO**: Enable users from partner organizations to access your applications
-6. **Cost Efficiency**: Pay only for active users with predictable monthly pricing
-7. **Power Pages Synergy**: Exceptional integration with Power Pages for rapid, secure portal development
-8. **Canadian Security Compliance**: Designed to help meet ITSG-33, PBMM, and other Canadian security frameworks
-9. **Comprehensive Monitoring**: Built-in auditing and reporting for security oversight
-10. **Reduced Development Time**: Focus on applications rather than identity infrastructure, accelerating time-to-market
-11. **Customizable Experience**: Brandable login experiences that maintain organizational identity
-12. **Continuous Improvement**: Regular updates and new features from Microsoft
-
-### CANADIAN DIGITAL SECURITY ALIGNMENT
-
-Entra External ID supports key Canadian security requirements:
-
-- **PBMM Compliance**: Supports Protected B data classification with Medium integrity and availability requirements
-- **ITSG-33 Controls**: Maps to security controls for identification, authentication, and access management
-- **TBS Digital Standards**: Aligns with Government of Canada digital standards for secure service delivery
-- **CSE Security Guidelines**: Compatible with Canadian Centre for Cyber Security guidance for cloud services
-- **Privacy by Design**: Supports privacy principles required by Canadian privacy regulations
-
-By implementing Entra External ID following the approach outlined in this document, organizations can create a secure, scalable, and user-friendly authentication system for external users while meeting security requirements and leveraging industry standards.
+The following identity provider configuration is used:
+
+- **Local Accounts**: Email and password based accounts in the Entra External ID identity store
+- Self-service password reset
+- Email verification
+- Progressive profiling capabilities
+
+## Technical Implementation
+
+### Architecture
+
+```mermaid
+graph TB
+    A[User Browser] -->|1. Access Request| B[Application Portal]
+    B -->|2. Auth Redirect| C[Microsoft Entra External ID]
+    C -->|3. Authentication| D[Identity Provider]
+    D -->|4. Token| C
+    C -->|5. Token Issuance| B
+    B -->|6. API Call with Token| E[Protected API]
+    E -->|7. Token Validation| F[Microsoft Entra ID]
+    
+    subgraph "Azure"
+    C
+    F
+    end
+    
+    subgraph "Organizational Infrastructure"
+    B
+    E
+    G[Database]
+    end
+    
+    E --> G
+```
+
+### Protocol Support
+
+The Entra External ID tenant supports industry-standard authentication protocols for application integration:
+
+```mermaid
+graph TD
+    A[Integration Protocols] --> B[OpenID Connect]
+    A --> C[SAML 2.0]
+    
+    B --> D[Authorization Code Flow]
+    B --> E[Implicit Flow]
+    B --> F[Hybrid Flow]
+    
+    C --> G[SP-Initiated SSO]
+    C --> H[IdP-Initiated SSO]
+    
+    D --> I[Application Integration]
+    E --> I
+    F --> I
+    G --> I
+    H --> I
+```
+
+#### OpenID Connect (OIDC) Benefits
+- Modern, REST-based protocol
+- Simplified token handling
+- Mobile application support
+- User info endpoint for attribute retrieval
+- Lightweight implementation
+
+#### SAML Benefits
+- Widespread enterprise application support
+- Rich attribute statements
+- Mature implementation patterns
+- Legacy application compatibility
+
+### Data Flow
+
+The authentication process follows these steps:
+
+1. User attempts to access application
+2. User is redirected to Entra External ID for authentication
+3. User authenticates via local account
+4. Entra External ID issues a token containing claims about the user
+5. The application validates the token and extracts user information
+6. Access is granted based on user claims and application permissions
+
+### Security Controls
+
+The following security controls have been implemented:
+
+```mermaid
+graph TD
+    A[Security Controls] --> B[Authentication Policies]
+    A --> C[Token Handling]
+    A --> D[Data Protection]
+    A --> E[Monitoring]
+    
+    B --> B1[MFA Requirements]
+    B --> B2[Password Policies]
+    B --> B3[Session Management]
+    
+    C --> C1[Token Encryption]
+    C --> C2[Signature Validation]
+    C --> C3[Lifetime Policies]
+    
+    D --> D1[Data Encryption]
+    D --> D2[Personal Info Handling]
+    D --> D3[Consent Management]
+    
+    E --> E1[Logging]
+    E --> E2[Alerting]
+    E --> E3[Reporting]
+```
+
+#### Authentication Policies
+- Strong password requirements (12+ characters, complexity)
+- Multi-factor authentication via email for sensitive operations
+- Session timeout after 30 minutes of inactivity
+
+#### Token Security
+- JWT tokens with industry-standard encryption
+- Configurable token lifetimes
+- Refresh token patterns
+- Audience and issuer validation
+
+#### Data Protection
+- Encryption of all personal data at rest and in transit
+- Minimal data collection in accordance with Privacy Act
+- Automated data retention policies
+- Strict data classification
+
+## Application Integration
+
+### Single Sign-On Benefits
+
+The implementation of Entra External ID provides the following SSO benefits:
+
+- **Improved User Experience**: Users sign in once and access multiple applications
+- **Reduced Password Fatigue**: Eliminating multiple credentials for different applications
+- **Centralized Access Control**: Manage permissions from a single location
+- **Consistent Security Policies**: Apply uniform security controls across applications
+- **Simplified Onboarding/Offboarding**: Streamlined user lifecycle management
+- **Enhanced Security Monitoring**: Consolidated authentication logging
+
+### Authentication Flow
+
+The following diagram shows how applications integrate with Entra ID:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant App as Application
+    participant Auth as Entra External ID
+    participant API as Protected API
+    
+    User->>App: Access Request
+    App->>Auth: Redirect to Authentication
+    Auth->>User: Authentication Prompt
+    User->>Auth: Provide Credentials
+    Auth->>User: Email MFA (if required)
+    User->>Auth: Complete MFA
+    Auth->>App: Issue ID Token + Access Token
+    App->>API: API Request with Access Token
+    API->>API: Validate Token
+    API->>App: API Response
+    App->>User: Display Protected Content
+```
+
+### Token Claims
+
+The token issued to applications contains the following claims:
+
+- Standard claims:
+  - `sub`: Unique identifier for the user
+  - `email`: User's email address
+  - `given_name`: User's first name
+  - `family_name`: User's last name
+  - `phone_number`: User's phone number
+  - `iat`: Time at which the token was issued
+  - `exp`: Expiration time
+
+## Operational Considerations
+
+### Custom Domain Configuration
+
+The current Entra External ID tenant uses the default domain `electcan2.onmicrosoft.com`. To configure a custom domain (e.g., `login.elections.ca`):
+
+```mermaid
+graph TD
+    A[Custom Domain Configuration] --> B[Purchase Domain]
+    B --> C[Verify Domain Ownership]
+    C --> D[Configure DNS Records]
+    D --> E[Add Custom Domain in Entra ID]
+    E --> F[Configure User Flows]
+    F --> G[Update Applications]
+    
+    C --> C1[Add TXT Record]
+    D --> D1[Add CNAME Record]
+    D --> D2[Configure SSL Certificate]
+```
+
+1. **Verify Domain Ownership**:
+   - Add a TXT record to your DNS configuration
+   - Microsoft will verify ownership through DNS lookup
+
+2. **Configure DNS Records**:
+   - Add a CNAME record pointing to `electcan2.b2clogin.com`
+   - Configure SSL certificates if needed
+
+3. **Add Custom Domain in Entra ID**:
+   - Navigate to Entra External ID > Custom Domains
+   - Add the verified domain
+   - Set as primary domain if desired
+
+4. **Update Applications**:
+   - Update all application configurations to use the new domain
+   - Test SSO flows with the custom domain
+
+### Language Support
+
+Entra External ID provides built-in support for both English and French:
+
+```mermaid
+graph TD
+    A[Language Configuration] --> B[User Flow Setup]
+    B --> C[UI Customization]
+    C --> D[Testing]
+    
+    B --> B1[Enable Languages]
+    B --> B2[Set Default Language]
+    
+    C --> C1[Email Templates]
+    C --> C2[Page UI Elements]
+    C --> C3[Error Messages]
+```
+
+1. **Enable Language Support**:
+   - In the user flow properties, enable both English and French
+   - Set the default fallback language (typically English)
+   - Configure language detection mechanisms
+
+2. **UI Customization**:
+   - Create language-specific versions of all UI elements
+   - Upload translated versions of:
+     - Page content
+     - Error messages
+     - Email templates
+
+3. **Language Selection**:
+   - Add language selector in the user interface
+   - Honor browser language preferences
+   - Allow users to change language during the authentication process
+
+4. **Testing**:
+   - Test the complete user journey in both languages
+   - Verify all email communications
+   - Ensure accessibility standards are met in both languages
+
+### Monitoring and Reporting
+
+Comprehensive monitoring is implemented using Microsoft's built-in tools:
+
+```mermaid
+graph LR
+    A[Monitoring Tools] --> B[Microsoft Purview]
+    A --> C[Entra ID Insights]
+    A --> D[Azure Monitor]
+    A --> E[Log Analytics]
+    
+    B --> B1[Data Governance]
+    B --> B2[Compliance Reporting]
+    
+    C --> C1[Usage Patterns]
+    C --> C2[Risk Detections]
+    C --> C3[User Behavior]
+    
+    D --> D1[Performance Metrics]
+    D --> D2[Health Status]
+    
+    E --> E1[Query Logs]
+    E --> E2[Custom Dashboards]
+    E --> E3[Alert Rules]
+```
+
+#### Microsoft Purview
+- Data discovery and classification
+- Sensitive information monitoring
+- Compliance reporting
+- Risk assessment
+
+#### Entra ID Insights
+- Sign-in activity monitoring
+- User risk detection
+- Authentication method usage
+- Self-service adoption metrics
+- Conditional access impact
+
+#### Azure Monitor
+- Performance metrics
+- Service health
+- Resource utilization
+- Availability monitoring
+
+#### Log Analytics
+- Custom query capabilities
+- Long-term log retention
+- Cross-service correlation
+- Custom alert rules
+- Visualization dashboards
+
+#### Key Metrics Monitored
+- Authentication success/failure rates
+- Account lockouts
+- Password reset volumes
+- MFA enrollments and usage
+- Geographic access patterns
+- Suspicious activities
+- API access patterns
+- User flow completion rates
+
+### User Management
+
+Administrators can manage external users through:
+
+1. Microsoft Entra Admin Portal
+2. Microsoft Graph API integration
+3. Role-based access control
+
+## Compliance
+
+The implementation adheres to:
+
+- Treasury Board of Canada Secretariat (TBS) security standards
+- Privacy Act requirements
+- Elections Canada Act provisions
+- ITSG-33 security controls
+- Government of Canada Cloud Security Profile
+
+## Roadmap
+
+The following future enhancements may be considered for the identity system:
+
+**Disclaimer**: The items listed below are recommendations and may or may not be pursued depending on organizational willingness and budget considerations.
+
+- Enhanced identity verification capabilities
+- Expanded multi-factor authentication options
+- Additional identity provider integrations
+- Implementation of verifiable credentials
+- Risk-based authentication policies
+
+## References
+
+- [Microsoft Entra External ID Documentation](https://learn.microsoft.com/en-us/entra/external-id/)
+- [Microsoft Entra Monitoring and Reporting](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/)
+- [Microsoft Purview Documentation](https://learn.microsoft.com/en-us/purview/)
+- [Government of Canada Identity and Access Management Guidelines](https://www.canada.ca/en/government/system/digital-government/online-security-privacy/identity-management.html)
+- [Treasury Board Identity Management Policy](https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=16577)
+- [OIDC Protocol Documentation](https://openid.net/connect/)
+- [SAML 2.0 Technical Overview](http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html)
