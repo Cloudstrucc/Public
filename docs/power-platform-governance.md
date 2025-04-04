@@ -114,25 +114,38 @@ Before installing the CoE Toolkit, ensure the following prerequisites are met:
 ### Installation Process
 
 ```mermaid
-flowchart TD
+flowchart LR
     A[Start Installation] --> B{Prerequisites Met?}
     B -->|No| C[Fulfill Prerequisites]
     C --> B
     B -->|Yes| D[Download CoE Toolkit]
-    D --> E[Create Dedicated Environments]
+    
+    D --> E[Create Environments]
     E --> F[Install Core Components]
     F --> G[Configure Settings]
-    G --> H[Install Governance Components]
-    H --> I[Install Nurture Components]
-    I --> J[Install Audit Components]
-    J --> K[Install Admin Components]
-    K --> L[Configure Power BI Dashboard]
-    L --> M[Test Components]
-    M --> N{Tests Successful?}
-    N -->|No| O[Troubleshoot]
-    O --> M
-    N -->|Yes| P[Document Installation]
-    P --> Q[End Installation]
+    
+    G --> H[Install Additional Components]
+    H --> I[Test Components]
+    I --> J{Tests Successful?}
+    
+    J -->|No| K[Troubleshoot]
+    K --> I
+    J -->|Yes| L[Document Installation]
+    L --> M[End Installation]
+    
+    subgraph "Additional Components"
+    H1[Governance] 
+    H2[Nurture]
+    H3[Audit]
+    H4[Admin]
+    H5[Power BI Dashboard]
+    end
+    
+    H --- H1
+    H --- H2
+    H --- H3
+    H --- H4
+    H --- H5
 ```
 
 #### Step-by-Step Installation
