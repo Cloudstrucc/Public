@@ -1,0 +1,219 @@
+trigger: none # Manual trigger only
+
+parameters:
+- name: solutionName
+  displayName: Solution Name to Migrate
+  type: string
+  default: ''
+  required: true
+
+variables:
+- group: PowerPlatformConnections # Variable group containing connection details
+- name: System.Debug
+  value: false # Set to true for debugging
+
+stages:
+- stage: ExportAndCreatePR
+  displayName: 'Export Solution and Create PR'
+  jobs:
+  - job: ExportSolution
+    displayName: 'Export Solution and Create PR'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '6.0.x'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet packages'
+      inputs:
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet packages'
+      inputs:
+        command: 'restore'
+        projects: '**/PowerPlatformSolutionExporter.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build solution exporter'
+      inputs:
+        command: 'build'
+        projects: '**/PowerPlatformSolutionExporter.csproj'
+        arguments: '--configuration Release'
+
+    - task: PowerShell@2
+      displayName: 'Install PAC CLI'
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "Installing Power Platform CLI..."
+          dotnet tool install -g Microsoft.PowerApps.CLI.Tool
+          pac --version
+
+    - task: PowerShell@2
+      displayName: 'Create configuration file'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $configContent = @"
+          {
+            "SourceEnvUrl": "$(SourceEnvironmentUrl)",
+            "TargetEnvUrl": "$(TargetEnvironmentUrl)",
+            "ClientId": "$(ClientId)",
+            "ClientSecret": "$(ClientSecret)",
+            "TenantId": "$(TenantId)",
+            "SolutionName": "${{ parameters.solutionName }}",
+            "GitRepoUrl": "$(GitRepoUrl)",
+            "GitPat": "$(GitPat)",
+            "GitUserEmail": "$(GitUserEmail)",
+            "GitUserName": "$(GitUserName)"
+          }
+          "@
+          
+          New-Item -Path "$(Build.SourcesDirectory)/config.json" -ItemType File -Force -Value $configContent
+          Write-Host "Configuration file created successfully"
+
+    - task: DotNetCoreCLI@2
+      name: ExportTask
+      displayName: 'Run solution exporter'
+      inputs:
+        command: 'run'
+        projects: '**/PowerPlatformSolutionExporter.csproj'
+        arguments: '--configuration Release'
+      
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish solution artifacts'
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/exports'
+        artifact: 'PowerPlatformSolution'
+        publishLocation: 'pipeline'
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish solution info'
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/solution-info.json'
+        artifact: 'SolutionInfo'
+        publishLocation: 'pipeline'
+
+    # Output variables for next stage
+    - task: PowerShell@2
+      name: SetOutputVariables
+      displayName: 'Set output variables'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $solutionInfo = Get-Content -Path "$(Build.SourcesDirectory)/solution-info.json" | ConvertFrom-Json
+          Write-Host "##vso[task.setvariable variable=SolutionName;isOutput=true]$($solutionInfo.SolutionName)"
+          Write-Host "##vso[task.setvariable variable=PrUrl;isOutput=true]$($solutionInfo.PrUrl)"
+          Write-Host "##vso[task.setvariable variable=Branch;isOutput=true]$($solutionInfo.Branch)"
+
+- stage: WaitForPRApproval
+  displayName: 'Wait for PR Approval'
+  dependsOn: ExportAndCreatePR
+  variables:
+    SolutionName: $[ stageDependencies.ExportAndCreatePR.ExportSolution.outputs['SetOutputVariables.SolutionName'] ]
+    PrUrl: $[ stageDependencies.ExportAndCreatePR.ExportSolution.outputs['SetOutputVariables.PrUrl'] ]
+  jobs:
+  - job: WaitForApproval
+    displayName: 'Wait for PR approval'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: PowerShell@2
+      displayName: 'Show PR information'
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "Please approve the Pull Request before continuing:"
+          Write-Host "Solution: $(SolutionName)"
+          Write-Host "PR URL: $(PrUrl)"
+
+    - task: ManualValidation@0
+      displayName: 'Wait for PR approval'
+      timeoutInMinutes: 4320 # 3 days
+      inputs:
+        notifyUsers: '$(ApproverEmails)'
+        instructions: 'Please approve the Pull Request at $(PrUrl) before approving this validation step.'
+        onTimeout: 'reject'
+
+- stage: ImportSolution
+  displayName: 'Import Solution'
+  dependsOn: 
+  - ExportAndCreatePR
+  - WaitForPRApproval
+  condition: succeeded()
+  variables:
+    SolutionName: $[ stageDependencies.ExportAndCreatePR.ExportSolution.outputs['SetOutputVariables.SolutionName'] ]
+  jobs:
+  - job: ImportSolution
+    displayName: 'Import Solution'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '6.0.x'
+
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download solution artifacts'
+      inputs:
+        buildType: 'current'
+        artifactName: 'PowerPlatformSolution'
+        targetPath: '$(Build.SourcesDirectory)/exports'
+
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download solution info'
+      inputs:
+        buildType: 'current'
+        artifactName: 'SolutionInfo'
+        targetPath: '$(Build.SourcesDirectory)'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet packages'
+      inputs:
+        command: 'restore'
+        projects: '**/PowerPlatformSolutionImporter.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build solution importer'
+      inputs:
+        command: 'build'
+        projects: '**/PowerPlatformSolutionImporter.csproj'
+        arguments: '--configuration Release'
+
+    - task: PowerShell@2
+      displayName: 'Create configuration file'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $configContent = @"
+          {
+            "TargetEnvUrl": "$(TargetEnvironmentUrl)",
+            "ClientId": "$(ClientId)",
+            "ClientSecret": "$(ClientSecret)",
+            "TenantId": "$(TenantId)"
+          }
+          "@
+          
+          New-Item -Path "$(Build.SourcesDirectory)/config.json" -ItemType File -Force -Value $configContent
+          Write-Host "Configuration file created successfully"
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Run solution importer'
+      inputs:
+        command: 'run'
+        projects: '**/PowerPlatformSolutionImporter.csproj'
+        arguments: '--configuration Release'
+
+    - task: PowerShell@2
+      displayName: 'Notify import completion'
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "Solution import initiated for $(SolutionName)"
+          Write-Host "The import will continue on the server even after this pipeline completes."
+          Write-Host "You can check the status in the Power Platform admin center."

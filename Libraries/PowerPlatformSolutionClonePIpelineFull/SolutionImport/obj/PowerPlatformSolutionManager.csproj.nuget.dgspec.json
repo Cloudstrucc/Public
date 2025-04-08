@@ -1,0 +1,74 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/frederickpearson/projects/Public/Libraries/PowerPlatformSolutionManager/PowerPlatformSolutionManager.csproj": {}
+  },
+  "projects": {
+    "/Users/frederickpearson/projects/Public/Libraries/PowerPlatformSolutionManager/PowerPlatformSolutionManager.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/frederickpearson/projects/Public/Libraries/PowerPlatformSolutionManager/PowerPlatformSolutionManager.csproj",
+        "projectName": "PowerPlatformSolutionManager",
+        "projectPath": "/Users/frederickpearson/projects/Public/Libraries/PowerPlatformSolutionManager/PowerPlatformSolutionManager.csproj",
+        "packagesPath": "/Users/frederickpearson/.nuget/packages/",
+        "outputPath": "/Users/frederickpearson/projects/Public/Libraries/PowerPlatformSolutionManager/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/frederickpearson/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "/usr/local/Cellar/dotnet/9.0.3/libexec/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.PowerPlatform.Dataverse.Client": {
+              "target": "Package",
+              "version": "[1.2.5, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/Cellar/dotnet/9.0.3/libexec/sdk/9.0.104/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
