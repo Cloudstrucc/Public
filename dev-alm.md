@@ -89,8 +89,6 @@ Consistent naming standards are critical for the successful implementation and m
 5. **Ensure Compliance**: Addresses regulatory and organizational requirements
 6. **Reduce Development Time**: Eliminates confusion and rework due to inconsistent naming
 
-Elections Canada has established the following naming standards for all Power Platform resources, as documented in the official [Cloudstrucc Public GitHub repository](https://github.com/Cloudstrucc/Public/blob/main/docs/conventions.md).
-
 ### Standard Naming Patterns
 
 | Resource Type                   | Pattern                               | Example                              |
