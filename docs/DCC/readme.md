@@ -33,7 +33,7 @@
 | **📞 Channels** | Voice, Chat, Email, SMS, Social Media |
 | **💰 Expected ROI** | 410-764% Over 3 Years |
 | **⚡ Implementation** | Leveraging Existing Power Platform Expertise |
-| **📅 Timeline** | 6-Month Phased Deployment |
+| **📅 Timeline** | 12-18-Month Phased Deployment |
 
 <br>
 
