@@ -1,129 +1,147 @@
-# Aries Bifold Wallet - iOS Setup Guide
+---
 
-## 🚀 Overview
+# Bifold Wallet – iOS Setup Guide (macOS ARM64 – M1/M2)
 
-This project is a fork of Aries Bifold Wallet configured for iOS development using Xcode. It uses React Native, Aries Framework JavaScript (AFJ), and other libraries to enable self-sovereign identity (SSI) wallets.
+This guide walks through how to successfully build and run the Bifold wallet on macOS ARM64 (e.g., M1/M2) with Xcode. It also includes key fixes for common issues and is tailored for developers using the [Bifold Wallet project](https://github.com/openwallet-foundation/bifold-wallet).
 
 ---
 
-## 📦 Prerequisites
+## ✅ Prerequisites
 
-* macOS with Xcode installed
-* Node.js (>=18)
-* Yarn (v1 or v3+)
-* CocoaPods (`sudo gem install cocoapods`)
-* Xcode Command Line Tools
-* Xcode Simulator (iOS 16 or later)
+* macOS ARM64 (M1/M2)
+* Xcode ≥ 15
+* Homebrew
+* Node.js (v18 LTS preferred)
+* Yarn
+* Cocoapods (installed via Homebrew)
+* `Rosetta 2` installed (`softwareupdate --install-rosetta`)
 
 ---
 
-## 📂 Project Setup
+## 📦 Project Bootstrap
 
 ```bash
-git clone https://github.com/hyperledger/aries-mobile-agent-react-native bifold-wallet-ios
-cd bifold-wallet-ios
+# Clone the repo
+$ git clone https://github.com/openwallet-foundation/bifold-wallet.git
+$ cd bifold-wallet
 
-# Install packages
-yarn install
-
-# Navigate to iOS app folder
-cd samples/app/ios
-pod install
+# Install dependencies and bootstrap
+$ yarn install
+$ yarn bootstrap
 ```
 
 ---
 
-## 🛠 Building the App
+## ⚙️ iOS Build Setup
+
+### 1. Install CocoaPods
 
 ```bash
-# Go to root of sample app
-cd ../../app
-
-# Run Metro bundler
-yarn start
-
-# In another terminal: run iOS build
-npx react-native run-ios
+sudo arch -x86_64 gem install ffi
+arch -x86_64 pod install --project-directory=./packages/legacy/core/ios
 ```
+
+If you're using ARM64 (`M1/M2`):
+
+```bash
+cd packages/legacy/core/ios
+sudo arch -x86_64 gem install cocoapods
+arch -x86_64 pod install
+```
+
+### 2. Build with Xcode
+
+* Open: `packages/legacy/core/ios/legacy.xcworkspace`
+* Select target: `legacy`
+* Use iOS Simulator (e.g. iPhone 14)
+* Press ▶️ to build and run
 
 ---
 
-## 🧪 Troubleshooting
+## 🧠 Common Troubleshooting
 
-### ❌ Library 'swiftWebKit' not found
+### 🧩 1. `Library 'swiftWebKit' not found`
 
-**Fix:**
+This can happen on ARM Macs. To resolve:
 
-1. Open the `.xcodeproj` in Xcode.
-2. Go to Build Phases > Link Binary With Libraries.
-3. If `libswiftWebKit.tbd` exists but causes issues:
+```bash
+sudo xcode-select --switch /Applications/Xcode.app
+sudo xcodebuild -runFirstLaunch
+```
 
-   * Remove it.
-   * Add it again via: `Add Other… > /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/lib/swift/libswiftWebKit.tbd`
-4. Clean build folder and re-run.
+Ensure Xcode command line tools are selected:
 
-### ❌ Could not connect to the server (Metro/JS bundle)
+```bash
+xcode-select --install
+```
 
-**Fix:**
+If still unresolved:
 
-* Ensure `yarn start` is running.
-* Ensure no firewall blocks `localhost:8081`.
-* In `AppDelegate.mm`, make sure `jsCodeLocation` points to the correct dev server.
+* Clean Derived Data in Xcode
+* Delete `ios/Pods` and run `pod install` again
 
 ---
 
-## 📡 Mediation Timeout Fix
+## 🔄 Forcing DIDComm v1 Mode (Indicio Mediator Compatibility)
 
-If you see logs like:
+If you're using **Indicio’s public mediator**, you must set the Aries agent to **DIDComm v1 mode**.
 
-```
-Timeout has occurred
-Request was aborted due to timeout...
-```
+### 🔧 Modify the Agent Configuration
 
-This means the Aries agent sent a mediation request but received no response.
+Edit `packages/core/src/hooks/useBifoldAgentSetup.ts` inside the `createNewAgent` function:
 
-### Causes:
-
-* Mediator does not support return routing
-* Your app has no inbound transport configured
-
-### Fixes:
-
-* Run a mediator with inbound transport or polling
-* Use `HttpInboundTransport` if port exposed
-* Use `ngrok` to expose local port
-* Enable:
+#### ✏️ Before:
 
 ```ts
-autoAcceptConnections: AutoAcceptConnection.Always,
-autoAcceptMediationRequests: true,
+config: {
+  label: store.preferences.walletName || 'Aries Bifold',
+  walletConfig: {
+    id: walletSecret.id,
+    key: walletSecret.key,
+  },
+  logger,
+  autoUpdateStorageOnStartup: true,
+},
 ```
 
-### Dev Tip:
+#### ✅ After:
 
-Use [AFJ Mediator](https://github.com/hyperledger/aries-framework-javascript/blob/main/docs/guides/mediator.md) for local testing
+```ts
+config: {
+  label: store.preferences.walletName || 'Aries Bifold',
+  walletConfig: {
+    id: walletSecret.id,
+    key: walletSecret.key,
+  },
+  logger,
+  autoUpdateStorageOnStartup: true,
+  useDidCommV2: false, // ← Force compatibility with DIDComm v1
+},
+```
 
 ---
 
-## ✅ Status
+## ✅ Final Steps
 
-✅ App builds and launches in iOS Simulator
-✅ Metro bundler serves app
-✅ Mediation request sent successfully
-⚠️ Awaiting inbound transport or mediator response
+```bash
+# Clean & Rebuild
+$ yarn clean
+$ yarn bootstrap
+$ yarn ios
+```
+
+Or rebuild from Xcode:
+
+* Clean Build Folder (Shift + Cmd + K)
+* Rebuild
 
 ---
 
 ## 📚 References
 
-* [AFJ Framework](https://aries.js.org)
-* [Aries Bifold GitHub](https://github.com/hyperledger/aries-mobile-agent-react-native)
-* [Apple Xcode CLI Tools](https://developer.apple.com/xcode/resources/)
-* [CocoaPods Setup](https://guides.cocoapods.org/using/getting-started.html)
+* [Official Bifold Developer Guide](https://github.com/openwallet-foundation/bifold-wallet/blob/main/DEVELOPER.md)
+* [Credo TS Docs](https://credo.js.org/)
+* [Aries Framework JavaScript](https://aries.js.org/)
 
 ---
 
-## 📎 License
-
-[Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
