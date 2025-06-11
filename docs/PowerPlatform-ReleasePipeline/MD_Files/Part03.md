@@ -1,0 +1,5 @@
+# IMPLEMENTATION
+
+## OVERVIEW
+
+The PowerPlatform CI/CD implementation is comprised of a scripts that provides the PowerPlatform build teams with the ability to check-in their Dataverse solutions, configuration data schema files, and portal code to the organizations primary repository(ies) hosting the source code and deployment artefacts that make up the Department’s grant funding system. This pipeline extension is built to be generic to any PowerPlatform implementation that is comprised of both Model-Driven-Apps and PowerApps Portals. Canvas Apps are not yet fully supported in this implementation, however support for these types of applications will be released in version 1.3. That being said, since Canvas apps are typically stored in a solution, this pipeline automation extension can include Canvas Apps but will not include certain features like automated tests designed for these types of applications. Version 1.3 is scheduled to be released on June 28, 2022 along with an updated version of this document.

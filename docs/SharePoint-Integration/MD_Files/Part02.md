@@ -1,0 +1,3 @@
+# Purpose
+
+The Dataverse provides document storage out of the box using the Notes table. While this is suitable for small applications, it is often better to use an enterprise grade IM repository. Thankfully, the Dataverse provides the ability the integration to SharePoint Online sites natively. This guide provides the configuration steps to integration SharePoint Online Sites & Subsites to your Dataverse environment for both Model Driven and Portal Apps.

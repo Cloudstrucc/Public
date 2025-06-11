@@ -1,0 +1,5 @@
+# SharePoint Online – Prepare Sites and Subsites for Integration with Dataverse Environments
+
+##### Preface
+
+The recommended architecture to implement SharePoint Online integration with the Dataverse is to use Subsites. By using subsites, your organization can manage all the security and access control policies at the site level and therefore, all subsites deployed within the site will inherit these policies. Security administrators can also opt to add and or override these policies at the subsite level for specific environments with unique requirements. Additionally, it is recommended that a site is created for non productionized environments and another for production environments for those whose security requirements allow for shared infrastructure. For production environments that require a dedicated site the same steps can be followed but instead of creating a subsite, the production Dataverse environment integrating with the dedicated site will use the site URL to integrate rather than a subsite.

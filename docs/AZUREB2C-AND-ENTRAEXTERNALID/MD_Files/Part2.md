@@ -1,0 +1,4 @@
+# AZURE B2C CONNECTION PATTERNS – MICROSOFT
+
+This section describes and illustrates the relevant connection patterns that Azure B2C supports out of the box. These patterns are officially supported by Microsoft; however, the Department does have additional flexibility to extend and go beyond the boundaries of these patterns. However, it is recommended that the Department does not deviate or attempt to significantly customize and extend Azure B2C’s capabilities and instead leverage its OOB features and where limitations are found, attempt to refactor the connecting application to integrate with B2C in a native fashion. This is important because Azure B2C has implemented the OpenID Connect and OAUTH 2.0 specifications and, especially, for web portal authentication, following the OIDC specifications is key to ensuring that security standards are met to avoid any potential pitfalls associated with non-standard ways to integrate with the platform.  
+
