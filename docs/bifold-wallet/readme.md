@@ -313,3 +313,140 @@ To modify:
 | Text customized          | ☐      |
 | Navigation styled        | ☐      |
 | App name/ID set          | ☐      |
+
+---
+
+# 🎨 Customizing Bifold Wallet UI for Vanguard Cloud Services
+
+This guide outlines how to modify the **visual style**, **text**, and **assets** in the Bifold Wallet iOS project to match your **Vanguard Cloud Services** branding.
+
+---
+
+## 🧱 Project Structure
+
+| Component      | Purpose                     | Location                                               |
+| -------------- | --------------------------- | ------------------------------------------------------ |
+| Theme / Colors | Color palette and fonts     | `packages/core/src/theme.ts`                           |
+| Images / Logos | Logos, splash screen, icons | `packages/core/src/assets/` and `ios/Assets.xcassets/` |
+| Text / Labels  | UI strings and labels       | `packages/core/src/localization/` and `constants/`     |
+| Navigation UI  | Screen layouts and headers  | `packages/core/src/navigators/`                        |
+| App Metadata   | Name, identifiers (iOS)     | `ios/AriesBifold/Info.plist`                           |
+
+---
+
+## 🎨 Update Theme Colors
+
+📄 **File:** `packages/core/src/theme.ts`
+
+```ts
+export const theme = {
+  ColorPallet: {
+    primary: {
+      main: '#0055A4', // Vanguard blue
+      dark: '#003E7E',
+      light: '#4D90FE',
+    },
+    secondary: {
+      main: '#00B5E2', // Accent color (light cyan)
+    },
+    background: {
+      default: '#F5F9FC',
+      paper: '#FFFFFF',
+    },
+    text: {
+      primary: '#1B1F23',
+      secondary: '#4B5563',
+    },
+  },
+  ...
+}
+```
+
+---
+
+## 🖼️ Replace Images and Icons
+
+📁 **Folder:** `packages/core/src/assets/`
+
+Replace **Bifold** branding files with **Vanguard Cloud Services** assets:
+
+* `logo.png` → `vanguard-logo.png`
+* `splash.png` → `vanguard-splash.png`
+* `bifold-icon.png` → `vanguard-icon.png`
+
+📁 **iOS Assets:**
+
+```
+samples/app/ios/AriesBifold/Assets.xcassets/
+```
+
+Replace:
+
+* `AppIcon` → iOS app icon (your custom Vanguard icon)
+* `LaunchImage` or storyboard splash screen assets
+
+❗️ **Ensure:**
+
+* File names match or update `.pbxproj` references.
+* Bifold logo is completely removed.
+
+---
+
+## 📝 Customize Text and Labels
+
+📁 **Text Locations:**
+
+* `packages/core/src/localization/`
+* `packages/core/src/constants/`
+* `packages/core/src/screens/`
+
+🔧 Update:
+
+* Welcome screen text
+* Alerts and error messages
+* Onboarding steps and instructions
+
+✅ Optional:
+
+* Use `i18n` for French/English.
+
+---
+
+## 🧭 Modify Navigation and Layout
+
+📁 **Files:** `packages/core/src/navigators/`
+
+* `MainStack.tsx` → Adjust screen flow
+* `OnboardingStack.tsx` → Add/remove intro screens
+* `defaultStackOptions.ts` → Navigation bar styling
+* `defaultLayoutOptions.ts` → Overall screen layout
+
+---
+
+## 📲 Change App Name, Display, and Identifiers (iOS)
+
+📄 **File:** `samples/app/ios/AriesBifold/Info.plist`
+
+🔧 Change:
+
+```xml
+<key>CFBundleDisplayName</key>
+<string>Vanguard Wallet</string>
+```
+
+Optional edits:
+
+* `CFBundleIdentifier`
+* Permissions text (camera, notifications, etc.)
+
+---
+
+## ✅ Summary Checklist
+
+| Task                              | Status |
+| --------------------------------- | ------ |
+| Brand theme colors applied        | ☐      |
+| Vanguard icons and logos in place | ☐      |
+| Onboarding / welcome text updated | ☐      |
+| Navigation adjusted               | ☐      |
+| iOS bundle info changed           | ☐      |
