@@ -1,5 +1,3 @@
----
-
 # Bifold Wallet – iOS Setup Guide (macOS ARM64 – M1/M2)
 
 This guide walks through how to successfully build and run the Bifold wallet on macOS ARM64 (e.g., M1/M2) with Xcode. It also includes key fixes for common issues and is tailored for developers using the [Bifold Wallet project](https://github.com/openwallet-foundation/bifold-wallet).
