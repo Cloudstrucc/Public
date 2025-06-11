@@ -119,7 +119,7 @@ If you're using **Indicio’s public mediator**, you must set the Aries agent to
 
 Edit `packages/core/src/hooks/useBifoldAgentSetup.ts` inside the `createNewAgent` function:
 
-#### ✏️ Before:
+#### ✏️ Before
 
 ```ts
 config: {
@@ -133,7 +133,7 @@ config: {
 },
 ```
 
-#### ✅ After:
+#### ✅ After
 
 ```ts
 config: {
