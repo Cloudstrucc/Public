@@ -313,5 +313,3 @@ To modify:
 | Text customized          | ☐      |
 | Navigation styled        | ☐      |
 | App name/ID set          | ☐      |
-
-
