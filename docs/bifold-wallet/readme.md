@@ -184,3 +184,136 @@ Or rebuild from Xcode:
 * [Indicio Mediator Testing Tool](https://indicio-tech.github.io/mediator/)
 
 ---
+
+
+# 🎨 Customizing Bifold Wallet UI
+
+This guide outlines how to modify the **visual style**, **text**, and **assets** in the Bifold Wallet iOS project.
+
+---
+
+## 🧱 Project Structure
+
+| Component      | Purpose                     | Location                                               |
+| -------------- | --------------------------- | ------------------------------------------------------ |
+| Theme / Colors | Color palette and fonts     | `packages/core/src/theme.ts`                           |
+| Images / Logos | Logos, splash screen, icons | `packages/core/src/assets/` and `ios/Assets.xcassets/` |
+| Text / Labels  | UI strings and labels       | `packages/core/src/localization/` and `constants/`     |
+| Navigation UI  | Screen layouts and headers  | `packages/core/src/navigators/`                        |
+| App Metadata   | Name, identifiers (iOS)     | `ios/AriesBifold/Info.plist`                           |
+
+---
+
+## 🎨 Update Theme Colors
+
+📄 **File:** `packages/core/src/theme.ts`
+
+```ts
+export const theme = {
+  ColorPallet: {
+    primary: {
+      main: '#00ADEF', // ← Change this to your primary brand color
+      dark: '#0074A2',
+      light: '#66CFFF',
+    },
+    secondary: {
+      main: '#FF6600',
+    },
+    background: {
+      default: '#F5F5F5',
+      paper: '#FFFFFF',
+    },
+    text: {
+      primary: '#000000',
+      secondary: '#666666',
+    },
+  },
+  ...
+}
+```
+
+---
+
+## 🖼️ Replace Images and Icons
+
+📁 **Folder:** `packages/core/src/assets/`
+
+Replace:
+
+* `logo.png`
+* `splash.png`
+* `bifold-icon.png`
+
+📁 **iOS Assets:**
+
+```
+samples/app/ios/AriesBifold/Assets.xcassets/
+```
+
+Replace:
+
+* `AppIcon` → iOS app icon
+* `LaunchImage` or storyboard splash screen assets
+
+✅ Maintain naming and size conventions or update references in `Info.plist` and `.pbxproj` if changed.
+
+---
+
+## 📝 Customize Text and Labels
+
+📁 **Text Locations:**
+
+* `packages/core/src/localization/`
+* `packages/core/src/constants/`
+* `packages/core/src/screens/`
+
+To modify:
+
+* Welcome messages
+* Error strings
+* Button text
+* Onboarding labels
+
+✅ Use `i18n` key translations for multilingual support or hardcoded values for static strings.
+
+---
+
+## 🧭 Modify Navigation and Layout
+
+📁 **Files:** `packages/core/src/navigators/`
+
+* `MainStack.tsx` → Main navigation routes
+* `OnboardingStack.tsx` → Onboarding screens
+* `defaultStackOptions.ts` → Header styling
+* `defaultLayoutOptions.ts` → Global screen layout
+
+---
+
+## 📲 Change App Name, Display, and Identifiers (iOS)
+
+📄 **File:** `samples/app/ios/AriesBifold/Info.plist`
+
+🔧 Edit:
+
+```xml
+<key>CFBundleDisplayName</key>
+<string>Vanguard Wallet</string>
+```
+
+🛠 You can also update:
+
+* `CFBundleIdentifier`
+* `NSCameraUsageDescription`, etc.
+
+
+## ✅ Summary Checklist
+
+| Task                     | Status |
+| ------------------------ | ------ |
+| Theme colors updated     | ☐      |
+| Logo and splash replaced | ☐      |
+| Text customized          | ☐      |
+| Navigation styled        | ☐      |
+| App name/ID set          | ☐      |
+
+
