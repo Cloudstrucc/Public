@@ -1194,5 +1194,3 @@ sequenceDiagram
 ---
 
 **Note:** All Microsoft documentation links are current as of the knowledge cutoff date. For the most up-to-date information, please visit the official Microsoft documentation sites directly. Some links may require Microsoft account access or specific licensing to view detailed technical documentation.
-
-**Government Resources:** Elections Canada should also consult with their internal IT governance and compliance teams to ensure all implementations align with current federal government standards and requirements.
