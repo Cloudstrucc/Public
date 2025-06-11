@@ -80,6 +80,35 @@ If still unresolved:
 * Clean Derived Data in Xcode
 * Delete `ios/Pods` and run `pod install` again
 
+### 🧩 2. Yarn version mismatch
+
+If your project fails due to a `packageManager` version mismatch:
+
+```bash
+# Enable corepack if not already
+corepack enable
+
+# Activate the correct Yarn version defined in package.json
+corepack prepare yarn@4.9.2 --activate
+
+# Confirm version
+yarn --version  # should be 4.9.2
+```
+
+To avoid repeating this, add to your shell profile:
+
+```bash
+echo "corepack enable && corepack prepare yarn@4.9.2 --activate" >> ~/.zshrc
+source ~/.zshrc
+```
+
+Or if using bash:
+
+```bash
+echo "corepack enable && corepack prepare yarn@4.9.2 --activate" >> ~/.bash_profile
+source ~/.bash_profile
+```
+
 ---
 
 ## 🔄 Forcing DIDComm v1 Mode (Indicio Mediator Compatibility)
@@ -119,6 +148,16 @@ config: {
 },
 ```
 
+### 🔁 Use Custom Mediator Invite
+
+Update your mediator invitation URL to use Indicio’s updated mediator testing service:
+
+```ts
+mediatorInvitationUrl: "https://indicio-tech.github.io/mediator/",
+```
+
+You can update this in `getAgentModules` call inside the `createNewAgent` function in `useBifoldAgentSetup.ts`.
+
 ---
 
 ## ✅ Final Steps
@@ -142,5 +181,6 @@ Or rebuild from Xcode:
 * [Official Bifold Developer Guide](https://github.com/openwallet-foundation/bifold-wallet/blob/main/DEVELOPER.md)
 * [Credo TS Docs](https://credo.js.org/)
 * [Aries Framework JavaScript](https://aries.js.org/)
+* [Indicio Mediator Testing Tool](https://indicio-tech.github.io/mediator/)
 
 ---
