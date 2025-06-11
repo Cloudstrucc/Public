@@ -16,8 +16,8 @@
 
 <div align="center">
 
-| **Microsoft Technology Stack** |
-|:---:|
+|                                             **Microsoft Technology Stack**                                             |
+| :---------------------------------------------------------------------------------------------------------------------------: |
 | **Dynamics 365** • **Power Platform** • **Microsoft Teams** • **Power BI** • **AI Builder** |
 
 </div>
@@ -26,14 +26,14 @@
 
 ## 📋 **Project Overview**
 
-| **Category** | **Details** |
-|:-------------|:------------|
-| **🎯 Project Scope** | Full-Scale Call Center Implementation |
-| **👥 Agent Capacity** | 100-600 Scalable Agents |
-| **📞 Channels** | Voice, Chat, Email, SMS, Social Media |
-| **💰 Expected ROI** | 410-764% Over 3 Years |
+| **Category**          | **Details**                            |
+| :-------------------------- | :------------------------------------------- |
+| **🎯 Project Scope**  | Full-Scale Call Center Implementation        |
+| **👥 Agent Capacity** | 100-600 Scalable Agents                      |
+| **📞 Channels**       | Voice, Chat, Email, SMS, Social Media        |
+| **💰 Expected ROI**   | 410-764% Over 3 Years                        |
 | **⚡ Implementation** | Leveraging Existing Power Platform Expertise |
-| **📅 Timeline** | 12-18-Month Phased Deployment |
+| **📅 Timeline**       | 12-18-Month Phased Deployment                |
 
 <br>
 
@@ -70,13 +70,13 @@
 
 <div align="center">
 
-| **Benefit Category** | **Impact** |
-|:---------------------|:-----------|
+| **Benefit Category**     | **Impact**                             |
+| :----------------------------- | :------------------------------------------- |
 | **💰 Cost Optimization** | $58K-$98K Monthly Savings Through Automation |
-| **⚡ Efficiency Gains** | 85% First-Call Resolution Rate Target |
-| **🤖 Automation** | 30-40% Case Deflection via AI |
-| **📊 Analytics** | Real-time Performance & Predictive Insights |
-| **📱 Scalability** | Dynamic Election Period Scaling |
+| **⚡ Efficiency Gains**  | 85% First-Call Resolution Rate Target        |
+| **🤖 Automation**        | 30-40% Case Deflection via AI                |
+| **📊 Analytics**         | Real-time Performance & Predictive Insights  |
+| **📱 Scalability**       | Dynamic Election Period Scaling              |
 
 </div>
 
@@ -84,11 +84,11 @@
 
 ## 🏛️ **Elections Canada Advantages**
 
-> **✅ Existing Power Platform Licensing & Expertise**  
-> **✅ Teams Phone System Already Deployed**  
-> **✅ Internal Implementation Capabilities**  
-> **✅ Microsoft 365 Ecosystem Integration**  
-> **✅ Canadian Data Residency Compliance**  
+> **✅ Existing Power Platform Licensing & Expertise**
+> **✅ Teams Phone System Already Deployed**
+> **✅ Internal Implementation Capabilities**
+> **✅ Microsoft 365 Ecosystem Integration**
+> **✅ Canadian Data Residency Compliance**
 
 <br>
 
@@ -96,7 +96,7 @@
 
 <div align="center">
 
-**Comprehensive D365/Power Platform Call Centre Implementation**  
+**Comprehensive D365/Power Platform Call Centre Implementation**
 *With Microsoft Teams Integration for Enhanced Agent Experience*
 
 **Powered by** `Microsoft Cloud` • `Azure AI` • `Power Platform`
@@ -186,11 +186,11 @@ graph TD
     F --> G[Case Management & Workflows]
     G --> H[Power Automate Processes]
     G --> I[Power BI Analytics]
-    
+  
     J[Teams Phone System] --> B
     K[Chat/SMS/Social] --> B
     L[Email Integration] --> B
-    
+  
     F --> M[Teams Collaboration Features]
     F --> N[Knowledge Management]
     F --> O[Escalation Workflows]
@@ -320,16 +320,17 @@ graph TD
 ### **Phase 1: D365 Call Center Foundation (Months 1-2)**
 
 1. **D365 Customer Service Enterprise Setup**
+
    * Configure customer service hub and case management
    * Set up omnichannel routing and queue management
    * Deploy user roles and security policies
-
 2. **Power Platform Integration**
+
    * Configure Power Automate workflows for case processing
    * Set up Power BI analytics and reporting infrastructure
    * Deploy AI Builder models for basic automation
-
 3. **Teams Channel Integration**
+
    * Install Customer Service add-in for Teams
    * Configure Teams Phone System integration
    * Set up agent workspaces and collaboration features
@@ -337,16 +338,17 @@ graph TD
 ### **Phase 2: Advanced Automation & AI (Months 3-4)**
 
 1. **Power Virtual Agents Deployment**
+
    * Build election-specific chatbots and IVR flows
    * Train AI models on Elections Canada data and scenarios
    * Implement multi-language support and testing
-
 2. **Omnichannel Expansion**
+
    * Deploy chat, SMS, and social media channels
    * Configure advanced routing and escalation rules
    * Implement cross-channel continuity features
-
 3. **Analytics & Optimization**
+
    * Deploy comprehensive Power BI dashboards
    * Implement predictive analytics and forecasting
    * Set up performance monitoring and alerting
@@ -354,16 +356,17 @@ graph TD
 ### **Phase 3: Testing & Optimization (Months 5-6)**
 
 1. **Pilot Testing**
+
    * Conduct pilot with limited agent group
    * Test all channels and automation features
    * Gather feedback and optimize configurations
-
 2. **Training & Knowledge Transfer**
+
    * Train agents on D365 features and Teams integration
    * Develop knowledge base and self-service resources
    * Create operational procedures and escalation protocols
-
 3. **Go-Live Preparation**
+
    * Finalize configurations and security settings
    * Conduct stress testing for election-period volumes
    * Prepare rollback and contingency plans
@@ -456,11 +459,11 @@ graph TD
     G --> H[Power Automate Processes]
     G --> I[Knowledge Base Integration]
     G --> J[Power BI Analytics]
-    
+  
     K[Teams Phone Integration] --> B
     L[Chat/SMS Channels] --> B
     M[Email & Social Media] --> B
-    
+  
     F --> N[Teams Collaboration]
     F --> O[Supervisor Escalation]
     F --> P[Mobile Agent Support]
@@ -479,6 +482,7 @@ graph TD
 ### **📌 Phase 1: D365 Foundation Deployment (Baseline 100 Agents)**
 
 #### **Core D365 Call Center Setup:**
+
 - **Dynamics 365 Customer Service Enterprise** deployment with full case management
 - **Omnichannel for Customer Service** configuration with multi-channel routing
 - **Power Virtual Agents** development for common voter inquiries
@@ -486,12 +490,14 @@ graph TD
 - **Power BI dashboards** for operational monitoring and analytics
 
 #### **Teams Channel Integration:**
+
 - **Customer Service add-in for Teams** deployment for unified agent experience
 - **Teams Phone System integration** with D365 call routing and case context
 - **Teams workspace customization** for election-specific workflows and collaboration
 - **Mobile Teams configuration** for flexible agent deployment options
 
 #### **Automation & AI Implementation:**
+
 - **AI Builder models** for intent recognition and case classification
 - **Knowledge base deployment** with automated article suggestions
 - **Workflow automation** for routine case processing and follow-up
@@ -500,18 +506,21 @@ graph TD
 ### **📌 Phase 2: Election Period Scaling (600 Agents)**
 
 #### **Capacity Expansion:**
+
 - **Scale D365 licenses** from 100 to 600 agents with temporary licensing
 - **Expand Teams integration** to support increased agent population
 - **Enhance Power Virtual Agents** with election-specific capabilities
 - **Increase infrastructure capacity** through Azure scaling features
 
 #### **Advanced Automation Deployment:**
+
 - **Enhanced AI models** for election-period inquiry patterns
 - **Predictive analytics** for demand forecasting and resource optimization
 - **Advanced routing algorithms** for specialized election support queues
 - **Real-time monitoring** and alerting for high-volume periods
 
 #### **Multi-Channel Optimization:**
+
 - **Expanded chat and SMS** capabilities for voter convenience
 - **Social media monitoring** for election-related sentiment and issues
 - **Email automation** for follow-up communications and information delivery
@@ -538,12 +547,14 @@ sequenceDiagram
 ### **📌 Phase 3: Post-Election Optimization (Return to 100 Agents)**
 
 #### **License Optimization:**
+
 - **Scale down temporary licenses** while maintaining core capabilities
 - **Optimize automation** to handle increased self-service adoption
 - **Maintain AI models** with improved accuracy from election period data
 - **Continue analytics** for ongoing operational improvement
 
 #### **Continuous Improvement:**
+
 - **Performance analysis** using comprehensive election period data
 - **AI model refinement** based on actual voter interaction patterns
 - **Process optimization** for improved efficiency and satisfaction
@@ -566,39 +577,39 @@ graph TD
 
 ### **📌 Baseline Monthly Costs (100 Agents, Non-Election Period)**
 
-| **Component**                           | **Unit Cost** | **Quantity** | **Monthly Cost** |
-| --------------------------------------------- | ------------------- | ------------------ | ---------------------- |
-| D365 Customer Service Enterprise              | $105                | 100 agents        | $10,500                |
-| Omnichannel for Customer Service Add-on      | $95                 | 100 agents        | $9,500                 |
-| Customer Service add-in for Teams            | $20                 | 100 agents        | $2,000                 |
-| Power Virtual Agents                          | Fixed               | -                  | $1,500                 |
-| Power BI Pro                                  | $10                 | 20 supervisors     | $200                   |
-| Azure consumption (AI Builder, storage)      | Fixed               | -                  | $800                   |
-| Voice/telephony costs                         | $0.008/min          | 400K minutes       | $3,200                 |
-| **Total Baseline Monthly Cost**         |                     |                    | **$27,700**      |
+| **Component**                     | **Unit Cost**                               | **Quantity** | **Monthly Cost** |
+| --------------------------------------- | ------------------------------------------------- | ------------------ | ---------------------- |
+| D365 Customer Service Enterprise        | $105                | 100 agents        | $10,500 |                    |                        |
+| Omnichannel for Customer Service Add-on | $95                 | 100 agents        | $9,500  |                    |                        |
+| Customer Service add-in for Teams       | $20                 | 100 agents        | $2,000  |                    |                        |
+| Power Virtual Agents                    | Fixed                                             | -                  | $1,500                 |
+| Power BI Pro                            | $10                 | 20 supervisors     | $200   |                    |                        |
+| Azure consumption (AI Builder, storage) | Fixed                                             | -                  | $800                   |
+| Voice/telephony costs                   | $0.008/min          | 400K minutes       | $3,200 |                    |                        |
+| **Total Baseline Monthly Cost**   |                                                   |                    | **$27,700**      |
 
 ### **📌 Election Period Costs (600 Agents)**
 
-| **Component**                           | **Unit Cost** | **Quantity** | **Monthly Cost** |
-| --------------------------------------------- | ------------------- | ------------------ | ---------------------- |
-| D365 Customer Service Enterprise              | $105                | 600 agents        | $63,000                |
-| Omnichannel for Customer Service Add-on      | $95                 | 600 agents        | $57,000                |
-| Customer Service add-in for Teams            | $20                 | 600 agents        | $12,000                |
-| Power Virtual Agents (enhanced)               | Fixed               | -                  | $3,000                 |
-| Power BI Pro                                  | $10                 | 60 supervisors     | $600                   |
-| Azure consumption (increased load)            | Fixed               | -                  | $2,500                 |
-| Voice/telephony costs                         | $0.008/min          | 1.2M minutes       | $9,600                 |
-| **Total Election Period Monthly Cost** |                     |                    | **$147,700**     |
+| **Component**                          | **Unit Cost**                               | **Quantity** | **Monthly Cost** |
+| -------------------------------------------- | ------------------------------------------------- | ------------------ | ---------------------- |
+| D365 Customer Service Enterprise             | $105                | 600 agents        | $63,000 |                    |                        |
+| Omnichannel for Customer Service Add-on      | $95                 | 600 agents        | $57,000 |                    |                        |
+| Customer Service add-in for Teams            | $20                 | 600 agents        | $12,000 |                    |                        |
+| Power Virtual Agents (enhanced)              | Fixed                                             | -                  | $3,000                 |
+| Power BI Pro                                 | $10                 | 60 supervisors     | $600   |                    |                        |
+| Azure consumption (increased load)           | Fixed                                             | -                  | $2,500                 |
+| Voice/telephony costs                        | $0.008/min          | 1.2M minutes       | $9,600 |                    |                        |
+| **Total Election Period Monthly Cost** |                                                   |                    | **$147,700**     |
 
 ### **📌 Cost Optimization Through Automation**
 
-| **Optimization Strategy**               | **Potential Monthly Savings** |
-| --------------------------------------------- | ----------------------------------- |
-| Power Virtual Agents deflection (30%)        | $18K - $25K                         |
-| Automated case processing                     | $8K - $12K                          |
-| Intelligent routing optimization              | $5K - $8K                           |
-| Self-service portal adoption                  | $10K - $15K                         |
-| **Total Potential Savings**            | **$41K - $60K**               |
+| **Optimization Strategy**       | **Potential Monthly Savings** |
+| ------------------------------------- | ----------------------------------- |
+| Power Virtual Agents deflection (30%) | $18K - $25K                         |
+| Automated case processing             | $8K - $12K                          |
+| Intelligent routing optimization      | $5K - $8K                           |
+| Self-service portal adoption          | $10K - $15K                         |
+| **Total Potential Savings**     | **$41K - $60K**               |
 
 ## **5. Power Platform ROI & Value Realization**
 
@@ -628,25 +639,29 @@ graph TD
 
 ## **6. Implementation Timeline & Milestones**
 
-### **Months 1-2: Foundation Setup**
+### **Months 1-4: Foundation Setup**
+
 - D365 Customer Service Enterprise deployment and configuration
 - Omnichannel routing and queue management setup
 - Basic Power Virtual Agents and automation workflows
 - Teams integration and agent workspace configuration
 
-### **Months 3-4: Advanced Features**
+### **Months 4-12: Advanced Features**
+
 - AI Builder model development and training
 - Knowledge base deployment and content creation
 - Power BI analytics and dashboard implementation
 - Multi-channel expansion and testing
 
-### **Months 5-6: Testing & Optimization**
+### **Months 12-18: Testing & Optimization**
+
 - Pilot deployment with limited agent group
 - Load testing and performance optimization
 - Agent training and knowledge transfer
 - Final configuration and go-live preparation
 
 ### **Ongoing: Continuous Improvement**
+
 - Performance monitoring and optimization
 - AI model refinement and enhancement
 - User feedback integration and feature updates
@@ -655,6 +670,7 @@ graph TD
 ## **7. Success Metrics & KPIs**
 
 ### **Operational Metrics:**
+
 * **Average handle time** reduction through automation and knowledge base
 * **First-call resolution rate** improvement via intelligent routing and AI assistance
 * **Agent utilization** optimization through workload balancing and scheduling
@@ -662,6 +678,7 @@ graph TD
 * **Multi-channel adoption** rates and citizen satisfaction scores
 
 ### **Business Value Metrics:**
+
 * **Cost per interaction** reduction through automation and efficiency gains
 * **Agent productivity** improvements measured by cases resolved per hour
 * **Citizen satisfaction** scores across all channels and interaction types
@@ -669,6 +686,7 @@ graph TD
 * **Scalability effectiveness** during election period volume spikes
 
 ### **Technology Performance:**
+
 * **System availability** and reliability during critical election periods
 * **Response time** performance across all channels and features
 * **Integration effectiveness** between D365, Teams, and other systems
@@ -705,24 +723,28 @@ The pilot deployment will validate **Dynamics 365 Customer Service Enterprise an
 ### **📌 Phase 1: D365 Foundation & Teams Integration (Weeks 1-4)**
 
 #### **D365 Customer Service Enterprise Setup:**
+
 - **Deploy D365 Customer Service Hub** with comprehensive case management capabilities
 - **Configure Omnichannel for Customer Service** with multi-channel routing and queues
 - **Set up user roles and security** aligned with Elections Canada requirements
 - **Integrate with existing systems** for voter data and case context
 
 #### **Power Platform Implementation:**
+
 - **Deploy Power Virtual Agents** with basic election inquiry automation
 - **Configure Power Automate workflows** for case creation, routing, and escalation
 - **Set up AI Builder models** for intent recognition and case classification
 - **Implement Power BI dashboards** for real-time monitoring and analytics
 
 #### **Teams Channel Integration:**
+
 - **Install Customer Service add-in for Teams** across pilot agent group (100 agents)
 - **Configure Teams Phone System integration** with D365 call routing
 - **Set up Teams workspaces** with election-specific channels and collaboration features
 - **Deploy Teams mobile apps** for flexible agent deployment testing
 
 #### **Knowledge Management & Training:**
+
 - **Deploy knowledge base** with Elections Canada content and FAQ articles
 - **Create agent training materials** for D365 features and Teams integration
 - **Establish escalation procedures** using Teams channels and D365 workflows
@@ -731,24 +753,28 @@ The pilot deployment will validate **Dynamics 365 Customer Service Enterprise an
 ### **📌 Phase 2: Live Testing & Optimization (Weeks 5-8)**
 
 #### **Multi-Channel Testing:**
+
 - **Voice channel validation** through Teams Phone System integration with D365
 - **Chat and SMS testing** via omnichannel routing and agent workflows
 - **Email integration testing** with automated case creation and assignment
 - **Social media monitoring** setup and escalation workflow validation
 
 #### **Power Virtual Agents Optimization:**
+
 - **Test AI chatbot performance** with real voter inquiries and scenarios
 - **Optimize conversation flows** based on actual interaction patterns
 - **Enhance natural language processing** for better intent recognition
 - **Configure escalation triggers** for seamless handoff to live agents
 
 #### **Automation & Workflow Testing:**
+
 - **Validate Power Automate workflows** for case processing and escalation
 - **Test AI Builder models** for accuracy in case classification and routing
 - **Evaluate knowledge base integration** and automated article suggestions
 - **Monitor performance metrics** and identify optimization opportunities
 
 #### **Teams Collaboration Validation:**
+
 - **Test supervisor consultation** features during live voter interactions
 - **Validate escalation procedures** through Teams channels and D365 workflows
 - **Assess mobile agent capabilities** using Teams apps for remote work scenarios
@@ -757,24 +783,28 @@ The pilot deployment will validate **Dynamics 365 Customer Service Enterprise an
 ### **📌 Phase 3: Performance Analysis & Scaling Preparation (Weeks 9-12)**
 
 #### **Comprehensive Performance Analysis:**
+
 - **Analyze pilot metrics** including case deflection, resolution times, and satisfaction
 - **Evaluate automation effectiveness** and identify areas for improvement
 - **Assess agent productivity** and Teams integration benefits
 - **Review system performance** under various load conditions and scenarios
 
 #### **Cost-Benefit Analysis:**
+
 - **Calculate pilot ROI** including cost savings from automation and efficiency gains
 - **Project full-scale benefits** based on pilot performance and scalability testing
 - **Assess infrastructure costs** for election period scaling requirements
 - **Validate business case** for full D365 call center implementation
 
 #### **Election Readiness Planning:**
+
 - **Design scaling strategy** for 600-agent election deployment
 - **Plan automation enhancements** for election-specific inquiry patterns
 - **Prepare performance monitoring** and alerting for high-volume periods
 - **Develop contingency plans** and rollback procedures for risk mitigation
 
 #### **Final Optimization & Go-Live Preparation:**
+
 - **Implement pilot learnings** and configuration improvements
 - **Finalize agent training** and knowledge transfer programs
 - **Complete security and compliance** validation for production deployment
@@ -789,6 +819,7 @@ The pilot deployment will validate **Dynamics 365 Customer Service Enterprise an
 **🔹 Expected Savings:** $25K - $40K per month
 
 #### **Implementation Approach:**
+
 - **Enhanced conversation design** with natural language processing optimization
 - **Integration with Elections Canada databases** for real-time voter information lookup
 - **Multi-language support** for English and French voter interactions
@@ -813,6 +844,7 @@ graph TD
 **🔹 Expected Savings:** $15K - $25K per month
 
 #### **Automation Areas:**
+
 - **Automatic case creation** from all inbound channels with proper categorization
 - **Intelligent routing** based on case type, urgency, and agent skills
 - **Escalation workflows** with automated approvals and notifications
@@ -825,6 +857,7 @@ graph TD
 **🔹 Expected Savings:** $10K - $18K per month
 
 #### **Collaboration Features:**
+
 - **Real-time supervisor consultation** during complex voter interactions
 - **Knowledge sharing** through Teams channels and collaborative workflows
 - **Expert escalation** via Teams chat and screen sharing capabilities
@@ -837,6 +870,7 @@ graph TD
 **🔹 Expected Savings:** $8K - $15K per month
 
 #### **Analytics Applications:**
+
 - **Predictive capacity planning** for election period resource allocation
 - **Performance optimization** based on agent and channel analytics
 - **Citizen journey analysis** for improved service design and delivery
@@ -846,33 +880,33 @@ graph TD
 
 ### **Technical Performance KPIs:**
 
-| **Metric Category**                 | **Target Performance**              | **Measurement Method** |
-| ----------------------------------------- | ----------------------------------------- | ----------------------------- |
-| **System Availability**            | 99.5% uptime during pilot             | Azure monitoring & alerting   |
-| **Response Time**                   | <2 seconds for D365 interface loading | Performance testing tools     |
-| **Teams Integration Performance**   | <1 second for call routing to agent   | Teams analytics & reporting   |
-| **AI Accuracy**                     | 85% intent recognition success rate   | Power Virtual Agents analytics |
-| **Data Synchronization**            | 100% accuracy across systems          | Automated testing & validation |
+| **Metric Category**               | **Target Performance**          | **Measurement Method**   |
+| --------------------------------------- | ------------------------------------- | ------------------------------ |
+| **System Availability**           | 99.5% uptime during pilot             | Azure monitoring & alerting    |
+| **Response Time**                 | <2 seconds for D365 interface loading | Performance testing tools      |
+| **Teams Integration Performance** | <1 second for call routing to agent   | Teams analytics & reporting    |
+| **AI Accuracy**                   | 85% intent recognition success rate   | Power Virtual Agents analytics |
+| **Data Synchronization**          | 100% accuracy across systems          | Automated testing & validation |
 
 ### **Operational Performance KPIs:**
 
-| **Metric Category**               | **Baseline Target**                 | **Pilot Achievement Goal** |
-| --------------------------------------- | ----------------------------------------- | --------------------------------- |
-| **Case Deflection Rate**         | 20% through automation               | 30% via Power Virtual Agents     |
-| **First-Call Resolution**         | 75% with manual processes            | 85% with D365 knowledge base     |
-| **Average Handle Time**           | 8 minutes current average            | 6 minutes with automation        |
-| **Agent Utilization**             | 70% effective time                   | 85% with intelligent routing     |
-| **Customer Satisfaction**         | 3.8/5 current rating                | 4.2/5 with improved service      |
+| **Metric Category**       | **Baseline Target** | **Pilot Achievement Goal** |
+| ------------------------------- | ------------------------- | -------------------------------- |
+| **Case Deflection Rate**  | 20% through automation    | 30% via Power Virtual Agents     |
+| **First-Call Resolution** | 75% with manual processes | 85% with D365 knowledge base     |
+| **Average Handle Time**   | 8 minutes current average | 6 minutes with automation        |
+| **Agent Utilization**     | 70% effective time        | 85% with intelligent routing     |
+| **Customer Satisfaction** | 3.8/5 current rating      | 4.2/5 with improved service      |
 
 ### **Business Value KPIs:**
 
-| **Value Metric**                    | **Current State**                   | **Pilot Target**                |
-| ----------------------------------------- | ----------------------------------------- | -------------------------------------- |
-| **Cost per Case**                   | $15 average handling cost            | $10 with automation               |
-| **Agent Productivity**              | 25 cases per agent per day          | 35 cases with D365 efficiency    |
-| **Automation ROI**                  | N/A baseline                         | 200%+ return on investment        |
-| **Training Time Reduction**         | 40 hours for new agents             | 24 hours with Teams familiarity  |
-| **Infrastructure Savings**          | N/A baseline                         | 30% reduction in hardware needs   |
+| **Value Metric**            | **Current State**                                    | **Pilot Target**          |
+| --------------------------------- | ---------------------------------------------------------- | ------------------------------- |
+| **Cost per Case**           | $15 average handling cost            | $10 with automation |                                 |
+| **Agent Productivity**      | 25 cases per agent per day                                 | 35 cases with D365 efficiency   |
+| **Automation ROI**          | N/A baseline                                               | 200%+ return on investment      |
+| **Training Time Reduction** | 40 hours for new agents                                    | 24 hours with Teams familiarity |
+| **Infrastructure Savings**  | N/A baseline                                               | 30% reduction in hardware needs |
 
 ## **5. Risk Mitigation & Quality Assurance**
 
@@ -904,22 +938,22 @@ graph TD
 
 ### **Pilot Investment vs. Expected Returns:**
 
-| **Investment Category**                | **Pilot Cost** | **Annual Projection** | **3-Year ROI** |
-| -------------------------------------------- | -------------------- | ---------------------------- | -------------------- |
-| **D365 Licensing (100 agents)**        | $27,700/month        | $332,400/year               | Cost baseline        |
-| **Implementation Services**             | $150,000 one-time    | Amortized over 3 years      | $50,000/year         |
-| **Training & Change Management**        | $75,000 one-time     | Amortized over 3 years      | $25,000/year         |
-| **Total Investment**                    | $252,700 first year | $407,400/year steady state | $407,400/year        |
+| **Investment Category**          | **Pilot Cost**                                              | **Annual Projection** | **3-Year ROI** |
+| -------------------------------------- | ----------------------------------------------------------------- | --------------------------- | -------------------- |
+| **D365 Licensing (100 agents)**  | $27,700/month        | $332,400/year                              | Cost baseline               |                      |
+| **Implementation Services**      | $150,000 one-time    | Amortized over 3 years      | $50,000/year |                             |                      |
+| **Training & Change Management** | $75,000 one-time     | Amortized over 3 years      | $25,000/year |                             |                      |
+| **Total Investment**             | $252,700 first year | $407,400/year steady state                  | $407,400/year               |                      |
 
 ### **Expected Savings & Value Generation:**
 
-| **Savings Category**                   | **Monthly Savings** | **Annual Value**      | **3-Year Total** |
-| -------------------------------------------- | ------------------------- | --------------------------- | ---------------------- |
-| **Automation Cost Reduction**          | $25K - $40K               | $300K - $480K               | $900K - $1.44M         |
-| **Efficiency Improvements**            | $15K - $25K               | $180K - $300K               | $540K - $900K          |
-| **Infrastructure Optimization**        | $10K - $18K               | $120K - $216K               | $360K - $648K          |
-| **Quality & Satisfaction Gains**       | $8K - $15K                | $96K - $180K                | $288K - $540K          |
-| **Total Expected Savings**             | $58K - $98K               | $696K - $1.176M            | $2.088M - $3.528M     |
+| **Savings Category**             | **Monthly Savings** | **Annual Value** | **3-Year Total** |
+| -------------------------------------- | ------------------------- | ---------------------- | ---------------------- |
+| **Automation Cost Reduction**    | $25K - $40K               | $300K - $480K          | $900K - $1.44M         |
+| **Efficiency Improvements**      | $15K - $25K               | $180K - $300K          | $540K - $900K          |
+| **Infrastructure Optimization**  | $10K - $18K               | $120K - $216K          | $360K - $648K          |
+| **Quality & Satisfaction Gains** | $8K - $15K                | $96K - $180K           | $288K - $540K          |
+| **Total Expected Savings**       | $58K - $98K               | $696K - $1.176M        | $2.088M - $3.528M      |
 
 ### **Net ROI Calculation:**
 
@@ -963,18 +997,18 @@ graph TB
     B --> C[Power Virtual Agents AI Triage]
     C --> D[Automated Resolution & FAQ]
     C --> E[Intelligent Agent Queue Assignment]
-    
+  
     E --> F[D365 Customer Service Hub]
     F --> G[Teams Agent Interface Integration]
     G --> H[Case Management & Documentation]
     G --> I[Knowledge Base & Expert Lookup]
     G --> J[Supervisor Escalation via Teams]
-    
+  
     H --> K[Power Automate Workflow Engine]
     K --> L[Case Processing & Routing]
     K --> M[Follow-up & Satisfaction Surveys]
     K --> N[Integration with Elections Canada Systems]
-    
+  
     B --> O[Power BI Real-time Analytics]
     O --> P[Operational Dashboards]
     O --> Q[Predictive Analytics & Forecasting]
@@ -991,11 +1025,11 @@ graph TD
     D --> E[Automatic Case Creation]
     E --> F[Knowledge Base Integration]
     F --> G[Teams Collaboration Features]
-    
+  
     G --> H[Supervisor Consultation via Chat]
     G --> I[Expert Escalation via Teams Channel]
     G --> J[Screen Sharing for Complex Issues]
-    
+  
     E --> K[Power Automate Triggers]
     K --> L[Workflow Processing]
     K --> M[Notifications & Alerts]
@@ -1017,7 +1051,7 @@ sequenceDiagram
     PVA->>EC: Lookup voter information
     EC->>PVA: Return citizen data
     PVA->>PVA: Process inquiry with AI
-    
+  
     alt Automated Resolution
         PVA->>Citizen: Provide answer & close
         PVA->>Analytics: Log interaction data
@@ -1034,18 +1068,21 @@ sequenceDiagram
 ## **9. Continuous Improvement & Future Roadmap**
 
 ### **Phase 1 Enhancements (Year 1):**
+
 * **Advanced AI models** trained on Elections Canada-specific data patterns
 * **Predictive analytics** for election period demand forecasting and resource planning
 * **Enhanced automation** for complex case routing and resolution workflows
 * **Mobile-first citizen portals** integrated with D365 for self-service options
 
 ### **Phase 2 Expansion (Year 2):**
+
 * **Cross-government integration** for shared services and citizen data
 * **Advanced voice analytics** for sentiment analysis and quality improvement
 * **Proactive citizen engagement** through predictive service delivery
 * **Integration with emerging technologies** like Microsoft Copilot for enhanced agent assistance
 
 ### **Phase 3 Innovation (Year 3):**
+
 * **AI-powered citizen experience** with personalized service delivery
 * **Blockchain integration** for secure voter verification and case audit trails
 * **Advanced analytics platforms** with machine learning for continuous optimization
@@ -1066,24 +1103,28 @@ sequenceDiagram
 ## **Microsoft Official Documentation**
 
 ### **Dynamics 365 Customer Service**
+
 - [Dynamics 365 Customer Service Overview](https://docs.microsoft.com/en-us/dynamics365/customer-service/overview)
 - [Omnichannel for Customer Service](https://docs.microsoft.com/en-us/dynamics365/customer-service/introduction-omnichannel)
 - [Customer Service Enterprise Licensing](https://docs.microsoft.com/en-us/dynamics365/customer-service/system-requirements-omnichannel)
 - [Case Management in Dynamics 365](https://docs.microsoft.com/en-us/dynamics365/customer-service/customer-service-hub-user-guide-case-sla)
 
 ### **Microsoft Teams Integration**
+
 - [Customer Service add-in for Microsoft Teams](https://docs.microsoft.com/en-us/dynamics365/customer-service/teams-integration)
 - [Microsoft Teams Phone System](https://docs.microsoft.com/en-us/microsoftteams/cloud-voice-landing-page)
 - [Teams Premium Features](https://docs.microsoft.com/en-us/microsoftteams/teams-add-on-licensing/microsoft-teams-premium)
 - [Teams Direct Routing](https://docs.microsoft.com/en-us/microsoftteams/direct-routing-landing-page)
 
 ### **Power Platform**
+
 - [Power Virtual Agents Documentation](https://docs.microsoft.com/en-us/power-virtual-agents/)
 - [Power Automate for Customer Service](https://docs.microsoft.com/en-us/power-automate/getting-started)
 - [Power BI Integration with Dynamics 365](https://docs.microsoft.com/en-us/power-bi/connect-data/service-connect-to-microsoft-dynamics-crm)
 - [AI Builder Overview](https://docs.microsoft.com/en-us/ai-builder/overview)
 
 ### **Azure Services**
+
 - [Azure Communication Services](https://docs.microsoft.com/en-us/azure/communication-services/)
 - [Azure AI Services](https://docs.microsoft.com/en-us/azure/cognitive-services/)
 - [Azure Canada Data Residency](https://docs.microsoft.com/en-us/azure/canada/)
@@ -1091,12 +1132,14 @@ sequenceDiagram
 ## **Microsoft Licensing and Pricing**
 
 ### **Official Pricing Pages**
+
 - [Dynamics 365 Pricing](https://dynamics.microsoft.com/en-us/pricing/)
 - [Microsoft Teams Pricing](https://www.microsoft.com/en-us/microsoft-teams/compare-microsoft-teams-options)
 - [Power Platform Pricing](https://powerapps.microsoft.com/en-us/pricing/)
 - [Azure Communication Services Pricing](https://azure.microsoft.com/en-us/pricing/details/communication-services/)
 
 ### **Licensing Guides**
+
 - [Dynamics 365 Licensing Guide](https://go.microsoft.com/fwlink/?LinkId=866544)
 - [Microsoft 365 and Teams Licensing](https://docs.microsoft.com/en-us/office365/servicedescriptions/teams-service-description)
 - [Power Platform Licensing FAQ](https://docs.microsoft.com/en-us/power-platform/admin/powerapps-flow-licensing-faq)
@@ -1104,11 +1147,13 @@ sequenceDiagram
 ## **Government and Compliance**
 
 ### **Canadian Government Cloud Services**
+
 - [Microsoft Cloud for Government](https://www.microsoft.com/en-us/enterprise/government)
 - [Azure Government Canada](https://azure.microsoft.com/en-us/global-infrastructure/government/)
 - [Government Data Residency Requirements](https://docs.microsoft.com/en-us/compliance/regulatory/offering-canada-privacy-laws)
 
 ### **Security and Compliance Documentation**
+
 - [Microsoft Trust Center](https://www.microsoft.com/en-us/trust-center)
 - [Dynamics 365 Security](https://docs.microsoft.com/en-us/dynamics365/customer-service/implement-security)
 - [Teams Security and Compliance](https://docs.microsoft.com/en-us/microsoftteams/security-compliance-overview)
@@ -1116,22 +1161,26 @@ sequenceDiagram
 ## **Industry Best Practices and Case Studies**
 
 ### **Call Center Modernization**
+
 - [Microsoft Customer Service Solutions](https://www.microsoft.com/en-us/industry/public-sector/customer-service)
 - [Digital Transformation in Government](https://info.microsoft.com/ww-landing-government-digital-transformation.html)
 - [Contact Center AI Solutions](https://www.microsoft.com/en-us/ai/ai-for-customer-service)
 
 ### **Government Technology Implementation**
+
 - [Government Technology Trends](https://www.microsoft.com/en-us/industry/government/digital-government)
 - [Public Sector Digital Services](https://azure.microsoft.com/en-us/industries/government/)
 
 ## **Technical Architecture References**
 
 ### **Implementation Guides**
+
 - [Omnichannel Implementation Guide](https://docs.microsoft.com/en-us/dynamics365/customer-service/implement-omnichannel-customer-service)
 - [Power Virtual Agents Implementation](https://docs.microsoft.com/en-us/power-virtual-agents/fundamentals-what-is-power-virtual-agents)
 - [Teams Phone System Setup](https://docs.microsoft.com/en-us/microsoftteams/setting-up-your-phone-system)
 
 ### **Integration Patterns**
+
 - [Microsoft Cloud Architecture Patterns](https://docs.microsoft.com/en-us/azure/architecture/)
 - [Power Platform Integration Scenarios](https://docs.microsoft.com/en-us/power-platform/admin/data-integrator)
 - [Teams App Development](https://docs.microsoft.com/en-us/microsoftteams/platform/)
@@ -1139,55 +1188,65 @@ sequenceDiagram
 ## **Performance and Analytics**
 
 ### **Monitoring and Analytics**
+
 - [Power BI for Customer Service Analytics](https://docs.microsoft.com/en-us/dynamics365/customer-service/configure-customer-service-analytics-insights-csh)
 - [Teams Analytics and Reporting](https://docs.microsoft.com/en-us/microsoftteams/teams-analytics-and-reports/)
 - [Azure Monitor for Applications](https://docs.microsoft.com/en-us/azure/azure-monitor/)
 
 ### **Performance Optimization**
+
 - [Dynamics 365 Performance Optimization](https://docs.microsoft.com/en-us/dynamics365/customer-service/system-requirements-omnichannel)
 - [Teams Performance Best Practices](https://docs.microsoft.com/en-us/microsoftteams/prepare-network)
 
 ## **Training and Adoption Resources**
 
 ### **Microsoft Learn Paths**
+
 - [Dynamics 365 Customer Service Learning Path](https://docs.microsoft.com/en-us/learn/browse/?products=dynamics-customer-service)
 - [Power Platform Learning Paths](https://docs.microsoft.com/en-us/learn/browse/?products=power-platform)
 - [Microsoft Teams Training](https://docs.microsoft.com/en-us/learn/browse/?products=m365-teams)
 
 ### **Certification Programs**
+
 - [Microsoft Certified: Dynamics 365 Customer Service Functional Consultant](https://docs.microsoft.com/en-us/learn/certifications/d365-functional-consultant-customer-service/)
 - [Microsoft Certified: Power Platform Solution Architect](https://docs.microsoft.com/en-us/learn/certifications/power-platform-solution-architect-expert/)
 
 ## **Support and Community Resources**
 
 ### **Official Support Channels**
+
 - [Microsoft Support for Business](https://support.microsoft.com/en-us/business)
 - [Dynamics 365 Community](https://community.dynamics.com/)
 - [Power Platform Community](https://powerusers.microsoft.com/)
 - [Microsoft Tech Community](https://techcommunity.microsoft.com/)
 
 ### **Government-Specific Resources**
+
 - [Microsoft Government Support](https://www.microsoft.com/en-us/enterprise/government/support)
 - [Azure Government Documentation](https://docs.microsoft.com/en-us/azure/azure-government/)
 
 ## **ROI and Business Case References**
 
 ### **Total Economic Impact Studies**
+
 - [Forrester TEI of Microsoft Dynamics 365](https://www.microsoft.com/en-us/dynamics365/forrester-tei-study)
 - [Power Platform ROI Studies](https://powerapps.microsoft.com/en-us/roi-calculator/)
 - [Teams ROI Calculator](https://www.microsoft.com/en-us/microsoft-teams/roi)
 
 ### **Industry Benchmarks**
+
 - [Gartner Customer Service Technology Reports](https://www.gartner.com/en/information-technology)
 - [IDC Digital Transformation Studies](https://www.idc.com/)
 
 ## **Elections Canada Specific Context**
 
 ### **Canadian Electoral System**
+
 - [Elections Canada Official Website](https://www.elections.ca/)
 - [Canadian Electoral System Overview](https://www.elections.ca/content.aspx?section=res&dir=ces&document=part1&lang=e)
 
 ### **Government IT Modernization**
+
 - [Government of Canada Digital Operations Strategic Plan](https://www.canada.ca/en/government/system/digital-government/digital-operations-strategic-plan-2018-2022.html)
 - [Treasury Board Digital Standards](https://www.canada.ca/en/government/system/digital-government/government-canada-digital-standards.html)
 
