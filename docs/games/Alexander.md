@@ -524,8 +524,6 @@ The game models Alexander's policy dilemmas:
 - **Experience:** Professional military tradition
 - **Intelligence:** Extensive spy networks
 
-This design captures the epic scope of Alexander's conquests while maintaining historical authenticity and strategic depth. The asymmetric gameplay challenges players to overcome the same obstacles faced by ancient commanders, from logistics and loyalty to the clash of different military systems.
-
 ---
 
 ## Game Board & Reference Materials
