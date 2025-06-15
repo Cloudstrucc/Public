@@ -1,4 +1,7 @@
 # Napoleonic Wars: Empire's End (Revised Balanced Edition)
+
+![Napoleonic Wars Game Map](images/napolean-empires-end.png)
+
 ## Complete Board Game Design
 
 ### Game Overview
