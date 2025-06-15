@@ -105,35 +105,70 @@ class GameSimulator {
     }
 
     executeFrenchStrategy(gameState, player) {
-        // Aggressive expansion strategy
-        const expansionChance = Math.max(0.3, 0.7 - (gameState.turn / 40));
+        // More challenging French strategy with escalating coalition resistance
+        const coalitionSize = Object.values(gameState.players).filter(p => p.coalitionStatus === 'Allied').length;
+        const coalitionPenalty = Math.max(0, coalitionSize - 1) * 0.15; // Penalty increases with coalition size
+        const supplyPenalty = Math.max(0, (player.territories - 15) * 0.02); // Supply line difficulties
+        const expansionChance = Math.max(0.15, 0.6 - (gameState.turn / 40) - coalitionPenalty - supplyPenalty);
         
         if (Math.random() < expansionChance) {
-            // Attempt territory expansion
-            const targetTerritories = Math.floor(Math.random() * 3) + 1;
+            // Limited expansion with higher costs
+            const targetTerritories = Math.floor(Math.random() * 2) + 1;
             player.territories += targetTerritories;
-            player.heat += targetTerritories;
+            player.heat += targetTerritories * 2; // Double heat generation
             
-            // Coalition response
+            // Stronger coalition response
             Object.values(gameState.players).forEach(p => {
                 if (p.name !== 'France' && p.coalitionStatus === 'Allied') {
-                    p.units += Math.floor(Math.random() * 2);
+                    p.units += Math.floor(Math.random() * 3) + 1; // More units
+                    p.ipcs += targetTerritories * 100; // Financial support
                 }
             });
+        }
+        
+        // Attrition effects for overextension
+        if (player.territories > 20) {
+            const attritionRoll = this.rollDice();
+            if (attritionRoll <= 3) {
+                player.units = Math.max(1, player.units - Math.floor(Math.random() * 2) - 1);
+                player.territories = Math.max(15, player.territories - 1);
+            }
         }
     }
 
     executeCoalitionStrategy(gameState, player, faction) {
-        // Defensive/coalition building strategy
-        if (gameState.players.France.territories > 20) {
-            player.units += Math.floor(Math.random() * 3) + 1;
+        // More aggressive coalition strategy
+        const france = gameState.players.France;
+        
+        // Automatic coalition formation when France gets strong
+        if (france.territories > 18) {
             player.coalitionStatus = 'Allied';
+            player.units += Math.floor(Math.random() * 2) + 1;
         }
-
-        // Naval strategy for Britain
+        
+        // Enhanced British naval warfare
         if (faction === 'Britain') {
+            if (Math.random() < 0.6) { // Increased from 0.4
+                const blockadeDamage = this.rollDice() * 3; // Increased damage
+                france.ipcs = Math.max(0, france.ipcs - blockadeDamage);
+                console.log(`British blockade reduces French income by ${blockadeDamage}`);
+            }
+        }
+        
+        // Coalition coordination bonus
+        if (player.coalitionStatus === 'Allied') {
+            const alliedCount = Object.values(gameState.players).filter(p => p.coalitionStatus === 'Allied').length;
+            if (alliedCount >= 3) {
+                player.units += 1; // Coordination bonus
+                player.ipcs += alliedCount * 50; // Financial support
+            }
+        }
+        
+        // Russian winter advantage
+        if (faction === 'Russia' && gameState.season === 'Winter') {
             if (Math.random() < 0.4) {
-                gameState.players.France.ipcs = Math.max(0, gameState.players.France.ipcs - this.rollDice() * 2);
+                // Winter attrition affects French forces more
+                france.units = Math.max(1, france.units - Math.floor(Math.random() * 3));
             }
         }
     }
@@ -155,24 +190,33 @@ class GameSimulator {
 
     checkNapoleonicVictory(gameState) {
         const france = gameState.players.France;
+        const coalitionPowers = Object.values(gameState.players).filter(p => p.name !== 'France');
+        const totalCoalitionTerritories = coalitionPowers.reduce((sum, p) => sum + p.territories, 0);
         
-        // French victory conditions
-        if (france.territories >= 25) {
+        // French victory conditions (made harder)
+        if (france.territories >= 30 && france.units >= 10) { // Increased from 25, added unit requirement
             gameState.winner = 'France';
             gameState.victoryType = 'Territorial Domination';
             return;
         }
 
-        // Coalition victory conditions
-        if (france.territories <= 10) {
+        // Coalition victory conditions (made easier)
+        if (france.territories <= 12 || france.units <= 3) { // Increased threshold from 10
             gameState.winner = 'Coalition';
             gameState.victoryType = 'French Collapse';
             return;
         }
+        
+        // Economic victory for coalition
+        if (totalCoalitionTerritories >= france.territories * 2) {
+            gameState.winner = 'Coalition';
+            gameState.victoryType = 'Economic Stranglehold';
+            return;
+        }
 
-        // Time victory (historical)
+        // Time victory (historical) - favors coalition
         if (gameState.turn >= 40) {
-            if (france.territories >= 15) {
+            if (france.territories >= 20 && france.units >= 8) { // Stricter requirements
                 gameState.winner = 'France';
                 gameState.victoryType = 'Historical Survival';
             } else {
@@ -249,40 +293,95 @@ class GameSimulator {
 
     executeMacedonianStrategy(gameState, player) {
         if (gameState.alexanderAlive) {
-            // Aggressive conquest
-            const conquestAttempts = Math.floor(Math.random() * 3) + 1;
+            // More challenging conquest with supply limitations
+            const supplyPenalty = Math.max(0, (player.territories - 15) * 0.03);
+            const loyaltyPenalty = Math.max(0, (25 - player.territories) * 0.01); // Easier to lose than gain
+            const conquestChance = Math.max(0.25, 0.55 - supplyPenalty - loyaltyPenalty);
+            
+            const conquestAttempts = Math.floor(Math.random() * 2) + 1; // Reduced from 3
             for (let i = 0; i < conquestAttempts; i++) {
-                if (Math.random() < 0.6) {
+                if (Math.random() < conquestChance) {
                     player.territories += 1;
-                    player.talents += this.rollDice() * 10; // Plunder
+                    player.talents += this.rollDice() * 8; // Reduced plunder
+                    
+                    // Increased resistance with each conquest
+                    const resistanceChance = Math.min(0.6, player.territories * 0.02);
+                    if (Math.random() < resistanceChance) {
+                        player.units = Math.max(1, player.units - 1);
+                    }
                 }
             }
             
-            // Supply line challenges
+            // Enhanced supply line challenges
+            if (player.territories > 20) {
+                const supplyRoll = this.rollDice();
+                if (supplyRoll <= 4) { // Increased from 2
+                    player.units = Math.max(1, player.units - Math.floor(Math.random() * 3));
+                    player.loyalty = Math.max(1, player.loyalty - 1);
+                }
+            }
+            
+            // Macedonian homesickness and mutiny
             if (player.territories > 25) {
-                player.units = Math.max(1, player.units - Math.floor(Math.random() * 2));
+                if (Math.random() < 0.3) {
+                    player.territories = Math.max(20, player.territories - Math.floor(Math.random() * 3));
+                    console.log('Macedonian mutiny forces retreat');
+                }
             }
         }
     }
 
     executeResistanceStrategy(gameState, player, faction) {
-        // Defensive strategy
-        if (gameState.players.Macedon.territories > 15) {
-            player.units += Math.floor(Math.random() * 2) + 1;
+        // Enhanced resistance strategy
+        const macedon = gameState.players.Macedon;
+        
+        // Earlier and stronger resistance
+        if (macedon.territories > 12) { // Reduced from 15
+            player.units += Math.floor(Math.random() * 3) + 1;
+            player.talents += Math.floor(Math.random() * 500) + 200;
         }
 
-        // Special abilities
+        // Special faction abilities
         if (faction === 'Persian Empire') {
-            // Satrap loyalty issues
-            if (Math.random() < 0.2) {
+            // Improved Persian resistance and satrap loyalty
+            if (Math.random() < 0.15) { // Reduced frequency but kept impact
                 player.loyalty = Math.max(1, player.loyalty - 1);
-                player.territories = Math.max(1, player.territories - 1);
+                player.territories = Math.max(5, player.territories - 1);
+            }
+            
+            // Persian counter-attacks
+            if (macedon.territories > 20 && Math.random() < 0.4) {
+                player.territories += Math.floor(Math.random() * 2) + 1;
+                macedon.territories = Math.max(8, macedon.territories - 1);
+                console.log('Persian counter-offensive reclaims territory');
+            }
+        }
+        
+        if (faction === 'Indian Kingdoms') {
+            // War elephants and monsoons
+            if (Math.random() < 0.3) {
+                const elephantBonus = this.rollDice();
+                player.units += elephantBonus;
+                // Elephants cause Macedonian losses
+                if (macedon.units > elephantBonus) {
+                    macedon.units -= Math.floor(elephantBonus / 2);
+                }
+            }
+        }
+        
+        if (faction === 'Greek City-States') {
+            // Greek rebellions when Alexander is far away
+            if (macedon.territories > 18 && Math.random() < 0.35) {
+                player.territories += 1;
+                macedon.loyalty = Math.max(1, macedon.loyalty - 1);
+                console.log('Greek rebellion while Alexander campaigns in the East');
             }
         }
     }
 
     checkAlexanderVictory(gameState) {
         const macedon = gameState.players.Macedon;
+        const enemies = Object.values(gameState.players).filter(p => p.name !== 'Macedon');
         
         if (!gameState.alexanderAlive) {
             gameState.winner = 'Diadochi';
@@ -290,17 +389,39 @@ class GameSimulator {
             return;
         }
 
-        if (macedon.territories >= 30) {
+        // Macedonian victory conditions (made much harder)
+        if (macedon.territories >= 35 && macedon.units >= 8 && macedon.loyalty >= 4) {
             gameState.winner = 'Macedon';
             gameState.victoryType = 'World Conquest';
             return;
         }
+        
+        // Enemy coalition victory (made easier)
+        const totalEnemyTerritories = enemies.reduce((sum, p) => sum + p.territories, 0);
+        if (totalEnemyTerritories >= macedon.territories * 1.5) {
+            const strongestEnemy = enemies.reduce((max, p) => p.territories > max.territories ? p : max);
+            gameState.winner = strongestEnemy.name;
+            gameState.victoryType = 'Resistance Victory';
+            return;
+        }
+        
+        // Macedonian collapse
+        if (macedon.territories <= 10 || macedon.loyalty <= 2) {
+            gameState.winner = 'Persian Empire'; // Default to Persia
+            gameState.victoryType = 'Macedonian Collapse';
+            return;
+        }
 
+        // Time victory (favors resistance)
         if (gameState.turn >= 40) {
-            const largestEmpire = Object.values(gameState.players)
-                .reduce((max, player) => player.territories > max.territories ? player : max);
-            gameState.winner = largestEmpire.name;
-            gameState.victoryType = 'Time Victory';
+            if (macedon.territories >= 25 && macedon.units >= 6) {
+                gameState.winner = 'Macedon';
+                gameState.victoryType = 'Historical Achievement';
+            } else {
+                const largestEmpire = enemies.reduce((max, player) => player.territories > max.territories ? player : max);
+                gameState.winner = largestEmpire.name;
+                gameState.victoryType = 'Time Victory - Resistance';
+            }
         }
     }
 
@@ -522,19 +643,50 @@ class GameSimulator {
         
         // Income phase
         if (faction === 'LAPD') {
-            player.money += 2500;
+            const lapd = player;
+            lapd.money += 3000; // Increased base budget
+            lapd.trust = lapd.trust || 8;
+            lapd.corruption = lapd.corruption || 2;
+            
+            // Trust-based bonuses
+            if (lapd.trust >= 8) {
+                lapd.money += 1000; // Federal funding
+            }
+            if (lapd.trust >= 6) {
+                lapd.money += 500; // State support
+            }
         } else {
             player.money += player.territories * 400 + this.rollDice() * 200;
+            
+            // Gang-specific bonuses
+            if (faction === 'Bloods') {
+                player.respect = (player.respect || 10) + Math.floor(player.territories / 3);
+            } else if (faction === 'Crips') {
+                player.money += 200; // Better drug trade
+            } else if (faction === 'Mexican Mafia') {
+                player.units += Math.floor(Math.random() * 1.5); // Family loyalty
+            }
         }
 
-        // Gang warfare
-        if (faction !== 'LAPD' && Math.random() < 0.5) {
+        // Gang warfare (more balanced)
+        if (faction !== 'LAPD' && Math.random() < 0.4) { // Reduced frequency
             this.executeGangWarfare(gameState, faction);
         }
 
-        // LAPD operations
+        // Enhanced LAPD operations
         if (faction === 'LAPD') {
             this.executeLAPDOperations(gameState);
+        }
+        
+        // LAPD can gain territories through successful operations
+        if (faction === 'LAPD' && Math.random() < 0.2) {
+            const gangs = Object.values(gameState.players).filter(p => p.name !== 'LAPD');
+            const weakestGang = gangs.reduce((min, gang) => gang.units < min.units ? gang : min);
+            if (weakestGang && weakestGang.units <= 2) {
+                player.territories += 1;
+                weakestGang.territories = Math.max(1, weakestGang.territories - 1);
+                console.log(`LAPD secures territory from ${weakestGang.name}`);
+            }
         }
     }
 
@@ -563,30 +715,103 @@ class GameSimulator {
         }
     }
 
+    // Enhanced LAPD operations with more competitive abilities
     executeLAPDOperations(gameState) {
-        // Target highest heat gang
+        const lapd = gameState.players.LAPD;
         const gangs = Object.values(gameState.players).filter(p => p.name !== 'LAPD');
-        const target = gangs.reduce((max, gang) => gang.heat > max.heat ? gang : max);
         
-        if (target && Math.random() < 0.6) {
-            target.heat = Math.max(0, target.heat - 2);
-            target.units = Math.max(1, target.units - 1);
-            if (Math.random() < 0.3) {
-                target.money = Math.max(0, target.money - this.rollDice() * 500);
+        // Enhanced LAPD capabilities
+        lapd.trust = lapd.trust || 8; // Initialize trust if not present
+        lapd.corruption = lapd.corruption || 2;
+        
+        // Multi-target operations (LAPD advantage)
+        if (Math.random() < 0.7) {
+            gangs.forEach(gang => {
+                if (gang.heat > 2) {
+                    const raidEffectiveness = this.rollDice() + lapd.trust;
+                    if (raidEffectiveness >= 8) {
+                        gang.heat = Math.max(0, gang.heat - 2);
+                        gang.units = Math.max(1, gang.units - 1);
+                        gang.money = Math.max(0, gang.money - this.rollDice() * 600);
+                        
+                        // LAPD gains resources from successful operations
+                        lapd.money += 300;
+                        lapd.trust = Math.min(10, lapd.trust + 0.5);
+                    }
+                }
+            });
+        }
+        
+        // Federal task force (powerful LAPD ability)
+        if (lapd.trust >= 7 && Math.random() < 0.25) {
+            const targetGang = gangs.reduce((max, gang) => gang.heat > max.heat ? gang : max);
+            if (targetGang) {
+                console.log(`Federal task force targets ${targetGang.name}`);
+                targetGang.units = Math.max(1, targetGang.units - 2);
+                targetGang.territories = Math.max(1, targetGang.territories - 1);
+                targetGang.money = Math.max(0, targetGang.money - 2000);
+                lapd.territories += 1; // LAPD gains control
             }
+        }
+        
+        // Intelligence network
+        if (Math.random() < 0.4) {
+            gangs.forEach(gang => {
+                if (Math.random() < 0.3) {
+                    gang.heat += 1; // Surveillance increases heat
+                }
+            });
+        }
+        
+        // Community policing programs
+        if (lapd.trust >= 6 && Math.random() < 0.3) {
+            lapd.money += 1000; // Federal grants
+            gangs.forEach(gang => {
+                gang.respect = Math.max(0, (gang.respect || 10) - 1); // Reduces gang influence
+            });
         }
     }
 
     checkLAGangVictory(gameState) {
-        // Gang victory conditions
+        // Enhanced LAPD victory conditions
+        if (gameState.players.LAPD) {
+            const lapd = gameState.players.LAPD;
+            const gangs = Object.values(gameState.players).filter(p => p.name !== 'LAPD');
+            
+            // LAPD territorial victory
+            if (lapd.territories >= 6) {
+                gameState.winner = 'LAPD';
+                gameState.victoryType = 'Police Control';
+                return;
+            }
+            
+            // LAPD pacification victory
+            const totalGangHeat = gangs.reduce((sum, p) => sum + p.heat, 0);
+            const averageGangHeat = totalGangHeat / gangs.length;
+            
+            if (averageGangHeat <= 2) {
+                gameState.winner = 'LAPD';
+                gameState.victoryType = 'Peace in Compton';
+                return;
+            }
+            
+            // LAPD economic victory (seizing gang assets)
+            if (lapd.money >= 15000) {
+                gameState.winner = 'LAPD';
+                gameState.victoryType = 'Asset Forfeiture Victory';
+                return;
+            }
+        }
+        
+        // Gang victory conditions (slightly harder with LAPD competition)
         Object.values(gameState.players).forEach(player => {
             if (player.name !== 'LAPD') {
-                if (player.territories >= 8) {
+                if (player.territories >= 9) { // Increased from 8
                     gameState.winner = player.name;
                     gameState.victoryType = 'Territorial Control';
                     return;
                 }
-                if (player.respect >= 50) {
+                if ((player.respect || 0) >= 60) { // Increased from 50
                     gameState.winner = player.name;
                     gameState.victoryType = 'Street Respect';
                     return;
@@ -594,26 +819,23 @@ class GameSimulator {
             }
         });
 
-        // LAPD victory
-        if (gameState.players.LAPD) {
-            const totalGangHeat = Object.values(gameState.players)
-                .filter(p => p.name !== 'LAPD')
-                .reduce((sum, p) => sum + p.heat, 0);
-            
-            if (totalGangHeat <= 3) {
-                gameState.winner = 'LAPD';
-                gameState.victoryType = 'Peace in Compton';
-            }
-        }
-
-        // Time victory
+        // Time victory (more competitive scoring)
         if (gameState.turn >= 25) {
-            const winner = Object.values(gameState.players)
-                .reduce((max, player) => {
-                    const score = player.territories * 2 + (player.respect || 0) + Math.floor(player.money / 1000);
-                    const maxScore = max.territories * 2 + (max.respect || 0) + Math.floor(max.money / 1000);
-                    return score > maxScore ? player : max;
-                });
+            const allPlayers = Object.values(gameState.players);
+            const winner = allPlayers.reduce((max, player) => {
+                let score;
+                if (player.name === 'LAPD') {
+                    score = player.territories * 3 + Math.floor(player.money / 500) + (player.trust || 0) * 2;
+                } else {
+                    score = player.territories * 2 + (player.respect || 0) + Math.floor(player.money / 1000);
+                }
+                
+                const maxScore = max.name === 'LAPD' 
+                    ? max.territories * 3 + Math.floor(max.money / 500) + (max.trust || 0) * 2
+                    : max.territories * 2 + (max.respect || 0) + Math.floor(max.money / 1000);
+                    
+                return score > maxScore ? player : max;
+            });
             gameState.winner = winner.name;
             gameState.victoryType = 'Time Victory';
         }

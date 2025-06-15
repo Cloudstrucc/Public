@@ -24,7 +24,7 @@
 
 ## 🚀 **Usage Examples**
 
-``` bash
+```bash
 # Basic simulation
 node simulator.js napoleonic 100
 
@@ -69,3 +69,11 @@ This will help you identify:
 * **Underpowered factions** (<10% win rate)
 * **Game length issues** (too short/long)
 * **Faction-specific balance problems**
+
+## Test the balance fixes
+
+```javascript
+node simulator.js napolean-v1 200 --analyze --detect-balance
+node simulator.js alexander-v1 300 --analyze --detect-balance  
+node simulator.js lagangwarswithcops-v1 200 --analyze --detect-balance
+```
