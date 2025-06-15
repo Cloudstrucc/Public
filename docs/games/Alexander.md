@@ -786,3 +786,5 @@ The enhanced resistance capabilities represent what could have happened:
 - **Egypt:** 6 territories, 35 Talents (increased), defensive position with Nile protection
 - **Indian Kingdoms:** 12 territories, 40 Talents (increased), war elephants and monsoon advantages
 - **Scythian Tribes:** 15 territories, 15 Talents, mobile cavalry and harsh terrain
+  
+![Peices](images/alexandrepieces.png)

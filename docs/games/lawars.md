@@ -817,52 +817,9 @@ LAPD players must balance:
 - **Reactive vs Proactive**: Responding to crime vs preventing it
 - **Legal vs Extra-Legal**: Proper procedures vs expedient solutions
 
-This creates a competitive, authentic, and strategically rich law enforcement faction that can hold its own against the three gang factions while maintaining the serious themes and realistic consequences of urban conflict.
+### Game reference material
 
----
+![Compton Gang](images/gang-wars-compton.png)
 
-## Game Board & Reference Materials
+![Compton Gang pieces](images/la-gang-pieces.png)
 
-### Turn Order & Season Tracking
-![Turn Order and Season Track](https://i.imgur.com/napoleonic-turn-track.jpg)
-
-*The game includes essential tracking boards for managing the complex turn sequence and seasonal effects. The turn order track shows the historical sequence starting with France's initiative, while the season track cycles through Spring, Summer, Autumn, and Winter with their respective bonuses and penalties. The year track covers the full Napoleonic period from 1803-1815.*
-
-**Key Tracking Elements:**
-- **Turn Order:** France (1st) → Austria (2nd) → Prussia/Germany (3rd) → Russia (4th) → Britain (5th) → Spain (6th) → Minor Powers (7th)
-- **Seasonal Effects:** Each season provides different bonuses and challenges
-  - **Spring:** +1 IPC from agriculture
-  - **Summer:** +1 movement to all units (campaign season)
-  - **Autumn:** +2 IPC harvest bonus, -1 naval movement
-  - **Winter:** Attrition effects, supply difficulties, Baltic Sea freezes
-- **Historical Timeline:** 13-year campaign covering the height of the Napoleonic Wars
-
-### European Theater Map
-![Napoleonic Wars Game Map](https://i.imgur.com/napoleonic-europe-map.jpg)
-
-*The main game board depicts Europe during the Napoleonic era, with major powers color-coded and strategic cities marked. The map shows crucial geographical features like the English Channel, Mediterranean Sea, and major rivers that affected military campaigns. White circles indicate capital cities and key strategic objectives.*
-
-**Map Features:**
-- **France (Brown):** Central European position with Paris as capital
-- **Austria (Tan/Beige):** Eastern European power controlling much of Central Europe
-- **Russia (Tan/Eastern):** Vast territories extending beyond the map edge
-- **Spain (Brown/Western):** Iberian Peninsula with potential for Peninsula War
-- **Britain:** Island nation with naval supremacy but limited land access
-- **German States:** Fragmented territories ripe for French expansion or Austrian influence
-
-### Unit Reference & Combat Icons
-![Napoleonic Unit Types](https://i.imgur.com/napoleonic-units.jpg)
-
-*Clean, iconic representations of all military unit types used in the game. The silhouettes clearly distinguish between different unit roles while maintaining the period aesthetic. Unit costs are shown in the map legend for quick reference during gameplay.*
-
-**Unit Categories:**
-- **Land Forces:** Infantry (3 IPCs), Cavalry (4 IPCs), Artillery (4 IPCs), Guard units (6 IPCs), Generals
-- **Naval Forces:** Frigates, Ships of the Line, Transports, Corvettes, Bomb Vessels
-- **Special Units:** Each nation has unique advantages and specialized forces
-- **Historical Accuracy:** Unit costs and capabilities reflect actual military economics and effectiveness
-
-**Strategic Implications:**
-- **Combined Arms:** Artillery and infantry work together for maximum effectiveness
-- **Naval Power:** Essential for blockades, trade protection, and amphibious operations  
-- **Elite Units:** Guard formations and named generals provide crucial combat advantages
-- **Economic Balance:** Unit costs create meaningful resource allocation decisions

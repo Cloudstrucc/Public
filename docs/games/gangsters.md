@@ -641,3 +641,5 @@ NYPD as a wild card affects other players' chances through:
 ## Game Board & Reference Materials
 
 ![Gangsters Original Draft Map](images/gangsters-v1.png)
+
+![Gangsters Pieces](images/gangsterspeices.png)
