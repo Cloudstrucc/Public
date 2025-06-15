@@ -1,4 +1,7 @@
 # Gangsters: Rise of the Family (With NYPD) - Complete Revised Edition
+
+![Gangsters Original Draft Map](images/gangsters-v1.png)
+
 ## Complete Board Game Design
 
 ### Game Overview
@@ -637,4 +640,4 @@ NYPD as a wild card affects other players' chances through:
 
 ## Game Board & Reference Materials
 
-![Gangsters Original Draft Map](images/gangsters.png)
+![Gangsters Original Draft Map](images/gangsters-v1.png)

@@ -1,4 +1,6 @@
-# Alexander the Great: Conquest of the Known World (Revised Balanced Edition)
+# Alexander the Great: Conquest of the Known World
+
+![Alexander the Great Game Map](images/alexander.png)
 
 ## Complete Board Game Design
 
@@ -12,27 +14,27 @@ A strategic board game for 2-6 players covering Alexander's conquests (336-323 B
 
 ### Land Units
 
-| Unit Type | Cost (Talents) | Attack | Defense | Movement | Special Rules |
-|-----------|----------------|--------|---------|----------|---------------|
-| **Phalanx** | 4 | 3 | 4 | 1 | +1 defense vs cavalry, -1 vs skirmishers |
-| **Hypaspists** | 5 | 4 | 3 | 2 | Elite infantry, can move after combat |
-| **Companion Cavalry** | 6 | 5 | 3 | 3 | Shock charge (+2 first round), Macedonian only |
-| **Heavy Cavalry** | 5 | 4 | 2 | 3 | Shock charge (+1 first round) |
-| **Light Cavalry** | 3 | 2 | 2 | 4 | Can retreat before combat, scouting |
-| **Archers** | 2 | 2 | 1 | 2 | Ranged attack (no retaliation first round) |
-| **Slingers** | 1 | 1 | 1 | 2 | Cheap skirmishers, +1 vs heavy infantry |
-| **War Elephants** | 8 | 5 | 4 | 2 | Terror effect, Indian/Persian only |
-| **Siege Engines** | 6 | 4 | 2 | 1 | +3 vs fortifications, must be built in cities |
-| **General** | 10 | - | - | 3 | +1 to all units in territory, loyalty effects |
+| Unit Type                   | Cost (Talents) | Attack | Defense | Movement | Special Rules                                  |
+| --------------------------- | -------------- | ------ | ------- | -------- | ---------------------------------------------- |
+| **Phalanx**           | 4              | 3      | 4       | 1        | +1 defense vs cavalry, -1 vs skirmishers       |
+| **Hypaspists**        | 5              | 4      | 3       | 2        | Elite infantry, can move after combat          |
+| **Companion Cavalry** | 6              | 5      | 3       | 3        | Shock charge (+2 first round), Macedonian only |
+| **Heavy Cavalry**     | 5              | 4      | 2       | 3        | Shock charge (+1 first round)                  |
+| **Light Cavalry**     | 3              | 2      | 2       | 4        | Can retreat before combat, scouting            |
+| **Archers**           | 2              | 2      | 1       | 2        | Ranged attack (no retaliation first round)     |
+| **Slingers**          | 1              | 1      | 1       | 2        | Cheap skirmishers, +1 vs heavy infantry        |
+| **War Elephants**     | 8              | 5      | 4       | 2        | Terror effect, Indian/Persian only             |
+| **Siege Engines**     | 6              | 4      | 2       | 1        | +3 vs fortifications, must be built in cities  |
+| **General**           | 10             | -      | -       | 3        | +1 to all units in territory, loyalty effects  |
 
 ### Naval Units
 
-| Unit Type | Cost (Talents) | Attack | Defense | Movement | Special Rules |
-|-----------|----------------|--------|---------|----------|---------------|
-| **Trireme** | 8 | 3 | 3 | 3 | Standard warship, ramming attack |
-| **Quinquereme** | 12 | 4 | 4 | 2 | Heavy warship, can transport 1 land unit |
-| **Transport** | 5 | 0 | 1 | 2 | Carries 2 land units, vulnerable |
-| **Merchant** | 3 | 0 | 1 | 2 | Generates 1 Talent per turn on trade routes |
+| Unit Type             | Cost (Talents) | Attack | Defense | Movement | Special Rules                               |
+| --------------------- | -------------- | ------ | ------- | -------- | ------------------------------------------- |
+| **Trireme**     | 8              | 3      | 3       | 3        | Standard warship, ramming attack            |
+| **Quinquereme** | 12             | 4      | 4       | 2        | Heavy warship, can transport 1 land unit    |
+| **Transport**   | 5              | 0      | 1       | 2        | Carries 2 land units, vulnerable            |
+| **Merchant**    | 3              | 0      | 1       | 2        | Generates 1 Talent per turn on trade routes |
 
 ---
 
@@ -73,7 +75,7 @@ A strategic board game for 2-6 players covering Alexander's conquests (336-323 B
 After losing 50% of units in a battle:
 
 - **Barbarian armies:** Roll 1d6, 1-3 = remaining units retreat
-- **Persian armies:** Roll 1d6, 1-2 = remaining units retreat  
+- **Persian armies:** Roll 1d6, 1-2 = remaining units retreat
 - **Greek armies:** Roll 1d6, 1 = remaining units retreat
 - **Macedonian armies:** Never retreat while Alexander is present
 
@@ -191,7 +193,7 @@ After losing 50% of units in a battle:
 **Diadochi Kingdoms:**
 
 1. **Antigonus** (Europe): Gets Greek territories + Companion Cavalry
-2. **Ptolemy** (Egypt): Gets Egyptian territories + Naval units  
+2. **Ptolemy** (Egypt): Gets Egyptian territories + Naval units
 3. **Seleucus** (Asia): Gets Persian territories + Elephants
 4. **Cassander** (Macedon): Gets Macedonian core + Phalanx units
 
@@ -201,25 +203,25 @@ After losing 50% of units in a battle:
 
 ### Income Sources by Nation (Revised)
 
-| Territory Type | Base Income | Persian Bonus | Macedonian Bonus | Other Nations |
-|----------------|-------------|---------------|------------------|---------------|
-| **Satrapy Capital** | 6 Talents | +2 (tribute) | +1 (conquest) | +0 |
-| **Royal City** | 8 Talents | +3 (palace) | +2 (plunder) | +1 |
-| **Trading Port** | 4 Talents | +1 (commerce) | +1 (tribute) | +2 (natural) |
-| **Mining Region** | 5 Talents | +2 (organized) | +1 (forced labor) | +1 |
-| **Agricultural** | 2 Talents | +1 (irrigation) | +0 | +1 (local) |
-| **Nomad Lands** | 1 Talent | +0 | -1 (raiding) | +2 (tribal) |
+| Territory Type            | Base Income | Persian Bonus   | Macedonian Bonus  | Other Nations |
+| ------------------------- | ----------- | --------------- | ----------------- | ------------- |
+| **Satrapy Capital** | 6 Talents   | +2 (tribute)    | +1 (conquest)     | +0            |
+| **Royal City**      | 8 Talents   | +3 (palace)     | +2 (plunder)      | +1            |
+| **Trading Port**    | 4 Talents   | +1 (commerce)   | +1 (tribute)      | +2 (natural)  |
+| **Mining Region**   | 5 Talents   | +2 (organized)  | +1 (forced labor) | +1            |
+| **Agricultural**    | 2 Talents   | +1 (irrigation) | +0                | +1 (local)    |
+| **Nomad Lands**     | 1 Talent    | +0              | -1 (raiding)      | +2 (tribal)   |
 
 ### Regional Wealth Redistribution (Enhanced)
 
-| Nation | Starting Talents | Territories | Enhanced Bonuses |
-|--------|------------------|-------------|------------------|
-| **Macedon** | 25 | 8 | +Alexander bonus, -distance penalties |
-| **Persian Empire** | 75 | 25 | +Satrap system, +reconquest bonuses |
-| **Greek City-States** | 45 | 12 | +Naval trade, +democratic bonuses |
-| **Indian Kingdoms** | 40 | 12 | +Monsoon wealth, +elephant breeding |
-| **Egyptian Satraps** | 35 | 6 | +Nile floods, +temple bonuses |
-| **Scythian Tribes** | 15 | 15 | +Mobility bonuses, +harsh terrain |
+| Nation                      | Starting Talents | Territories | Enhanced Bonuses                      |
+| --------------------------- | ---------------- | ----------- | ------------------------------------- |
+| **Macedon**           | 25               | 8           | +Alexander bonus, -distance penalties |
+| **Persian Empire**    | 75               | 25          | +Satrap system, +reconquest bonuses   |
+| **Greek City-States** | 45               | 12          | +Naval trade, +democratic bonuses     |
+| **Indian Kingdoms**   | 40               | 12          | +Monsoon wealth, +elephant breeding   |
+| **Egyptian Satraps**  | 35               | 6           | +Nile floods, +temple bonuses         |
+| **Scythian Tribes**   | 15               | 15          | +Mobility bonuses, +harsh terrain     |
 
 ### Enhanced Trade & Tribute
 
@@ -241,7 +243,7 @@ After losing 50% of units in a battle:
 - **Success:** Roll 1d6 + your military strength - their strength
 - **Results:**
   - 7+ = Gain 3 Talents per turn
-  - 4-6 = Gain 1 Talent per turn  
+  - 4-6 = Gain 1 Talent per turn
   - 1-3 = Demand rejected, relations worsen
 
 ---
@@ -279,7 +281,7 @@ If Alexander dies or is defeated:
 Each territory has a loyalty value (1-5):
 
 - **5:** Fully loyal, provides full income
-- **3-4:** Stable, provides normal income  
+- **3-4:** Stable, provides normal income
 - **2:** Unrest, -1 income, -1 to defending units
 - **1:** Revolt, territory produces rebels
 
@@ -296,7 +298,7 @@ Each territory has a loyalty value (1-5):
 **Rebellion Triggers:**
 
 - **Loyalty 1**: 50% chance per turn
-- **Loyalty 2**: 25% chance per turn  
+- **Loyalty 2**: 25% chance per turn
 - **Harsh Rule**: +1 income, -1 loyalty per turn
 - **Cultural Respect**: -1 income, +1 loyalty per turn
 
@@ -312,15 +314,15 @@ Each territory has a loyalty value (1-5):
 
 ### Terrain Effects
 
-| Terrain Type | Movement Cost | Combat Modifier | Special Rules |
-|--------------|---------------|-----------------|---------------|
-| **Plains** | 1 | Normal | Ideal for cavalry |
-| **Hills** | 2 | +1 defense | Archer bonus (+1 attack) |
-| **Mountains** | 3 | +2 defense | Only light units can pass |
-| **Desert** | 2 | -1 to all units | Attrition: lose 1 unit per turn |
-| **Forest** | 2 | +1 defense | Cavalry -1 attack |
-| **Marsh** | 3 | -1 to all units | Disease: roll 1d6, 1 = lose unit |
-| **River Crossing** | +1 | -1 attack crossing | Bridges negate penalty |
+| Terrain Type             | Movement Cost | Combat Modifier    | Special Rules                    |
+| ------------------------ | ------------- | ------------------ | -------------------------------- |
+| **Plains**         | 1             | Normal             | Ideal for cavalry                |
+| **Hills**          | 2             | +1 defense         | Archer bonus (+1 attack)         |
+| **Mountains**      | 3             | +2 defense         | Only light units can pass        |
+| **Desert**         | 2             | -1 to all units    | Attrition: lose 1 unit per turn  |
+| **Forest**         | 2             | +1 defense         | Cavalry -1 attack                |
+| **Marsh**          | 3             | -1 to all units    | Disease: roll 1d6, 1 = lose unit |
+| **River Crossing** | +1            | -1 attack crossing | Bridges negate penalty           |
 
 ### Historical Geography Features
 
@@ -574,7 +576,7 @@ Sample events based on historical occurrences:
 **Annual Cycle** (Each game year = 8 turns):
 
 - **Spring (Turns 1-2):** Normal movement, +1 income from agriculture
-- **Summer (Turns 3-4):** Campaign season, +1 movement to all units  
+- **Summer (Turns 3-4):** Campaign season, +1 movement to all units
 - **Autumn (Turns 5-6):** Harvest, +2 income from agriculture
 - **Winter (Turns 7-8):** Reduced movement, no naval activity in northern seas
 
@@ -633,7 +635,7 @@ Sample events based on historical occurrences:
 **Objective:** Capture 5 Persian cities in Asia Minor
 **Special Rules:** No Indian kingdoms, limited Persian resources
 
-### The Great Conquest (Standard Game - 40 turns)  
+### The Great Conquest (Standard Game - 40 turns)
 
 **Setup:** Full map, all players active
 **Objective:** Multiple victory conditions active
@@ -739,7 +741,7 @@ This revision models the real challenges Alexander would have faced:
 The enhanced resistance capabilities represent what could have happened:
 
 - **Persian resurgence** under competent leadership
-- **Indian unity** against foreign invasion  
+- **Indian unity** against foreign invasion
 - **Greek democratic revival** against Macedonian imperialism
 - **Egyptian independence** movements
 
@@ -749,7 +751,7 @@ The enhanced resistance capabilities represent what could have happened:
 
 ### Game Map: The Ancient World (336-323 BCE)
 
-![Alexander the Great Game Map](https://i.imgur.com/alexander-map.jpg)
+![Alexander the Great Game Map](images/alexander.png)
 
 *The game board shows the vast territories from Macedon to India, with color-coded regions representing different empires and kingdoms. White circles indicate major cities and capitals that serve as strategic objectives. The map includes important geographical features like the Aegean Sea, Mediterranean, Persian Gulf, and key rivers that affected historical military campaigns.*
 
@@ -764,7 +766,7 @@ The enhanced resistance capabilities represent what could have happened:
 
 ### Rules Reference Card
 
-![Rules Overview and Victory Conditions](https://i.imgur.com/alexander-rules.jpg)
+![Rules Overview and Victory Conditions](images/alexrules.png)
 
 *This reference card provides essential game information including unit costs, combat rules, victory conditions, and starting forces for each faction. The Greek key pattern border reflects the classical ancient world aesthetic.*
 
@@ -784,5 +786,3 @@ The enhanced resistance capabilities represent what could have happened:
 - **Egypt:** 6 territories, 35 Talents (increased), defensive position with Nile protection
 - **Indian Kingdoms:** 12 territories, 40 Talents (increased), war elephants and monsoon advantages
 - **Scythian Tribes:** 15 territories, 15 Talents, mobile cavalry and harsh terrain
-
-This captures the epic scope of Alexander's conquests while maintaining historical authenticity and strategic depth. The asymmetric gameplay challenges players to overcome the same obstacles faced by ancient commanders, from logistics and loyalty to the clash of different military systems, with enhanced balance favoring realistic resistance to Macedonian expansion.

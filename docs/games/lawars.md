@@ -1,4 +1,7 @@
 # LA Gang Wars: Battle for Compton (With Enhanced LAPD) - Complete Revised Edition
+
+![Compton Gang](images/gang-wars-compton.png)
+
 ## Complete Board Game Design
 
 ### Game Overview
@@ -863,5 +866,3 @@ This creates a competitive, authentic, and strategically rich law enforcement fa
 - **Naval Power:** Essential for blockades, trade protection, and amphibious operations  
 - **Elite Units:** Guard formations and named generals provide crucial combat advantages
 - **Economic Balance:** Unit costs create meaningful resource allocation decisions
-
-This design creates complex relationships where LAPD can be a legitimate force for order OR become just another gang competing for control of Compton's streets. The choice between community policing and corruption creates dynamic alliances and conflicts that reflect real-world urban challenges while providing LAPD with the competitive tools needed to be a viable faction against the three established gang powers.

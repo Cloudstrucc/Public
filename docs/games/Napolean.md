@@ -750,7 +750,9 @@ The game now better models the historical reality where French tactical brillian
 ## Game Board & Reference Materials
 
 ### Turn Order & Season Tracking
-![Turn Order and Season Track](https://i.imgur.com/napoleonic-turn-track.jpg)
+![Cheat sheet](images/napoleancheatsheet.png)
+
+![Turn Order and Season Track](images/napoleanrules.png)
 
 *The game includes essential tracking boards for managing the complex turn sequence and seasonal effects. The turn order track shows the historical sequence starting with France's initiative, while the season track cycles through Spring, Summer, Autumn, and Winter with their respective bonuses and penalties. The year track covers the full Napoleonic period from 1803-1815.*
 
@@ -764,7 +766,7 @@ The game now better models the historical reality where French tactical brillian
 - **Historical Timeline:** 13-year campaign covering the height of the Napoleonic Wars
 
 ### European Theater Map
-![Napoleonic Wars Game Map](https://i.imgur.com/napoleonic-europe-map.jpg)
+![Napoleonic Wars Game Map](images/napolean-empires-end.png)
 
 *The main game board depicts Europe during the Napoleonic era, with major powers color-coded and strategic cities marked. The map shows crucial geographical features like the English Channel, Mediterranean Sea, and major rivers that affected military campaigns. White circles indicate capital cities and key strategic objectives.*
 
@@ -777,7 +779,7 @@ The game now better models the historical reality where French tactical brillian
 - **German States:** Fragmented territories ripe for French expansion or Austrian influence
 
 ### Unit Reference & Combat Icons
-![Napoleonic Unit Types](https://i.imgur.com/napoleonic-units.jpg)
+![Napoleonic Unit Types](images/nappieces.png)
 
 *Clean, iconic representations of all military unit types used in the game. The silhouettes clearly distinguish between different unit roles while maintaining the period aesthetic. Unit costs are shown in the map legend for quick reference during gameplay.*
 
