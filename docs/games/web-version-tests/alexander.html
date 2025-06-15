@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alexander the Great: Conquest of the Known World</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Trajan+Pro:wght@400;700&family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cinzel', serif;
+            background: 
+                linear-gradient(135deg, #f5f5dc 0%, #daa520 25%, #b8860b 50%, #cd853f 75%, #f5f5dc 100%),
+                radial-gradient(circle at 20% 20%, rgba(218, 165, 32, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 69, 19, 0.2) 0%, transparent 50%);
+            color: #8b4513;
+            min-height: 100vh;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, transparent 48%, rgba(218, 165, 32, 0.05) 49%, rgba(218, 165, 32, 0.05) 51%, transparent 52%),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 20px,
+                    rgba(218, 165, 32, 0.03) 20px,
+                    rgba(218, 165, 32, 0.03) 22px
+                );
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 25px;
+            background: 
+                linear-gradient(135deg, rgba(245, 245, 220, 0.95), rgba(255, 255, 255, 0.9)),
+                linear-gradient(45deg, rgba(218, 165, 32, 0.1), rgba(184, 134, 11, 0.1));
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 4px solid #daa520;
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.3),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3),
+                0 0 30px rgba(218, 165, 32, 0.3);
+            position: relative;
+        }
+
+        .game-header::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border: 2px solid rgba(218, 165, 32, 0.4);
+            border-radius: 16px;
+            pointer-events: none;
+        }
+
+        .game-header::after {
+            content: '🏛️ ⚔️ 🏛️';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #f5f5dc, #fff);
+            padding: 5px 20px;
+            border-radius: 15px;
+            border: 2px solid #daa520;
+            font-size: 1.2rem;
+        }
+
+        .game-title {
+            font-family: 'Trajan Pro', 'Cinzel Decorative', serif;
+            font-size: 3.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #b8860b, #daa520, #ffd700, #daa520, #b8860b);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 12px;
+            animation: goldShimmer 4s ease-in-out infinite;
+            letter-spacing: 2px;
+        }
+
+        @keyframes goldShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .game-subtitle {
+            font-size: 1.4rem;
+            color: #8b4513;
+            font-style: italic;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .game-era {
+            font-size: 1rem;
+            color: #cd853f;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .main-game-area {
+            display: flex;
+            gap: 30px;
+            max-width: 1700px;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .map-container {
+            flex: 1;
+            min-width: 800px;
+            max-width: 1000px;
+        }
+
+        .ancient-world-map {
+            position: relative;
+            width: 100%;
+            height: 750px;
+            background: 
+                linear-gradient(135deg, #87ceeb 0%, #4682b4 25%, #daa520 50%, #8fbc8f 75%, #f5deb3 100%),
+                radial-gradient(circle at 30% 70%, rgba(139, 69, 19, 0.3) 0%, transparent 60%);
+            border: 6px solid #b8860b;
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.4),
+                inset 0 2px 0 rgba(255, 255, 255, 0.2),
+                0 0 40px rgba(218, 165, 32, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ancient-world-map::before {
+            content: 'THE KNOWN WORLD • 336 BCE';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-family: 'Trajan Pro', serif;
+            font-size: 1.3rem;
+            color: #8b4513;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 2px solid #daa520;
+        }
+
+        .territory {
+            position: absolute;
+            border: 3px solid #8b4513;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(245, 245, 220, 0.9);
+            backdrop-filter: blur(5px);
+            color: #8b4513;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .territory:hover {
+            transform: scale(1.08);
+            z-index: 20;
+            box-shadow: 0 8px 30px rgba(218, 165, 32, 0.6);
+            border-color: #daa520;
+        }
+
+        .territory-name {
+            font-size: 10px;
+            text-align: center;
+            margin-bottom: 4px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .territory-income {
+            font-size: 9px;
+            color: #b8860b;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .territory-loyalty {
+            font-size: 8px;
+            color: #cd853f;
+            opacity: 0.9;
+        }
+
+        /* Faction Colors - Ancient World Themed */
+        .macedon { 
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.9), rgba(218, 165, 32, 0.9)); 
+            border-color: #daa520; 
+            color: #8b4513;
+        }
+        .persia { 
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.9), rgba(75, 0, 130, 0.9)); 
+            border-color: #8a2be2; 
+            color: #fff;
+        }
+        .greece { 
+            background: linear-gradient(135deg, rgba(70, 130, 180, 0.9), rgba(100, 149, 237, 0.9)); 
+            border-color: #4682b4; 
+            color: #fff;
+        }
+        .egypt { 
+            background: linear-gradient(135deg, rgba(255, 140, 0, 0.9), rgba(255, 165, 0, 0.9)); 
+            border-color: #ff8c00; 
+            color: #8b4513;
+        }
+        .india { 
+            background: linear-gradient(135deg, rgba(255, 20, 147, 0.9), rgba(199, 21, 133, 0.9)); 
+            border-color: #ff1493; 
+            color: #fff;
+        }
+        .scythia { 
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.9), rgba(0, 100, 0, 0.9)); 
+            border-color: #228b22; 
+            color: #fff;
+        }
+        .neutral { 
+            background: linear-gradient(135deg, rgba(245, 245, 220, 0.9), rgba(255, 248, 220, 0.9)); 
+            border-color: #daa520; 
+            color: #8b4513;
+        }
+
+        .side-panel {
+            width: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .faction-panel {
+            background: 
+                linear-gradient(135deg, rgba(245, 245, 220, 0.95), rgba(255, 255, 255, 0.9)),
+                linear-gradient(45deg, rgba(218, 165, 32, 0.1), rgba(184, 134, 11, 0.1));
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 25px;
+            border: 3px solid #cd853f;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .faction-panel::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            border: 1px solid rgba(218, 165, 32, 0.3);
+            border-radius: 15px;
+            pointer-events: none;
+        }
+
+        .faction-panel.active {
+            border-color: #daa520;
+            box-shadow: 0 0 35px rgba(218, 165, 32, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .faction-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(218, 165, 32, 0.4);
+        }
+
+        .faction-icon {
+            font-size: 3rem;
+            margin-right: 18px;
+            filter: drop-shadow(3px 3px 6px rgba(0, 0, 0, 0.3));
+        }
+
+        .faction-name {
+            font-family: 'Trajan Pro', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #8b4513;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+        }
+
+        .faction-subtitle {
+            font-size: 0.95rem;
+            color: #cd853f;
+            font-style: italic;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .faction-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(218, 165, 32, 0.3);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            color: #8b4513;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #b8860b;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .turn-counter {
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #8b4513;
+            background: 
+                linear-gradient(135deg, rgba(245, 245, 220, 0.9), rgba(255, 255, 255, 0.8)),
+                linear-gradient(45deg, rgba(218, 165, 32, 0.1), rgba(184, 134, 11, 0.1));
+            padding: 18px;
+            border-radius: 15px;
+            border: 3px solid #daa520;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .alexander-status {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+            background: 
+                linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(218, 165, 32, 0.3)),
+                linear-gradient(45deg, rgba(245, 245, 220, 0.9), rgba(255, 255, 255, 0.8));
+            padding: 18px;
+            border-radius: 15px;
+            border: 3px solid #b8860b;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .status-container {
+            text-align: center;
+            flex: 1;
+            margin: 0 12px;
+        }
+
+        .status-label {
+            font-size: 1rem;
+            color: #8b4513;
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .status-bar {
+            width: 140px;
+            height: 20px;
+            background: linear-gradient(135deg, #8b4513, #654321);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 10px auto;
+            border: 2px solid #b8860b;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .status-fill {
+            height: 100%;
+            transition: width 0.6s ease;
+            border-radius: 10px;
+        }
+
+        .loyalty-fill { 
+            background: linear-gradient(90deg, #dc143c, #ff4500, #ffd700, #32cd32);
+            box-shadow: 0 0 12px rgba(50, 205, 50, 0.5);
+        }
+        .distance-fill { 
+            background: linear-gradient(90deg, #32cd32, #ffd700, #ff4500, #dc143c);
+            box-shadow: 0 0 12px rgba(220, 20, 60, 0.5);
+        }
+        .alexander-health-fill { 
+            background: linear-gradient(90deg, #32cd32, #90ee90, #f0f8ff);
+            box-shadow: 0 0 12px rgba(50, 205, 50, 0.5);
+        }
+
+        .status-value {
+            font-size: 0.9rem;
+            color: #8b4513;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 18px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #daa520, #ffd700);
+            color: #8b4513;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 25px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #b8860b;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(218, 165, 32, 0.5);
+            background: linear-gradient(135deg, #ffd700, #ffeb3b);
+        }
+
+        .control-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .action-area {
+            background: 
+                linear-gradient(135deg, rgba(245, 245, 220, 0.95), rgba(255, 255, 255, 0.9)),
+                linear-gradient(45deg, rgba(218, 165, 32, 0.1), rgba(184, 134, 11, 0.1));
+            padding: 25px;
+            border-radius: 18px;
+            margin: 20px 0;
+            border: 3px solid #cd853f;
+            box-shadow: inset 0 3px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-area h3 {
+            color: #8b4513;
+            margin-bottom: 18px;
+            font-family: 'Trajan Pro', serif;
+            text-align: center;
+            font-size: 1.4rem;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, rgba(218, 165, 32, 0.8), rgba(255, 215, 0, 0.8));
+            color: #8b4513;
+            border: 2px solid #b8860b;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.9), rgba(255, 235, 59, 0.9));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(218, 165, 32, 0.4);
+        }
+
+        .message-area {
+            background: 
+                linear-gradient(135deg, rgba(245, 245, 220, 0.95), rgba(255, 255, 255, 0.9)),
+                linear-gradient(45deg, rgba(218, 165, 32, 0.1), rgba(184, 134, 11, 0.1));
+            padding: 25px;
+            border-radius: 18px;
+            margin: 25px 0;
+            min-height: 120px;
+            max-width: 1000px;
+            border-left: 8px solid #daa520;
+            border-right: 3px solid #cd853f;
+            border-top: 3px solid #cd853f;
+            border-bottom: 3px solid #cd853f;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #8b4513;
+            box-shadow: 
+                inset 0 3px 12px rgba(0, 0, 0, 0.2),
+                0 6px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: 
+                linear-gradient(135deg, rgba(245, 245, 220, 0.98), rgba(255, 255, 255, 0.95)),
+                linear-gradient(45deg, rgba(218, 165, 32, 0.1), rgba(184, 134, 11, 0.1));
+            backdrop-filter: blur(20px);
+            border: 4px solid #daa520;
+            border-radius: 25px;
+            padding: 35px;
+            max-width: 550px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        .popup-content {
+            text-align: center;
+        }
+
+        .popup-title {
+            font-family: 'Trajan Pro', serif;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+            color: #8b4513;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+        }
+
+        .popup-message {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            color: #8b4513;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        /* Units Display */
+        .units-display {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 2px solid rgba(218, 165, 32, 0.4);
+        }
+
+        .units-label {
+            font-size: 1rem;
+            color: #8b4513;
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .unit-tokens {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .unit-token {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid #daa520;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(245, 245, 220, 0.9), rgba(218, 165, 32, 0.3));
+            color: #8b4513;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .unit-token:hover {
+            transform: scale(1.3);
+            box-shadow: 0 6px 25px rgba(218, 165, 32, 0.6);
+        }
+
+        /* Responsive design */
+        @media (max-width: 1500px) {
+            .main-game-area {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .side-panel {
+                width: 100%;
+                max-width: 1000px;
+            }
+
+            .faction-stats {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .game-title {
+                font-size: 2.2rem;
+            }
+            
+            .faction-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .territory {
+                font-size: 9px;
+            }
+
+            .map-container {
+                min-width: 100%;
+            }
+
+            .ancient-world-map {
+                height: 600px;
+            }
+
+            .side-panel {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .alexander-status {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .status-container {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1 class="game-title">ALEXANDER THE GREAT</h1>
+            <p class="game-subtitle">Conquest of the Known World</p>
+            <p class="game-era">Ancient Strategic Warfare • 336-323 BCE</p>
+        </div>
+
+        <div class="turn-counter">
+            Turn <span id="turnNumber">1</span> - <span id="currentFactionName">KINGDOM OF MACEDON</span> Campaign
+        </div>
+
+        <div class="alexander-status">
+            <div class="status-container">
+                <div class="status-label">Empire Loyalty</div>
+                <div class="status-bar">
+                    <div class="status-fill loyalty-fill" id="loyaltyMeter" style="width: 80%"></div>
+                </div>
+                <div class="status-value" id="loyaltyValue">4.0/5</div>
+            </div>
+            <div class="status-container">
+                <div class="status-label">Distance from Macedon</div>
+                <div class="status-bar">
+                    <div class="status-fill distance-fill" id="distanceMeter" style="width: 27%"></div>
+                </div>
+                <div class="status-value" id="distanceValue">8 territories</div>
+            </div>
+            <div class="status-container">
+                <div class="status-label">Alexander's Status</div>
+                <div class="status-bar">
+                    <div class="status-fill alexander-health-fill" id="alexanderHealthMeter" style="width: 100%"></div>
+                </div>
+                <div class="status-value" id="alexanderHealthValue">Alive & Leading</div>
+            </div>
+        </div>
+
+        <div class="main-game-area">
+            <div class="map-container">
+                <div class="ancient-world-map" id="ancientWorldMap">
+                    <!-- Territories will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="faction-panel active macedon" id="macedonPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">👑</div>
+                        <div>
+                            <div class="faction-name">KINGDOM OF MACEDON</div>
+                            <div class="faction-subtitle">Elite Army • Rapid Conquest</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">💰 Treasury:</span>
+                            <span class="stat-value" id="macedonTalents">25 Talents</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏛️ Territories:</span>
+                            <span class="stat-value" id="macedonTerritories">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">👥 Loyalty:</span>
+                            <span class="stat-value" id="macedonLoyalty">5</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">⚔️ Army Size:</span>
+                            <span class="stat-value" id="macedonUnits">12</span>
+                        </div>
+                    </div>
+                    <div class="units-display">
+                        <div class="units-label">Elite Forces:</div>
+                        <div class="unit-tokens" id="macedonUnitTokens">
+                            <div class="unit-token" title="Companion Cavalry">CC</div>
+                            <div class="unit-token" title="Companion Cavalry">CC</div>
+                            <div class="unit-token" title="Companion Cavalry">CC</div>
+                            <div class="unit-token" title="Hypaspists">Hyp</div>
+                            <div class="unit-token" title="Hypaspists">Hyp</div>
+                            <div class="unit-token" title="Phalanx">Pha</div>
+                            <div class="unit-token" title="Phalanx">Pha</div>
+                            <div class="unit-token" title="Phalanx">Pha</div>
+                            <div class="unit-token" title="Phalanx">Pha</div>
+                            <div class="unit-token" title="Archers">Arc</div>
+                            <div class="unit-token" title="Archers">Arc</div>
+                            <div class="unit-token" title="Alexander">Alex</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel persia" id="persiaPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">🦁</div>
+                        <div>
+                            <div class="faction-name">PERSIAN EMPIRE</div>
+                            <div class="faction-subtitle">Vast Resources • Administrative Power</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">💰 Treasury:</span>
+                            <span class="stat-value" id="persiaTalents">75 Talents</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏛️ Territories:</span>
+                            <span class="stat-value" id="persiaTerritories">25</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">👥 Loyalty:</span>
+                            <span class="stat-value" id="persiaLoyalty">4</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">⚔️ Army Size:</span>
+                            <span class="stat-value" id="persiaUnits">35</span>
+                        </div>
+                    </div>
+                    <div class="units-display">
+                        <div class="units-label">Imperial Forces:</div>
+                        <div class="unit-tokens" id="persiaUnitTokens">
+                            <div class="unit-token" title="Heavy Cavalry">HC</div>
+                            <div class="unit-token" title="Heavy Cavalry">HC</div>
+                            <div class="unit-token" title="Heavy Cavalry">HC</div>
+                            <div class="unit-token" title="Immortal Guard">IG</div>
+                            <div class="unit-token" title="Immortal Guard">IG</div>
+                            <div class="unit-token" title="Archers">Arc</div>
+                            <div class="unit-token" title="Archers">Arc</div>
+                            <div class="unit-token" title="Darius">Dar</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel greece" id="greecePanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">🏛️</div>
+                        <div>
+                            <div class="faction-name">GREEK CITY-STATES</div>
+                            <div class="faction-subtitle">Naval Power • Democratic Unity</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">💰 Treasury:</span>
+                            <span class="stat-value" id="greeceTalents">45 Talents</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏛️ Territories:</span>
+                            <span class="stat-value" id="greeceTerritories">12</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">👥 Loyalty:</span>
+                            <span class="stat-value" id="greeceLoyalty">3</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">⚔️ Army Size:</span>
+                            <span class="stat-value" id="greeceUnits">23</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel egypt" id="egyptPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">🐪</div>
+                        <div>
+                            <div class="faction-name">EGYPTIAN SATRAPS</div>
+                            <div class="faction-subtitle">Nile Wealth • Ancient Wisdom</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">💰 Treasury:</span>
+                            <span class="stat-value" id="egyptTalents">35 Talents</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏛️ Territories:</span>
+                            <span class="stat-value" id="egyptTerritories">6</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">👥 Loyalty:</span>
+                            <span class="stat-value" id="egyptLoyalty">3</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">⚔️ Army Size:</span>
+                            <span class="stat-value" id="egyptUnits">13</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel india" id="indiaPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">🐘</div>
+                        <div>
+                            <div class="faction-name">INDIAN KINGDOMS</div>
+                            <div class="faction-subtitle">War Elephants • Monsoon Power</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">💰 Treasury:</span>
+                            <span class="stat-value" id="indiaTalents">40 Talents</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏛️ Territories:</span>
+                            <span class="stat-value" id="indiaTerritories">12</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">👥 Loyalty:</span>
+                            <span class="stat-value" id="indiaLoyalty">2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">⚔️ Army Size:</span>
+                            <span class="stat-value" id="indiaUnits">24</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel scythia" id="scythiaPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">🏹</div>
+                        <div>
+                            <div class="faction-name">SCYTHIAN TRIBES</div>
+                            <div class="faction-subtitle">Mobile Cavalry • Endless Steppes</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">💰 Treasury:</span>
+                            <span class="stat-value" id="scythiaTalents">15 Talents</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏛️ Territories:</span>
+                            <span class="stat-value" id="scythiaTerritories">15</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">👥 Loyalty:</span>
+                            <span class="stat-value" id="scythiaLoyalty">2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">⚔️ Army Size:</span>
+                            <span class="stat-value" id="scythiaUnits">26</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-area">
+            <h3 id="actionPointsDisplay">Strategic Commands (3 AP remaining)</h3>
+            <div class="action-buttons">
+                <button class="action-btn" onclick="recruitUnits()">⚔️ Recruit Units</button>
+                <button class="action-btn" onclick="launchCampaign()">🏹 Launch Campaign</button>
+                <button class="action-btn" onclick="buildStructures()">🏗️ Build Structures</button>
+                <button class="action-btn" onclick="diplomacy()">🤝 Diplomacy</button>
+                <button class="action-btn" onclick="culturalPolicy()">📜 Cultural Policy</button>
+                <button class="action-btn" onclick="specialAction()">✨ Special Action</button>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <button class="control-btn" onclick="endTurn()">⏭️ End Turn</button>
+            <button class="control-btn" onclick="showRules()">📋 Rules</button>
+            <button class="control-btn" onclick="showMap()">🗺️ Map Info</button>
+            <button class="control-btn" onclick="resetGame()">🔄 New Campaign</button>
+        </div>
+
+        <div class="message-area" id="messageArea">
+            The year is 336 BCE. Young Alexander has just ascended to the Macedonian throne after his father Philip's assassination. The Greek city-states test his resolve, the Persian Empire awaits across the Hellespont, and the fate of the ancient world hangs in the balance. Will you forge an empire that spans from Greece to India, or will you lead the resistance against Macedonian ambition?
+        </div>
+
+        <!-- Event Popup -->
+        <div class="event-popup" id="eventPopup">
+            <div class="popup-content">
+                <h2 class="popup-title" id="popupTitle">Event Title</h2>
+                <p class="popup-message" id="popupMessage">Event message goes here...</p>
+                <div class="popup-buttons">
+                    <button class="control-btn" onclick="closePopup()">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // GLOBAL GAME STATE
+        var gameState = {
+            currentTurn: 1,
+            currentFaction: 'macedon',
+            actionPoints: 3,
+            alexanderAlive: true,
+            alexanderDistance: 8, // territories from Macedon
+            averageLoyalty: 4,
+            factions: {
+                macedon: {
+                    talents: 25,
+                    territories: ['pella', 'aegae', 'amphipolis', 'olynthos', 'methone', 'potidaea', 'chalkidike', 'therme'],
+                    loyalty: 5,
+                    units: {
+                        'Companion Cavalry': 3,
+                        'Hypaspists': 2,
+                        'Phalanx': 4,
+                        'Archers': 2,
+                        'Generals': 1
+                    },
+                    buildings: [],
+                    totalTerritories: 8
+                },
+                persia: {
+                    talents: 75,
+                    territories: ['persepolis', 'babylon', 'susa', 'ecbatana', 'bactra', 'samarkand'],
+                    loyalty: 4,
+                    units: {
+                        'Heavy Cavalry': 8,
+                        'Archers': 12,
+                        'Slingers': 8,
+                        'Immortal Guard': 4,
+                        'Generals': 3
+                    },
+                    buildings: [],
+                    totalTerritories: 25
+                },
+                greece: {
+                    talents: 45,
+                    territories: ['athens', 'sparta', 'thebes', 'corinth', 'argos', 'megara', 'delphi', 'olympia'],
+                    loyalty: 3,
+                    units: {
+                        'Phalanx': 6,
+                        'Light Cavalry': 3,
+                        'Triremes': 8,
+                        'Archers': 4,
+                        'Generals': 2
+                    },
+                    buildings: [],
+                    totalTerritories: 12
+                },
+                egypt: {
+                    talents: 35,
+                    territories: ['memphis', 'alexandria', 'thebes-egypt', 'aswan'],
+                    loyalty: 3,
+                    units: {
+                        'Phalanx': 4,
+                        'Archers': 6,
+                        'Light Cavalry': 2,
+                        'Generals': 1
+                    },
+                    buildings: [],
+                    totalTerritories: 6
+                },
+                india: {
+                    talents: 40,
+                    territories: ['taxila', 'gandhara', 'mathura', 'pataliputra'],
+                    loyalty: 2,
+                    units: {
+                        'War Elephants': 6,
+                        'Heavy Cavalry': 4,
+                        'Archers': 8,
+                        'Phalanx': 4,
+                        'Generals': 2
+                    },
+                    buildings: [],
+                    totalTerritories: 12
+                },
+                scythia: {
+                    talents: 15,
+                    territories: ['chersonesos', 'tanais', 'olbia'],
+                    loyalty: 2,
+                    units: {
+                        'Light Cavalry': 10,
+                        'Archers': 8,
+                        'Slingers': 6,
+                        'Generals': 2
+                    },
+                    buildings: [],
+                    totalTerritories: 15
+                }
+            }
+        };
+
+        // TERRITORY DEFINITIONS - Ancient World Map
+        var territories = {
+            // Macedon Core
+            'pella': { name: 'Pella', income: 4, x: 320, y: 180, controller: 'macedon', type: 'capital', loyalty: 5 },
+            'aegae': { name: 'Aegae', income: 3, x: 300, y: 200, controller: 'macedon', type: 'royal', loyalty: 5 },
+            'amphipolis': { name: 'Amphipolis', income: 3, x: 340, y: 170, controller: 'macedon', type: 'fortress', loyalty: 5 },
+            'olynthos': { name: 'Olynthos', income: 2, x: 330, y: 190, controller: 'macedon', type: 'city', loyalty: 4 },
+            'methone': { name: 'Methone', income: 2, x: 280, y: 210, controller: 'macedon', type: 'port', loyalty: 4 },
+            'potidaea': { name: 'Potidaea', income: 2, x: 310, y: 200, controller: 'macedon', type: 'city', loyalty: 4 },
+            'chalkidike': { name: 'Chalkidike', income: 2, x: 350, y: 180, controller: 'macedon', type: 'region', loyalty: 4 },
+            'therme': { name: 'Therme', income: 2, x: 290, y: 190, controller: 'macedon', type: 'port', loyalty: 4 },
+
+            // Greek City-States
+            'athens': { name: 'Athens', income: 6, x: 280, y: 250, controller: 'greece', type: 'capital', loyalty: 3 },
+            'sparta': { name: 'Sparta', income: 4, x: 260, y: 290, controller: 'greece', type: 'capital', loyalty: 4 },
+            'thebes': { name: 'Thebes', income: 4, x: 270, y: 240, controller: 'greece', type: 'city', loyalty: 3 },
+            'corinth': { name: 'Corinth', income: 5, x: 250, y: 260, controller: 'greece', type: 'port', loyalty: 3 },
+            'argos': { name: 'Argos', income: 3, x: 250, y: 280, controller: 'greece', type: 'city', loyalty: 3 },
+            'megara': { name: 'Megara', income: 2, x: 270, y: 250, controller: 'greece', type: 'city', loyalty: 3 },
+            'delphi': { name: 'Delphi', income: 3, x: 260, y: 230, controller: 'greece', type: 'sanctuary', loyalty: 4 },
+            'olympia': { name: 'Olympia', income: 3, x: 240, y: 270, controller: 'greece', type: 'sanctuary', loyalty: 4 },
+
+            // Persian Empire Core
+            'persepolis': { name: 'Persepolis', income: 8, x: 500, y: 340, controller: 'persia', type: 'capital', loyalty: 4 },
+            'babylon': { name: 'Babylon', income: 6, x: 450, y: 320, controller: 'persia', type: 'royal', loyalty: 4 },
+            'susa': { name: 'Susa', income: 5, x: 480, y: 330, controller: 'persia', type: 'royal', loyalty: 4 },
+            'ecbatana': { name: 'Ecbatana', income: 5, x: 470, y: 300, controller: 'persia', type: 'royal', loyalty: 4 },
+            'bactra': { name: 'Bactra', income: 4, x: 580, y: 280, controller: 'persia', type: 'satrapy', loyalty: 3 },
+            'samarkand': { name: 'Samarkand', income: 4, x: 600, y: 260, controller: 'persia', type: 'satrapy', loyalty: 3 },
+
+            // Egyptian Territories
+            'memphis': { name: 'Memphis', income: 6, x: 380, y: 380, controller: 'egypt', type: 'capital', loyalty: 3 },
+            'alexandria': { name: 'Alexandria', income: 8, x: 370, y: 370, controller: 'egypt', type: 'port', loyalty: 3 },
+            'thebes-egypt': { name: 'Thebes', income: 4, x: 390, y: 400, controller: 'egypt', type: 'city', loyalty: 3 },
+            'aswan': { name: 'Aswan', income: 3, x: 400, y: 420, controller: 'egypt', type: 'fortress', loyalty: 3 },
+
+            // Indian Kingdoms
+            'taxila': { name: 'Taxila', income: 5, x: 650, y: 340, controller: 'india', type: 'capital', loyalty: 2 },
+            'gandhara': { name: 'Gandhara', income: 4, x: 640, y: 330, controller: 'india', type: 'kingdom', loyalty: 2 },
+            'mathura': { name: 'Mathura', income: 4, x: 680, y: 360, controller: 'india', type: 'city', loyalty: 2 },
+            'pataliputra': { name: 'Pataliputra', income: 6, x: 720, y: 380, controller: 'india', type: 'capital', loyalty: 2 },
+
+            // Scythian Territories
+            'chersonesos': { name: 'Chersonesos', income: 2, x: 380, y: 150, controller: 'scythia', type: 'port', loyalty: 2 },
+            'tanais': { name: 'Tanais', income: 2, x: 420, y: 140, controller: 'scythia', type: 'trading', loyalty: 2 },
+            'olbia': { name: 'Olbia', income: 3, x: 360, y: 160, controller: 'scythia', type: 'port', loyalty: 2 },
+
+            // Neutral Territories
+            'troy': { name: 'Troy', income: 3, x: 340, y: 250, controller: 'neutral', type: 'legendary', loyalty: 1 },
+            'ephesos': { name: 'Ephesos', income: 5, x: 350, y: 270, controller: 'neutral', type: 'port', loyalty: 1 },
+            'miletos': { name: 'Miletos', income: 4, x: 360, y: 280, controller: 'neutral', type: 'port', loyalty: 1 },
+            'halicarnassos': { name: 'Halicarnassos', income: 3, x: 340, y: 290, controller: 'neutral', type: 'city', loyalty: 1 },
+            'sardis': { name: 'Sardis', income: 4, x: 360, y: 260, controller: 'neutral', type: 'satrapy', loyalty: 1 },
+            'gordion': { name: 'Gordion', income: 3, x: 380, y: 250, controller: 'neutral', type: 'city', loyalty: 1 }
+        };
+
+        // UTILITY FUNCTIONS
+        function updateMessage(message) {
+            document.getElementById('messageArea').textContent = message;
+        }
+
+        function updateActionPointsDisplay() {
+            var display = document.getElementById('actionPointsDisplay');
+            if (display) {
+                display.textContent = 'Strategic Commands (' + gameState.actionPoints + ' AP remaining)';
+            }
+        }
+
+        function getFactionDisplayName(faction) {
+            var names = {
+                'macedon': 'KINGDOM OF MACEDON',
+                'persia': 'PERSIAN EMPIRE',
+                'greece': 'GREEK CITY-STATES',
+                'egypt': 'EGYPTIAN SATRAPS',
+                'india': 'INDIAN KINGDOMS',
+                'scythia': 'SCYTHIAN TRIBES'
+            };
+            return names[faction] || faction.toUpperCase();
+        }
+
+        function getFactionIcon(faction) {
+            var icons = {
+                'macedon': '👑',
+                'persia': '🦁',
+                'greece': '🏛️',
+                'egypt': '🐪',
+                'india': '🐘',
+                'scythia': '🏹'
+            };
+            return icons[faction] || '⚔️';
+        }
+
+        // MAIN GAME FUNCTIONS
+        function recruitUnits() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining! End your turn to continue.");
+                return;
+            }
+
+            var faction = gameState.factions[gameState.currentFaction];
+            var unitCosts = {
+                'macedon': { 'Phalanx': 4, 'Hypaspists': 5, 'Companion Cavalry': 6, 'Archers': 2 },
+                'persia': { 'Heavy Cavalry': 5, 'Archers': 2, 'Immortal Guard': 7, 'Slingers': 1 },
+                'greece': { 'Phalanx': 4, 'Triremes': 8, 'Light Cavalry': 3, 'Archers': 2 },
+                'egypt': { 'Phalanx': 4, 'Archers': 2, 'Light Cavalry': 3, 'Siege Engines': 6 },
+                'india': { 'War Elephants': 8, 'Heavy Cavalry': 5, 'Archers': 2, 'Phalanx': 4 },
+                'scythia': { 'Light Cavalry': 3, 'Archers': 2, 'Slingers': 1 }
+            };
+
+            var availableUnits = unitCosts[gameState.currentFaction];
+            var unitOptions = '';
+            for (var unit in availableUnits) {
+                var cost = availableUnits[unit];
+                if (faction.talents >= cost) {
+                    unitOptions += unit + ' (' + cost + ' Talents) - ';
+                }
+            }
+
+            if (unitOptions === '') {
+                updateMessage("Insufficient talents to recruit any units! Control more territories for greater income.");
+                return;
+            }
+
+            var unitType = prompt('Available units: ' + unitOptions + '\nEnter unit type to recruit:');
+            if (unitType && availableUnits[unitType]) {
+                var cost = availableUnits[unitType];
+                faction.talents -= cost;
+                
+                if (!faction.units[unitType]) {
+                    faction.units[unitType] = 0;
+                }
+                faction.units[unitType]++;
+                
+                gameState.actionPoints--;
+                updateMessage('Recruited ' + unitType + ' for ' + cost + ' Talents. Unit added to your forces and ready for deployment.');
+                updateUI();
+                updateActionPointsDisplay();
+            }
+        }
+
+        function launchCampaign() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining! End your turn to continue.");
+                return;
+            }
+
+            var faction = gameState.currentFaction;
+            var factionData = gameState.factions[faction];
+            var campaigns = [];
+
+            if (faction === 'macedon') {
+                campaigns = [
+                    'Anatolia Campaign - 8 Talents',
+                    'Syrian Expedition - 10 Talents',
+                    'Egyptian Conquest - 12 Talents',
+                    'Persian Heartland - 15 Talents'
+                ];
+            } else if (faction === 'persia') {
+                campaigns = [
+                    'Reconquest of Anatolia - 10 Talents',
+                    'Greek Invasion - 12 Talents',
+                    'Scythian Expedition - 8 Talents',
+                    'Satrap Suppression - 6 Talents'
+                ];
+            } else {
+                campaigns = [
+                    'Defensive Campaign - 5 Talents',
+                    'Regional Conquest - 8 Talents',
+                    'Naval Expedition - 10 Talents',
+                    'Alliance War - 12 Talents'
+                ];
+            }
+
+            var campaign = prompt('Choose campaign:\n' + campaigns.join('\n') + '\n\nEnter campaign name:');
+            if (campaign) {
+                executeCampaign(campaign);
+                gameState.actionPoints--;
+                updateUI();
+                updateActionPointsDisplay();
+            }
+        }
+
+        function executeCampaign(campaign) {
+            var faction = gameState.factions[gameState.currentFaction];
+            var isMacedon = gameState.currentFaction === 'macedon';
+
+            if (campaign.indexOf('Anatolia') !== -1) {
+                var cost = isMacedon ? 8 : 10;
+                if (faction.talents >= cost) {
+                    faction.talents -= cost;
+                    var success = Math.random() > 0.3;
+                    if (success) {
+                        var gained = Math.floor(Math.random() * 3) + 2;
+                        faction.totalTerritories += gained;
+                        var plunder = Math.floor(Math.random() * 1000) + 500;
+                        faction.talents += plunder;
+                        
+                        if (isMacedon) {
+                            gameState.alexanderDistance += gained;
+                            gameState.averageLoyalty = Math.max(1, gameState.averageLoyalty - 0.5);
+                        }
+                        
+                        updateMessage('Successful Anatolian campaign! Gained ' + gained + ' territories and ' + plunder + ' Talents in plunder.');
+                    } else {
+                        updateMessage("Campaign failed due to fierce resistance. Forces retreat to regroup.");
+                    }
+                } else {
+                    updateMessage("Insufficient talents for this campaign!");
+                }
+            } else if (campaign.indexOf('Egyptian') !== -1) {
+                var cost = 12;
+                if (faction.talents >= cost) {
+                    faction.talents -= cost;
+                    var success = Math.random() > 0.4;
+                    if (success) {
+                        var plunder = Math.floor(Math.random() * 2000) + 1000;
+                        faction.talents += plunder;
+                        faction.totalTerritories += 2;
+                        
+                        if (isMacedon) {
+                            gameState.alexanderDistance += 8; // Far from Macedon
+                            gameState.averageLoyalty = Math.max(1, gameState.averageLoyalty - 1);
+                        }
+                        
+                        updateMessage('Egyptian conquest successful! The wealth of the Pharaohs flows into your treasury: ' + plunder + ' Talents gained!');
+                    } else {
+                        updateMessage("Egyptian campaign stalled. The Nile Delta proves difficult to conquer.");
+                    }
+                }
+            } else if (campaign.indexOf('Persian Heartland') !== -1) {
+                var cost = 15;
+                if (faction.talents >= cost && isMacedon) {
+                    faction.talents -= cost;
+                    var success = Math.random() > 0.5; // Difficult campaign
+                    if (success) {
+                        var plunder = Math.floor(Math.random() * 3000) + 2000;
+                        faction.talents += plunder;
+                        faction.totalTerritories += 4;
+                        gameState.alexanderDistance += 12; // Very far from Macedon
+                        gameState.averageLoyalty = Math.max(1, gameState.averageLoyalty - 1.5);
+                        
+                        updateMessage('The Persian heartland falls! Persepolis burns and vast treasures are seized: ' + plunder + ' Talents! But the army grows distant from home...');
+                    } else {
+                        updateMessage("The Persian heartland resists fiercely. Darius rallies his forces and the campaign stalls.");
+                    }
+                }
+            } else {
+                // Generic campaign
+                var cost = 6;
+                if (faction.talents >= cost) {
+                    faction.talents -= cost;
+                    var success = Math.random() > 0.4;
+                    if (success) {
+                        var gained = Math.floor(Math.random() * 2) + 1;
+                        faction.totalTerritories += gained;
+                        updateMessage('Campaign successful! Gained ' + gained + ' territories.');
+                    } else {
+                        updateMessage("Campaign encountered setbacks. No territorial gains this turn.");
+                    }
+                }
+            }
+        }
+
+        function buildStructures() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining! End your turn to continue.");
+                return;
+            }
+
+            var faction = gameState.factions[gameState.currentFaction];
+            var structures = {
+                'Fortress': { cost: 8, effect: '+2 defense to territory' },
+                'Harbor': { cost: 10, effect: '+3 Talents income from trade' },
+                'Academy': { cost: 12, effect: '+1 to all unit recruitment' },
+                'Treasury': { cost: 6, effect: '+2 Talents income per turn' },
+                'Siege Works': { cost: 15, effect: 'Can besiege fortified cities' },
+                'Monument': { cost: 20, effect: '+1 loyalty in all territories' }
+            };
+
+            var buildingOptions = '';
+            for (var structure in structures) {
+                var cost = structures[structure].cost;
+                if (faction.talents >= cost) {
+                    buildingOptions += structure + ' (' + cost + ' Talents) - ' + structures[structure].effect + '\n';
+                }
+            }
+
+            if (buildingOptions === '') {
+                updateMessage("Insufficient talents to build any structures!");
+                return;
+            }
+
+            var building = prompt('Available structures:\n' + buildingOptions + '\nEnter structure name:');
+            if (building && structures[building]) {
+                var cost = structures[building].cost;
+                faction.talents -= cost;
+                
+                if (!faction.buildings) {
+                    faction.buildings = [];
+                }
+                faction.buildings.push(building.toLowerCase().replace(' ', ''));
+                
+                if (building === 'Monument') {
+                    gameState.averageLoyalty = Math.min(5, gameState.averageLoyalty + 1);
+                }
+                
+                gameState.actionPoints--;
+                updateMessage('Built ' + building + ' for ' + cost + ' Talents. ' + structures[building].effect);
+                updateUI();
+                updateActionPointsDisplay();
+            }
+        }
+
+        function diplomacy() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining! End your turn to continue.");
+                return;
+            }
+
+            var otherFactions = Object.keys(gameState.factions).filter(f => f !== gameState.currentFaction);
+            var actions = [
+                'Form Alliance - 5 Talents',
+                'Demand Tribute - 3 Talents',
+                'Trade Agreement - 2 Talents',
+                'Marriage Alliance - 8 Talents',
+                'Hostage Exchange - 4 Talents'
+            ];
+
+            var diplomacyChoice = prompt('Diplomatic Actions:\n' + actions.join('\n') + '\n\nWith factions: ' + otherFactions.join(', ') + '\n\nEnter action:');
+            
+            if (diplomacyChoice) {
+                var faction = gameState.factions[gameState.currentFaction];
+                var success = Math.random() > 0.4;
+                
+                if (diplomacyChoice.indexOf('Alliance') !== -1) {
+                    if (faction.talents >= 5) {
+                        faction.talents -= 5;
+                        if (success) {
+                            updateMessage('Alliance successfully negotiated! Your diplomatic influence grows across the ancient world.');
+                        } else {
+                            updateMessage('Alliance proposal rejected. The other faction remains suspicious of your intentions.');
+                        }
+                    }
+                } else if (diplomacyChoice.indexOf('Tribute') !== -1) {
+                    if (faction.talents >= 3) {
+                        faction.talents -= 3;
+                        if (success) {
+                            var tribute = Math.floor(Math.random() * 5) + 2;
+                            faction.talents += tribute;
+                            updateMessage('Tribute demand accepted! You receive ' + tribute + ' Talents per turn from the weaker faction.');
+                        } else {
+                            updateMessage('Tribute demand refused! The target faction prepares for war instead.');
+                        }
+                    }
+                } else if (diplomacyChoice.indexOf('Trade') !== -1) {
+                    if (faction.talents >= 2) {
+                        faction.talents -= 2;
+                        if (success) {
+                            faction.talents += 3;
+                            updateMessage('Trade agreement established! Merchants and caravans bring prosperity: +3 Talents gained.');
+                        } else {
+                            updateMessage('Trade negotiations fail due to disagreements over tariffs and routes.');
+                        }
+                    }
+                }
+                
+                gameState.actionPoints--;
+                updateUI();
+                updateActionPointsDisplay();
+            }
+        }
+
+        function culturalPolicy() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining! End your turn to continue.");
+                return;
+            }
+
+            if (gameState.currentFaction !== 'macedon') {
+                updateMessage("Only the Macedonian faction can implement cultural policies!");
+                return;
+            }
+
+            var policies = [
+                'Hellenization - 5 Talents per turn',
+                'Persian Adoption - Free but reduces Macedonian loyalty',
+                'Cultural Tolerance - 2 Talents per turn',
+                'Military Integration - 3 Talents per turn'
+            ];
+
+            var policy = prompt('Alexander\'s Cultural Policies:\n' + policies.join('\n') + '\n\nChoose policy:');
+            var faction = gameState.factions.macedon;
+
+            if (policy && policy.indexOf('Hellenization') !== -1) {
+                if (faction.talents >= 5) {
+                    faction.talents -= 5;
+                    gameState.averageLoyalty = Math.min(5, gameState.averageLoyalty + 1);
+                    updateMessage('Hellenization policy implemented! Greek culture spreads throughout the empire. Loyalty increases but costs are high.');
+                }
+            } else if (policy && policy.indexOf('Adoption') !== -1) {
+                gameState.averageLoyalty = Math.min(5, gameState.averageLoyalty + 1.5);
+                faction.loyalty = Math.max(1, faction.loyalty - 1);
+                updateMessage('Alexander adopts Persian customs! Local populations are pleased but Macedonian veterans grumble about "going native."');
+            } else if (policy && policy.indexOf('Tolerance') !== -1) {
+                if (faction.talents >= 2) {
+                    faction.talents -= 2;
+                    gameState.averageLoyalty = Math.min(5, gameState.averageLoyalty + 0.5);
+                    updateMessage('Cultural tolerance policy adopted. Local customs are respected, gradually winning hearts and minds.');
+                }
+            }
+
+            if (policy) {
+                gameState.actionPoints--;
+                updateUI();
+                updateActionPointsDisplay();
+            }
+        }
+
+        function specialAction() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining! End your turn to continue.");
+                return;
+            }
+
+            var faction = gameState.currentFaction;
+            var factionData = gameState.factions[faction];
+
+            switch (faction) {
+                case 'macedon':
+                    if (gameState.alexanderAlive) {
+                        // Alexander's Great Captain ability
+                        updateMessage("The Great Captain speaks! Alexander's legendary charisma inspires the troops. All Macedonian units gain +2 combat bonus this turn!");
+                        // In a full implementation, this would affect combat calculations
+                    } else {
+                        updateMessage("Without Alexander, the Macedonian empire struggles with succession issues...");
+                    }
+                    break;
+                    
+                case 'persia':
+                    // Satrap System
+                    var loyalSatraps = Math.floor(factionData.totalTerritories * 0.6);
+                    var income = loyalSatraps * 2;
+                    factionData.talents += income;
+                    updateMessage("The Royal Road delivers tribute from loyal satraps! +" + income + " Talents from the vast Persian administrative system.");
+                    break;
+                    
+                case 'greece':
+                    // Olympic Games unity
+                    var greekUnity = Math.floor(Math.random() * 3) + 2;
+                    factionData.loyalty = Math.min(5, factionData.loyalty + 1);
+                    updateMessage("The Olympic Games unite the Greek city-states! Democratic spirit strengthens resistance to tyranny. Loyalty increased.");
+                    break;
+                    
+                case 'egypt':
+                    // Nile Flood bonus
+                    var floodBonus = Math.floor(Math.random() * 8) + 5;
+                    factionData.talents += floodBonus;
+                    updateMessage("The Nile floods bring prosperity! Rich silt fertilizes the land and trade flourishes. +" + floodBonus + " Talents from the gift of the river.");
+                    break;
+                    
+                case 'india':
+                    // Monsoon warfare bonus
+                    var elephantBonus = Math.floor(factionData.units['War Elephants'] || 0) * 2;
+                    factionData.talents += elephantBonus;
+                    updateMessage("The monsoon season favors Indian warfare! War elephants are bred and trained. +" + elephantBonus + " Talents from elephant corps expansion.");
+                    break;
+                    
+                case 'scythia':
+                    // Nomadic mobility
+                    var raidBonus = Math.floor(Math.random() * 6) + 3;
+                    factionData.talents += raidBonus;
+                    updateMessage("Swift horse raids strike settled territories! The steppes provide endless warriors. +" + raidBonus + " Talents from successful raids.");
+                    break;
+            }
+
+            gameState.actionPoints--;
+            updateUI();
+            updateActionPointsDisplay();
+        }
+
+        function endTurn() {
+            // Collect income from territories
+            for (var faction in gameState.factions) {
+                var data = gameState.factions[faction];
+                var baseIncome = data.totalTerritories * 2; // Base income per territory
+                
+                // Apply faction bonuses
+                switch (faction) {
+                    case 'macedon':
+                        baseIncome += Math.floor(data.totalTerritories * 0.5); // Conquest bonus
+                        break;
+                    case 'persia':
+                        baseIncome += Math.floor(data.totalTerritories * 0.8); // Administrative efficiency
+                        break;
+                    case 'greece':
+                        baseIncome += Math.floor(data.totalTerritories * 0.6); // Trade networks
+                        break;
+                    case 'egypt':
+                        baseIncome += Math.floor(data.totalTerritories * 1.2); // Nile wealth
+                        break;
+                    case 'india':
+                        baseIncome += Math.floor(data.totalTerritories * 0.7); // Monsoon agriculture
+                        break;
+                    case 'scythia':
+                        baseIncome += Math.floor(data.totalTerritories * 0.3); // Nomadic economy
+                        break;
+                }
+                
+                data.talents += baseIncome;
+            }
+
+            // Alexander mortality check (if Macedonian)
+            if (gameState.currentFaction === 'macedon' && gameState.alexanderAlive && gameState.currentTurn > 15) {
+                var mortalityRisk = 3; // Base 3%
+                if (gameState.alexanderDistance > 20) mortalityRisk += 2;
+                if (gameState.averageLoyalty < 3) mortalityRisk += 1;
+                
+                if (Math.random() * 100 < mortalityRisk) {
+                    gameState.alexanderAlive = false;
+                    updateMessage("TRAGIC NEWS! Alexander the Great has died! The empire enters succession crisis...");
+                    // Trigger succession mechanics
+                    triggerSuccessionCrisis();
+                }
+            }
+
+            // Check overextension penalties for Macedon
+            if (gameState.currentFaction === 'macedon') {
+                var territories = gameState.factions.macedon.totalTerritories;
+                if (territories > 25) {
+                    // Severe overextension
+                    gameState.averageLoyalty = Math.max(1, gameState.averageLoyalty - 1);
+                    updateMessage("The empire grows too vast! Rebellions stir in distant provinces as Macedonian control weakens...");
+                } else if (territories > 20) {
+                    // Moderate overextension
+                    gameState.averageLoyalty = Math.max(1, gameState.averageLoyalty - 0.5);
+                    updateMessage("The burdens of empire weigh heavily. Distant territories grow restless under Macedonian rule.");
+                }
+            }
+
+            // Move to next faction
+            var factionOrder = ['macedon', 'persia', 'greece', 'egypt', 'india', 'scythia'];
+            var currentIndex = factionOrder.indexOf(gameState.currentFaction);
+            
+            if (currentIndex === factionOrder.length - 1) {
+                gameState.currentTurn++;
+                gameState.currentFaction = factionOrder[0];
+                
+                // Random events every few turns
+                if (gameState.currentTurn % 3 === 0) {
+                    drawEventCard();
+                }
+            } else {
+                gameState.currentFaction = factionOrder[currentIndex + 1];
+            }
+
+            gameState.actionPoints = 3;
+            updateUI();
+            updateActionPointsDisplay();
+            updateMessage(getFactionDisplayName(gameState.currentFaction) + " begins their turn. The fate of the ancient world hangs in the balance. You have 3 Action Points.");
+
+            checkVictoryConditions();
+        }
+
+        function triggerSuccessionCrisis() {
+            if (!gameState.alexanderAlive) {
+                // Split Macedonian empire among Diadochi
+                var macedon = gameState.factions.macedon;
+                macedon.totalTerritories = Math.floor(macedon.totalTerritories / 4); // Major territorial loss
+                macedon.talents = Math.floor(macedon.talents / 2); // Half the treasury
+                gameState.averageLoyalty = 1; // Massive loyalty crisis
+                
+                updateMessage("The Diadochi Wars begin! The empire fragments as Alexander's generals fight for control. Macedonian power is shattered!");
+            }
+        }
+
+        function checkVictoryConditions() {
+            for (var faction in gameState.factions) {
+                var data = gameState.factions[faction];
+                
+                if (faction === 'macedon') {
+                    // Macedonian victory conditions (much harder now)
+                    if (data.totalTerritories >= 35 && gameState.alexanderAlive && gameState.averageLoyalty >= 4) {
+                        showVictory('ALEXANDRIAN EMPIRE TRIUMPHANT! Alexander has conquered the known world and unified it under Macedonian rule. A feat beyond even his historical achievements!');
+                    } else if (data.totalTerritories >= 25 && gameState.alexanderAlive && gameState.averageLoyalty >= 3) {
+                        showVictory('ALEXANDER THE GREAT VICTORIOUS! The Macedonian empire spans from Greece to India, rivaling the historical conquests of the great king!');
+                    }
+                } else {
+                    // Resistance victory conditions
+                    if (data.totalTerritories >= 15 && faction === 'persia') {
+                        showVictory('PERSIAN EMPIRE RESURGENT! Darius has successfully resisted the Macedonian invasion and restored Achaemenid power!');
+                    } else if (data.totalTerritories >= 12 && data.loyalty >= 4) {
+                        showVictory(getFactionDisplayName(faction) + ' VICTORIOUS! Through unity and determination, they have successfully resisted Macedonian expansion!');
+                    }
+                }
+                
+                // Coalition victory
+                var resistanceTotal = 0;
+                var coalitionCount = 0;
+                for (var f in gameState.factions) {
+                    if (f !== 'macedon' && gameState.factions[f].totalTerritories >= 8) {
+                        resistanceTotal += gameState.factions[f].totalTerritories;
+                        coalitionCount++;
+                    }
+                }
+                
+                if (coalitionCount >= 3 && resistanceTotal > gameState.factions.macedon.totalTerritories * 1.5) {
+                    showVictory('COALITION OF THE EAST TRIUMPHANT! The united resistance has successfully contained Macedonian expansion and preserved the independence of the ancient world!');
+                }
+            }
+
+            // Time victory (40 turns)
+            if (gameState.currentTurn >= 40) {
+                var strongest = 'macedon';
+                var highestScore = gameState.factions.macedon.totalTerritories;
+                
+                for (var faction in gameState.factions) {
+                    if (gameState.factions[faction].totalTerritories > highestScore) {
+                        strongest = faction;
+                        highestScore = gameState.factions[faction].totalTerritories;
+                    }
+                }
+                
+                showVictory('TIME VICTORY: ' + getFactionDisplayName(strongest) + ' emerges as the dominant power after 40 years of warfare. History shall remember their name!');
+            }
+        }
+
+        function showVictory(message) {
+            document.getElementById('popupTitle').textContent = 'VICTORY ACHIEVED';
+            document.getElementById('popupMessage').textContent = message;
+            document.getElementById('eventPopup').style.display = 'block';
+        }
+
+        function showRules() {
+            var rules = '⚔️ ALEXANDER THE GREAT: CONQUEST OF THE KNOWN WORLD\n' +
+                'Ancient warfare strategy game (336-323 BCE)\n\n' +
+                '🎯 OBJECTIVE: Conquer the ancient world or resist Macedonian expansion.\n\n' +
+                '👥 FACTIONS:\n' +
+                '👑 KINGDOM OF MACEDON - Elite army, rapid conquest, overextension risks\n' +
+                '🦁 PERSIAN EMPIRE - Vast resources, administrative efficiency, reconquest potential\n' +
+                '🏛️ GREEK CITY-STATES - Naval power, democratic unity, cultural resistance\n' +
+                '🐪 EGYPTIAN SATRAPS - Nile wealth, defensive positions, ancient wisdom\n' +
+                '🐘 INDIAN KINGDOMS - War elephants, monsoon advantages, unified resistance\n' +
+                '🏹 SCYTHIAN TRIBES - Mobile cavalry, harsh terrain, endless raids\n\n' +
+                '🏆 VICTORY CONDITIONS:\n' +
+                'MACEDON: 35 territories + Alexander alive + loyalty 4 (Legendary)\n' +
+                '         25 territories + Alexander alive + loyalty 3 (Historical)\n' +
+                'RESISTANCE: 15 territories (Persian reconquest) OR Coalition control\n\n' +
+                '⚔️ GAMEPLAY:\n' +
+                '• 3 Action Points per turn\n' +
+                '• Recruit units, launch campaigns, build structures\n' +
+                '• Manage loyalty, distance penalties, cultural integration\n' +
+                '• Income from controlled territories and special bonuses\n\n' +
+                '🏛️ HISTORICAL MECHANICS:\n' +
+                '• Alexander mortality risk increases with distance and time\n' +
+                '• Overextension penalties for vast empires\n' +
+                '• Cultural policies affect loyalty and Macedonian support\n' +
+                '• Succession crisis if Alexander dies\n\n' +
+                'Lead your faction to glory in the ancient world!';
+            alert(rules);
+        }
+
+        function showMap() {
+            var mapInfo = 'TERRITORIES OF THE ANCIENT WORLD (336 BCE):\n\n';
+            
+            var factionTerritories = {};
+            for (var id in territories) {
+                var territory = territories[id];
+                var controller = territory.controller;
+                if (!factionTerritories[controller]) {
+                    factionTerritories[controller] = [];
+                }
+                factionTerritories[controller].push(territory.name + ' (' + territory.income + ' Talents)');
+            }
+            
+            for (var faction in factionTerritories) {
+                mapInfo += getFactionDisplayName(faction) + ':\n';
+                mapInfo += factionTerritories[faction].join(', ') + '\n\n';
+            }
+            
+            alert(mapInfo);
+        }
+
+        function drawEventCard() {
+            var events = [
+                { 
+                    title: "Oracle of Delphi Speaks", 
+                    message: "The Oracle prophesies great changes ahead. All factions gain divine favor but must pay tribute to the gods.", 
+                    effect: function() {
+                        for (var faction in gameState.factions) {
+                            gameState.factions[faction].talents += 5;
+                        }
+                    }
+                },
+                { 
+                    title: "Mutiny at the Hyphasis River", 
+                    message: "Macedonian soldiers refuse to march further east! Alexander's army demands to return home.", 
+                    effect: function() {
+                        if (gameState.alexanderDistance > 20) {
+                            gameState.averageLoyalty = Math.max(1, gameState.averageLoyalty - 2);
+                            updateMessage("The army's homesickness grows stronger as they venture further from Macedonia...");
+                        }
+                    }
+                },
+                { 
+                    title: "Plague Strikes the Army", 
+                    message: "Disease sweeps through military camps. All armies lose strength.", 
+                    effect: function() {
+                        for (var faction in gameState.factions) {
+                            var units = gameState.factions[faction].units;
+                            for (var unitType in units) {
+                                if (units[unitType] > 0) {
+                                    units[unitType] = Math.max(0, units[unitType] - 1);
+                                }
+                            }
+                        }
+                    }
+                },
+                { 
+                    title: "Olympic Truce Declared", 
+                    message: "The Olympic Games bring temporary peace. All hostilities cease as athletes compete for glory.", 
+                    effect: function() {
+                        for (var faction in gameState.factions) {
+                            gameState.factions[faction].loyalty = Math.min(5, gameState.factions[faction].loyalty + 1);
+                        }
+                    }
+                },
+                {
+                    title: "Persian Gold Flows",
+                    message: "The Persian treasury opens! Loyal satraps contribute to the war effort.",
+                    effect: function() {
+                        gameState.factions.persia.talents += 15;
+                    }
+                },
+                {
+                    title: "Alexander Cuts the Gordian Knot",
+                    message: "Alexander's boldness inspires his troops! Macedonian morale soars.",
+                    effect: function() {
+                        if (gameState.currentFaction === 'macedon' && gameState.alexanderAlive) {
+                            gameState.factions.macedon.loyalty = Math.min(5, gameState.factions.macedon.loyalty + 2);
+                        }
+                    }
+                },
+                {
+                    title: "Monsoon Season Begins",
+                    message: "Heavy rains favor the Indian kingdoms. War elephants thrive in the wet season.",
+                    effect: function() {
+                        gameState.factions.india.talents += 8;
+                        var elephants = gameState.factions.india.units['War Elephants'] || 0;
+                        gameState.factions.india.units['War Elephants'] = elephants + 1;
+                    }
+                }
+            ];
+
+            var event = events[Math.floor(Math.random() * events.length)];
+            event.effect();
+            
+            document.getElementById('popupTitle').textContent = event.title;
+            document.getElementById('popupMessage').textContent = event.message;
+            document.getElementById('eventPopup').style.display = 'block';
+            
+            updateUI();
+        }
+
+        function closePopup() {
+            document.getElementById('eventPopup').style.display = 'none';
+        }
+
+        function resetGame() {
+            if (confirm('Begin a new campaign? The ancient world awaits your command.')) {
+                location.reload();
+            }
+        }
+
+        function selectTerritory(territoryId) {
+            var territory = territories[territoryId];
+            var controller = getFactionDisplayName(territory.controller);
+            updateMessage('Selected: ' + territory.name + ' - Controlled by: ' + controller + ' - Income: ' + territory.income + ' Talents/turn - Type: ' + territory.type.toUpperCase() + ' - Loyalty: ' + territory.loyalty);
+        }
+
+        // UI FUNCTIONS
+        function createMap() {
+            var mapContainer = document.getElementById('ancientWorldMap');
+            mapContainer.innerHTML = '';
+            
+            // Add era label
+            var eraLabel = document.createElement('div');
+            eraLabel.style.cssText = 'position: absolute; top: 20px; left: 20px; font-family: "Trajan Pro", serif; font-size: 1.3rem; color: #8b4513; font-weight: 700; text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8); z-index: 10; background: rgba(255, 255, 255, 0.8); padding: 8px 16px; border-radius: 12px; border: 2px solid #daa520;';
+            eraLabel.textContent = 'THE KNOWN WORLD • 336 BCE';
+            mapContainer.appendChild(eraLabel);
+
+            for (var id in territories) {
+                var territory = territories[id];
+                var territoryElement = document.createElement('div');
+                territoryElement.className = 'territory ' + territory.controller;
+                territoryElement.id = id;
+                territoryElement.style.left = territory.x + 'px';
+                territoryElement.style.top = territory.y + 'px';
+                territoryElement.style.width = '120px';
+                territoryElement.style.height = '70px';
+
+                territoryElement.innerHTML = 
+                    '<div class="territory-name">' + territory.name + '</div>' +
+                    '<div class="territory-income">' + territory.income + ' Talents</div>' +
+                    '<div class="territory-loyalty">Loyalty: ' + territory.loyalty + '</div>';
+
+                territoryElement.onclick = function() { selectTerritory(this.id); };
+                territoryElement.title = territory.name + ' - Income: ' + territory.income + ' Talents - Controller: ' + territory.controller + ' - Loyalty: ' + territory.loyalty;
+
+                mapContainer.appendChild(territoryElement);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('turnNumber').textContent = gameState.currentTurn;
+            document.getElementById('currentFactionName').textContent = getFactionDisplayName(gameState.currentFaction);
+
+            for (var faction in gameState.factions) {
+                updateFactionDisplay(faction, gameState.factions[faction]);
+            }
+
+            updateStatusBars();
+            updateActiveFactionPanel();
+            createMap();
+        }
+
+        function updateFactionDisplay(faction, data) {
+            var talentsElement = document.getElementById(faction + 'Talents');
+            var territoriesElement = document.getElementById(faction + 'Territories');
+            var loyaltyElement = document.getElementById(faction + 'Loyalty');
+            var unitsElement = document.getElementById(faction + 'Units');
+            
+            if (talentsElement) {
+                talentsElement.textContent = data.talents.toLocaleString() + ' Talents';
+            }
+            if (territoriesElement) {
+                territoriesElement.textContent = data.totalTerritories;
+            }
+            if (loyaltyElement) {
+                loyaltyElement.textContent = data.loyalty || 'N/A';
+            }
+            
+            // Count total units
+            var totalUnits = 0;
+            if (data.units) {
+                for (var unitType in data.units) {
+                    totalUnits += data.units[unitType];
+                }
+            }
+            if (unitsElement) {
+                unitsElement.textContent = totalUnits;
+            }
+        }
+
+        function updateStatusBars() {
+            // Loyalty meter
+            var loyaltyMeter = document.getElementById('loyaltyMeter');
+            var loyaltyValue = document.getElementById('loyaltyValue');
+            if (loyaltyMeter && loyaltyValue) {
+                var loyaltyPercent = (gameState.averageLoyalty / 5) * 100;
+                loyaltyMeter.style.width = loyaltyPercent + '%';
+                loyaltyValue.textContent = gameState.averageLoyalty.toFixed(1) + '/5';
+            }
+
+            // Distance meter (Macedon only)
+            var distanceMeter = document.getElementById('distanceMeter');
+            var distanceValue = document.getElementById('distanceValue');
+            if (distanceMeter && distanceValue) {
+                var maxDistance = 30;
+                var distancePercent = (gameState.alexanderDistance / maxDistance) * 100;
+                distanceMeter.style.width = Math.min(100, distancePercent) + '%';
+                distanceValue.textContent = gameState.alexanderDistance + ' territories';
+            }
+
+            // Alexander health
+            var healthMeter = document.getElementById('alexanderHealthMeter');
+            var healthValue = document.getElementById('alexanderHealthValue');
+            if (healthMeter && healthValue) {
+                var health = gameState.alexanderAlive ? 100 : 0;
+                healthMeter.style.width = health + '%';
+                healthValue.textContent = gameState.alexanderAlive ? 'Alive & Leading' : 'Deceased';
+            }
+        }
+
+        function updateActiveFactionPanel() {
+            var panels = document.querySelectorAll('.faction-panel');
+            for (var i = 0; i < panels.length; i++) {
+                panels[i].classList.remove('active');
+            }
+            
+            var currentPanel = document.getElementById(gameState.currentFaction + 'Panel');
+            if (currentPanel) {
+                currentPanel.classList.add('active');
+            }
+        }
+
+        function initializeGame() {
+            createMap();
+            updateUI();
+            updateActionPointsDisplay();
+            updateMessage("The year is 336 BCE. Young Alexander has just ascended to the Macedonian throne after his father Philip's assassination. The Greek city-states test his resolve, the Persian Empire awaits across the Hellespont, and the fate of the ancient world hangs in the balance. Will you forge an empire that spans from Greece to India, or will you lead the resistance against Macedonian ambition?");
+        }
+
+        // Initialize the game when the page loads
+        window.onload = function() {
+            initializeGame();
+        };
+    </script>
+</body>
+</html>
