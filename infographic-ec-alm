@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1200" width="800" height="1200">
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#f9f9f9"/>
+  
+  <!-- Header with dark blue background -->
+  <rect x="0" y="0" width="800" height="120" fill="#1e3f5a"/>
+  
+  <!-- Canada Flag Logo -->
+  <svg x="40" y="35" width="50" height="50" viewBox="0 0 512 512">
+    <rect width="512" height="512" fill="white"/>
+    <rect x="128" width="256" height="512" fill="white"/>
+    <rect width="128" height="512" fill="#d52b1e"/>
+    <rect x="384" width="128" height="512" fill="#d52b1e"/>
+    <polygon points="256,128 256,384 224,384 288,448 352,384 320,384 320,128" fill="#d52b1e"/>
+  </svg>
+  
+  <!-- Title -->
+  <text x="110" y="55" font-family="Arial, sans-serif" font-size="24" fill="white" font-weight="bold">Elections Canada</text>
+  <text x="110" y="85" font-family="Arial, sans-serif" font-size="20" fill="#ffc20e" font-weight="bold">Power Platform Development Standards</text>
+  
+  <!-- Item 1: Naming Conventions -->
+  <rect x="40" y="150" width="720" height="180" fill="white" stroke="#68c3d4" stroke-width="1" rx="5" ry="5"/>
+  <rect x="40" y="150" width="160" height="180" fill="#68c3d4" rx="5" ry="5"/>
+  
+  <text x="120" y="210" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="white" font-weight="bold">1</text>
+  <text x="120" y="250" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white" font-weight="bold">NAMING</text>
+  <text x="120" y="270" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white" font-weight="bold">CONVENTIONS</text>
+  
+  <text x="220" y="185" font-family="Arial, sans-serif" font-size="20" fill="#1e3f5a" font-weight="bold">Consistent Naming Standards</text>
+  
+  <text x="425" y="220" font-family="Arial, sans-serif" font-size="14" fill="#333">
+    <tspan x="220" dy="0">• Solutions: [Department]-[Project]-[Purpose]</tspan>
+    <tspan x="220" dy="24">• Environments: [Department]-[Project]-[Type]</tspan>
+    <tspan x="220" dy="24">• Entities: [Prefix]_[Entity]</tspan>
+    <tspan x="220" dy="24">• Components follow standardized pattern for discoverability</tspan>
+    <tspan x="220" dy="24">• Department prefixes: EC, VO, FO, PO, EF</tspan>
+  </text>
+  
+  <!-- Item 2: ALM Pipeline -->
+  <rect x="40" y="350" width="720" height="180" fill="white" stroke="#68c3d4" stroke-width="1" rx="5" ry="5"/>
+  <rect x="40" y="350" width="160" height="180" fill="#68c3d4" rx="5" ry="5"/>
+  
+  <text x="120" y="410" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="white" font-weight="bold">2</text>
+  <text x="120" y="450" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white" font-weight="bold">ALM</text>
+  <text x="120" y="470" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white" font-weight="bold">PIPELINE</text>
+  
+  <text x="220" y="385" font-family="Arial, sans-serif" font-size="20" fill="#1e3f5a" font-weight="bold">Pipeline-Driven Deployments</text>
+  
+  <text x="425" y="420" font-family="Arial, sans-serif" font-size="14" fill="#333">
+    <tspan x="220" dy="0">• Development → Test → UAT → Production flow</tspan>
+    <tspan x="220" dy="24">• Azure DevOps integration with branch policies</tspan>
+    <tspan x="220" dy="24">• Automated solution package validation</tspan>
+    <tspan x="220" dy="24">• Approval gates at each stage with stakeholder review</tspan>
+    <tspan x="220" dy="24">• Solution checker validation required before deployment</tspan>
+  </text>
+  
+  <!-- Item 3: Security Standards -->
+  <rect x="40" y="550" width="720" height="180" fill="white" stroke="#68c3d4" stroke-width="1" rx="5" ry="5"/>
+  <rect x="40" y="550" width="160" height="180" fill="#68c3d4" rx="5" ry="5"/>
+  
+  <text x="120" y="610" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="white" font-weight="bold">3</text>
+  <text x="120" y="650" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white" font-weight="bold">SECURITY</text>
+  <text x="120" y="670" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white" font-weight="bold">STANDARDS</text>
+  
+  <text x="220" y="585" font-family="Arial, sans-serif" font-size="20" fill="#1e3f5a" font-weight="bold">Protected Data Handling</text>
+  
+  <text x="425" y="620" font-family="Arial, sans-serif" font-size="14" fill="#333">
+    <tspan x="220" dy="0">• Server-side rendering for Protected B and MM data</tspan>
+    <tspan x="220" dy="24">• Parent-child table permission model for record security</tspan>
+    <tspan x="220" dy="24">• Web API limited to read-only operations for non-sensitive data</tspan>
+    <tspan x="220" dy="24">• Entra External ID for portal authentication</tspan>
+    <tspan x="220" dy="24">• Consistent security headers and CSRF protection</tspan>
+  </text>
+  
+  <!-- Item 4: Integration Strategy -->
+  <rect x="40" y="750" width="720" height="180" fill="white" stroke="#68c3d4" stroke-width="1" rx="5" ry="5"/>
+  <rect x="40" y="750" width="160" height="180" fill="#68c3d4" rx="5" ry="5"/>
+  
+  <text x="120" y="810" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="white" font-weight="bold">4</text>
+  <text x="120" y="850" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white" font-weight="bold">INTEGRATION</text>
+  <text x="120" y="870" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white" font-weight="bold">STRATEGY</text>
+  
+  <text x="220" y="785" font-family="Arial, sans-serif" font-size="20" fill="#1e3f5a" font-weight="bold">Power Automate-First Approach</text>
+  
+  <text x="425" y="820" font-family="Arial, sans-serif" font-size="14" fill="#333">
+    <tspan x="220" dy="0">• Power Automate flows for all API integrations</tspan>
+    <tspan x="220" dy="24">• On-premises gateway for secure connectivity</tspan>
+    <tspan x="220" dy="24">• Plugin development only for performance-critical operations</tspan>
+    <tspan x="220" dy="24">• Common libraries for C# development consistency</tspan>
+    <tspan x="220" dy="24">• Centralized credential management with Azure Key Vault</tspan>
+  </text>
+  
+  <!-- Item 5: Environment Management -->
+  <rect x="40" y="950" width="720" height="180" fill="white" stroke="#68c3d4" stroke-width="1" rx="5" ry="5"/>
+  <rect x="40" y="950" width="160" height="180" fill="#68c3d4" rx="5" ry="5"/>
+  
+  <text x="120" y="1010" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="white" font-weight="bold">5</text>
+  <text x="120" y="1050" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white" font-weight="bold">GOVERNANCE</text>
+  <text x="120" y="1070" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white" font-weight="bold">& ACCESS</text>
+  
+  <text x="220" y="985" font-family="Arial, sans-serif" font-size="20" fill="#1e3f5a" font-weight="bold">Controlled Access Management</text>
+  
+  <text x="425" y="1020" font-family="Arial, sans-serif" font-size="14" fill="#333">
+    <tspan x="220" dy="0">• Developers as admins in development environments only</tspan>
+    <tspan x="220" dy="24">• Azure PIM for just-in-time emergency access</tspan>
+    <tspan x="220" dy="24">• All downstream deployments via pipelines only</tspan>
+    <tspan x="220" dy="24">• Center of Excellence governance model</tspan>
+    <tspan x="220" dy="24">• Regular security reviews and access audits</tspan>
+  </text>
+  
+  <!-- Footer -->
+  <rect x="0" y="1160" width="800" height="40" fill="#1e3f5a"/>
+  <text x="400" y="1185" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">Elections Canada · Power Platform Center of Excellence · 2025</text>
+</svg>
