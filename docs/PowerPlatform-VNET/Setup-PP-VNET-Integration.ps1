@@ -8,7 +8,7 @@
   - Enterprise policy configuration (using ARM templates)
   - Power Platform environment creation (separate from policy application)
 .EXAMPLE
-  .\Setup-PPVNetIntegration.ps1
+  .\Setup-PP-VNET-Integration.ps1
 .NOTES
   Requires appropriate permissions in both Azure and Power Platform
   Updated for 2025 with correct cmdlets and parameters
