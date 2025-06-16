@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LA Gang Wars: Battle for Compton</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 50%, #4a0e0e 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #8B0000;
+            box-shadow: 0 8px 32px rgba(139, 0, 0, 0.5);
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff0000, #ffff00, #0066ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 5px;
+        }
+
+        .game-subtitle {
+            font-size: 1rem;
+            color: #ff6666;
+            font-style: italic;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .main-game-area {
+            display: flex;
+            gap: 20px;
+            max-width: 1400px;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .map-container {
+            flex: 1;
+            min-width: 600px;
+            max-width: 800px;
+        }
+
+        .compton-map {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+            border: 4px solid #8B0000;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .territory {
+            position: absolute;
+            border: 2px solid #666;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            width: 100px;
+            height: 60px;
+        }
+
+        .territory:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .territory-name {
+            font-size: 9px;
+            text-align: center;
+            margin-bottom: 3px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .territory-income {
+            font-size: 8px;
+            color: #90EE90;
+            font-weight: bold;
+        }
+
+        /* Faction Colors */
+        .bloods { background: linear-gradient(135deg, #DC143C, #8B0000); border-color: #FF0000; }
+        .crips { background: linear-gradient(135deg, #0066CC, #000080); border-color: #0080FF; }
+        .mexicanMafia { background: linear-gradient(135deg, #8B4513, #654321); border-color: #CD853F; }
+        .lapd { background: linear-gradient(135deg, #000080, #4169E1); border-color: #0080FF; }
+        .neutral { background: linear-gradient(135deg, #696969, #2F2F2F); border-color: #808080; }
+
+        .side-panel {
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .faction-panel {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #666;
+            transition: all 0.3s ease;
+        }
+
+        .faction-panel.active {
+            border-color: #FFD700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .faction-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .faction-icon {
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+
+        .faction-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .faction-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #90EE90;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #8B0000, #DC143C);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            border: 2px solid #FF0000;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.4);
+        }
+
+        .action-area {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 2px solid #8B0000;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            background: rgba(139, 0, 0, 0.8);
+            color: white;
+            border: 1px solid #FF0000;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(220, 20, 60, 0.8);
+        }
+
+        .message-area {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            min-height: 80px;
+            max-width: 800px;
+            border-left: 4px solid #8B0000;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .turn-counter {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #FFD700;
+        }
+
+        .event-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 3px solid #8B0000;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 400px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .popup-content {
+            text-align: center;
+        }
+
+        .popup-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #FF0000;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .main-game-area {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .side-panel {
+                width: 100%;
+                max-width: 800px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 1.8rem;
+            }
+            
+            .faction-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .territory {
+                font-size: 8px;
+            }
+
+            .map-container {
+                min-width: 100%;
+            }
+
+            .compton-map {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // GLOBAL VARIABLES - MUST BE FIRST
+        var gameState = {
+            currentTurn: 1,
+            currentFaction: 'bloods',
+            actionPoints: 3,
+            globalHeat: 2,
+            lapdTrust: 8,
+            factions: {
+                bloods: { cash: 3000, territories: ['elm-street', 'long-beach-south'], respect: 10, heat: 8 },
+                crips: { cash: 3500, territories: ['rosecrans-ave', 'grape-street'], respect: 10, heat: 8 },
+                mexicanMafia: { cash: 2500, territories: ['alondra-blvd', 'atlantic-drive'], respect: 10, heat: 8 },
+                lapd: { budget: 6000, territories: ['sheriff-station', 'courthouse', 'community-center'], trust: 8, corruption: 2 }
+            }
+        };
+
+        var territories = {
+            'elm-street': { name: 'Elm Street', income: 300, x: 100, y: 50, controller: 'bloods', type: 'residential' },
+            'mayo-avenue': { name: 'Mayo Avenue', income: 500, x: 300, y: 50, controller: 'neutral', type: 'commercial' },
+            'compton-blvd-north': { name: 'Compton Blvd N', income: 400, x: 500, y: 50, controller: 'neutral', type: 'main-street' },
+            'rosecrans-ave': { name: 'Rosecrans Ave', income: 600, x: 100, y: 200, controller: 'crips', type: 'business' },
+            'long-beach-blvd': { name: 'Long Beach Blvd', income: 800, x: 300, y: 200, controller: 'neutral', type: 'drug-corridor' },
+            'compton-college': { name: 'Compton College', income: 0, x: 500, y: 200, controller: 'neutral', type: 'school' },
+            'alondra-blvd': { name: 'Alondra Blvd', income: 400, x: 100, y: 350, controller: 'mexicanMafia', type: 'industrial' },
+            'atlantic-drive': { name: 'Atlantic Drive', income: 300, x: 300, y: 350, controller: 'mexicanMafia', type: 'residential' },
+            'greenleaf-blvd': { name: 'Greenleaf Blvd', income: 500, x: 500, y: 350, controller: 'neutral', type: 'shopping' },
+            'central-avenue': { name: 'Central Ave', income: 350, x: 650, y: 150, controller: 'neutral', type: 'historic' },
+            'stockwell-street': { name: 'Stockwell St', income: 250, x: 650, y: 250, controller: 'neutral', type: 'quiet' },
+            'white-avenue': { name: 'White Ave', income: 350, x: 650, y: 350, controller: 'neutral', type: 'mixed' },
+            'willowbrook': { name: 'Willowbrook', income: 200, x: 50, y: 450, controller: 'neutral', type: 'hospital' },
+            'grape-street': { name: 'Grape Street', income: 300, x: 200, y: 450, controller: 'crips', type: 'residential' },
+            'fig-street': { name: 'Fig Street', income: 450, x: 350, y: 450, controller: 'neutral', type: 'industrial' },
+            'sheriff-station': { name: 'Sheriff Station', income: 0, x: 400, y: 100, controller: 'lapd', type: 'police-station' },
+            'courthouse': { name: 'Courthouse', income: 0, x: 450, y: 150, controller: 'lapd', type: 'courthouse' },
+            'community-center': { name: 'Community Center', income: 0, x: 350, y: 300, controller: 'lapd', type: 'community' },
+            'long-beach-south': { name: 'Long Beach S', income: 600, x: 250, y: 300, controller: 'bloods', type: 'mixed' },
+            'mlk-hospital': { name: 'MLK Hospital', income: 0, x: 150, y: 150, controller: 'neutral', type: 'hospital' },
+            'compton-high': { name: 'Compton High', income: 0, x: 550, y: 300, controller: 'neutral', type: 'school' }
+        };
+
+        // UTILITY FUNCTIONS
+        function updateMessage(message) {
+            document.getElementById('messageArea').textContent = message;
+        }
+
+        function updateActionPointsDisplay() {
+            var display = document.getElementById('actionPointsDisplay');
+            if (display) {
+                display.textContent = 'Actions (' + gameState.actionPoints + ' AP remaining)';
+            }
+        }
+
+        function getFactionDisplayName(faction) {
+            var names = { 'bloods': 'BLOODS', 'crips': 'CRIPS', 'mexicanMafia': 'MEXICAN MAFIA', 'lapd': 'LAPD' };
+            return names[faction] || faction.toUpperCase();
+        }
+
+        // MAIN GAME FUNCTIONS
+        function recruitUnit() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+            var faction = gameState.factions[gameState.currentFaction];
+            var cost = 600;
+            if ((faction.cash || faction.budget || 0) >= cost) {
+                if (gameState.currentFaction === 'lapd') {
+                    faction.budget -= cost;
+                } else {
+                    faction.cash -= cost;
+                }
+                gameState.actionPoints--;
+                updateMessage('Recruited new unit for $' + cost + '. Placed in controlled territory.');
+                updateUI();
+                updateActionPointsDisplay();
+            } else {
+                updateMessage("Not enough money to recruit units!");
+            }
+        }
+
+        function startOperation() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+            var faction = gameState.factions[gameState.currentFaction];
+            var cost = 1000;
+            if ((faction.cash || faction.budget || 0) >= cost) {
+                if (gameState.currentFaction === 'lapd') {
+                    faction.budget -= cost;
+                    var seized = Math.floor(Math.random() * 2000) + 1000;
+                    faction.budget += seized;
+                    updateMessage('Police operation successful! Seized $' + seized + ' in gang assets.');
+                } else {
+                    faction.cash -= cost;
+                    var profit = Math.floor(Math.random() * 2000) + 1500;
+                    faction.cash += profit;
+                    faction.heat = Math.min(10, faction.heat + 1);
+                    updateMessage('Gang operation successful! Earned $' + profit + '. Heat increased.');
+                }
+                gameState.actionPoints--;
+                updateUI();
+                updateActionPointsDisplay();
+            } else {
+                updateMessage("Not enough money for operation!");
+            }
+        }
+
+        function moveUnits() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+            updateMessage("Units moved to strategic positions.");
+            gameState.actionPoints--;
+            updateUI();
+            updateActionPointsDisplay();
+        }
+
+        function attackTerritory() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+            var neutralTerritories = [];
+            for (var id in territories) {
+                if (territories[id].controller === 'neutral') {
+                    neutralTerritories.push(id);
+                }
+            }
+            if (neutralTerritories.length === 0) {
+                updateMessage("No neutral territories to attack!");
+                return;
+            }
+            var targetId = neutralTerritories[Math.floor(Math.random() * neutralTerritories.length)];
+            var target = territories[targetId];
+            var attackSuccess = Math.random() > 0.4;
+            if (attackSuccess) {
+                territories[targetId].controller = gameState.currentFaction;
+                gameState.factions[gameState.currentFaction].territories.push(targetId);
+                if (gameState.currentFaction !== 'lapd') {
+                    gameState.factions[gameState.currentFaction].respect += 3;
+                }
+                updateMessage('Successfully captured ' + target.name + '! Gained territory and respect.');
+            } else {
+                if (gameState.currentFaction !== 'lapd') {
+                    gameState.factions[gameState.currentFaction].heat += 1;
+                }
+                updateMessage('Failed to capture ' + target.name + '. Units retreated.');
+            }
+            gameState.actionPoints -= 2;
+            updateUI();
+            updateActionPointsDisplay();
+        }
+
+        function buyWeapons() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+            var faction = gameState.factions[gameState.currentFaction];
+            var cost = 800;
+            if ((faction.cash || faction.budget || 0) >= cost) {
+                if (gameState.currentFaction === 'lapd') {
+                    faction.budget -= cost;
+                } else {
+                    faction.cash -= cost;
+                }
+                updateMessage('Purchased weapons for $' + cost + '. Units get combat bonus.');
+                gameState.actionPoints--;
+                updateUI();
+                updateActionPointsDisplay();
+            } else {
+                updateMessage("Not enough money to buy weapons!");
+            }
+        }
+
+        function specialAction() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+            var faction = gameState.currentFaction;
+            var factionData = gameState.factions[faction];
+            switch (faction) {
+                case 'bloods':
+                    factionData.respect += 2;
+                    updateMessage("Family First activated! All Bloods sets rally together. +2 Respect.");
+                    break;
+                case 'crips':
+                    updateMessage("Rolling Deep activated! Crips units can move in larger groups.");
+                    break;
+                case 'mexicanMafia':
+                    updateMessage("La Familia activated! Mexican Mafia units gain loyalty bonus.");
+                    break;
+                case 'lapd':
+                    if (factionData.trust >= 7) {
+                        var seized = Math.floor(Math.random() * 5000) + 2000;
+                        factionData.budget += seized;
+                        updateMessage('Federal Task Force successful! Seized $' + seized + ' in gang assets.');
+                    } else {
+                        updateMessage("Insufficient trust level for Federal Task Force. Need Trust 7+.");
+                    }
+                    break;
+            }
+            gameState.actionPoints--;
+            updateUI();
+            updateActionPointsDisplay();
+        }
+
+        function endTurn() {
+            for (var faction in gameState.factions) {
+                var data = gameState.factions[faction];
+                var income = 0;
+                for (var i = 0; i < data.territories.length; i++) {
+                    var territoryId = data.territories[i];
+                    var territory = territories[territoryId];
+                    income += territory.income;
+                }
+                if (faction === 'lapd') {
+                    data.budget += income + (data.trust * 100);
+                } else {
+                    data.cash += income;
+                }
+            }
+            var factionOrder = ['bloods', 'crips', 'mexicanMafia', 'lapd'];
+            var currentIndex = factionOrder.indexOf(gameState.currentFaction);
+            if (currentIndex === factionOrder.length - 1) {
+                gameState.currentTurn++;
+                gameState.currentFaction = factionOrder[0];
+                if (Math.random() < 0.3) {
+                    drawEventCard();
+                }
+            } else {
+                gameState.currentFaction = factionOrder[currentIndex + 1];
+            }
+            gameState.actionPoints = 3;
+            updateUI();
+            updateActionPointsDisplay();
+            updateMessage(getFactionDisplayName(gameState.currentFaction) + "'s turn begins. You have 3 Action Points.");
+            checkVictoryConditions();
+        }
+
+        function checkVictoryConditions() {
+            for (var faction in gameState.factions) {
+                var data = gameState.factions[faction];
+                if (faction === 'lapd') {
+                    if (data.territories.length >= 8 && data.trust >= 7) {
+                        showVictory('LAPD wins by Territorial Control! Restored order to Compton.');
+                    } else if (data.budget >= 20000) {
+                        showVictory('LAPD wins by Economic Dominance! Asset forfeiture program successful.');
+                    }
+                } else {
+                    if (data.territories.length >= 10) {
+                        showVictory(getFactionDisplayName(faction) + ' wins by Territorial Control! Controls the streets of Compton.');
+                    } else if (data.respect >= 70) {
+                        showVictory(getFactionDisplayName(faction) + ' wins by Street Respect! Most feared gang in Compton.');
+                    } else if (data.cash >= 15000 && data.territories.length >= 6) {
+                        showVictory(getFactionDisplayName(faction) + ' wins by Economic Power! Built a drug empire.');
+                    }
+                }
+            }
+        }
+
+        function showVictory(message) {
+            document.getElementById('popupTitle').textContent = 'GAME OVER';
+            document.getElementById('popupMessage').textContent = message;
+            document.getElementById('eventPopup').style.display = 'block';
+        }
+
+        function showRules() {
+            alert('LA GANG WARS: BATTLE FOR COMPTON\nSet in 1990s Compton during the height of gang warfare.\n\nOBJECTIVE: Control Compton through territory, respect, or economics.\n\nFACTIONS:\n• BLOODS (Red) - Family-based gang\n• CRIPS (Blue) - Business-minded gang\n• MEXICAN MAFIA (Brown) - Disciplined gang\n• LAPD (Blue) - Law enforcement\n\nVICTORY CONDITIONS:\nGANGS: 10 territories OR 70 respect OR $15k + 6 territories\nLAPD: 8 territories + Trust 7 OR $20k budget\n\nGAMEPLAY:\n• 3 Action Points per turn\n• Recruit units, start operations, attack territories\n• Manage heat (gangs) or trust (LAPD)\n• Income from controlled territories each turn');
+        }
+
+        function showMap() {
+            var mapInfo = 'COMPTON TERRITORY INFORMATION:\n\n';
+            for (var id in territories) {
+                var territory = territories[id];
+                mapInfo += territory.name + ': ' + territory.controller + ' ($' + territory.income + '/turn)\n';
+            }
+            alert(mapInfo);
+        }
+
+        function drawEventCard() {
+            var events = [
+                { title: "Police Raid", message: "LAPD raids gang territory. All gangs +1 heat." },
+                { title: "Community Meeting", message: "Neighborhood organizes. All factions -1 heat." },
+                { title: "Federal Investigation", message: "FBI investigates. All gangs +2 heat." },
+                { title: "Weapons Shipment", message: "New weapons arrive. Discount this turn." }
+            ];
+            var event = events[Math.floor(Math.random() * events.length)];
+            document.getElementById('popupTitle').textContent = event.title;
+            document.getElementById('popupMessage').textContent = event.message;
+            document.getElementById('eventPopup').style.display = 'block';
+            updateUI();
+        }
+
+        function closePopup() {
+            document.getElementById('eventPopup').style.display = 'none';
+        }
+
+        function resetGame() {
+            if (confirm('Start a new game? This will reset all progress.')) {
+                location.reload();
+            }
+        }
+
+        function selectTerritory(territoryId) {
+            var territory = territories[territoryId];
+            updateMessage('Selected: ' + territory.name + ' - Controller: ' + territory.controller + ' - Income: $' + territory.income + '/turn - Type: ' + territory.type);
+        }
+
+        // UI FUNCTIONS
+        function createMap() {
+            var mapContainer = document.getElementById('comptonMap');
+            mapContainer.innerHTML = '';
+            for (var id in territories) {
+                var territory = territories[id];
+                var territoryElement = document.createElement('div');
+                territoryElement.className = 'territory ' + territory.controller;
+                territoryElement.id = id;
+                territoryElement.style.left = territory.x + 'px';
+                territoryElement.style.top = territory.y + 'px';
+                territoryElement.innerHTML = '<div class="territory-name">' + territory.name + '</div><div class="territory-income">$' + territory.income + '/turn</div>';
+                territoryElement.onclick = function() { selectTerritory(this.id); };
+                territoryElement.title = territory.name + ' - Income: $' + territory.income + ' - Controller: ' + territory.controller;
+                mapContainer.appendChild(territoryElement);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('turnNumber').textContent = gameState.currentTurn;
+            document.getElementById('currentFactionName').textContent = getFactionDisplayName(gameState.currentFaction);
+            for (var faction in gameState.factions) {
+                updateFactionDisplay(faction, gameState.factions[faction]);
+            }
+            updateActiveFactionPanel();
+            createMap();
+        }
+
+        function updateFactionDisplay(faction, data) {
+            var isLAPD = faction === 'lapd';
+            var cashElement = document.getElementById(faction + (isLAPD ? 'Budget' : 'Cash'));
+            var territoriesElement = document.getElementById(faction + 'Territories');
+            if (cashElement) {
+                cashElement.textContent = '$' + (data.cash || data.budget || 0).toLocaleString();
+            }
+            if (territoriesElement) {
+                territoriesElement.textContent = data.territories.length;
+            }
+            if (isLAPD) {
+                var trustElement = document.getElementById('lapdTrust');
+                var corruptionElement = document.getElementById('lapdCorruption');
+                if (trustElement) trustElement.textContent = data.trust;
+                if (corruptionElement) corruptionElement.textContent = data.corruption;
+            } else {
+                var respectElement = document.getElementById(faction + 'Respect');
+                var heatElement = document.getElementById(faction + 'Heat');
+                if (respectElement) respectElement.textContent = data.respect;
+                if (heatElement) heatElement.textContent = data.heat;
+            }
+        }
+
+        function updateActiveFactionPanel() {
+            var panels = document.querySelectorAll('.faction-panel');
+            for (var i = 0; i < panels.length; i++) {
+                panels[i].classList.remove('active');
+            }
+            var currentPanel = document.getElementById(gameState.currentFaction + 'Panel');
+            if (currentPanel) {
+                currentPanel.classList.add('active');
+            }
+        }
+
+        function initializeGame() {
+            createMap();
+            updateUI();
+            updateActionPointsDisplay();
+            updateMessage("Welcome to 1990s Compton. The Bloods control the red territories, ready to expand their influence. You have 3 Action Points this turn.");
+        }
+    </script>
+
+    <div class="game-container">
+        <div class="game-header">
+            <h1 class="game-title">🔫 LA GANG WARS 🔫</h1>
+            <p class="game-subtitle">Battle for Compton - 1990s Gang Warfare Strategy</p>
+        </div>
+
+        <div class="turn-counter">
+            Turn <span id="turnNumber">1</span> - <span id="currentFactionName">BLOODS</span> Turn
+        </div>
+
+        <div class="main-game-area">
+            <div class="map-container">
+                <div class="compton-map" id="comptonMap">
+                    <!-- Territories will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="faction-panel active bloods" id="bloodsPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">🔴</div>
+                        <div>
+                            <div class="faction-name">BLOODS</div>
+                            <div style="font-size: 0.8rem; color: #FF6666;">Red Set</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span>💰 Cash:</span>
+                            <span class="stat-value" id="bloodsCash">$3,000</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>🏠 Territories:</span>
+                            <span class="stat-value" id="bloodsTerritories">2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>👑 Respect:</span>
+                            <span class="stat-value" id="bloodsRespect">10</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>🔥 Heat:</span>
+                            <span class="stat-value" id="bloodsHeat">8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel crips" id="cripsPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">🔵</div>
+                        <div>
+                            <div class="faction-name">CRIPS</div>
+                            <div style="font-size: 0.8rem; color: #6666FF;">Blue Set</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span>💰 Cash:</span>
+                            <span class="stat-value" id="cripsCash">$3,500</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>🏠 Territories:</span>
+                            <span class="stat-value" id="cripsTerritories">2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>👑 Respect:</span>
+                            <span class="stat-value" id="cripsRespect">10</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>🔥 Heat:</span>
+                            <span class="stat-value" id="cripsHeat">8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel mexicanMafia" id="mexicanMafiaPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">🟤</div>
+                        <div>
+                            <div class="faction-name">MEXICAN MAFIA</div>
+                            <div style="font-size: 0.8rem; color: #CD853F;">Brown Pride</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span>💰 Cash:</span>
+                            <span class="stat-value" id="mexicanMafiaCash">$2,500</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>🏠 Territories:</span>
+                            <span class="stat-value" id="mexicanMafiaTerritories">2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>👑 Respect:</span>
+                            <span class="stat-value" id="mexicanMafiaRespect">10</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>🔥 Heat:</span>
+                            <span class="stat-value" id="mexicanMafiaHeat">8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel lapd" id="lapdPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">👮</div>
+                        <div>
+                            <div class="faction-name">LAPD</div>
+                            <div style="font-size: 0.8rem; color: #87CEEB;">Law Enforcement</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span>💰 Budget:</span>
+                            <span class="stat-value" id="lapdBudget">$6,000</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>🏠 Territories:</span>
+                            <span class="stat-value" id="lapdTerritories">3</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>🤝 Trust:</span>
+                            <span class="stat-value" id="lapdTrust">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>💸 Corruption:</span>
+                            <span class="stat-value" id="lapdCorruption">2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-area">
+                    <h3 id="actionPointsDisplay">Actions (3 AP remaining)</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="recruitUnit()">Recruit Unit</button>
+                        <button class="action-btn" onclick="startOperation()">Start Operation</button>
+                        <button class="action-btn" onclick="moveUnits()">Move Units</button>
+                        <button class="action-btn" onclick="attackTerritory()">Attack Territory</button>
+                        <button class="action-btn" onclick="buyWeapons()">Buy Weapons</button>
+                        <button class="action-btn" onclick="specialAction()">Special Action</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <button class="control-btn" onclick="endTurn()">End Turn</button>
+            <button class="control-btn" onclick="showRules()">Game Rules</button>
+            <button class="control-btn" onclick="showMap()">Territory Info</button>
+            <button class="control-btn" onclick="drawEventCard()">Event Card</button>
+            <button class="control-btn" onclick="resetGame()">New Game</button>
+        </div>
+
+        <div class="message-area" id="messageArea">
+            Welcome to 1990s Compton. The streets are controlled by three major gangs: Bloods (Red), Crips (Blue), and Mexican Mafia (Brown). LAPD fights to maintain order. Choose your faction and battle for control of the neighborhoods. Bloods turn begins - you have 3 Action Points to use.
+        </div>
+    </div>
+
+    <!-- Event Popup -->
+    <div class="event-popup" id="eventPopup">
+        <div class="popup-content">
+            <div class="popup-title" id="popupTitle">Event</div>
+            <div id="popupMessage">Event message here</div>
+            <div class="popup-buttons">
+                <button class="control-btn" onclick="closePopup()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize game when page loads
+        window.addEventListener('load', function() {
+            initializeGame();
+
+            // Add visual feedback for buttons
+            var buttons = document.querySelectorAll('.control-btn, .action-btn');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].addEventListener('click', function() {
+                    var button = this;
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(function() {
+                        button.style.transform = '';
+                    }, 100);
+                });
+            }
+
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                if (event.target.tagName === 'INPUT') return;
+                switch(event.key.toLowerCase()) {
+                    case 'e': event.preventDefault(); endTurn(); break;
+                    case 'r': event.preventDefault(); recruitUnit(); break;
+                    case 'o': event.preventDefault(); startOperation(); break;
+                    case 'a': event.preventDefault(); attackTerritory(); break;
+                    case 'm': event.preventDefault(); moveUnits(); break;
+                    case 's': event.preventDefault(); specialAction(); break;
+                    case 'w': event.preventDefault(); buyWeapons(); break;
+                    case 'h': event.preventDefault(); showRules(); break;
+                    case 'escape': closePopup(); break;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

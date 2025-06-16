@@ -1,0 +1,60 @@
+trigger: none # Manual trigger only
+
+parameters:
+- name: solutionName
+  displayName: Solution Name to Migrate
+  type: string
+  default: ''
+  required: true
+
+variables:
+- group: PowerPlatformConnections # Variable group containing connection details
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '6.0.x'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore NuGet packages'
+  inputs:
+    command: 'restore'
+    projects: '**/PowerPlatformSolutionManager.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build solution'
+  inputs:
+    command: 'build'
+    projects: '**/PowerPlatformSolutionManager.csproj'
+    arguments: '--configuration Release'
+
+- task: PowerShell@2
+  displayName: 'Create configuration file'
+  inputs:
+    targetType: 'inline'
+    script: |
+      $configContent = @"
+      {
+        "SourceEnvUrl": "$(SourceEnvironmentUrl)",
+        "TargetEnvUrl": "$(TargetEnvironmentUrl)",
+        "ClientId": "$(ClientId)",
+        "ClientSecret": "$(ClientSecret)",
+        "TenantId": "$(TenantId)",
+        "SolutionName": "${{ parameters.solutionName }}"
+      }
+      "@
+      
+      New-Item -Path "$(Build.SourcesDirectory)/PowerPlatformSolutionManager/config.json" -ItemType File -Force -Value $configContent
+      Write-Host "Configuration file created successfully"
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run solution migration tool'
+  inputs:
+    command: 'run'
+    projects: '**/PowerPlatformSolutionManager.csproj'
+    arguments: '--configuration Release'

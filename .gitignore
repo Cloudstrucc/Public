@@ -5,3 +5,111 @@ polymorphiclookupconfig-lab.json
 .devcontainer
 .github
 .vscode
+COMMANDS-cli.sh
+# .NET Core
+*.swp
+*.swo
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# Visual Studio Code
+.vscode
+.vs
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio
+.vs/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Power Platform
+/exports/
+/unpacked/
+solution-info.json
+config.json
+*.zip
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Azure DevOps specific
+.coverage
+*.coverage
+.testresults
+*.testresults
+
+# Credentials and secrets
+*.pfx
+*.key
+*.crt
+*.p12
+*.pem
+**/credentials.json
+**/appsettings.*.json
+!appsettings.template.json
+!appsettings.example.json
+
+# PAC CLI related
+/pac

@@ -1,0 +1,3 @@
+# CONFIGURING SIGN IN CANADA SIC (TBS)
+
+Azure B2C supports integrating with both OpenID Connect and SAML 2.0 Identity Providers. It can act not only as a “service provider” to Applications inside and outside our organization but also as an Identity Provider for your apps. In this section, the guide demonstrates how to integrate Azure B2C with the Government of Canada’s OpenID Connect provider - SignIn Canada. The initial set up connects to SignIn Canada’s test environment (CATE). The same steps are required for configuring production. We recommend creating a separate Azure B2C environment for Production.

@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gangsters: Rise of the Family</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 25%, #3d2817 50%, #4a1810 75%, #2d1810 100%);
+            color: #f4e4c1;
+            min-height: 100vh;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 48%, rgba(212, 175, 55, 0.03) 49%, rgba(212, 175, 55, 0.03) 51%, transparent 52%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.9), rgba(101, 67, 33, 0.9));
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 3px solid #d4af37;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(212, 175, 55, 0.2),
+                0 0 20px rgba(212, 175, 55, 0.15);
+            position: relative;
+        }
+
+        .game-header::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 17px;
+            pointer-events: none;
+        }
+
+        .game-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #d4af37, #ffd700, #b8860b, #daa520);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 10px;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .game-subtitle {
+            font-size: 1.2rem;
+            color: #daa520;
+            font-style: italic;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            letter-spacing: 1px;
+        }
+
+        .game-era {
+            font-size: 0.9rem;
+            color: #b8860b;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .main-game-area {
+            display: flex;
+            gap: 25px;
+            max-width: 1600px;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .map-container {
+            flex: 1;
+            min-width: 700px;
+            max-width: 900px;
+        }
+
+        .prohibition-map {
+            position: relative;
+            width: 100%;
+            height: 700px;
+            background: 
+                linear-gradient(135deg, #2c1810, #3d2817),
+                radial-gradient(circle at 30% 30%, rgba(139, 69, 19, 0.3) 0%, transparent 60%);
+            border: 4px solid #b8860b;
+            border-radius: 15px;
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(212, 175, 55, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .prohibition-map::before {
+            content: 'NEW YORK CITY - 1925';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.1rem;
+            color: #d4af37;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+
+        .district {
+            position: absolute;
+            border: 2px solid #8b4513;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(244, 228, 193, 0.1);
+            backdrop-filter: blur(3px);
+            color: #f4e4c1;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .district:hover {
+            transform: scale(1.05);
+            z-index: 15;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+            border-color: #d4af37;
+        }
+
+        .district-name {
+            font-size: 10px;
+            text-align: center;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .district-income {
+            font-size: 9px;
+            color: #90EE90;
+            font-weight: bold;
+        }
+
+        .district-controller {
+            font-size: 8px;
+            margin-top: 2px;
+            opacity: 0.8;
+        }
+
+        /* Faction Colors - Prohibition Era Themed */
+        .irish { background: linear-gradient(135deg, rgba(34, 139, 34, 0.8), rgba(0, 100, 0, 0.8)); border-color: #228B22; }
+        .italian { background: linear-gradient(135deg, rgba(220, 20, 60, 0.8), rgba(139, 0, 0, 0.8)); border-color: #DC143C; }
+        .jewish { background: linear-gradient(135deg, rgba(70, 130, 180, 0.8), rgba(25, 25, 112, 0.8)); border-color: #4682B4; }
+        .polish { background: linear-gradient(135deg, rgba(160, 82, 45, 0.8), rgba(101, 67, 33, 0.8)); border-color: #A0522D; }
+        .nypd { background: linear-gradient(135deg, rgba(0, 0, 139, 0.8), rgba(25, 25, 112, 0.8)); border-color: #191970; }
+        .neutral { background: linear-gradient(135deg, rgba(105, 105, 105, 0.8), rgba(47, 79, 79, 0.8)); border-color: #696969; }
+
+        .side-panel {
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .faction-panel {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.9), rgba(101, 67, 33, 0.9));
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #8b4513;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .faction-panel::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 13px;
+            pointer-events: none;
+        }
+
+        .faction-panel.active {
+            border-color: #d4af37;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .faction-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .faction-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .faction-name {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #d4af37;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .faction-subtitle {
+            font-size: 0.85rem;
+            color: #daa520;
+            font-style: italic;
+            margin-top: 2px;
+        }
+
+        .faction-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .stat-label {
+            color: #f4e4c1;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #daa520;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .turn-counter {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #d4af37;
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.8), rgba(101, 67, 33, 0.8));
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #b8860b;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .meters-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(139, 69, 19, 0.3));
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid #8b4513;
+        }
+
+        .meter-container {
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        .meter-label {
+            font-size: 0.9rem;
+            color: #daa520;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .meter-bar {
+            width: 120px;
+            height: 18px;
+            background: linear-gradient(135deg, #2c1810, #1a1a1a);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 8px auto;
+            border: 2px solid #8b4513;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .meter-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 8px;
+        }
+
+        .heat-fill { 
+            background: linear-gradient(90deg, #228B22, #FFD700, #FF4500, #DC143C);
+            box-shadow: 0 0 10px rgba(220, 20, 60, 0.5);
+        }
+        .trust-fill { 
+            background: linear-gradient(90deg, #4682B4, #87CEEB, #F0F8FF);
+            box-shadow: 0 0 10px rgba(70, 130, 180, 0.5);
+        }
+        .corruption-fill { 
+            background: linear-gradient(90deg, #2F4F4F, #8B4513, #A0522D, #8B0000);
+            box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+        }
+
+        .meter-value {
+            font-size: 0.85rem;
+            color: #f4e4c1;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #8b4513, #d4af37);
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #b8860b;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+        }
+
+        .control-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .action-area {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(139, 69, 19, 0.4));
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid #8b4513;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .action-area h3 {
+            color: #d4af37;
+            margin-bottom: 15px;
+            font-family: 'Cinzel Decorative', serif;
+            text-align: center;
+            font-size: 1.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.8), rgba(160, 82, 45, 0.8));
+            color: #f4e4c1;
+            border: 1px solid #d4af37;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.8), rgba(218, 165, 32, 0.8));
+            color: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .message-area {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(139, 69, 19, 0.4));
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            min-height: 100px;
+            max-width: 900px;
+            border-left: 6px solid #d4af37;
+            border-right: 2px solid #8b4513;
+            border-top: 2px solid #8b4513;
+            border-bottom: 2px solid #8b4513;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 
+                inset 0 2px 10px rgba(0, 0, 0, 0.5),
+                0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.95), rgba(101, 67, 33, 0.95));
+            backdrop-filter: blur(15px);
+            border: 3px solid #d4af37;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .popup-content {
+            text-align: center;
+        }
+
+        .popup-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #d4af37;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .popup-message {
+            font-size: 1.1rem;
+            line-height: 1.4;
+            margin-bottom: 25px;
+            color: #f4e4c1;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Units Display */
+        .units-display {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .units-label {
+            font-size: 0.9rem;
+            color: #daa520;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .unit-tokens {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .unit-token {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.8), rgba(212, 175, 55, 0.3));
+            color: #f4e4c1;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .unit-token:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Evidence & Corruption Display */
+        .special-trackers {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(139, 69, 19, 0.3));
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #8b4513;
+        }
+
+        .tracker {
+            text-align: center;
+            flex: 1;
+        }
+
+        .tracker-label {
+            font-size: 0.8rem;
+            color: #daa520;
+            margin-bottom: 5px;
+        }
+
+        .tracker-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #d4af37;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1400px) {
+            .main-game-area {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .side-panel {
+                width: 100%;
+                max-width: 900px;
+            }
+
+            .faction-stats {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .faction-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .district {
+                font-size: 9px;
+            }
+
+            .map-container {
+                min-width: 100%;
+            }
+
+            .prohibition-map {
+                height: 500px;
+            }
+
+            .side-panel {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // GLOBAL GAME STATE
+        var gameState = {
+            currentTurn: 1,
+            currentFaction: 'irish',
+            actionPoints: 4,
+            globalHeat: 3,
+            evidenceTokens: 0,
+            factions: {
+                irish: {
+                    cash: 4000,
+                    territories: ['docks-north', 'docks-south'],
+                    heat: 9,
+                    corruption: 10,
+                    units: ['lieutenant', 'soldier', 'soldier', 'thug', 'thug'],
+                    buildings: []
+                },
+                italian: {
+                    cash: 5000,
+                    territories: ['downtown-west', 'downtown-east'],
+                    heat: 8,
+                    corruption: 10,
+                    units: ['capo', 'soldier', 'soldier', 'thug'],
+                    buildings: []
+                },
+                jewish: {
+                    cash: 4500,
+                    territories: ['financial-north', 'financial-south'],
+                    heat: 7,
+                    corruption: 10,
+                    units: ['lieutenant', 'accountant', 'soldier', 'soldier', 'thug'],
+                    buildings: []
+                },
+                polish: {
+                    cash: 3500,
+                    territories: ['industrial-west', 'industrial-east'],
+                    heat: 8,
+                    corruption: 10,
+                    units: ['lieutenant', 'soldier', 'soldier', 'soldier', 'thug', 'thug'],
+                    buildings: []
+                },
+                nypd: {
+                    budget: 4000,
+                    territories: ['police-downtown', 'police-docks', 'police-financial'],
+                    trust: 10,
+                    corruption: 0,
+                    units: ['chief', 'detective', 'detective', 'cop', 'cop', 'cop', 'cop', 'prosecutor'],
+                    evidenceTokens: 0
+                }
+            }
+        };
+
+        // TERRITORY DEFINITIONS
+        var territories = {
+            // Downtown Districts
+            'downtown-west': { name: 'Downtown West', income: 800, x: 150, y: 150, controller: 'italian', type: 'downtown' },
+            'downtown-east': { name: 'Downtown East', income: 800, x: 300, y: 150, controller: 'italian', type: 'downtown' },
+            'downtown-center': { name: 'City Hall', income: 600, x: 225, y: 100, controller: 'neutral', type: 'government' },
+            
+            // Docks Districts  
+            'docks-north': { name: 'North Docks', income: 600, x: 100, y: 300, controller: 'irish', type: 'docks' },
+            'docks-south': { name: 'South Docks', income: 600, x: 100, y: 400, controller: 'irish', type: 'docks' },
+            'docks-warehouse': { name: 'Warehouse District', income: 500, x: 150, y: 350, controller: 'neutral', type: 'docks' },
+            
+            // Financial Districts
+            'financial-north': { name: 'Wall Street North', income: 700, x: 400, y: 200, controller: 'jewish', type: 'financial' },
+            'financial-south': { name: 'Wall Street South', income: 700, x: 400, y: 280, controller: 'jewish', type: 'financial' },
+            'financial-bank': { name: 'Banking District', income: 900, x: 450, y: 240, controller: 'neutral', type: 'financial' },
+            
+            // Industrial Districts
+            'industrial-west': { name: 'Factory West', income: 400, x: 200, y: 450, controller: 'polish', type: 'industrial' },
+            'industrial-east': { name: 'Factory East', income: 400, x: 350, y: 450, controller: 'polish', type: 'industrial' },
+            'industrial-rail': { name: 'Rail Yards', income: 500, x: 275, y: 500, controller: 'neutral', type: 'industrial' },
+            
+            // Entertainment Districts
+            'entertainment-theater': { name: 'Theater District', income: 700, x: 500, y: 150, controller: 'neutral', type: 'entertainment' },
+            'entertainment-clubs': { name: 'Club District', income: 800, x: 550, y: 200, controller: 'neutral', type: 'entertainment' },
+            
+            // Residential Districts
+            'residential-little-italy': { name: 'Little Italy', income: 300, x: 320, y: 320, controller: 'neutral', type: 'residential' },
+            'residential-irish': { name: 'Irish Quarter', income: 300, x: 180, y: 250, controller: 'neutral', type: 'residential' },
+            'residential-jewish': { name: 'Lower East Side', income: 300, x: 480, y: 320, controller: 'neutral', type: 'residential' },
+            'residential-polish': { name: 'Polish District', income: 300, x: 250, y: 380, controller: 'neutral', type: 'residential' },
+            
+            // Police Precincts
+            'police-downtown': { name: 'Downtown Precinct', income: 0, x: 375, y: 120, controller: 'nypd', type: 'police' },
+            'police-docks': { name: 'Harbor Precinct', income: 0, x: 125, y: 250, controller: 'nypd', type: 'police' },
+            'police-financial': { name: 'Financial Precinct', income: 0, x: 425, y: 340, controller: 'nypd', type: 'police' }
+        };
+
+        // UTILITY FUNCTIONS
+        function updateMessage(message) {
+            document.getElementById('messageArea').textContent = message;
+        }
+
+        function updateActionPointsDisplay() {
+            var display = document.getElementById('actionPointsDisplay');
+            if (display) {
+                display.textContent = 'Family Operations (' + gameState.actionPoints + ' AP remaining)';
+            }
+        }
+
+        function getFactionDisplayName(faction) {
+            var names = {
+                'irish': 'THE IRISH MOB',
+                'italian': 'LA FAMIGLIA',
+                'jewish': 'THE SYNDICATE',
+                'polish': 'POLISH GANG',
+                'nypd': 'NEW YORK POLICE'
+            };
+            return names[faction] || faction.toUpperCase();
+        }
+
+        function getFactionIcon(faction) {
+            var icons = {
+                'irish': '🍀',
+                'italian': '🇮🇹', 
+                'jewish': '✡️',
+                'polish': '🇵🇱',
+                'nypd': '👮'
+            };
+            return icons[faction] || '❓';
+        }
+
+        // MAIN GAME FUNCTIONS
+        function recruitUnit() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+
+            var faction = gameState.factions[gameState.currentFaction];
+            var unitCosts = {
+                'irish': { 'Thug': 375, 'Soldier': 1000, 'Lieutenant': 2000 }, // 25% cheaper thugs
+                'italian': { 'Thug': 550, 'Soldier': 1100, 'Capo': 3500 }, // 10% more expensive
+                'jewish': { 'Soldier': 1000, 'Lieutenant': 2000, 'Accountant': 1500 },
+                'polish': { 'Thug': 500, 'Soldier': 1000, 'Lieutenant': 2000 },
+                'nypd': { 'Beat Cop': 600, 'Detective': 1200, 'Sergeant': 1800 }
+            };
+
+            var availableUnits = unitCosts[gameState.currentFaction];
+            var unitOptions = '';
+            for (var unit in availableUnits) {
+                var cost = availableUnits[unit];
+                if ((faction.cash || faction.budget || 0) >= cost) {
+                    unitOptions += unit + ' ($' + cost + ') - ';
+                }
+            }
+
+            if (unitOptions === '') {
+                updateMessage("Not enough money to recruit any units!");
+                return;
+            }
+
+            var unitType = prompt('Available units: ' + unitOptions + '\nEnter unit type to recruit:');
+            if (unitType && availableUnits[unitType]) {
+                var cost = availableUnits[unitType];
+                if (gameState.currentFaction === 'nypd') {
+                    faction.budget -= cost;
+                } else {
+                    faction.cash -= cost;
+                }
+                
+                faction.units.push(unitType.toLowerCase().replace(' ', ''));
+                gameState.actionPoints--;
+                updateMessage('Recruited ' + unitType + ' for $' + cost + '. Unit added to your organization.');
+                updateUI();
+                updateActionPointsDisplay();
+            }
+        }
+
+        function startOperation() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+
+            var faction = gameState.currentFaction;
+            var factionData = gameState.factions[faction];
+            var operations = [];
+
+            if (faction === 'nypd') {
+                operations = [
+                    'Police Raid - $1000',
+                    'Evidence Collection - $800',
+                    'Undercover Operation - $1200',
+                    'Court Prosecution - $500'
+                ];
+            } else {
+                operations = [
+                    'Numbers Racket - $600 investment',
+                    'Bootlegging Operation - $1200 investment', 
+                    'Protection Racket - $800 investment',
+                    'Bank Robbery - $1500 investment'
+                ];
+            }
+
+            var operation = prompt('Choose operation:\n' + operations.join('\n') + '\n\nEnter operation name:');
+            if (operation) {
+                executeOperation(operation);
+                gameState.actionPoints--;
+                updateUI();
+                updateActionPointsDisplay();
+            }
+        }
+
+        function executeOperation(operation) {
+            var faction = gameState.factions[gameState.currentFaction];
+            var isNYPD = gameState.currentFaction === 'nypd';
+
+            if (operation.indexOf('Raid') !== -1 && isNYPD) {
+                if (faction.budget >= 1000) {
+                    faction.budget -= 1000;
+                    var success = Math.random() > 0.3;
+                    if (success) {
+                        var seized = Math.floor(Math.random() * 2000) + 1000;
+                        faction.budget += Math.floor(seized * 0.25); // Asset forfeiture
+                        faction.evidenceTokens = (faction.evidenceTokens || 0) + 2;
+                        gameState.globalHeat = Math.max(0, gameState.globalHeat - 1);
+                        updateMessage('Successful police raid! Seized $' + seized + ', gained evidence, reduced heat.');
+                    } else {
+                        updateMessage("Police raid failed. Suspects escaped.");
+                    }
+                } else {
+                    updateMessage("Insufficient budget for police raid!");
+                }
+            } else if (operation.indexOf('Numbers') !== -1) {
+                if (faction.cash >= 600) {
+                    faction.cash -= 600;
+                    var success = Math.random() > 0.4;
+                    if (success) {
+                        var profit = Math.floor(Math.random() * 800) + 400;
+                        faction.cash += profit;
+                        faction.heat = Math.min(10, faction.heat + 1);
+                        updateMessage('Numbers racket successful! Earned $' + profit + '. Heat increased.');
+                    } else {
+                        faction.heat = Math.min(10, faction.heat + 2);
+                        updateMessage("Numbers racket busted! Lost investment and gained heat.");
+                    }
+                }
+            } else if (operation.indexOf('Bootlegging') !== -1) {
+                if (faction.cash >= 1200) {
+                    faction.cash -= 1200;
+                    var success = Math.random() > 0.3;
+                    if (success) {
+                        var profit = Math.floor(Math.random() * 2000) + 1000;
+                        if (gameState.currentFaction === 'irish') profit += 200; // Irish bonus
+                        faction.cash += profit;
+                        faction.heat = Math.min(10, faction.heat + 2);
+                        updateMessage('Bootlegging operation successful! Earned $' + profit + '. High heat generated.');
+                    } else {
+                        faction.heat = Math.min(10, faction.heat + 3);
+                        updateMessage("Bootlegging operation raided! Lost investment, high heat gained.");
+                    }
+                }
+            } else if (operation.indexOf('Bank') !== -1) {
+                if (faction.cash >= 1500) {
+                    faction.cash -= 1500;
+                    var success = Math.random() > 0.5; // High risk
+                    if (success) {
+                        var profit = Math.floor(Math.random() * 5000) + 3000;
+                        faction.cash += profit;
+                        faction.heat = Math.min(10, faction.heat + 4);
+                        updateMessage('Bank robbery successful! Stole $' + profit + '. Massive heat generated!');
+                    } else {
+                        faction.heat = Math.min(10, faction.heat + 5);
+                        updateMessage("Bank robbery failed! Lost units to police, extreme heat gained.");
+                    }
+                }
+            }
+        }
+
+        function buildOperation() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+
+            var faction = gameState.factions[gameState.currentFaction];
+            var buildings = {
+                'Speakeasy': { cost: 3500, income: 800, heat: 1 },
+                'Distillery': { cost: 5000, income: 1200, heat: 2 },
+                'Safe House': { cost: 2000, income: 0, heat: -1 },
+                'Gambling Den': { cost: 3000, income: 800, heat: 1 }
+            };
+
+            var buildingOptions = '';
+            for (var building in buildings) {
+                var cost = buildings[building].cost;
+                if (gameState.currentFaction === 'polish' && building === 'Distillery') {
+                    cost = Math.floor(cost * 0.75); // 25% cheaper for Polish
+                }
+                if (faction.cash >= cost) {
+                    buildingOptions += building + ' ($' + cost + ') - ';
+                }
+            }
+
+            if (buildingOptions === '') {
+                updateMessage("Not enough money to build anything!");
+                return;
+            }
+
+            var building = prompt('Available buildings:\n' + buildingOptions + '\nEnter building name:');
+            if (building && buildings[building]) {
+                var cost = buildings[building].cost;
+                if (gameState.currentFaction === 'polish' && building === 'Distillery') {
+                    cost = Math.floor(cost * 0.75);
+                }
+                
+                faction.cash -= cost;
+                faction.buildings.push(building.toLowerCase().replace(' ', ''));
+                faction.heat = Math.max(0, Math.min(10, faction.heat + buildings[building].heat));
+                
+                gameState.actionPoints--;
+                updateMessage('Built ' + building + ' for $' + cost + '. Provides $' + buildings[building].income + '/turn.');
+                updateUI();
+                updateActionPointsDisplay();
+            }
+        }
+
+        function expandTerritory() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+
+            var neutralTerritories = [];
+            for (var id in territories) {
+                if (territories[id].controller === 'neutral') {
+                    neutralTerritories.push(id);
+                }
+            }
+
+            if (neutralTerritories.length === 0) {
+                updateMessage("No neutral territories to expand into!");
+                return;
+            }
+
+            var targetId = neutralTerritories[Math.floor(Math.random() * neutralTerritories.length)];
+            var target = territories[targetId];
+            
+            var attackSuccess = Math.random() > 0.4;
+            
+            if (attackSuccess) {
+                territories[targetId].controller = gameState.currentFaction;
+                gameState.factions[gameState.currentFaction].territories.push(targetId);
+                if (gameState.currentFaction !== 'nypd') {
+                    gameState.factions[gameState.currentFaction].corruption += 1;
+                }
+                
+                updateMessage('Successfully expanded into ' + target.name + '! Gained territory and influence.');
+            } else {
+                if (gameState.currentFaction !== 'nypd') {
+                    gameState.factions[gameState.currentFaction].heat += 1;
+                }
+                updateMessage('Failed to expand into ' + target.name + '. Encountered resistance.');
+            }
+
+            gameState.actionPoints -= 2;
+            updateUI();
+            updateActionPointsDisplay();
+        }
+
+        function bribeOfficial() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+
+            var faction = gameState.factions[gameState.currentFaction];
+            var officials = [
+                { name: 'Beat Cop', cost: 500, effect: 'Ignore 1 raid per turn' },
+                { name: 'Detective', cost: 1500, effect: 'Reduce heat by 1' },
+                { name: 'Judge', cost: 3000, effect: 'Release arrested units' },
+                { name: 'Mayor', cost: 5000, effect: 'Control city regulations' }
+            ];
+
+            var corruptionCostMultiplier = 1;
+            if (gameState.currentFaction === 'irish') {
+                corruptionCostMultiplier = 2; // Politicians cost double for Irish
+            } else if (gameState.currentFaction === 'polish') {
+                corruptionCostMultiplier = 1.5; // +50% for Polish
+            }
+
+            var bribeOptions = '';
+            for (var i = 0; i < officials.length; i++) {
+                var official = officials[i];
+                var cost = Math.floor(official.cost * corruptionCostMultiplier);
+                if (faction.cash >= cost) {
+                    bribeOptions += official.name + ' ($' + cost + ') - ' + official.effect + '\n';
+                }
+            }
+
+            if (bribeOptions === '') {
+                updateMessage("Not enough money to bribe any officials!");
+                return;
+            }
+
+            var choice = prompt('Available bribes:\n' + bribeOptions + '\nEnter official name:');
+            for (var i = 0; i < officials.length; i++) {
+                var official = officials[i];
+                if (choice && official.name.toLowerCase().indexOf(choice.toLowerCase()) !== -1) {
+                    var cost = Math.floor(official.cost * corruptionCostMultiplier);
+                    faction.cash -= cost;
+                    faction.corruption = Math.min(10, faction.corruption + 1);
+                    
+                    if (official.name === 'Detective') {
+                        faction.heat = Math.max(0, faction.heat - 1);
+                    }
+                    
+                    gameState.actionPoints--;
+                    updateMessage('Bribed ' + official.name + ' for $' + cost + '. ' + official.effect);
+                    updateUI();
+                    updateActionPointsDisplay();
+                    break;
+                }
+            }
+        }
+
+        function specialAction() {
+            if (gameState.actionPoints <= 0) {
+                updateMessage("No action points remaining!");
+                return;
+            }
+
+            var faction = gameState.currentFaction;
+            var factionData = gameState.factions[faction];
+
+            switch (faction) {
+                case 'irish':
+                    // Irish special: Dock territory bonus
+                    var dockTerritories = factionData.territories.filter(t => territories[t] && territories[t].type === 'docks');
+                    var bonus = dockTerritories.length * 200;
+                    factionData.cash += bonus;
+                    updateMessage("Irish Dock Control activated! Smuggling operations earn $" + bonus + " bonus.");
+                    break;
+                    
+                case 'italian':
+                    // Italian special: Family loyalty
+                    factionData.corruption += 2; // Capos provide extra corruption
+                    updateMessage("Family Loyalty activated! La Famiglia's influence grows stronger. +2 Corruption.");
+                    break;
+                    
+                case 'jewish':
+                    // Jewish special: Money laundering
+                    var accountants = factionData.units.filter(u => u === 'accountant').length;
+                    var laundered = accountants * 300;
+                    factionData.cash += laundered;
+                    updateMessage("Money Laundering activated! Accountants generate $" + laundered + " clean money.");
+                    break;
+                    
+                case 'polish':
+                    // Polish special: Industrial bonus
+                    var industrialTerritories = factionData.territories.filter(t => territories[t] && territories[t].type === 'industrial');
+                    var bonus = industrialTerritories.length * 200;
+                    factionData.cash += bonus;
+                    updateMessage("Industrial Control activated! Factory protection rackets earn $" + bonus + " bonus.");
+                    break;
+                    
+                case 'nypd':
+                    // NYPD special: Evidence collection or federal support
+                    if (factionData.trust >= 8) {
+                        var seized = Math.floor(Math.random() * 3000) + 2000;
+                        factionData.budget += seized;
+                        factionData.evidenceTokens = (factionData.evidenceTokens || 0) + 3;
+                        updateMessage('Federal Task Force activated! Seized $' + seized + ' and gained 3 evidence tokens.');
+                    } else {
+                        updateMessage("Insufficient trust for Federal Task Force. Need Trust 8+.");
+                    }
+                    break;
+            }
+
+            gameState.actionPoints--;
+            updateUI();
+            updateActionPointsDisplay();
+        }
+
+        function endTurn() {
+            // Collect income from territories and buildings
+            for (var faction in gameState.factions) {
+                var data = gameState.factions[faction];
+                var income = 0;
+                
+                // Territory income
+                for (var i = 0; i < data.territories.length; i++) {
+                    var territoryId = data.territories[i];
+                    var territory = territories[territoryId];
+                    income += territory.income;
+                }
+                
+                // Building income
+                var buildings = data.buildings || [];
+                for (var j = 0; j < buildings.length; j++) {
+                    var building = buildings[j];
+                    switch (building) {
+                        case 'speakeasy': income += 800; break;
+                        case 'distillery': income += 1200; break;
+                        case 'gambling': income += 800; break;
+                    }
+                }
+
+                // Apply faction bonuses
+                if (faction === 'nypd') {
+                    data.budget += income + (data.trust * 200); // Trust bonus
+                } else {
+                    data.cash += income;
+                    
+                    // Apply faction-specific bonuses
+                    if (faction === 'irish') {
+                        // Bootlegging bonus already applied in operations
+                    } else if (faction === 'jewish') {
+                        var accountants = (data.units || []).filter(u => u === 'accountant').length;
+                        data.cash += accountants * 300; // Accountant bonus
+                    }
+                }
+            }
+
+            // Move to next faction
+            var factionOrder = ['irish', 'italian', 'jewish', 'polish', 'nypd'];
+            var currentIndex = factionOrder.indexOf(gameState.currentFaction);
+            
+            if (currentIndex === factionOrder.length - 1) {
+                gameState.currentTurn++;
+                gameState.currentFaction = factionOrder[0];
+                
+                // Random events
+                if (Math.random() < 0.4) {
+                    drawEventCard();
+                }
+            } else {
+                gameState.currentFaction = factionOrder[currentIndex + 1];
+            }
+
+            gameState.actionPoints = 4;
+            updateUI();
+            updateActionPointsDisplay();
+            updateMessage(getFactionDisplayName(gameState.currentFaction) + "'s turn begins. The family has 4 Action Points for operations.");
+
+            checkVictoryConditions();
+        }
+
+        function checkVictoryConditions() {
+            for (var faction in gameState.factions) {
+                var data = gameState.factions[faction];
+                
+                if (faction === 'nypd') {
+                    // NYPD victory conditions
+                    if (data.territories.length >= 10 && data.trust >= 8) {
+                        showVictory('NEW YORK POLICE wins by Law and Order! The streets are safe again.');
+                    } else if ((data.evidenceTokens || 0) >= 15 && data.trust >= 8) {
+                        showVictory('NEW YORK POLICE wins by Federal Recognition! Exemplary police work.');
+                    } else if (data.corruption >= 8 && data.territories.length >= 12) {
+                        showVictory('CORRUPT POLICE wins by Criminal Empire! The law has become lawless.');
+                    }
+                } else {
+                    // Gang victory conditions  
+                    if (data.territories.length >= 12) {
+                        showVictory(getFactionDisplayName(faction) + ' wins by Territorial Control! Dominates the city.');
+                    } else if (data.corruption >= 15) {
+                        showVictory(getFactionDisplayName(faction) + ' wins by Political Victory! Controls the system.');
+                    } else if (data.cash >= 20000 && data.territories.length >= 8) {
+                        showVictory(getFactionDisplayName(faction) + ' wins by Economic Empire! Built a criminal dynasty.');
+                    }
+                }
+            }
+        }
+
+        function showVictory(message) {
+            document.getElementById('popupTitle').textContent = 'PROHIBITION ENDS';
+            document.getElementById('popupMessage').textContent = message;
+            document.getElementById('eventPopup').style.display = 'block';
+        }
+
+        function showRules() {
+            var rules = '🎭 GANGSTERS: RISE OF THE FAMILY\n' +
+                'Prohibition-era America (1920-1933)\n\n' +
+                '🎯 OBJECTIVE: Control New York through territory, corruption, or economics.\n\n' +
+                '👥 FACTIONS:\n' +
+                '🍀 IRISH MOB - Dock control, bootlegging specialists\n' +
+                '🇮🇹 LA FAMIGLIA - Loyalty bonus, family compounds\n' +
+                '✡️ THE SYNDICATE - Financial experts, money laundering\n' +
+                '🇵🇱 POLISH GANG - Industrial focus, distillery masters\n' +
+                '👮 NYPD - Law enforcement, can be honest or corrupt\n\n' +
+                '🏆 VICTORY CONDITIONS:\n' +
+                'GANGS: 12 territories OR 15 corruption OR $20k + 8 territories\n' +
+                'NYPD: 10 territories + Trust 8 OR 15 evidence + Trust 8\n\n' +
+                '🎲 GAMEPLAY:\n' +
+                '• 4 Action Points per turn\n' +
+                '• Build operations, recruit units, expand territory\n' +
+                '• Manage heat (gangs) or trust/corruption (NYPD)\n' +
+                '• Income from controlled territories and buildings\n\n' +
+                '⚖️ PROHIBITION MECHANICS:\n' +
+                '• Bootlegging generates high income but attracts heat\n' +
+                '• Corruption system affects political influence\n' +
+                '• Police can raid operations or become corrupt\n' +
+                '• Evidence collection leads to prosecutions\n\n' +
+                'Welcome to the lawless streets of Prohibition!';
+            alert(rules);
+        }
+
+        function showMap() {
+            var mapInfo = 'NEW YORK CITY TERRITORY CONTROL (1925):\n\n';
+            
+            for (var id in territories) {
+                var territory = territories[id];
+                mapInfo += territory.name + ': ' + territory.controller.toUpperCase() + ' ($' + territory.income + '/turn)\n';
+            }
+            
+            alert(mapInfo);
+        }
+
+        function drawEventCard() {
+            var events = [
+                { 
+                    title: "Federal Investigation", 
+                    message: "The Feds are investigating organized crime. All gangs +2 heat, NYPD gains federal support.", 
+                    effect: function() {
+                        ['irish', 'italian', 'jewish', 'polish'].forEach(function(faction) {
+                            gameState.factions[faction].heat = Math.min(10, gameState.factions[faction].heat + 2);
+                        });
+                        gameState.factions.nypd.trust = Math.min(10, gameState.factions.nypd.trust + 1);
+                    }
+                },
+                { 
+                    title: "Temperance Rally", 
+                    message: "Anti-alcohol protesters march. All speakeasies -$200 income this turn.", 
+                    effect: function() {
+                        // Building income temporarily reduced
+                    }
+                },
+                { 
+                    title: "Police Commissioner Change", 
+                    message: "New police leadership appointed. NYPD resets corruption to 0, trust to 8.", 
+                    effect: function() {
+                        gameState.factions.nypd.corruption = 0;
+                        gameState.factions.nypd.trust = 8;
+                    }
+                },
+                { 
+                    title: "Smuggling Ship Arrives", 
+                    message: "Fresh liquor shipment from Canada. All factions can build speakeasies at half price this turn.", 
+                    effect: function() {
+                        // Building discount applied for one turn
+                    }
+                },
+                {
+                    title: "Gang War Erupts",
+                    message: "Violence escalates between rival families. Random gangs must fight.",
+                    effect: function() {
+                        var gangs = ['irish', 'italian', 'jewish', 'polish'];
+                        var gang1 = gangs[Math.floor(Math.random() * gangs.length)];
+                        var gang2;
+                        do {
+                            gang2 = gangs[Math.floor(Math.random() * gangs.length)];
+                        } while (gang2 === gang1);
+                        
+                        gameState.factions[gang1].heat += 2;
+                        gameState.factions[gang2].heat += 2;
+                    }
+                },
+                {
+                    title: "Economic Boom",
+                    message: "Business is booming! All legitimate operations +$300 this turn.",
+                    effect: function() {
+                        for (var faction in gameState.factions) {
+                            if (faction !== 'nypd') {
+                                gameState.factions[faction].cash += 300;
+                            }
+                        }
+                    }
+                }
+            ];
+
+            var event = events[Math.floor(Math.random() * events.length)];
+            event.effect();
+            
+            document.getElementById('popupTitle').textContent = event.title;
+            document.getElementById('popupMessage').textContent = event.message;
+            document.getElementById('eventPopup').style.display = 'block';
+            
+            updateUI();
+        }
+
+        function closePopup() {
+            document.getElementById('eventPopup').style.display = 'none';
+        }
+
+        function resetGame() {
+            if (confirm('Start a new game? The Prohibition era will begin anew.')) {
+                location.reload();
+            }
+        }
+
+        function selectDistrict(districtId) {
+            var territory = territories[districtId];
+            var controller = getFactionDisplayName(territory.controller);
+            updateMessage('Selected: ' + territory.name + ' - Controlled by: ' + controller + ' - Income: $' + territory.income + '/turn - Type: ' + territory.type.toUpperCase());
+        }
+
+        // UI FUNCTIONS
+        function createMap() {
+            var mapContainer = document.getElementById('prohibitionMap');
+            mapContainer.innerHTML = '';
+            
+            // Add era label
+            var eraLabel = document.createElement('div');
+            eraLabel.style.cssText = 'position: absolute; top: 15px; left: 15px; font-family: "Cinzel Decorative", serif; font-size: 1.1rem; color: #d4af37; font-weight: 700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); z-index: 10;';
+            eraLabel.textContent = 'NEW YORK CITY - 1925';
+            mapContainer.appendChild(eraLabel);
+
+            for (var id in territories) {
+                var territory = territories[id];
+                var districtElement = document.createElement('div');
+                districtElement.className = 'district ' + territory.controller;
+                districtElement.id = id;
+                districtElement.style.left = territory.x + 'px';
+                districtElement.style.top = territory.y + 'px';
+                districtElement.style.width = '120px';
+                districtElement.style.height = '80px';
+
+                districtElement.innerHTML = 
+                    '<div class="district-name">' + territory.name + '</div>' +
+                    '<div class="district-income">$' + territory.income + '/turn</div>' +
+                    '<div class="district-controller">' + territory.controller.toUpperCase() + '</div>';
+
+                districtElement.onclick = function() { selectDistrict(this.id); };
+                districtElement.title = territory.name + ' - Income: $' + territory.income + ' - Controller: ' + territory.controller + ' - Type: ' + territory.type;
+
+                mapContainer.appendChild(districtElement);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('turnNumber').textContent = gameState.currentTurn;
+            document.getElementById('currentFactionName').textContent = getFactionDisplayName(gameState.currentFaction);
+
+            for (var faction in gameState.factions) {
+                updateFactionDisplay(faction, gameState.factions[faction]);
+            }
+
+            updateMeters();
+            updateActiveFactionPanel();
+            createMap();
+        }
+
+        function updateFactionDisplay(faction, data) {
+            var isNYPD = faction === 'nypd';
+            var cashElement = document.getElementById(faction + (isNYPD ? 'Budget' : 'Cash'));
+            var territoriesElement = document.getElementById(faction + 'Territories');
+            
+            if (cashElement) {
+                cashElement.textContent = '$' + (data.cash || data.budget || 0).toLocaleString();
+            }
+            if (territoriesElement) {
+                territoriesElement.textContent = data.territories.length;
+            }
+
+            if (isNYPD) {
+                var trustElement = document.getElementById('nypd' + 'Trust');
+                var corruptionElement = document.getElementById('nypd' + 'Corruption');
+                var evidenceElement = document.getElementById('nypd' + 'Evidence');
+                if (trustElement) trustElement.textContent = data.trust;
+                if (corruptionElement) corruptionElement.textContent = data.corruption;
+                if (evidenceElement) evidenceElement.textContent = data.evidenceTokens || 0;
+            } else {
+                var heatElement = document.getElementById(faction + 'Heat');
+                var corruptionElement = document.getElementById(faction + 'Corruption');
+                var unitsElement = document.getElementById(faction + 'Units');
+                if (heatElement) heatElement.textContent = data.heat;
+                if (corruptionElement) corruptionElement.textContent = data.corruption;
+                if (unitsElement) unitsElement.textContent = (data.units || []).length;
+            }
+        }
+
+        function updateMeters() {
+            // Heat meter
+            var heatMeter = document.getElementById('heatMeter');
+            var heatValue = document.getElementById('heatValue');
+            if (heatMeter && heatValue) {
+                var heatPercent = (gameState.globalHeat / 10) * 100;
+                heatMeter.style.width = heatPercent + '%';
+                heatValue.textContent = gameState.globalHeat + '/10';
+            }
+
+            // Trust meter (NYPD)
+            var trustMeter = document.getElementById('trustMeter');
+            var trustValue = document.getElementById('trustValue');
+            if (trustMeter && trustValue) {
+                var nypd = gameState.factions.nypd;
+                var trustPercent = (nypd.trust / 10) * 100;
+                trustMeter.style.width = trustPercent + '%';
+                trustValue.textContent = nypd.trust + '/10';
+            }
+
+            // Corruption meter (current faction)
+            var corruptionMeter = document.getElementById('corruptionMeter');
+            var corruptionValue = document.getElementById('corruptionValue');
+            if (corruptionMeter && corruptionValue) {
+                var currentFaction = gameState.factions[gameState.currentFaction];
+                if (currentFaction.corruption !== undefined) {
+                    var corruptionPercent = (currentFaction.corruption / 10) * 100;
+                    corruptionMeter.style.width = corruptionPercent + '%';
+                    corruptionValue.textContent = currentFaction.corruption + '/10';
+                }
+            }
+        }
+
+        function updateActiveFactionPanel() {
+            var panels = document.querySelectorAll('.faction-panel');
+            for (var i = 0; i < panels.length; i++) {
+                panels[i].classList.remove('active');
+            }
+            
+            var currentPanel = document.getElementById(gameState.currentFaction + 'Panel');
+            if (currentPanel) {
+                currentPanel.classList.add('active');
+            }
+        }
+
+        function initializeGame() {
+            createMap();
+            updateUI();
+            updateActionPointsDisplay();
+            updateMessage("Welcome to Prohibition-era New York, 1925. The Irish Mob controls the docks and begins their rise to power. Choose your operations wisely - the Feds are watching.");
+        }
+    </script>
+
+    <div class="game-container">
+        <div class="game-header">
+            <h1 class="game-title">🎭 GANGSTERS 🎭</h1>
+            <p class="game-subtitle">Rise of the Family</p>
+            <p class="game-era">Prohibition Era • New York City • 1920-1933</p>
+        </div>
+
+        <div class="turn-counter">
+            Turn <span id="turnNumber">1</span> - <span id="currentFactionName">THE IRISH MOB</span> Operations
+        </div>
+
+        <div class="meters-display">
+            <div class="meter-container">
+                <div class="meter-label">Federal Heat</div>
+                <div class="meter-bar">
+                    <div class="meter-fill heat-fill" id="heatMeter" style="width: 30%"></div>
+                </div>
+                <div class="meter-value" id="heatValue">3/10</div>
+            </div>
+            <div class="meter-container">
+                <div class="meter-label">NYPD Trust</div>
+                <div class="meter-bar">
+                    <div class="meter-fill trust-fill" id="trustMeter" style="width: 100%"></div>
+                </div>
+                <div class="meter-value" id="trustValue">10/10</div>
+            </div>
+            <div class="meter-container">
+                <div class="meter-label">Corruption</div>
+                <div class="meter-bar">
+                    <div class="meter-fill corruption-fill" id="corruptionMeter" style="width: 100%"></div>
+                </div>
+                <div class="meter-value" id="corruptionValue">10/10</div>
+            </div>
+        </div>
+
+        <div class="main-game-area">
+            <div class="map-container">
+                <div class="prohibition-map" id="prohibitionMap">
+                    <!-- Districts will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="faction-panel active irish" id="irishPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">🍀</div>
+                        <div>
+                            <div class="faction-name">THE IRISH MOB</div>
+                            <div class="faction-subtitle">Dock Masters & Bootleggers</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">💰 Cash:</span>
+                            <span class="stat-value" id="irishCash">$4,000</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏢 Territories:</span>
+                            <span class="stat-value" id="irishTerritories">2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🔥 Heat:</span>
+                            <span class="stat-value" id="irishHeat">9</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">💸 Corruption:</span>
+                            <span class="stat-value" id="irishCorruption">10</span>
+                        </div>
+                    </div>
+                    <div class="units-display">
+                        <div class="units-label">Family Members:</div>
+                        <div class="unit-tokens" id="irishUnits">
+                            <div class="unit-token" title="Lieutenant">Lt</div>
+                            <div class="unit-token" title="Soldier">Sol</div>
+                            <div class="unit-token" title="Soldier">Sol</div>
+                            <div class="unit-token" title="Thug">Thg</div>
+                            <div class="unit-token" title="Thug">Thg</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel italian" id="italianPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">🇮🇹</div>
+                        <div>
+                            <div class="faction-name">LA FAMIGLIA</div>
+                            <div class="faction-subtitle">Honor & Loyalty</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">💰 Cash:</span>
+                            <span class="stat-value" id="italianCash">$5,000</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏢 Territories:</span>
+                            <span class="stat-value" id="italianTerritories">2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🔥 Heat:</span>
+                            <span class="stat-value" id="italianHeat">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">💸 Corruption:</span>
+                            <span class="stat-value" id="italianCorruption">10</span>
+                        </div>
+                    </div>
+                    <div class="units-display">
+                        <div class="units-label">Family Members:</div>
+                        <div class="unit-tokens" id="italianUnits">
+                            <div class="unit-token" title="Capo">Cpo</div>
+                            <div class="unit-token" title="Soldier">Sol</div>
+                            <div class="unit-token" title="Soldier">Sol</div>
+                            <div class="unit-token" title="Thug">Thg</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel jewish" id="jewishPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">✡️</div>
+                        <div>
+                            <div class="faction-name">THE SYNDICATE</div>
+                            <div class="faction-subtitle">Financial Empire</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">💰 Cash:</span>
+                            <span class="stat-value" id="jewishCash">$4,500</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏢 Territories:</span>
+                            <span class="stat-value" id="jewishTerritories">2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🔥 Heat:</span>
+                            <span class="stat-value" id="jewishHeat">7</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">💸 Corruption:</span>
+                            <span class="stat-value" id="jewishCorruption">10</span>
+                        </div>
+                    </div>
+                    <div class="units-display">
+                        <div class="units-label">Family Members:</div>
+                        <div class="unit-tokens" id="jewishUnits">
+                            <div class="unit-token" title="Lieutenant">Lt</div>
+                            <div class="unit-token" title="Accountant">Acc</div>
+                            <div class="unit-token" title="Soldier">Sol</div>
+                            <div class="unit-token" title="Soldier">Sol</div>
+                            <div class="unit-token" title="Thug">Thg</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel polish" id="polishPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">🇵🇱</div>
+                        <div>
+                            <div class="faction-name">POLISH GANG</div>
+                            <div class="faction-subtitle">Industrial Power</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">💰 Cash:</span>
+                            <span class="stat-value" id="polishCash">$3,500</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏢 Territories:</span>
+                            <span class="stat-value" id="polishTerritories">2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🔥 Heat:</span>
+                            <span class="stat-value" id="polishHeat">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">💸 Corruption:</span>
+                            <span class="stat-value" id="polishCorruption">10</span>
+                        </div>
+                    </div>
+                    <div class="units-display">
+                        <div class="units-label">Family Members:</div>
+                        <div class="unit-tokens" id="polishUnits">
+                            <div class="unit-token" title="Lieutenant">Lt</div>
+                            <div class="unit-token" title="Soldier">Sol</div>
+                            <div class="unit-token" title="Soldier">Sol</div>
+                            <div class="unit-token" title="Soldier">Sol</div>
+                            <div class="unit-token" title="Thug">Thg</div>
+                            <div class="unit-token" title="Thug">Thg</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faction-panel nypd" id="nypdPanel">
+                    <div class="faction-header">
+                        <div class="faction-icon">👮</div>
+                        <div>
+                            <div class="faction-name">NEW YORK POLICE</div>
+                            <div class="faction-subtitle">Law & Order</div>
+                        </div>
+                    </div>
+                    <div class="faction-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">💰 Budget:</span>
+                            <span class="stat-value" id="nypdBudget">$4,000</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏢 Territories:</span>
+                            <span class="stat-value" id="nypdTerritories">3</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🤝 Trust:</span>
+                            <span class="stat-value" id="nypdTrust">10</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">📋 Evidence:</span>
+                            <span class="stat-value" id="nypdEvidence">0</span>
+                        </div>
+                    </div>
+                    <div class="units-display">
+                        <div class="units-label">Police Force:</div>
+                        <div class="unit-tokens" id="nypdUnits">
+                            <div class="unit-token" title="Police Chief">Ch</div>
+                            <div class="unit-token" title="Detective">Det</div>
+                            <div class="unit-token" title="Detective">Det</div>
+                            <div class="unit-token" title="Beat Cop">Cop</div>
+                            <div class="unit-token" title="Beat Cop">Cop</div>
+                            <div class="unit-token" title="Beat Cop">Cop</div>
+                            <div class="unit-token" title="Beat Cop">Cop</div>
+                            <div class="unit-token" title="Prosecutor">Pros</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-area">
+                    <h3 id="actionPointsDisplay">Family Operations (4 AP remaining)</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="recruitUnit()">Recruit Members</button>
+                        <button class="action-btn" onclick="startOperation()">Run Operation</button>
+                        <button class="action-btn" onclick="buildOperation()">Build Enterprise</button>
+                        <button class="action-btn" onclick="expandTerritory()">Expand Territory</button>
+                        <button class="action-btn" onclick="bribeOfficial()">Bribe Officials</button>
+                        <button class="action-btn" onclick="specialAction()">Family Special</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <button class="control-btn" onclick="endTurn()">End Operations</button>
+            <button class="control-btn" onclick="showRules()">Game Rules</button>
+            <button class="control-btn" onclick="showMap()">Territory Status</button>
+            <button class="control-btn" onclick="drawEventCard()">News Flash</button>
+            <button class="control-btn" onclick="resetGame()">New Era</button>
+        </div>
+
+        <div class="message-area" id="messageArea">
+            Welcome to Prohibition-era New York, 1925. The Irish Mob controls the vital dock districts and prepares to expand their bootlegging empire. Federal agents watch from the shadows while corrupt officials count their bribes. The battle for New York's underworld begins now.
+        </div>
+    </div>
+
+    <!-- Event Popup -->
+    <div class="event-popup" id="eventPopup">
+        <div class="popup-content">
+            <div class="popup-title" id="popupTitle">Breaking News</div>
+            <div class="popup-message" id="popupMessage">Event message here</div>
+            <div class="popup-buttons">
+                <button class="control-btn" onclick="closePopup()">Understood</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize game when page loads
+        window.addEventListener('load', function() {
+            initializeGame();
+
+            // Add visual feedback for buttons
+            var buttons = document.querySelectorAll('.control-btn, .action-btn');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].addEventListener('click', function() {
+                    var button = this;
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(function() {
+                        button.style.transform = '';
+                    }, 150);
+                });
+            }
+
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                if (event.target.tagName === 'INPUT') return;
+                switch(event.key.toLowerCase()) {
+                    case 'e': event.preventDefault(); endTurn(); break;
+                    case 'r': event.preventDefault(); recruitUnit(); break;
+                    case 'o': event.preventDefault(); startOperation(); break;
+                    case 'b': event.preventDefault(); buildOperation(); break;
+                    case 't': event.preventDefault(); expandTerritory(); break;
+                    case 'c': event.preventDefault(); bribeOfficial(); break;
+                    case 's': event.preventDefault(); specialAction(); break;
+                    case 'h': event.preventDefault(); showRules(); break;
+                    case 'escape': closePopup(); break;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

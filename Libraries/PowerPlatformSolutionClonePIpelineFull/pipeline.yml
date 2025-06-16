@@ -1,0 +1,373 @@
+trigger: none # Manual trigger only
+
+parameters:
+- name: solutionName
+  displayName: Solution Name to Migrate
+  type: string
+  default: ''
+  required: true
+- name: gitPat
+  displayName: Git Personal Access Token
+  type: string
+  default: ''
+  required: true
+
+variables:
+- group: PowerPlatformConnections # Variable group containing connection details
+- name: System.Debug
+  value: false # Set to true for debugging
+
+stages:
+- stage: ExportAndCreatePR
+  displayName: 'Export Solution and Create PR'
+  jobs:
+  - job: ExportSolution
+    displayName: 'Export Solution and Create PR'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '6.0.x'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet packages'
+      inputs:
+        command: 'restore'
+        projects: '**/PowerPlatformSolutionExporter.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build solution exporter'
+      inputs:
+        command: 'build'
+        projects: '**/PowerPlatformSolutionExporter.csproj'
+        arguments: '--configuration Release'
+
+    - task: PowerShell@2
+      displayName: 'Install PAC CLI'
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "Installing Power Platform CLI..."
+          dotnet tool install -g Microsoft.PowerApps.CLI.Tool
+          pac --version
+
+    - task: PowerShell@2
+      displayName: 'Create configuration file'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $configContent = @"
+          {
+            "SourceEnvUrl": "$(SourceEnvironmentUrl)",
+            "TargetEnvUrl": "$(TargetEnvironmentUrl)",
+            "ClientId": "$(ClientId)",
+            "ClientSecret": "$(ClientSecret)",
+            "TenantId": "$(TenantId)",
+            "SolutionName": "${{ parameters.solutionName }}"
+          }
+          "@
+          
+          New-Item -Path "$(Build.SourcesDirectory)/config.json" -ItemType File -Force -Value $configContent
+          Write-Host "Configuration file created successfully"
+
+    - task: DotNetCoreCLI@2
+      name: ExportTask
+      displayName: 'Run solution exporter'
+      inputs:
+        command: 'run'
+        projects: '**/PowerPlatformSolutionExporter.csproj'
+        arguments: '--configuration Release'
+      
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish solution artifacts'
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/exports'
+        artifact: 'PowerPlatformSolution'
+        publishLocation: 'pipeline'
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish unpacked solution'
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/unpacked'
+        artifact: 'UnpackedSolution'
+        publishLocation: 'pipeline'
+
+    # Create a timestamp for branch name
+    - task: PowerShell@2
+      name: SetVariables
+      displayName: 'Set branch and PR variables'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+          $branchName = "solution/${{ parameters.solutionName }}_$timestamp"
+          Write-Host "##vso[task.setvariable variable=BranchName]$branchName"
+          Write-Host "##vso[task.setvariable variable=SolutionName]${{ parameters.solutionName }}"
+          Write-Host "##vso[task.setvariable variable=Timestamp]$timestamp"
+          
+          # Get the solution version from the exported files
+          $solutionXmlPath = "$(Build.SourcesDirectory)/unpacked/solution.xml"
+          if (Test-Path $solutionXmlPath) {
+            [xml]$solutionXml = Get-Content $solutionXmlPath
+            $version = $solutionXml.ImportExportXml.SolutionManifest.Version
+            Write-Host "Solution version: $version"
+            Write-Host "##vso[task.setvariable variable=SolutionVersion]$version"
+          } else {
+            Write-Host "##vso[task.setvariable variable=SolutionVersion]1.0.0.0"
+          }
+
+    # Configure Git
+    - task: PowerShell@2
+      displayName: 'Configure Git'
+      inputs:
+        targetType: 'inline'
+        script: |
+          git config --global user.email "$(Build.RequestedForEmail)"
+          git config --global user.name "$(Build.RequestedFor)"
+
+    # Clone repository
+    - task: PowerShell@2
+      displayName: 'Clone repository'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Create a credential file for Git
+          $gitUrl = "$(GitRepoUrl)"
+          $pat = "${{ parameters.gitPat }}"
+          
+          $gitUrlWithCreds = $gitUrl -replace "https://", "https://_:$pat@"
+          
+          Write-Host "Cloning repository..."
+          git clone $gitUrlWithCreds "$(Build.SourcesDirectory)/repo"
+          
+          # Navigate to repo directory
+          cd "$(Build.SourcesDirectory)/repo"
+          
+          # Create new branch
+          Write-Host "Creating branch: $(BranchName)"
+          git checkout -b "$(BranchName)"
+          
+          # Create a directory for the solution if it doesn't exist
+          $solutionDir = "$(Build.SourcesDirectory)/repo/$(SolutionName)"
+          if (!(Test-Path $solutionDir)) {
+            New-Item -Path $solutionDir -ItemType Directory -Force
+          } else {
+            # Clear existing solution files if directory exists
+            Remove-Item -Path "$solutionDir/*" -Recurse -Force
+          }
+          
+          # Copy unpacked solution files to repo
+          Write-Host "Copying solution files to repo..."
+          Copy-Item -Path "$(Build.SourcesDirectory)/unpacked/*" -Destination $solutionDir -Recurse -Force
+          
+          # Add files to git
+          Write-Host "Adding files to git..."
+          git add .
+          
+          # Commit changes
+          Write-Host "Committing changes..."
+          git commit -m "Update solution $(SolutionName) to version $(SolutionVersion)"
+          
+          # Push to remote
+          Write-Host "Pushing to remote..."
+          git push origin "$(BranchName)"
+
+    # Create PR
+    - task: PowerShell@2
+      name: CreatePR
+      displayName: 'Create Pull Request'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $orgUrl = "$(System.CollectionUri)"
+          $project = "$(System.TeamProject)"
+          $repoName = [System.IO.Path]::GetFileNameWithoutExtension("$(GitRepoUrl)")
+          $sourceBranch = "$(BranchName)"
+          $targetBranch = "main"
+          $title = "Solution update: $(SolutionName) $(SolutionVersion)"
+          $description = "This PR contains updates to $(SolutionName) solution exported from $(SourceEnvironmentUrl).`n`nApprove this PR to deploy to $(TargetEnvironmentUrl)."
+          
+          $apiUrl = "$orgUrl$project/_apis/git/repositories/$repoName/pullrequests?api-version=6.0"
+          
+          $body = @{
+            sourceRefName = "refs/heads/$sourceBranch"
+            targetRefName = "refs/heads/$targetBranch"
+            title = $title
+            description = $description
+          } | ConvertTo-Json
+          
+          $headers = @{
+            Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":${{ parameters.gitPat }}"))
+          }
+          
+          $response = Invoke-RestMethod -Uri $apiUrl -Method Post -ContentType "application/json" -Headers $headers -Body $body
+          
+          Write-Host "Pull Request created:"
+          Write-Host "Title: $($response.title)"
+          Write-Host "ID: $($response.pullRequestId)"
+          Write-Host "URL: $($response._links.web.href)"
+          
+          Write-Host "##vso[task.setvariable variable=PullRequestId;isOutput=true]$($response.pullRequestId)"
+          Write-Host "##vso[task.setvariable variable=PullRequestUrl;isOutput=true]$($response._links.web.href)"
+
+- stage: WaitForPRApproval
+  displayName: 'Wait for PR Approval'
+  dependsOn: ExportAndCreatePR
+  variables:
+    PullRequestId: $[ stageDependencies.ExportAndCreatePR.ExportSolution.outputs['CreatePR.PullRequestId'] ]
+    PullRequestUrl: $[ stageDependencies.ExportAndCreatePR.ExportSolution.outputs['CreatePR.PullRequestUrl'] ]
+    SolutionName: $[ stageDependencies.ExportAndCreatePR.ExportSolution.outputs['SetVariables.SolutionName'] ]
+  jobs:
+  - job: WaitForApproval
+    displayName: 'Wait for PR approval'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: PowerShell@2
+      displayName: 'Show PR information'
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "Please approve the Pull Request before continuing:"
+          Write-Host "Solution: $(SolutionName)"
+          Write-Host "PR URL: $(PullRequestUrl)"
+          Write-Host "PR ID: $(PullRequestId)"
+
+    - task: ManualValidation@0
+      displayName: 'Wait for PR approval'
+      timeoutInMinutes: 4320 # 3 days
+      inputs:
+        notifyUsers: '$(ApproverEmails)'
+        instructions: 'Please approve the Pull Request at $(PullRequestUrl) before approving this validation step.'
+        onTimeout: 'reject'
+
+    # Check if PR is completed (merged)
+    - task: PowerShell@2
+      displayName: 'Verify PR Status'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $orgUrl = "$(System.CollectionUri)"
+          $project = "$(System.TeamProject)"
+          $repoName = [System.IO.Path]::GetFileNameWithoutExtension("$(GitRepoUrl)")
+          $pullRequestId = "$(PullRequestId)"
+          
+          $apiUrl = "$orgUrl$project/_apis/git/repositories/$repoName/pullrequests/$pullRequestId?api-version=6.0"
+          
+          $headers = @{
+            Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":${{ parameters.gitPat }}"))
+          }
+          
+          $response = Invoke-RestMethod -Uri $apiUrl -Method Get -Headers $headers
+          
+          Write-Host "Pull Request Status: $($response.status)"
+          
+          if ($response.status -ne "completed") {
+            Write-Host "##vso[task.logissue type=error]Pull Request has not been completed (merged)."
+            Write-Host "##vso[task.complete result=Failed;]"
+            exit 1
+          }
+          
+          if ($response.mergeStatus -ne "succeeded") {
+            Write-Host "##vso[task.logissue type=error]Pull Request merge was not successful."
+            Write-Host "##vso[task.complete result=Failed;]"
+            exit 1
+          }
+          
+          Write-Host "Pull Request has been successfully merged."
+
+- stage: ImportSolution
+  displayName: 'Import Solution'
+  dependsOn: 
+  - ExportAndCreatePR
+  - WaitForPRApproval
+  condition: succeeded()
+  variables:
+    SolutionName: $[ stageDependencies.ExportAndCreatePR.ExportSolution.outputs['SetVariables.SolutionName'] ]
+  jobs:
+  - job: ImportSolution
+    displayName: 'Import Solution'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '6.0.x'
+
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download solution artifacts'
+      inputs:
+        buildType: 'current'
+        artifactName: 'PowerPlatformSolution'
+        targetPath: '$(Build.SourcesDirectory)/exports'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet packages'
+      inputs:
+        command: 'restore'
+        projects: '**/PowerPlatformSolutionImporter.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build solution importer'
+      inputs:
+        command: 'build'
+        projects: '**/PowerPlatformSolutionImporter.csproj'
+        arguments: '--configuration Release'
+
+    - task: PowerShell@2
+      displayName: 'Create configuration file'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $configContent = @"
+          {
+            "TargetEnvUrl": "$(TargetEnvironmentUrl)",
+            "ClientId": "$(ClientId)",
+            "ClientSecret": "$(ClientSecret)",
+            "TenantId": "$(TenantId)"
+          }
+          "@
+          
+          New-Item -Path "$(Build.SourcesDirectory)/config.json" -ItemType File -Force -Value $configContent
+          Write-Host "Configuration file created successfully"
+          
+          # Find the solution file path
+          $solutionFiles = Get-ChildItem -Path "$(Build.SourcesDirectory)/exports" -Filter *.zip
+          if ($solutionFiles.Count -eq 0) {
+            Write-Host "##vso[task.logissue type=error]No solution files found."
+            Write-Host "##vso[task.complete result=Failed;]"
+            exit 1
+          }
+          
+          $solutionFile = $solutionFiles[0].FullName
+          Write-Host "Found solution file: $solutionFile"
+          
+          # Create solution info file for the importer
+          $solutionInfo = @{
+            SolutionName = "$(SolutionName)"
+            SolutionFilePath = $solutionFile
+          } | ConvertTo-Json
+          
+          New-Item -Path "$(Build.SourcesDirectory)/solution-info.json" -ItemType File -Force -Value $solutionInfo
+          Write-Host "Solution info file created successfully"
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Run solution importer'
+      inputs:
+        command: 'run'
+        projects: '**/PowerPlatformSolutionImporter.csproj'
+        arguments: '--configuration Release'
+
+    - task: PowerShell@2
+      displayName: 'Notify import completion'
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "Solution import initiated for $(SolutionName)"
+          Write-Host "The import will continue on the server even after this pipeline completes."
+          Write-Host "You can check the status in the Power Platform admin center."

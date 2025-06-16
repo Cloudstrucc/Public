@@ -1,0 +1,3 @@
+# INTEGRATING web portals TO AZURE B2C
+
+To onboard web applications that require SSO, you will need to provide them with the metadata URL, and a ClientID and Secret. When a client creates a request, they will need to provide you with their “Redirect URL” and their “Front Channel Logout URL”. The latter is required for B2C to know which URL to invoke when it receives a logout request from another integrated web application to ensure that the other apps that have an active session are also logged out. Once you have this information, you can proceed with the steps below.

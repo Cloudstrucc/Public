@@ -1,0 +1,3 @@
+# Continuous Deployments
+
+This pipeline extension includes a release pipeline targeted to UAT and PRODUCTION environments. Releases are invoked by release managers who will have the ability to select any successful and issue a release to UAT and PROD using that build’s artefacts. The script is identical to the build integration script and will use the same variable group. The only delta is that the release pipeline script will loop through its source build integration artifacts and set the runtime variables automatically so that the release manager does not need to re-set these variables at run time. 

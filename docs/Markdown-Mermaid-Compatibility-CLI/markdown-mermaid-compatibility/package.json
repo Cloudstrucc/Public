@@ -1,0 +1,26 @@
+{
+  "name": "markdown-mermaid-compatibility",
+  "version": "1.0.0",
+  "description": "CLI tool to create platform-specific versions of markdown files with Mermaid diagrams",
+  "main": "index.js",
+  "bin": {
+    "markdown-mermaid-compatibility": "./index.js",
+    "mdmerge": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "markdown",
+    "mermaid",
+    "azure-devops",
+    "github",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "glob": "^10.3.3"
+  }
+}
