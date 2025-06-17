@@ -1,4 +1,4 @@
-## Prerequisites for Spinning Up a Free/Low-Cost Linux VM on Azure
+# Prerequisites for Spinning Up a Free/Low-Cost Linux VM on Azure
 
 Before you start, make sure you have:
 
@@ -9,14 +9,70 @@ Before you start, make sure you have:
   ```bash
   ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_vm -C "azure-vm"
   ```
+
 * **Checked quotas**: Ensure your subscription has at least one vCPU and 1 GB RAM free in your target region (e.g. `canadacentral`).
 * **Resource Group**: Decide on or create a RG to contain your VM, e.g. `rg-free-vm`.
 
 ---
 
-## Option A: Azure CLI (Reference)
+## Option A: Azure CLI
 
-*(Already covered before; see above for CLI steps.)*
+1. **Login & set subscription**
+
+   ```bash
+   az login
+   az account set --subscription "<YOUR_SUBSCRIPTION_ID>"
+   ```
+
+2. **Create (or verify) a Resource Group**
+
+   ```bash
+   az group create \
+     --name rg-free-vm \
+     --location canadacentral
+   ```
+
+3. **Generate SSH key** (if not already done in Prereqs)
+
+   ```bash
+   ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_vm -C "azure-vm"
+   ```
+
+4. **Deploy the VM**
+
+   ```bash
+   az vm create \
+     --resource-group rg-free-vm \
+     --name vm-free-linux \
+     --image UbuntuLTS \
+     --size Standard_B1s \
+     --admin-username azureuser \
+     --ssh-key-values ~/.ssh/id_ed25519_vm.pub \
+     --public-ip-sku Standard \
+     --tags Environment=Test Cost=Low
+   ```
+
+5. **Open SSH port (22)**
+
+   ```bash
+   az vm open-port --port 22 --resource-group rg-free-vm --name vm-free-linux
+   ```
+
+6. **Retrieve the public IP**
+
+   ```bash
+   az vm show \
+     --resource-group rg-free-vm \
+     --name vm-free-linux \
+     --show-details \
+     --query publicIps -o tsv
+   ```
+
+7. **SSH into your VM**
+
+   ```bash
+   ssh -i ~/.ssh/id_ed25519_vm azureuser@<PUBLIC_IP>
+   ```
 
 ---
 
@@ -130,6 +186,7 @@ Before you start, make sure you have:
      ]
    }
    ```
+
 2. **Deploy** via Azure CLI:
 
    ```bash
@@ -138,6 +195,7 @@ Before you start, make sure you have:
      --template-file free-linux-vm.json \
      --parameters sshKeyData="$(cat ~/.ssh/id_ed25519_vm.pub)"
    ```
+
 3. **SSH** into your VM with its public IP as shown in the deployment output.
 
 ---
