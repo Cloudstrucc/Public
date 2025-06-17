@@ -113,3 +113,5 @@ $RECYCLE.BIN/
 
 # PAC CLI related
 /pac
+
+*.DS_Store
