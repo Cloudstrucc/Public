@@ -10,12 +10,12 @@ style: |
   section {
     font-family: "Segoe UI", sans-serif;
   }
-  h1, h2, h3 {
-    color:rgb(1, 52, 115);
-    text-align:right;
+  h1 {
+    color:rgb(1, 52, 115);  
+    text-align:right;  
   },
   h2, h3 {
-    color: #60A5FA;    
+    color: #60A5FA;        
   }
   .lead {
     font-size: 1.5rem;
@@ -27,7 +27,7 @@ style: |
 <!-- Title Slide with Microsoft Graphic -->
 ![bg 100%](https://www.uctoday.com/wp-content/uploads/2022/07/How-Secure-Is-Microsoft-Teams.jpg)
 
-## A National Security Approach to M365 Collaboration
+## Elevated Security Approach to M365 Collaboration
 
 > Hardened configuration and control guidance  
 > for government and defense sector clients
