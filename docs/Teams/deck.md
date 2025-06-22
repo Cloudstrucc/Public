@@ -29,8 +29,8 @@ style: |
 
 ## Elevated Security Approach to M365 Collaboration
 
-> Hardened configuration and control guidance  
-> for government and defense sector clients
+" Hardened configuration and control guidance for external clients/partners"
+
 - Controlled collaboration with external partners  
 - End-to-end data confidentiality  
 - Compliance with Zero Trust and national security standards  
