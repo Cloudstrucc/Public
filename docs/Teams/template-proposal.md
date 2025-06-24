@@ -55,7 +55,7 @@ The end state will position Leonardo DRS Canada with a secure, modern, and scala
 
 ---
 
-## 🗕️ Duration and Phasing
+## ⏳ Duration and Phasing
 
 ### Project Duration: **30 to 60 Calendar Days**
 
@@ -86,6 +86,9 @@ The end state will position Leonardo DRS Canada with a secure, modern, and scala
 | **Subtotal**                       |                                               | **\$38,500 CAD**     |                    |
 | HST (13%)                          |                                               | **\$5,005 CAD**      |                    |
 | **Total with HST**                 |                                               | **\$43,505 CAD**     |                    |
+
+**Payment Terms**
+The total amount indicated in this proposal, including applicable taxes, shall become payable upon completion of the scope of work as outlined herein. Final payment shall be due within thirty (30) days of the client’s written confirmation of acceptance and sign-off of the completed deliverables. For greater certainty, such acceptance shall not be unreasonably withheld. This agreement shall be governed by the laws of the Province of Ontario and the federal laws of Canada applicable therein.
 
 > *Optional extension at \$125/hr support block (min. 10 hrs)*
 
