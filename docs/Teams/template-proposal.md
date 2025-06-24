@@ -12,9 +12,7 @@ size: 16:9
 ## For Leonardo DRS Canada
 
 ### Prepared by Cloudstrucc Inc.
-
 ---
-
 # 🛍️ Executive Summary
 
 Leonardo DRS Canada, a leading defence contractor and critical service provider for the naval electronics segment, operates under the stringent requirements of the **Controlled Goods Program (CGP)** governed by **Public Services and Procurement Canada (PSPC)**, as well as other government and international compliance frameworks.
@@ -59,13 +57,13 @@ The end state will position Leonardo DRS Canada with a secure, modern, and scala
 
 ### Project Duration: **30 to 60 Calendar Days**
 
-| Phase   | Duration  | Milestone                            | Outcome                                     |
-| ------- | --------- | ------------------------------------ | ------------------------------------------- |
-| Phase 1 | Week 1    | Kickoff & Assessment                 | Identify gaps and current posture           |
+| Phase   | Duration   | Milestone                            | Outcome                                     |
+| ------- | ---------- | ------------------------------------ | ------------------------------------------- |
+| Phase 1 | Week 1     | Kickoff & Assessment                 | Identify gaps and current posture           |
 | Phase 2 | Weeks 2–3 | MFA + Meeting Policy Hardening       | Guest MFA, Meeting Access Restrictions live |
 | Phase 3 | Weeks 3–4 | Security Layering (CMK, DLP, Labels) | Policies and encryption applied             |
 | Phase 4 | Weeks 5–6 | Audit, Testing, and Training         | Audit setup, team trained, docs delivered   |
-| Final   | Day 60    | Handover & Review                    | All systems in place, support begins        |
+| Final   | Day 60     | Handover & Review                    | All systems in place, support begins        |
 
 ---
 
@@ -73,19 +71,19 @@ The end state will position Leonardo DRS Canada with a secure, modern, and scala
 
 *Starting from the week of **July 7, 2025**, estimated due dates are projected based on a 60-day delivery schedule.*
 
-| Item                               | Description                                   | Estimated Cost (CAD) | Estimated Due Date |
-| ---------------------------------- | --------------------------------------------- | -------------------- | ------------------ |
-| Discovery & Assessment             | Initial audit, kickoff, stakeholder alignment | \$4,500              | July 11, 2025      |
-| Conditional Access & MFA Setup     | Configure policies, guest restrictions        | \$5,500              | July 18, 2025      |
-| Meeting & Collaboration Hardening  | Meeting options, lobby, link lockdown         | \$5,000              | July 25, 2025      |
-| DLP, Sensitivity Labels, IBs       | Purview config, segmenting, rollout           | \$6,500              | August 2, 2025     |
-| CMK & Private Endpoint Support     | Azure setup, encryption config                | \$7,000              | August 9, 2025     |
-| Audit, Defender XDR Integration    | Logging, detection, incident setup            | \$4,000              | August 16, 2025    |
-| Documentation & Knowledge Transfer | Wiki + live walkthroughs / training                     | \$3,500              | August 23, 2025    |
-| Support (60 days)                  | Response, tuning, questions                   | \$2,500              | September 6, 2025  |
-| **Subtotal**                       |                                               | **\$38,500 CAD**     |                    |
-| HST (13%)                          |                                               | **\$5,005 CAD**      |                    |
-| **Total with HST**                 |                                               | **\$43,505 CAD**     |                    |
+| Item                               | Description                                   | Estimated Cost (CAD)   | Estimated Due Date |
+| ---------------------------------- | --------------------------------------------- | ---------------------- | ------------------ |
+| Discovery & Assessment             | Initial audit, kickoff, stakeholder alignment | \$4,500                | July 11, 2025      |
+| Conditional Access & MFA Setup     | Configure policies, guest restrictions        | \$5,500                | July 18, 2025      |
+| Meeting & Collaboration Hardening  | Meeting options, lobby, link lockdown         | \$5,000                | July 25, 2025      |
+| DLP, Sensitivity Labels, IBs       | Purview config, segmenting, rollout           | \$6,500                | August 2, 2025     |
+| CMK & Private Endpoint Support     | Azure setup, encryption config                | \$7,000                | August 9, 2025     |
+| Audit, Defender XDR Integration    | Logging, detection, incident setup            | \$4,000                | August 16, 2025    |
+| Documentation & Knowledge Transfer | Wiki + live walkthroughs / training           | \$3,500                | August 23, 2025    |
+| Support (60 days)                  | Response, tuning, questions                   | \$2,500                | September 6, 2025  |
+| **Subtotal**                 |                                               | **\$38,500 CAD** |                    |
+| HST (13%)                          |                                               | **\$5,005 CAD**  |                    |
+| **Total with HST**           |                                               | **\$43,505 CAD** |                    |
 
 **Payment Terms**
 The total amount indicated in this proposal, including applicable taxes, shall become payable upon completion of the scope of work as outlined herein. Final payment shall be due within thirty (30) days of the client’s written confirmation of acceptance and sign-off of the completed deliverables. For greater certainty, such acceptance shall not be unreasonably withheld. This agreement shall be governed by the laws of the Province of Ontario and the federal laws of Canada applicable therein.
@@ -143,5 +141,4 @@ To implement the described security hardening, Leonardo DRS Canada will require 
 * Microsoft Compliance Center (Purview)
 
 ---
-
 ![bg right:50%](./image/cloudstrucc_sig_transbg.png)
