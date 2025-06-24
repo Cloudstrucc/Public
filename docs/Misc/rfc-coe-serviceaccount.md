@@ -1,7 +1,3 @@
-Absolutely. Here's the revised **markdown version**, clean and professional for an IT service request — with no icons and no mention of "Global Administrator":
-
----
-
 # Power Platform CoE Starter Kit – Service Account Setup (`powerplatform-coe`)
 
 ## Service Account Creation
@@ -12,7 +8,6 @@ Absolutely. Here's the revised **markdown version**, clean and professional for 
 ## Role Assignment
 
 * [ ] Assign the **Power Platform Service Admin** role
-  *Note: Do not assign the Dynamics 365 Service Admin role — it is insufficient for this scenario.*
 
 ## License Assignment (non-trial versions)
 
@@ -24,12 +19,10 @@ Absolutely. Here's the revised **markdown version**, clean and professional for 
 ## Mailbox Configuration
 
 * [ ] Ensure the account has an active **Exchange Online mailbox**
-  (required for use with the Office 365 Outlook connector)
 
 ## Security Configuration
 
 * [ ] Enable **Multifactor Authentication (MFA)** for this account
-  (follow Power Platform and Power Automate conditional access recommendations)
 
 ## Azure App Registration (for using audit log-based flows)
 
