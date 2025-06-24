@@ -15,7 +15,7 @@ size: 16:9
 
 ### Prepared by Cloudstrucc Inc.
 ---
-## 🧭 Executive Summary
+# 🧭 Executive Summary
 
 Leonardo DRS Canada, a leading defence contractor and critical service provider for the naval electronics segment, operates under the stringent requirements of the **Controlled Goods Program (CGP)** governed by **Public Services and Procurement Canada (PSPC)**, as well as other government and international compliance frameworks.
 
@@ -35,7 +35,7 @@ The end state will position Leonardo DRS Canada with a secure, modern, and scala
 
 ---
 
-## 🔐 Scope of Work (Updated)
+## 🔐 Scope of Work
 
 * ✅ Enforce MFA for guest/external access (Entra ID)
 * ✅ Prevent meeting link forwarding abuse
@@ -79,9 +79,14 @@ The end state will position Leonardo DRS Canada with a secure, modern, and scala
 | Audit, Defender XDR Integration    | Logging, detection, incident setup            | \$3,500                | August 16, 2025    |
 | Documentation & Knowledge Transfer | Wiki + live walkthroughs                      | \$3,000                | August 23, 2025    |
 | Support (60 days)                  | Response, tuning, questions                   | \$2,500                | September 6, 2025  |
-| **Total Estimate**           |                                               | **\$35,000 CAD** |                    |
+| **Total Estimate (pre tax)**           |                                               | **\$35,000 CAD** |                    |
+| **Grand Total with HST**           |                                               | **\$39,500 CAD** |                    |
 
 > *Optional extension at \$125/hr support block (min. 10 hrs)*
+
+**Payment Terms**
+
+The total amount indicated in this proposal, including applicable taxes, shall become payable upon completion of the scope of work as outlined herein. Final payment shall be due within thirty (30) days of the client’s written confirmation of acceptance and sign-off of the completed deliverables. For greater certainty, such acceptance shall not be unreasonably withheld. This agreement shall be governed by the laws of the Province of Ontario and the federal laws of Canada applicable therein.
 
 ---
 
@@ -96,7 +101,7 @@ To implement the described security hardening, Leonardo DRS Canada will require 
 | Microsoft 365 E5        | DLP, Sensitivity Labels, Defender, CMK support           | \~\$57                            |
 | Microsoft Teams Premium | Advanced meeting protection, watermarking, lobby control | \~\$18                            |
 
-### Notes:
+### Notes
 
 * E5 licensing is required for full Purview and Defender integration.
 * Teams Premium enables advanced meeting security such as watermarking, lobby isolation, and end-to-end encryption policy enforcement.
@@ -116,7 +121,7 @@ To implement the described security hardening, Leonardo DRS Canada will require 
 * Use of Microsoft 365 Service Tags for Teams isolation
 * Compliance test criteria (CGP/NIST/ITSG/NATO)
 
-### Appendix D: Compliance References (Expanded)
+### Appendix D: Compliance References
 
 * Government of Canada ITSG-33 / ITSG-22
 * Controlled Goods Program (CGP)
