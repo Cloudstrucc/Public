@@ -1,3 +1,18 @@
+<div style="position: relative; margin-bottom: 40px;">
+  <div style="position: absolute; top: 0; right: 0; display: flex; align-items: center; gap: 20px;">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfSAYy3IK4Dz7D9a53L9k_Y8gnC9LjyobBow&s"
+         alt="Microsoft Power Platform"
+         style="vertical-align: middle;">
+    <span style="font-size: 32px; color: #666; font-weight: 300;">+</span>
+    <img src="https://pbs.twimg.com/profile_images/1494408594254671874/Z-FoS_Gc_400x400.png"
+         alt="Nintex"
+         height="115"
+         width="115"
+         style="vertical-align: middle;">
+  </div>
+  <div style="height: 100px;"></div> <!-- Spacer to prevent overlap with title -->
+</div>
+
 # Nintex Assurance Digital Signature Integration - Complete Build Book
 
 ## Table of Contents
