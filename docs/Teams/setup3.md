@@ -1,17 +1,5 @@
----
-marp: true
-paginate: true
-theme: default
-size: 16:9
-----------
-
-![bg](./image/cloudstrucc_word_template.png)
-
 # 🛡️ Microsoft Teams & OneDrive Security Hardening Guide for Sensitive Organizations
 
-## For Leonardo DRS Canada
-
-### Prepared by Cloudstrucc Inc.
 ---
 
 ## 🌟 Objectives
@@ -29,8 +17,6 @@ Ensure that:
 ## 1. 🔑 Enforce MFA for Guests and External Users
 
 ### ✅ Setup with Conditional Access (Entra ID)
-
-Enforce MFA for all guests and external users using Conditional Access:
 
 1. Go to **Microsoft Entra admin center** → **Protection** → **Conditional Access** → `+ New policy`
 2. **Assignments**:
@@ -130,12 +116,15 @@ Private Endpoints allow Microsoft 365 traffic (e.g., Teams, SharePoint, Graph AP
    * `privatelink.sharepoint.com`
    * `privatelink.microsoft.com`
    * `privatelink.teams.microsoft.com` *(if required)*
+
 2. Set up **Private Endpoints** in your Azure VNet for:
 
    * SharePoint (used by Teams)
    * Microsoft Graph APIs
    * Office 365 services
+
 3. **Link** DNS zones to your VNet.
+
 4. Enforce traffic routing via **Azure Firewall or Proxy**.
 
 📘 [Office 365 Private Endpoint](https://learn.microsoft.com/en-us/microsoft-365/enterprise/microsoft-365-private-endpoints)
@@ -143,8 +132,6 @@ Private Endpoints allow Microsoft 365 traffic (e.g., Teams, SharePoint, Graph AP
 ---
 
 ## 6. 🔐 Microsoft Teams Security Features: Setup Guide
-
-Detailed configurations for Teams security features:
 
 * Information Barriers
 * DLP
@@ -157,13 +144,26 @@ Detailed configurations for Teams security features:
 * Access Reviews
 * Microsoft Defender XDR
 
-*(This section would list individual step-by-step setups as described in prior detailed guidance.)*
+---
+
+## ✅ Microsoft Teams Security Checklist
+
+| Security Goal                       | Solution                              |
+| ----------------------------------- | ------------------------------------- |
+| Require MFA for guests              | Conditional Access policy             |
+| Block invite forwarding             | Lobby + Meeting policy restrictions   |
+| Restrict join to invited users      | Entra External Collaboration settings |
+| Use customer-owned encryption keys  | Microsoft 365 Customer Key (CMK)      |
+| Ensure private access to Teams data | Azure Private Endpoints + DNS         |
+| Prevent data leaks in chat/files    | DLP + Sensitivity Labels              |
+| Block malware & malicious links     | Safe Attachments + Safe Links         |
+| Define content retention            | Microsoft Purview Retention Policies  |
+| Investigate incidents & activity    | Audit logs, eDiscovery, Defender XDR  |
+| Periodically review guest access    | Entra Access Reviews                  |
 
 ---
 
 ## ☁️ OneDrive for Business: Security Best Practices
-
-In organizations that rely heavily on Microsoft Teams, OneDrive is a critical file storage backend. Use the following best practices to secure OneDrive in a heightened security context:
 
 ### 1. 🔐 Enable Sensitivity Labels for Files
 
@@ -241,5 +241,3 @@ graph TD
     EntraID -->|MFA, Conditional Access| User
     OneDrive -->|Monitored by| DefenderCloudApps
 ```
----
-![bg right:50%](./image/cloudstrucc_sig_transbg.png)
