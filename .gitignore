@@ -115,3 +115,4 @@ $RECYCLE.BIN/
 /pac
 
 *.DS_Store
+*.env
