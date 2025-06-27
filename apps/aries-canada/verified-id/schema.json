@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Government Employee Credential",
+  "type": "object",
+  "properties": {
+    "firstName": { "type": "string" },
+    "lastName": { "type": "string" },
+    "email": { "type": "string", "format": "email" },
+    "organization": { "type": "string" },
+    "employeeId": { "type": "string" },
+    "department": { "type": "string" },
+    "role": { "type": "string" },
+    "issuanceDate": { "type": "string", "format": "date" }
+  },
+  "required": ["firstName","lastName","email","organization","employeeId","department","role","issuanceDate"]
+}
