@@ -1,0 +1,215 @@
+version: '3.8'
+
+services:
+  # =============================================================================
+  # DATABASE SERVICES
+  # =============================================================================
+  
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ecommerce-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd123!
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./sql-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "YourStrong@Passw0rd123!", "-Q", "SELECT 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: ecommerce-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecommerce-network
+    command: redis-server --appendonly yes --requirepass "RedisPass123!"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "RedisPass123!", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # =============================================================================
+  # APPLICATION SERVICES
+  # =============================================================================
+
+  dotnet-api:
+    build:
+      context: ./dotnet-api
+      dockerfile: Dockerfile
+    container_name: ecommerce-dotnet-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
+      - ConnectionStrings__Redis=${REDIS_CONNECTION_STRING}
+      - Stripe__SecretKey=${STRIPE_SECRET_KEY}
+      - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY}
+      - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET}
+      - PowerApps__TenantId=${POWER_APPS_TENANT_ID}
+      - PowerApps__ClientId=${POWER_APPS_CLIENT_ID}
+      - PowerApps__ClientSecret=${POWER_APPS_CLIENT_SECRET}
+      - PowerApps__ResourceUrl=${POWER_APPS_URL}
+      - Jwt__Key=${JWT_SECRET_KEY}
+    ports:
+      - "7001:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - ./dotnet-api/logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  blazor-frontend:
+    build:
+      context: ./blazor-frontend
+      dockerfile: Dockerfile
+    container_name: ecommerce-blazor-frontend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - ASPNETCORE_URLS=http://+:80
+      - ApiSettings__BaseUrl=http://dotnet-api:80
+      - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY}
+    ports:
+      - "5000:80"
+    depends_on:
+      dotnet-api:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - ./blazor-frontend/logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  python-agent:
+    build:
+      context: ./python-agent
+      dockerfile: Dockerfile
+    container_name: ecommerce-python-agent
+    environment:
+      - API_BASE_URL=http://dotnet-api:80
+      - REDIS_URL=${REDIS_CONNECTION_STRING}
+      - POWER_APPS_URL=${POWER_APPS_URL}
+      - POWER_APPS_CLIENT_ID=${POWER_APPS_CLIENT_ID}
+      - POWER_APPS_CLIENT_SECRET=${POWER_APPS_CLIENT_SECRET}
+      - POWER_APPS_TENANT_ID=${POWER_APPS_TENANT_ID}
+      - AMAZON_API_KEY=${AMAZON_API_KEY}
+      - PROXY_SERVICE_API_KEY=${PROXY_SERVICE_API_KEY}
+      - CAPTCHA_SOLVER_API_KEY=${CAPTCHA_SOLVER_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - ENABLE_REAL_SCRAPING=${ENABLE_REAL_SCRAPING:-true}
+      - ENABLE_MARKET_RESEARCH=${ENABLE_MARKET_RESEARCH:-true}
+      - PYTHON_ENV=${PYTHON_ENV:-development}
+      - LOG_LEVEL=${PYTHON_LOG_LEVEL:-INFO}
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      dotnet-api:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - ./python-agent/logs:/app/logs
+      - ./python-agent/data:/app/data
+    restart: unless-stopped
+
+  # =============================================================================
+  # MONITORING SERVICES
+  # =============================================================================
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ecommerce-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=${PROMETHEUS_RETENTION_TIME:-15d}'
+      - '--web.enable-lifecycle'
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ecommerce-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin123}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - prometheus
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+
+volumes:
+  sqlserver_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+
+networks:
+  ecommerce-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
