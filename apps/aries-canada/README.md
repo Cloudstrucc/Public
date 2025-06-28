@@ -189,3 +189,57 @@ az network nsg rule create --resource-group $RESOURCE_GROUP --nsg-name $NSG_NAME
   --source-address-prefixes "*" --destination-port-ranges "*"
 echo "NSG hardened: only trusted IPs allowed."
 ```
+
+## 🚀 Deployment on DigitalOcean Ubuntu Server
+
+1️⃣ **Provision Ubuntu Droplet**
+
+* Create Ubuntu 20.04/22.04 droplet in DigitalOcean.
+* Note public IP address.
+
+2️⃣ **DNS Records**
+
+* Point `agent.yourdomain.ca` and `mediator.yourdomain.ca` A records to droplet IP.
+
+3️⃣ **Install Docker & Certbot**
+
+```bash
+sudo apt update && sudo apt install -y docker.io certbot
+```
+
+4️⃣ **Run ACA-Py Agent and Mediator**
+
+```bash
+cd ~/aries-canada/docker
+docker-compose up -d
+```
+
+5️⃣ **Configure TLS with Certbot**
+
+```bash
+sudo certbot certonly --standalone -d agent.yourdomain.ca -d mediator.yourdomain.ca
+```
+
+* Update Docker or NGINX configs to use certs at `/etc/letsencrypt/live/{domain}/`.
+
+6️⃣ **Firewall Configuration**
+
+* Enable UFW:
+
+```bash
+sudo ufw allow OpenSSH
+sudo ufw allow 80,443,3000,3001,3002,3003/tcp
+sudo ufw enable
+```
+
+* Restrict access to trusted IPs by adjusting UFW rules.
+
+7️⃣ **Run Bridge Service**
+
+```bash
+cd ~/aries-canada/bridge-service
+cp .env.example .env
+npm install && npm start
+```
+
+This completes a full local or cloud deployment on DigitalOcean Ubuntu, fully aligned with your ACA-Py + Verified ID stack.
