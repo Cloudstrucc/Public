@@ -1,0 +1,248 @@
+services:
+  # =============================================================================
+  # DATABASE SERVICES - PostgreSQL (M4 Mac ARM64 Optimized)
+  # =============================================================================
+  
+  postgres:
+    image: postgres:15-alpine
+    platform: linux/arm64/v8
+    container_name: ecommerce-postgres
+    environment:
+      - POSTGRES_DB=EcommerceAI
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=YourStrong@Passw0rd123!
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d EcommerceAI"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    # M4 Mac optimizations
+    shm_size: 256mb
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c max_connections=200
+      -c work_mem=4MB
+      -c maintenance_work_mem=64MB
+      -c effective_cache_size=1GB
+
+  redis:
+    image: redis:7-alpine
+    platform: linux/arm64/v8
+    container_name: ecommerce-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecommerce-network
+    command: redis-server --appendonly yes --requirepass "RedisPass123!" --maxmemory 128mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a RedisPass123! ping || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  # =============================================================================
+  # NODE.JS APPLICATION SERVICES (M4 Mac ARM64 Optimized)
+  # =============================================================================
+
+  express-api:
+    build:
+      context: ./express-api
+      dockerfile: Dockerfile
+      platforms:
+        - linux/arm64/v8
+    platform: linux/arm64/v8
+    container_name: ecommerce-express-api
+    environment:
+      - NODE_ENV=development
+      - API_PORT=3001
+      - DATABASE_URL=postgresql://postgres:YourStrong@Passw0rd123!@postgres:5432/EcommerceAI?schema=public
+      - REDIS_URL=redis://redis:6379
+      - REDIS_PASSWORD=RedisPass123!
+      - JWT_SECRET=nodejs-super-secret-jwt-key-that-is-exactly-256-bits-long-for-security-2024
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_default}
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY:-pk_test_default}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_default}
+      # M4 Mac Node.js optimizations
+      - UV_THREADPOOL_SIZE=16
+      - NODE_OPTIONS=--max-old-space-size=2048
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - ./express-api/logs:/app/logs
+      - ./express-api/src:/app/src
+      - ./express-api/prisma:/app/prisma
+      - node_modules_api:/app/node_modules
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 180s
+    restart: unless-stopped
+
+  nextjs-frontend:
+    build:
+      context: ./nextjs-frontend
+      dockerfile: Dockerfile
+      platforms:
+        - linux/arm64/v8
+    platform: linux/arm64/v8
+    container_name: ecommerce-nextjs-frontend
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - API_URL=http://express-api:3001
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY:-pk_test_default}
+      # M4 Mac Next.js optimizations
+      - NEXT_TELEMETRY_DISABLED=1
+      - NODE_OPTIONS=--max-old-space-size=2048
+    ports:
+      - "3000:3000"
+    depends_on:
+      express-api:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - ./nextjs-frontend/logs:/app/logs
+      - ./nextjs-frontend/src:/app/src
+      - ./nextjs-frontend/public:/app/public
+      - node_modules_frontend:/app/node_modules
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  python-agent:
+    build:
+      context: ./python-agent
+      dockerfile: Dockerfile
+      platforms:
+        - linux/arm64/v8
+    platform: linux/arm64/v8
+    container_name: ecommerce-python-agent
+    environment:
+      - API_BASE_URL=http://express-api:3001
+      - REDIS_URL=redis:6379,password=RedisPass123!
+      - ENABLE_REAL_SCRAPING=true
+      - ENABLE_MARKET_RESEARCH=true
+      - PYTHON_ENV=development
+      - LOG_LEVEL=INFO
+      # M4 Mac Python optimizations
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      express-api:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - ./python-agent/logs:/app/logs
+      - ./python-agent/data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import requests; requests.get(\"http://express-api:3001/health\", timeout=10)' || exit 1"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 120s
+
+  # =============================================================================
+  # MONITORING SERVICES (M4 Mac Optimized)
+  # =============================================================================
+
+  prometheus:
+    image: prom/prometheus:latest
+    platform: linux/arm64/v8
+    container_name: ecommerce-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-lifecycle'
+      - '--storage.tsdb.wal-compression'
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    platform: linux/arm64/v8
+    container_name: ecommerce-grafana
+    ports:
+      - "3002:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+# =============================================================================
+# VOLUMES (M4 Mac Optimized)
+# =============================================================================
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  # Node.js module caching for M4 Mac performance
+  node_modules_api:
+    driver: local
+  node_modules_frontend:
+    driver: local
+
+# =============================================================================
+# NETWORKS (Fixed - Simple Bridge Network)
+# =============================================================================
+
+networks:
+  ecommerce-network:
+    driver: bridge
