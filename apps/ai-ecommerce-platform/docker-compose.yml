@@ -1,0 +1,212 @@
+services:
+  # =============================================================================
+  # DATABASE SERVICES - PostgreSQL (M4 Mac Optimized)
+  # =============================================================================
+  
+  postgres:
+    image: postgres:15-alpine
+    platform: linux/arm64
+    container_name: ecommerce-postgres
+    environment:
+      - POSTGRES_DB=EcommerceAI
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=YourStrong@Passw0rd123!
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d EcommerceAI"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    platform: linux/arm64
+    container_name: ecommerce-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecommerce-network
+    command: redis-server --appendonly yes --requirepass "RedisPass123!"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a RedisPass123! ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  # =============================================================================
+  # APPLICATION SERVICES (M4 Mac Optimized)
+  # =============================================================================
+
+  dotnet-api:
+    build:
+      context: ./dotnet-api
+      dockerfile: Dockerfile
+    platform: linux/arm64
+    container_name: ecommerce-dotnet-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=EcommerceAI;Username=postgres;Password=YourStrong@Passw0rd123!;
+      - ConnectionStrings__Redis=redis:6379,password=RedisPass123!
+      - Stripe__SecretKey=${STRIPE_SECRET_KEY:-sk_test_default}
+      - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY:-pk_test_default}
+      - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET:-whsec_default}
+      - Jwt__Key=m4-mac-super-secret-jwt-key-that-is-exactly-256-bits-long-for-apple-silicon-compatibility-2024
+    ports:
+      - "7001:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - ./dotnet-api/logs:/app/logs
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 45s
+      timeout: 20s
+      retries: 5
+      start_period: 180s
+    restart: unless-stopped
+
+  blazor-frontend:
+    build:
+      context: ./blazor-frontend
+      dockerfile: Dockerfile
+    platform: linux/arm64
+    container_name: ecommerce-blazor-frontend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ApiSettings__BaseUrl=http://dotnet-api:80
+    ports:
+      - "5001:80"
+    depends_on:
+      dotnet-api:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - ./blazor-frontend/logs:/app/logs
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  python-agent:
+    build:
+      context: ./python-agent
+      dockerfile: Dockerfile
+    platform: linux/arm64
+    container_name: ecommerce-python-agent
+    environment:
+      - API_BASE_URL=http://dotnet-api:80
+      - REDIS_URL=redis:6379,password=RedisPass123!
+      - ENABLE_REAL_SCRAPING=true
+      - ENABLE_MARKET_RESEARCH=true
+      - PYTHON_ENV=development
+      - LOG_LEVEL=INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      dotnet-api:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - ./python-agent/logs:/app/logs
+      - ./python-agent/data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import requests; requests.get(\"http://dotnet-api:80/\", timeout=10)' || exit 1"]
+      interval: 60s
+      timeout: 20s
+      retries: 3
+      start_period: 120s
+
+  # =============================================================================
+  # MONITORING SERVICES
+  # =============================================================================
+
+  prometheus:
+    image: prom/prometheus:latest
+    platform: linux/arm64
+    container_name: ecommerce-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=15d'
+      - '--web.enable-lifecycle'
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    platform: linux/arm64
+    container_name: ecommerce-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+
+networks:
+  ecommerce-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
