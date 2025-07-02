@@ -116,3 +116,5 @@ $RECYCLE.BIN/
 
 *.DS_Store
 *.env
+*.azuredeploy.parameters.json
+**/*.parameters.json

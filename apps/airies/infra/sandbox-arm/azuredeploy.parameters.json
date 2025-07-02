@@ -3,6 +3,6 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "adminUsername": { "value": "azureuser" },
-    "adminPassword": { "value": "YourSecureP@ssword123" }
+    "adminPassword": { "value": "azureuserpass" }
   }
 }
