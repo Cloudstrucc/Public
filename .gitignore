@@ -118,3 +118,4 @@ $RECYCLE.BIN/
 *.env
 *.azuredeploy.parameters.json
 **/*.parameters.json
+**/azuredeploy.parameters.json
