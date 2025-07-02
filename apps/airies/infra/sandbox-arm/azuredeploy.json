@@ -68,7 +68,7 @@
       "name": "[variables('publicIPName')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "publicIPAllocationMethod": "Dynamic"
+        "publicIPAllocationMethod": "Static"
       }
     },
     {
@@ -137,7 +137,7 @@
   "outputs": {
     "publicIPAddress": {
       "type": "string",
-      "value": "[reference(variables('publicIPName')).ipAddress]"
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPName'))).ipAddress]"
     }
   }
 }

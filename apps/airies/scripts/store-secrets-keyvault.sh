@@ -1,5 +1,6 @@
 #!/bin/bash
-VAULT_NAME="ariesKeyVault"
+VAULT_NAME="ariesdev$(date +%m%d)"
+
 
 az keyvault create --name $VAULT_NAME --resource-group ariesCanadaRG --location canadacentral
 az keyvault secret set --vault-name $VAULT_NAME --name acapy-wallet-key --value "replace-with-your-wallet-key"
