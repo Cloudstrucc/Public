@@ -119,5 +119,5 @@ $RECYCLE.BIN/
 *.azuredeploy.parameters.json
 **/*.parameters.json
 **/azuredeploy.parameters.json
-**/*.sitesettings.yml
-**/sitesettings.yml
+**/*.sitesetting.yml
+**/sitesetting.yml
