@@ -27,10 +27,19 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🚀 Setting up Aries Canada project structure...${NC}"
+# Generate random alphanumeric string for project folder
+RANDOM_ID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+PROJECT_DIR="airies-${RANDOM_ID}"
 
-# Create directory structure
-echo -e "${GREEN}📁 Creating directories...${NC}"
+echo -e "${BLUE}🚀 Setting up Aries Canada project structure...${NC}"
+echo -e "${GREEN}📁 Creating project directory: ${PROJECT_DIR}${NC}"
+
+# Create main project directory
+mkdir -p "${PROJECT_DIR}"
+cd "${PROJECT_DIR}"
+
+# Create directory structure inside project folder
+echo -e "${GREEN}📁 Creating subdirectories...${NC}"
 mkdir -p infra/sandbox-arm
 mkdir -p infra/prod-arm
 mkdir -p scripts
@@ -1744,10 +1753,201 @@ docker network inspect <network-name>
 ```
 EOF
 
-# Make all shell scripts executable
-echo -e "${GREEN}🔧 Making shell scripts executable...${NC}"
-chmod +x scripts/*.sh
-chmod +x tests/*.sh
+# Create cleanup/undo script
+echo -e "${GREEN}📄 Creating cleanup-aries-project.sh...${NC}"
+cat > cleanup-aries-project.sh << 'EOF'
+#!/bin/bash
+
+# Cleanup script for Aries Canada project (V2 - Safe cleanup)
+# This script removes all directories, files, and Docker resources created by setup-aries-project.sh
+#
+# USAGE:
+# 1. Make executable: chmod +x cleanup-aries-project.sh
+# 2. Run with confirmation: ./cleanup-aries-project.sh
+# 3. Run without confirmation: ./cleanup-aries-project.sh --force
+#
+# SAFETY: Only removes V2 resources to avoid conflicts with existing setups
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+FORCE=false
+if [[ "$1" == "--force" ]]; then
+    FORCE=true
+fi
+
+echo -e "${RED}🧹 Aries Canada V2 Project Cleanup${NC}"
+echo -e "${YELLOW}⚠️  This will remove ALL files and Docker resources created by the setup script${NC}"
+echo ""
+
+# Function to ask for confirmation
+confirm() {
+    if [[ "$FORCE" == "true" ]]; then
+        return 0
+    fi
+    
+    echo -e "${YELLOW}$1${NC}"
+    read -p "Continue? (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo -e "${BLUE}Skipping...${NC}"
+        return 1
+    fi
+    return 0
+}
+
+# Function to safely remove directory
+safe_remove_dir() {
+    local dir="$1"
+    if [[ -d "$dir" ]]; then
+        echo -e "${GREEN}Removing directory: $dir${NC}"
+        rm -rf "$dir"
+    else
+        echo -e "${YELLOW}Directory not found: $dir${NC}"
+    fi
+}
+
+# Function to safely remove file
+safe_remove_file() {
+    local file="$1"
+    if [[ -f "$file" ]]; then
+        echo -e "${GREEN}Removing file: $file${NC}"
+        rm -f "$file"
+    else
+        echo -e "${YELLOW}File not found: $file${NC}"
+    fi
+}
+
+echo -e "${BLUE}📊 Checking what will be removed...${NC}"
+echo ""
+
+# Check for Docker resources
+echo -e "${BLUE}🐳 Docker Resources (V2):${NC}"
+docker ps -a --filter "name=aries-v2\|von-v2" --format "table {{.Names}}\t{{.Status}}" 2>/dev/null || echo "No V2 containers found"
+docker network ls --filter "name=aries-v2\|von-v2" --format "table {{.Name}}" 2>/dev/null || echo "No V2 networks found"
+docker volume ls --filter "name=v2" --format "table {{.Name}}" 2>/dev/null || echo "No V2 volumes found"
+echo ""
+
+# Check for directories
+echo -e "${BLUE}📁 Directories to remove:${NC}"
+for dir in infra scripts .github docker docs tests; do
+    if [[ -d "$dir" ]]; then
+        echo "  ✅ $dir/"
+    else
+        echo "  ❌ $dir/ (not found)"
+    fi
+done
+echo ""
+
+# Check for files
+echo -e "${BLUE}📄 Files to remove:${NC}"
+for file in README.md cleanup-aries-project.sh; do
+    if [[ -f "$file" ]]; then
+        echo "  ✅ $file"
+    else
+        echo "  ❌ $file (not found)"
+    fi
+done
+echo ""
+
+# Confirm overall cleanup
+if ! confirm "🗑️  Remove ALL Aries Canada V2 project files and Docker resources?"; then
+    echo -e "${GREEN}✅ Cleanup cancelled. No changes made.${NC}"
+    exit 0
+fi
+
+echo ""
+echo -e "${RED}🧹 Starting cleanup...${NC}"
+echo ""
+
+# Stop and remove Docker containers
+if confirm "🛑 Stop and remove V2 Docker containers?"; then
+    echo -e "${BLUE}Stopping V2 containers...${NC}"
+    
+    # Stop containers
+    docker stop $(docker ps -q --filter "name=aries-v2\|von-v2") 2>/dev/null || echo "No running V2 containers to stop"
+    
+    # Remove containers
+    docker rm $(docker ps -aq --filter "name=aries-v2\|von-v2") 2>/dev/null || echo "No V2 containers to remove"
+    
+    echo -e "${GREEN}✅ V2 containers cleaned up${NC}"
+fi
+
+# Remove Docker networks
+if confirm "🌐 Remove V2 Docker networks?"; then
+    echo -e "${BLUE}Removing V2 networks...${NC}"
+    
+    # Remove custom networks
+    docker network rm aries-v2-network 2>/dev/null || echo "aries-v2-network not found"
+    docker network rm von-v2 2>/dev/null || echo "von-v2 network not found"
+    
+    echo -e "${GREEN}✅ V2 networks cleaned up${NC}"
+fi
+
+# Remove Docker volumes
+if confirm "💾 Remove V2 Docker volumes?"; then
+    echo -e "${BLUE}Removing V2 volumes...${NC}"
+    
+    # Remove V2 volumes
+    docker volume rm $(docker volume ls -q --filter "name=v2") 2>/dev/null || echo "No V2 volumes to remove"
+    
+    echo -e "${GREEN}✅ V2 volumes cleaned up${NC}"
+fi
+
+# Remove directories
+if confirm "📁 Remove project directories?"; then
+    echo -e "${BLUE}Removing directories...${NC}"
+    
+    safe_remove_dir "infra"
+    safe_remove_dir "scripts"
+    safe_remove_dir ".github"
+    safe_remove_dir "docker"
+    safe_remove_dir "docs"
+    safe_remove_dir "tests"
+    
+    echo -e "${GREEN}✅ Directories cleaned up${NC}"
+fi
+
+# Remove files
+if confirm "📄 Remove project files?"; then
+    echo -e "${BLUE}Removing files...${NC}"
+    
+    safe_remove_file "README.md"
+    
+    echo -e "${GREEN}✅ Files cleaned up${NC}"
+fi
+
+# Remove cleanup script itself (optional)
+if confirm "🗑️  Remove cleanup script itself?"; then
+    echo -e "${BLUE}Removing cleanup script...${NC}"
+    echo -e "${YELLOW}Note: This script will be deleted after completion${NC}"
+    
+    # Schedule self-deletion
+    (sleep 2 && rm -f "$0") &
+    
+    echo -e "${GREEN}✅ Cleanup script scheduled for removal${NC}"
+fi
+
+echo ""
+echo -e "${GREEN}🎉 Cleanup completed successfully!${NC}"
+echo ""
+echo -e "${BLUE}📊 Summary:${NC}"
+echo "  🐳 Docker containers, networks, and volumes removed"
+echo "  📁 Project directories removed"
+echo "  📄 Project files removed"
+echo "  🧹 System cleaned up"
+echo ""
+echo -e "${GREEN}✅ Your system is now clean of Aries Canada V2 project files${NC}"
+echo -e "${YELLOW}💡 You can safely run the setup script again if needed${NC}"
+EOF
+
+chmod +x cleanup-aries-project.sh
 
 # Create production templates note
 echo -e "${GREEN}📝 Creating production setup guide...${NC}"
@@ -1793,14 +1993,17 @@ EOF
 
 echo ""
 echo -e "${GREEN}✅ Enhanced project setup complete! (V2 - No conflicts)${NC}"
+echo -e "${BLUE}📂 Project created in: ${PROJECT_DIR}${NC}"
 echo ""
 echo -e "${BLUE}📁 Created directory structure:${NC}"
+echo "   ${PROJECT_DIR}/"
 echo "   ├── docker/von-network-v2/       # Local Indy ledger (port 8000)"
 echo "   ├── docker/aca-py-v2/            # Working ACA-Py config (ports 4000-4003)"
 echo "   ├── infra/sandbox-arm/            # Azure templates (ariesV2 resources)"
 echo "   ├── scripts/                      # Deployment & management scripts"
 echo "   ├── tests/                        # Integration tests"
-echo "   └── docs/                         # Documentation"
+echo "   ├── docs/                         # Documentation"
+echo "   └── cleanup-aries-project.sh     # Cleanup script"
 echo ""
 echo -e "${BLUE}📄 Created files:${NC}"
 echo "   ├── Working Docker configurations (tested, V2 ports)"
@@ -1812,16 +2015,23 @@ echo "   └── Comprehensive documentation"
 echo ""
 echo -e "${YELLOW}⚠️  IMPORTANT: Update these before deployment:${NC}"
 echo "   1. 🔑 Change API keys in docker/aca-py/.env (currently: v2secretkey)"
-echo "   2. 🔒 Update passwords in azuredeploy.parameters.json"
+echo "   2. 🔒 Update passwords in infra/sandbox-arm/azuredeploy.parameters.json"
 echo "   3. 🌐 Set TRUSTED_IP in scripts/harden-nsg.sh"
 echo "   4. 📧 Update email/domain in scripts/setup-tls.sh"
 echo "   5. ☁️  Configure Azure credentials for GitHub Actions"
 echo ""
 echo -e "${GREEN}🚀 Quick start (V2 - won't conflict with existing):${NC}"
+echo "   cd ${PROJECT_DIR}                 # Navigate to project folder"
 echo "   ./scripts/start-von-network.sh    # Start von-network on port 8000"
 echo "   ./scripts/start-aca-py.sh         # Start ACA-Py agents on ports 4000-4003"
 echo "   ./scripts/check-status.sh         # Verify everything works"
 echo "   ./scripts/create-bifold-invitation.sh  # Test mobile wallet"
+echo ""
+echo -e "${RED}🧹 Cleanup:${NC}"
+echo "   cd ${PROJECT_DIR}                 # Navigate to project folder"
+echo "   ./cleanup-aries-project.sh        # Remove all created files and Docker resources"
+echo "   ./cleanup-aries-project.sh --force # Remove without confirmation prompts"
+echo "   cd .. && rm -rf ${PROJECT_DIR}    # Remove entire project folder"
 echo ""
 echo -e "${BLUE}🔄 Port mappings (avoiding conflicts):${NC}"
 echo "   📊 Von-network V2:    8000 (web), 8701-8708 (nodes) [was 9000, 9701-9708]"
@@ -1829,4 +2039,5 @@ echo "   🤖 ACA-Py Agent V2:   4000 (agent), 4001 (admin)    [was 3000, 3001]"
 echo "   🔗 Mediator V2:       4002 (agent), 4003 (admin)    [was 3002, 3003]"
 echo "   🔐 API Key V2:        v2secretkey                    [was mysecretkey]"
 echo ""
-echo -e "${GREEN}🎉 Ready to deploy your V2 Aries infrastructure (safe deployment)!${NC}"
+echo -e "${GREEN}🎉 Ready to deploy your V2 Aries infrastructure!${NC}"
+echo -e "${YELLOW}💡 Project location: $(pwd)${NC}"

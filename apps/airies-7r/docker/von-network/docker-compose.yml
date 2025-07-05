@@ -1,0 +1,142 @@
+version: '3'
+services:
+  #
+  # Client V2
+  #
+  client-v2:
+    image: von-network-base
+    container_name: von-v2-client
+    command: ./scripts/start_client.sh
+    environment:
+      - IP=${IP:-host.docker.internal}
+      - IPS=${IPS}
+      - DOCKERHOST=${DOCKERHOST}
+      - RUST_LOG=${RUST_LOG}
+    networks:
+      - von-v2
+    volumes:
+      - client-v2-data:/home/indy/.indy_client
+      - ./tmp:/tmp
+  #
+  # Webserver V2
+  #
+  webserver-v2:
+    image: von-network-base
+    container_name: von-v2-webserver
+    command: bash -c 'sleep 10 && ./scripts/start_webserver.sh -i ${IP:-host.docker.internal}'
+    environment:
+      - IP=${IP:-host.docker.internal}
+      - IPS=${IPS}
+      - DOCKERHOST=${DOCKERHOST}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - RUST_LOG=${RUST_LOG}
+      - GENESIS_URL=${GENESIS_URL}
+      - LEDGER_SEED=${LEDGER_SEED}
+      - LEDGER_CACHE_PATH=${LEDGER_CACHE_PATH}
+      - REGISTER_NEW_DIDS=${REGISTER_NEW_DIDS:-True}
+      - ENABLE_LEDGER_CACHE=${ENABLE_LEDGER_CACHE:-True}
+      - ENABLE_BROWSER_ROUTES=${ENABLE_BROWSER_ROUTES:-True}
+      - DISPLAY_LEDGER_STATE=${DISPLAY_LEDGER_STATE:-True}
+      - LEDGER_INSTANCE_NAME=${LEDGER_INSTANCE_NAME:-von-network-v2}
+      - LEDGER_DESCRIPTION=${LEDGER_DESCRIPTION:-Von Network V2}
+    networks:
+      - von-v2
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config:/home/indy/config
+      - ./server:/home/indy/server
+      - webserver-v2-cli:/home/indy/.indy-cli
+      - webserver-v2-ledger:/home/indy/ledger
+  #
+  # Node 1 V2
+  #
+  node1-v2:
+    image: von-network-base
+    container_name: von-v2-node1
+    command: ./scripts/start_node.sh 1
+    networks:
+      - von-v2
+    ports:
+      - "8701:9701"
+      - "8702:9702"
+    environment:
+      - IP=${IP:-host.docker.internal}
+      - IPS=${IPS}
+      - DOCKERHOST=${DOCKERHOST}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - RUST_LOG=${RUST_LOG}
+    volumes:
+      - node1-v2-data:/home/indy/ledger
+  #
+  # Node 2 V2
+  #
+  node2-v2:
+    image: von-network-base
+    container_name: von-v2-node2
+    command: ./scripts/start_node.sh 2
+    networks:
+      - von-v2
+    ports:
+      - "8703:9703"
+      - "8704:9704"
+    environment:
+      - IP=${IP:-host.docker.internal}
+      - IPS=${IPS}
+      - DOCKERHOST=${DOCKERHOST}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - RUST_LOG=${RUST_LOG}
+    volumes:
+      - node2-v2-data:/home/indy/ledger
+  #
+  # Node 3 V2
+  #
+  node3-v2:
+    image: von-network-base
+    container_name: von-v2-node3
+    command: ./scripts/start_node.sh 3
+    networks:
+      - von-v2
+    ports:
+      - "8705:9705"
+      - "8706:9706"
+    environment:
+      - IP=${IP:-host.docker.internal}
+      - IPS=${IPS}
+      - DOCKERHOST=${DOCKERHOST}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - RUST_LOG=${RUST_LOG}
+    volumes:
+      - node3-v2-data:/home/indy/ledger
+  #
+  # Node 4 V2
+  #
+  node4-v2:
+    image: von-network-base
+    container_name: von-v2-node4
+    command: ./scripts/start_node.sh 4
+    networks:
+      - von-v2
+    ports:
+      - "8707:9707"
+      - "8708:9708"
+    environment:
+      - IP=${IP:-host.docker.internal}
+      - IPS=${IPS}
+      - DOCKERHOST=${DOCKERHOST}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - RUST_LOG=${RUST_LOG}
+    volumes:
+      - node4-v2-data:/home/indy/ledger
+
+networks:
+  von-v2:
+
+volumes:
+  client-v2-data:
+  webserver-v2-cli:
+  webserver-v2-ledger:
+  node1-v2-data:
+  node2-v2-data:
+  node3-v2-data:
+  node4-v2-data:
