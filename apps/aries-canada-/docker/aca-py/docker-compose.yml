@@ -2,10 +2,11 @@ version: '3'
 services:
   acapyagent:
     image: bcgovimages/aries-cloudagent:py36-1.16-1_0.7.4
+    platform: linux/amd64
     container_name: aries-agent
     ports:
-      - "3000:3000"  # Agent endpoint
-      - "3001:3001"  # Admin API
+      - "3000:3000"
+      - "3001:3001"
     command: >
       start
       --inbound-transport http 0.0.0.0 3000
@@ -20,16 +21,12 @@ services:
       --auto-provision
       --auto-accept-invites
       --auto-accept-requests
-      --genesis-url http://host.docker.internal:9000/genesis
-      --read-only-ledger
+      --genesis-url https://raw.githubusercontent.com/Indicio-tech/indicio-network/main/genesis_files/pool_transactions_buildernet_genesis
       --seed AriesCanadaAgent000000000000001
       --public-invites
       --auto-ping-connection
       --monitor-ping
       --log-level info
-      --debug-connections
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     networks:
       - aries-network
     depends_on:
@@ -37,10 +34,11 @@ services:
 
   mediator:
     image: bcgovimages/aries-cloudagent:py36-1.16-1_0.7.4
+    platform: linux/amd64
     container_name: aries-mediator
     ports:
-      - "3002:3002"  # Mediator endpoint
-      - "3003:3003"  # Mediator admin API
+      - "3002:3002"
+      - "3003:3003"
     command: >
       start
       --inbound-transport http 0.0.0.0 3002
@@ -54,16 +52,12 @@ services:
       --wallet-key mediator-key-123456789012
       --auto-provision
       --open-mediation
-      --genesis-url http://host.docker.internal:9000/genesis
-      --read-only-ledger
+      --genesis-url https://raw.githubusercontent.com/Indicio-tech/indicio-network/main/genesis_files/pool_transactions_buildernet_genesis
       --seed AriesCanadaMediator00000000001
       --public-invites
       --auto-ping-connection
       --monitor-ping
       --log-level info
-      --debug-connections
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     networks:
       - aries-network
 
