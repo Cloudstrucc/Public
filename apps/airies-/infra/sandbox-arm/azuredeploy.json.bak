@@ -15,10 +15,7 @@
     "authenticationType": {
       "type": "string",
       "defaultValue": "password",
-      "allowedValues": [
-        "password",
-        "sshPublicKey"
-      ],
+      "allowedValues": ["password", "sshPublicKey"],
       "metadata": {
         "description": "Type of authentication to use on the Virtual Machine"
       }
@@ -32,11 +29,7 @@
     "vmSize": {
       "type": "string",
       "defaultValue": "Standard_B2s",
-      "allowedValues": [
-        "Standard_B2s",
-        "Standard_D2s_v3",
-        "Standard_D4s_v3"
-      ],
+      "allowedValues": ["Standard_B2s", "Standard_D2s_v3", "Standard_D4s_v3"],
       "metadata": {
         "description": "Size of the virtual machine"
       }
@@ -258,7 +251,7 @@
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2021-03-01",
-      "name": "[concat(variables('vmName'), '/installAriesStack')]",
+      "name": "[concat(variables('vmName'), '/installDocker')]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
@@ -269,7 +262,12 @@
         "typeHandlerVersion": "2.1",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "commandToExecute": "#!/bin/bash\nset -e\n\n# Wait for system to be ready\necho \"Waiting for system to be ready...\"\nsleep 30\n\n# Set non-interactive mode\nexport DEBIAN_FRONTEND=noninteractive\n\n# Clean and fix apt\necho \"Cleaning apt cache...\"\nrm -rf /var/lib/apt/lists/*\napt-get clean\n\n# Update with retries\necho \"Updating package lists...\"\nfor i in {1..3}; do\n    apt-get update --fix-missing && break\n    echo \"Retry $i failed, waiting...\"\n    sleep 10\ndone\n\n# Install packages with error handling\necho \"Installing packages...\"\napt-get install -y --fix-broken docker.io docker-compose jq curl git qrencode || {\n    echo \"Installation failed, trying recovery...\"\n    dpkg --configure -a\n    apt-get update --fix-missing\n    apt-get install -y docker.io docker-compose jq curl git qrencode\n}\n\n# Configure Docker\necho \"Configuring Docker...\"\nsystemctl enable docker\nsystemctl start docker\nusermod -aG docker azureuser\n\n# Verify installation\necho \"Verifying installation...\"\ndocker --version\ndocker-compose --version\n\necho \"\u2705 Installation complete!\""
+          "fileUris": [
+            "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/application-workloads/docker/docker-simple-on-ubuntu/scripts/docker-setup.sh"
+          ]
+        },
+        "protectedSettings": {
+          "commandToExecute": "sh docker-setup.sh && sudo usermod -aG docker azureuser"
         }
       }
     }

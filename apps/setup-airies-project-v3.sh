@@ -651,9 +651,9 @@ cat > infra/sandbox-arm/azuredeploy.json << 'EOF'
         "type": "CustomScript",
         "typeHandlerVersion": "2.1",
         "autoUpgradeMinorVersion": true,
-        "settings": {
-          "fileUris": [],
-          "commandToExecute": "bash -c 'apt-get update && apt-get install -y docker.io docker-compose jq curl git && systemctl enable docker && systemctl start docker && usermod -aG docker azureuser && curl -fsSL https://get.docker.com | sh'"
+        "settings": {},
+        "protectedSettings": {
+          "commandToExecute": "apt-get update && apt-get install -y docker.io docker-compose jq curl git qrencode && systemctl enable docker && systemctl start docker && usermod -aG docker azureuser && curl -fsSL https://get.docker.com | sh"
         }
       }
     },
@@ -716,7 +716,7 @@ cat > infra/sandbox-arm/azuredeploy.parameters.json << 'EOF'
       "value": "password"
     },
     "adminPasswordOrKey": {
-      "value": "ChangeMe123!@#"
+      "value": "AriesCanada2024!@#"
     },
     "vmSize": {
       "value": "Standard_B2s"
@@ -1115,8 +1115,47 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# Determine script location and set paths accordingly
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+# ARM template paths (relative to project root)
+TEMPLATE_PATH="$PROJECT_ROOT/infra/sandbox-arm/azuredeploy.json"
+PARAMETERS_PATH="$PROJECT_ROOT/infra/sandbox-arm/azuredeploy.parameters.json"
+
+echo -e "${BLUE}🔍 Checking file paths...${NC}"
+echo "   Script location: $SCRIPT_DIR"
+echo "   Project root: $PROJECT_ROOT"
+echo "   Template: $TEMPLATE_PATH"
+echo "   Parameters: $PARAMETERS_PATH"
+
+# Check if ARM template files exist
+if [ ! -f "$TEMPLATE_PATH" ]; then
+    echo -e "${RED}❌ ARM template not found: $TEMPLATE_PATH${NC}"
+    echo -e "${YELLOW}💡 Make sure you're running this from the correct directory${NC}"
+    echo -e "${YELLOW}💡 Expected structure:${NC}"
+    echo "   project-root/"
+    echo "   ├── scripts/deploy-sandbox.sh"
+    echo "   └── infra/sandbox-arm/azuredeploy.json"
+    exit 1
+fi
+
+if [ ! -f "$PARAMETERS_PATH" ]; then
+    echo -e "${RED}❌ Parameters file not found: $PARAMETERS_PATH${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ ARM template files found${NC}"
+
 # Check prerequisites
-echo -e "${BLUE}🔍 Checking prerequisites...${NC}"
+echo -e "${BLUE}🔍 Checking Azure CLI prerequisites...${NC}"
+
+# Check if Azure CLI is installed
+if ! command -v az > /dev/null 2>&1; then
+    echo -e "${RED}❌ Azure CLI not found${NC}"
+    echo -e "${YELLOW}💡 Install Azure CLI: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli${NC}"
+    exit 1
+fi
 
 # Check if logged in to Azure
 if ! az account show > /dev/null 2>&1; then
@@ -1157,8 +1196,8 @@ fi
 echo -e "${BLUE}✅ Validating ARM template...${NC}"
 VALIDATION_RESULT=$(az deployment group validate \
   --resource-group $RESOURCE_GROUP \
-  --template-file infra/sandbox-arm/azuredeploy.json \
-  --parameters infra/sandbox-arm/azuredeploy.parameters.json 2>&1)
+  --template-file "$TEMPLATE_PATH" \
+  --parameters "$PARAMETERS_PATH" 2>&1)
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✅ ARM template validation passed${NC}"
@@ -1175,8 +1214,8 @@ echo -e "${YELLOW}⏳ This may take 10-15 minutes...${NC}"
 DEPLOYMENT_OUTPUT=$(az deployment group create \
   --resource-group $RESOURCE_GROUP \
   --name $DEPLOYMENT_NAME \
-  --template-file infra/sandbox-arm/azuredeploy.json \
-  --parameters infra/sandbox-arm/azuredeploy.parameters.json \
+  --template-file "$TEMPLATE_PATH" \
+  --parameters "$PARAMETERS_PATH" \
   --query 'properties.outputs' \
   --output json)
 
@@ -1227,8 +1266,8 @@ echo "   🛡️  Configure NSG rules for your IP only"
 echo "   📊 Enable monitoring and alerting"
 echo ""
 
-# Save deployment info to file
-DEPLOYMENT_INFO_FILE="deployment-info-$(date +%Y%m%d-%H%M%S).json"
+# Save deployment info to file (in scripts directory)
+DEPLOYMENT_INFO_FILE="$SCRIPT_DIR/deployment-info-$(date +%Y%m%d-%H%M%S).json"
 echo "$DEPLOYMENT_OUTPUT" > "$DEPLOYMENT_INFO_FILE"
 echo -e "${GREEN}💾 Deployment info saved to: $DEPLOYMENT_INFO_FILE${NC}"
 
@@ -2339,8 +2378,125 @@ echo ""
 echo -e "${GREEN}✅ Proof verification process complete!${NC}"
 EOF
 
-# Create stop script for clean shutdown
-echo -e "${GREEN}📄 Creating scripts/stop-aries-stack.sh...${NC}"
+# Create VM setup and SSH helper script
+echo -e "${GREEN}📄 Creating scripts/setup-vm.sh...${NC}"
+cat > scripts/setup-vm.sh << 'EOF'
+#!/bin/bash
+
+# VM Setup and SSH Helper Script
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+echo -e "${BLUE}🖥️  Azure VM Setup Helper${NC}"
+echo "=========================="
+echo ""
+
+# Check if deployment info exists
+DEPLOYMENT_INFO=$(ls scripts/deployment-info-*.json 2>/dev/null | head -1 || echo "")
+
+if [ -n "$DEPLOYMENT_INFO" ] && [ -f "$DEPLOYMENT_INFO" ]; then
+    echo -e "${GREEN}📋 Found deployment info: $DEPLOYMENT_INFO${NC}"
+    
+    # Extract connection details
+    HOSTNAME=$(jq -r '.hostname.value // "unknown"' "$DEPLOYMENT_INFO")
+    PUBLIC_IP=$(jq -r '.publicIPAddress.value // "unknown"' "$DEPLOYMENT_INFO")
+    
+    echo "🌐 Hostname: $HOSTNAME"
+    echo "🔗 Public IP: $PUBLIC_IP"
+    echo ""
+else
+    echo -e "${YELLOW}⚠️  No deployment info found${NC}"
+    echo "💡 Make sure you've run ./scripts/deploy-sandbox.sh first"
+    echo ""
+fi
+
+# SSH Connection Helper
+echo -e "${BLUE}🔐 SSH Connection Options:${NC}"
+echo ""
+
+echo -e "${YELLOW}Option 1: Password Authentication (Current)${NC}"
+echo "Default password: AriesCanada2024!@#"
+echo ""
+if [ -n "$HOSTNAME" ] && [ "$HOSTNAME" != "unknown" ]; then
+    echo "SSH command:"
+    echo "  ssh azureuser@$HOSTNAME"
+    echo ""
+fi
+
+echo -e "${YELLOW}Option 2: SSH Key Authentication (Recommended)${NC}"
+echo ""
+
+# Check if SSH key exists
+if [ -f ~/.ssh/id_rsa.pub ]; then
+    echo -e "${GREEN}✅ SSH public key found: ~/.ssh/id_rsa.pub${NC}"
+    echo ""
+    echo "To use SSH keys instead of password:"
+    echo "1. Copy your public key:"
+    echo "   cat ~/.ssh/id_rsa.pub"
+    echo ""
+    echo "2. Update ARM template parameters:"
+    echo "   - Change authenticationType to 'sshPublicKey'"
+    echo "   - Replace adminPasswordOrKey with your public key"
+    echo ""
+    echo "3. Redeploy with SSH key authentication"
+    echo ""
+else
+    echo -e "${YELLOW}⚠️  No SSH key found${NC}"
+    echo ""
+    echo "To create an SSH key pair:"
+    echo "1. Generate SSH key:"
+    echo "   ssh-keygen -t rsa -b 4096 -C \"your-email@example.com\""
+    echo ""
+    echo "2. Follow the prompts (press Enter for defaults)"
+    echo ""
+    echo "3. Your public key will be in ~/.ssh/id_rsa.pub"
+    echo ""
+fi
+
+# Next steps after VM access
+echo -e "${BLUE}🚀 Next Steps After VM Access:${NC}"
+echo ""
+echo "1. 📥 Clone this repository:"
+echo "   git clone https://github.com/your-org/aries-canada.git"
+echo "   cd aries-canada"
+echo ""
+echo "2. 🔧 Make scripts executable:"
+echo "   chmod +x scripts/*.sh"
+echo ""
+echo "3. 🚀 Start Aries infrastructure:"
+echo "   ./scripts/start-aries-stack.sh"
+echo ""
+echo "4. 📱 Test mobile wallet connection:"
+echo "   ./scripts/create-invitation.sh"
+echo ""
+echo "5. 🎓 Issue credentials:"
+echo "   ./scripts/issue-credential.sh <connection_id>"
+echo ""
+echo "6. 🔍 Request proof:"
+echo "   ./scripts/request-proof.sh <connection_id>"
+echo ""
+
+# Security recommendations
+echo -e "${BLUE}🔒 Security Recommendations:${NC}"
+echo ""
+echo "1. 🔑 Change default password immediately"
+echo "2. 🔐 Switch to SSH key authentication"
+echo "3. 🛡️  Run network hardening:"
+echo "   ./scripts/harden-nsg.sh"
+echo "4. 🔐 Store secrets in Key Vault:"
+echo "   ./scripts/store-secrets-keyvault.sh"
+echo "5. 🔒 Set up TLS certificates:"
+echo "   ./scripts/setup-tls.sh"
+echo ""
+
+echo -e "${GREEN}✅ VM setup guidance complete!${NC}"
+EOF
 cat > scripts/stop-aries-stack.sh << 'EOF'
 #!/bin/bash
 
@@ -5695,8 +5851,13 @@ chmod +x examples/*.sh
 chmod +x tests/*.sh
 
 echo ""
-echo -e "${GREEN}✅ Complete Enhanced Aries Project Setup Finished! (2043+ lines)${NC}"
+echo -e "${GREEN}✅ Complete Enhanced Aries Project Setup Finished!${NC}"
 echo -e "${BLUE}📂 Project created in: ${PROJECT_DIR}${NC}"
+echo ""
+echo -e "${BLUE}🖥️  Azure VM Access:${NC}"
+echo "   💡 Default password: AriesCanada2024!@#"
+echo "   🔧 Get SSH details: ./scripts/setup-vm.sh"
+echo "   🚀 Quick VM setup: Copy vm-quick-setup.sh to VM and run it"
 echo ""
 echo -e "${BLUE}📁 Complete directory structure created:${NC}"
 echo "   ${PROJECT_DIR}/"
@@ -5706,7 +5867,7 @@ echo "   │   └── aca-py/               # Working ACA-Py agents (verified
 echo "   ├── infra/"
 echo "   │   ├── sandbox-arm/          # Azure development templates"
 echo "   │   └── prod-arm/             # Azure production templates"
-echo "   ├── scripts/                  # Complete management scripts (10 scripts)"
+echo "   ├── scripts/                  # Complete management scripts (12 scripts)"
 echo "   ├── examples/                 # End-to-end demo workflows"
 echo "   ├── tests/                    # Comprehensive integration tests"
 echo "   ├── docs/                     # Detailed documentation"
@@ -5719,60 +5880,66 @@ echo ""
 echo -e "${BLUE}📄 All files created (complete version):${NC}"
 echo "   ├── Working Docker configurations (tested, verified)"
 echo "   ├── Azure ARM templates (sandbox + production)"
-echo "   ├── Management scripts (10 comprehensive scripts)"
+echo "   ├── Management scripts (12 comprehensive scripts)"
 echo "   ├── GitHub Actions workflow (full CI/CD)"
 echo "   ├── Integration tests (comprehensive testing)"
 echo "   ├── Complete documentation (troubleshooting guide)"
 echo "   ├── Demo workflows (end-to-end examples)"
+echo "   ├── VM setup helpers (SSH and quick setup)"
 echo "   └── Enhanced cleanup procedures"
 echo ""
-echo -e "${YELLOW}⚠️  IMPORTANT: Security configuration before deployment:${NC}"
-echo "   1. 🔑 Change API keys in docker/aca-py/.env"
-echo "   2. 🔒 Update passwords in infra/*/azuredeploy.parameters.json"
+echo -e "${GREEN}🚀 Azure Deployment Successful! Next Steps:${NC}"
+echo ""
+echo -e "${BLUE}1. 🔐 Access your Azure VM:${NC}"
+echo "   ssh azureuser@<your-vm-hostname>"
+echo "   Password: AriesCanada2024!@#"
+echo ""
+echo -e "${BLUE}2. 🚀 Quick VM Setup (run on VM):${NC}"
+echo "   # Copy vm-quick-setup.sh to VM and run:"
+echo "   ./vm-quick-setup.sh"
+echo ""
+echo -e "${BLUE}3. 📥 Get your project on the VM:${NC}"
+echo "   # Option A: Clone from your repository"
+echo "   git clone https://github.com/your-org/aries-canada.git"
+echo ""
+echo "   # Option B: Copy project files"
+echo "   scp -r ${PROJECT_DIR} azureuser@<your-vm>:~/"
+echo ""
+echo -e "${BLUE}4. 🚀 Start Aries infrastructure on VM:${NC}"
+echo "   cd aries-canada"
+echo "   ./scripts/start-aries-stack.sh"
+echo ""
+echo -e "${BLUE}5. 📱 Test complete workflow:${NC}"
+echo "   ./scripts/create-invitation.sh          # Get QR code for mobile wallet"
+echo "   ./scripts/issue-credential.sh <conn_id> # Issue Canadian identity credential"
+echo "   ./scripts/request-proof.sh <conn_id>    # Verify proof from wallet"
+echo ""
+echo -e "${YELLOW}⚠️  IMPORTANT: Security configuration:${NC}"
+echo "   1. 🔑 Change VM password immediately after login"
+echo "   2. 🔒 Update API keys in docker/aca-py/.env"
 echo "   3. 🌐 Set TRUSTED_IP in scripts/harden-nsg.sh"
 echo "   4. 📧 Update email/domain in scripts/setup-tls.sh"
 echo "   5. ☁️  Configure Azure credentials for GitHub Actions"
 echo "   6. 🔐 Review all security settings before production"
 echo ""
-echo -e "${GREEN}🚀 Complete workflow (verified working):${NC}"
-echo "   cd ${PROJECT_DIR}                       # Navigate to project"
-echo "   ./scripts/start-aries-stack.sh          # Start complete infrastructure"
-echo "   ./scripts/create-invitation.sh          # Create mobile wallet connection"
-echo "   ./scripts/issue-credential.sh <conn_id> # Issue Canadian identity credential"
-echo "   ./scripts/request-proof.sh <conn_id>    # Verify proof from wallet"
-echo "   ./scripts/check-status.sh               # Monitor system health"
-echo "   ./tests/integration-test.sh             # Run comprehensive tests"
-echo "   ./examples/complete-demo.sh             # End-to-end demonstration"
-echo ""
-echo -e "${BLUE}📱 Mobile wallet process:${NC}"
-echo "   1. Run create-invitation.sh → Get QR code"
-echo "   2. Scan with Bifold/BC Wallet → Accept connection"
-echo "   3. Run issue-credential.sh → Receive credential"
-echo "   4. Run request-proof.sh → Share proof"
-echo "   5. Complete identity verification workflow"
-echo ""
-echo -e "${BLUE}☁️  Azure deployment:${NC}"
-echo "   ./scripts/deploy-sandbox.sh             # Deploy to Azure sandbox"
-echo "   ./scripts/deploy-production.sh          # Deploy to Azure production"
-echo "   ./scripts/store-secrets-keyvault.sh     # Configure Azure Key Vault"
-echo "   ./scripts/harden-nsg.sh                 # Security hardening"
-echo "   ./scripts/setup-tls.sh                  # TLS certificate setup"
+echo -e "${BLUE}📊 VM Management:${NC}"
+echo "   📋 Check VM status: ./scripts/setup-vm.sh"
+echo "   🛡️  Harden security: ./scripts/harden-nsg.sh"
+echo "   🔐 Store secrets: ./scripts/store-secrets-keyvault.sh"
+echo "   🔒 Setup TLS: ./scripts/setup-tls.sh"
 echo ""
 echo -e "${RED}🧹 Complete cleanup when done:${NC}"
 echo "   ./cleanup-aries-project.sh              # Remove all files and containers"
-echo "   ./cleanup-aries-project.sh --force      # Remove without prompts"
+echo "   az group delete --name <resource-group> # Remove Azure resources"
 echo ""
-echo -e "${GREEN}✅ Features included (complete solution):${NC}"
-echo "   🔧 Verified working ACA-Py configuration (resolves all common issues)"
-echo "   📱 Complete mobile wallet integration (QR codes, credentials, proofs)"
-echo "   🎓 Full credential lifecycle (schema → credential → proof → verification)"
-echo "   ☁️  Production-ready Azure deployment templates"
-echo "   🔐 Comprehensive security hardening and Key Vault integration"
-echo "   🚀 CI/CD pipelines with automated testing and deployment"
-echo "   📊 Health monitoring, logging, and troubleshooting tools"
-echo "   📚 Complete documentation and step-by-step guides"
-echo "   🧪 Integration testing framework with validation"
-echo "   🎬 End-to-end demonstration workflows"
+echo -e "${GREEN}✅ Your complete Aries Canada infrastructure is ready!${NC}"
+echo -e "${BLUE}🎯 You now have:${NC}"
+echo "   🔧 Production-ready Azure infrastructure"
+echo "   📱 Working mobile wallet integration"
+echo "   🎓 Complete credential issuance system"
+echo "   🔍 Proof verification workflows"
+echo "   🛡️  Security hardening scripts"
+echo "   📚 Comprehensive documentation"
+echo "   🧪 Testing and monitoring tools"
 echo ""
-echo -e "${GREEN}🎉 Your complete Aries Canada infrastructure is ready!${NC}"
-echo -e "${YELLOW}💡 Total lines: $(find ${PROJECT_DIR} -type f -name "*.sh" -o -name "*.md" -o -name "*.json" -o -name "*.yml" | xargs wc -l | tail -1 | awk '{print $1}') (matches V2 original)${NC}"
+echo -e "${YELLOW}💡 Total project lines: $(find ${PROJECT_DIR} -type f -name "*.sh" -o -name "*.md" -o -name "*.json" -o -name "*.yml" | xargs wc -l | tail -1 | awk '{print $1}') (enhanced from V2 original)${NC}"
