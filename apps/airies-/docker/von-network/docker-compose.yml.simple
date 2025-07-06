@@ -1,0 +1,11 @@
+services:
+  mock-ledger:
+    image: nginx:alpine
+    container_name: von-v2-simple
+    ports:
+      - "8000:80"
+    volumes:
+      - ./web:/usr/share/nginx/html:ro
+
+volumes:
+  web-data:

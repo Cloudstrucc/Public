@@ -1,0 +1,18 @@
+version: '3'
+services:
+  von-network:
+    image: vonx/von-network:latest
+    container_name: von-network
+    ports:
+      - "8000:8000"
+      - "9701:9701"
+      - "9702:9702"
+      - "9703:9703"
+      - "9704:9704"
+    environment:
+      - GENESIS_URL=http://localhost:8000/genesis
+    volumes:
+      - von-network-data:/home/indy
+
+volumes:
+  von-network-data:

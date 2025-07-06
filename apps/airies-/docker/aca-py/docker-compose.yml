@@ -1,0 +1,66 @@
+version: '3'
+services:
+  acapyagent-v2:
+    image: bcgovimages/aries-cloudagent:py36-1.16-1_0.7.4
+    container_name: aries-v2-agent
+    ports:
+      - "4000:4000"
+      - "4001:4001"
+    command: >
+      start
+      --inbound-transport http 0.0.0.0 4000
+      --outbound-transport http
+      --admin 0.0.0.0 4001
+      --admin-api-key v2secretkey
+      --endpoint http://142.126.167.34:4000
+      --label "ACA-Py Agent V2"
+      --wallet-type askar
+      --wallet-name demo-wallet-v2-fresh
+      --wallet-key demo-key-v2-fresh
+      --auto-provision
+      --auto-accept-invites
+      --auto-accept-requests
+      --genesis-url http://host.docker.internal:9000/genesis 
+      --public-invites
+      --auto-ping-connection
+      --monitor-ping
+      --log-level info
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - mediator-v2
+    networks:
+      - aries-v2-network
+
+  mediator-v2:
+    image: bcgovimages/aries-cloudagent:py36-1.16-1_0.7.4
+    container_name: aries-v2-mediator
+    ports:
+      - "4002:4002"
+      - "4003:4003"
+    command: >
+      start
+      --inbound-transport http 0.0.0.0 4002
+      --outbound-transport http
+      --admin 0.0.0.0 4003
+      --admin-api-key v2secretkey
+      --endpoint http://142.126.167.34:4002
+      --label "Mediator Agent V2"
+      --wallet-type askar
+      --wallet-name mediator-wallet-v2-fresh
+      --wallet-key mediator-key-v2-fresh
+      --auto-provision
+      --open-mediation
+      --genesis-url http://host.docker.internal:9000/genesis
+      --public-invites
+      --auto-ping-connection
+      --monitor-ping
+      --log-level info
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - aries-v2-network
+
+networks:
+  aries-v2-network:
+    name: aries-v2-network

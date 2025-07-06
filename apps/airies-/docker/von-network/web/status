@@ -1,0 +1,6 @@
+{
+  "ready": true,
+  "register_new_dids": true,
+  "display_ledger_state": true,
+  "syncing": false
+}
