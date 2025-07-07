@@ -1,0 +1,66 @@
+version: '3'
+services:
+  acapyagent:
+    image: bcgovimages/aries-cloudagent:py36-1.16-1_0.7.4
+    platform: linux/amd64
+    container_name: aries-agent
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    command: >
+      start
+      --inbound-transport http 0.0.0.0 3000
+      --outbound-transport http
+      --admin 0.0.0.0 3001
+      --admin-api-key demo-admin-key
+      --endpoint http://localhost:3000
+      --label "Aries Canada Agent"
+      --wallet-type askar
+      --wallet-name demo-wallet
+      --wallet-key demo-wallet-key-123456789012
+      --auto-provision
+      --auto-accept-invites
+      --auto-accept-requests
+      --genesis-url https://raw.githubusercontent.com/Indicio-tech/indicio-network/main/genesis_files/pool_transactions_buildernet_genesis
+      --seed AriesCanadaAgent000000000000001
+      --public-invites
+      --auto-ping-connection
+      --monitor-ping
+      --log-level info
+    networks:
+      - aries-network
+    depends_on:
+      - mediator
+
+  mediator:
+    image: bcgovimages/aries-cloudagent:py36-1.16-1_0.7.4
+    platform: linux/amd64
+    container_name: aries-mediator
+    ports:
+      - "3002:3002"
+      - "3003:3003"
+    command: >
+      start
+      --inbound-transport http 0.0.0.0 3002
+      --outbound-transport http
+      --admin 0.0.0.0 3003
+      --admin-api-key demo-admin-key
+      --endpoint http://localhost:3002
+      --label "Aries Canada Mediator"
+      --wallet-type askar
+      --wallet-name mediator-wallet
+      --wallet-key mediator-key-123456789012
+      --auto-provision
+      --open-mediation
+      --genesis-url https://raw.githubusercontent.com/Indicio-tech/indicio-network/main/genesis_files/pool_transactions_buildernet_genesis
+      --seed AriesCanadaMediator00000000001
+      --public-invites
+      --auto-ping-connection
+      --monitor-ping
+      --log-level info
+    networks:
+      - aries-network
+
+networks:
+  aries-network:
+    name: aries-network

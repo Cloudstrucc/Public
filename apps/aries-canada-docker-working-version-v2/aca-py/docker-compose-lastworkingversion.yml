@@ -1,0 +1,62 @@
+version: '3.8'
+
+networks:
+  default:
+    external: true
+    name: von-network_von
+
+services:
+  agent:
+    image: bcgovimages/aries-cloudagent:py36-1.16-1_0.7.4
+    container_name: aries-agent
+    ports:
+      - "3001:3001"
+      - "8000:8000"
+    command: >
+      start
+      --inbound-transport http 0.0.0.0 8000
+      --outbound-transport http
+      --admin 0.0.0.0 3001
+      --admin-insecure-mode
+      --endpoint http://52.228.72.173:8000
+      --label AriesCanadaAgent
+      --wallet-type askar
+      --wallet-name agent-wallet
+      --wallet-key agent-key-123456789012
+      --auto-provision
+      --auto-accept-invites
+      --auto-accept-requests
+      --genesis-url http://52.228.72.173:9000/genesis
+      --wallet-local-did
+      --seed AriesCanadaAgent0000000000000001
+      --public-invites
+      --auto-ping-connection
+      --monitor-ping
+    depends_on:
+      - mediator
+      
+  mediator:
+    image: bcgovimages/aries-cloudagent:py36-1.16-1_0.7.4
+    container_name: aries-mediator
+    ports:
+      - "3003:3003"
+      - "8001:8001"
+    command: >
+      start
+      --inbound-transport http 0.0.0.0 8001
+      --outbound-transport http
+      --admin 0.0.0.0 3003
+      --admin-insecure-mode
+      --endpoint http://52.228.72.173:8001
+      --label AriesCanadaMediator
+      --wallet-type askar
+      --wallet-name mediator-wallet
+      --wallet-key mediator-key-123456789012
+      --auto-provision
+      --open-mediation
+      --genesis-url http://52.228.72.173:9000/genesis
+      --wallet-local-did
+      --seed AriesCanadaMediator0000000000001
+      --public-invites
+      --auto-ping-connection
+      --monitor-ping

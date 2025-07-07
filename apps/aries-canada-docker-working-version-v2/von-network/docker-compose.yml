@@ -1,0 +1,112 @@
+services:
+  webserver:
+    image: ghcr.io/bcgov/von-network-base:latest
+    container_name: von-webserver
+    command: 'bash -c "sleep 10 && ./scripts/start_webserver.sh"'
+    environment:
+      - GENESIS_FILE=/home/indy/genesis.txn
+      - DOCKERHOST=${DOCKERHOST:-host.docker.internal}
+      - IPS=${IPS:-172.20.0.2,172.20.0.3,172.20.0.4,172.20.0.5}
+      - NODE_IPS=${NODE_IPS:-172.20.0.2,172.20.0.3,172.20.0.4,172.20.0.5}
+      - GENESIS_FILE=/home/indy/ledger/sandbox/pool_transactions_genesis
+      - LEDGER_SEED=000000000000000000000000Trustee1
+      - ENABLE_GENESIS_CREATION=true
+      - REGISTER_NEW_DIDS=true
+      - LEDGER_INSTANCE_NAME=von-network
+      - LEDGER_DESCRIPTION=Aries Canada Local Ledger
+    ports:
+      - "9000:8000"
+    networks:
+      von:
+        ipv4_address: 172.20.0.10
+    volumes:
+      - von-webserver-cli:/home/indy/.indy-cli
+      - von-webserver-ledger:/home/indy/ledger
+    depends_on:
+      - node1
+      - node2
+      - node3
+      - node4
+
+  node1:
+    image: ghcr.io/bcgov/von-network-base:latest
+    container_name: von-node1
+    command: 'bash -c "./scripts/start_node.sh 1"'
+    environment:
+      - NODE_NUM=1
+      - IPS=172.20.0.2,172.20.0.3,172.20.0.4,172.20.0.5
+      - DOCKERHOST=172.20.0.2
+    networks:
+      von:
+        ipv4_address: 172.20.0.2
+    ports:
+      - "9701:9701"
+      - "9702:9702"
+    volumes:
+      - von-node1-data:/home/indy/ledger
+
+  node2:
+    image: ghcr.io/bcgov/von-network-base:latest
+    container_name: von-node2
+    command: 'bash -c "./scripts/start_node.sh 2"'
+    environment:
+      - NODE_NUM=2
+      - IPS=172.20.0.2,172.20.0.3,172.20.0.4,172.20.0.5
+      - DOCKERHOST=172.20.0.3
+    networks:
+      von:
+        ipv4_address: 172.20.0.3
+    ports:
+      - "9703:9703"
+      - "9704:9704"
+    volumes:
+      - von-node2-data:/home/indy/ledger
+
+  node3:
+    image: ghcr.io/bcgov/von-network-base:latest
+    container_name: von-node3
+    command: 'bash -c "./scripts/start_node.sh 3"'
+    environment:
+      - NODE_NUM=3
+      - IPS=172.20.0.2,172.20.0.3,172.20.0.4,172.20.0.5
+      - DOCKERHOST=172.20.0.4
+    networks:
+      von:
+        ipv4_address: 172.20.0.4
+    ports:
+      - "9705:9705"
+      - "9706:9706"
+    volumes:
+      - von-node3-data:/home/indy/ledger
+
+  node4:
+    image: ghcr.io/bcgov/von-network-base:latest
+    container_name: von-node4
+    command: 'bash -c "./scripts/start_node.sh 4"'
+    environment:
+      - NODE_NUM=4
+      - IPS=172.20.0.2,172.20.0.3,172.20.0.4,172.20.0.5
+      - DOCKERHOST=172.20.0.5
+    networks:
+      von:
+        ipv4_address: 172.20.0.5
+    ports:
+      - "9707:9707"
+      - "9708:9708"
+    volumes:
+      - von-node4-data:/home/indy/ledger
+
+networks:
+  von:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  von-webserver-cli:
+  von-webserver-ledger:
+  von-node1-data:
+  von-node2-data:
+  von-node3-data:
+  von-node4-data:
