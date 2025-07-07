@@ -1,0 +1,15 @@
+[0;31m[ERROR][0m Unknown option: Acme Corporation
+Usage: ./register_organization.sh [options]
+
+Options:
+  -n, --name <name>           Organization name (required)
+  -t, --type <type>           Organization type (default: Corporation)
+  -e, --email <email>         Contact email (required)
+  -a, --admin <admin>         Admin name (required)
+  -u, --url <url>             Agent URL (default: http://localhost:3001)
+  -k, --key <key>             API Key (default: demo-admin-key)
+  -g, --genesis <url>         Genesis URL (default: http://52.228.72.173:9000)
+  -h, --help                  Show this help message
+
+Example:
+  ./register_organization.sh -n "Acme Corp" -t "Corporation" -e "admin@acme.com" -a "John Smith"

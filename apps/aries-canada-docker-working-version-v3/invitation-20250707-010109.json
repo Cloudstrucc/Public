@@ -1,0 +1,13 @@
+{
+  "connection_id": "e81c74ca-f04b-47aa-8766-c4fec05957f5",
+  "invitation": {
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation",
+    "@id": "27ca14ba-3515-4d72-9aa5-00f26d293961",
+    "recipientKeys": [
+      "JAkLS66EaPDGmwix3mYwMs7NquTpgp8W6WvgzUz5ji58"
+    ],
+    "serviceEndpoint": "http://localhost:8000",
+    "label": "AriesCanadaAgent"
+  },
+  "invitation_url": "http://localhost:8000?c_i=eyJAdHlwZSI6ICJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9jb25uZWN0aW9ucy8xLjAvaW52aXRhdGlvbiIsICJAaWQiOiAiMjdjYTE0YmEtMzUxNS00ZDcyLTlhYTUtMDBmMjZkMjkzOTYxIiwgInJlY2lwaWVudEtleXMiOiBbIkpBa0xTNjZFYVBER213aXgzbVl3TXM3TnF1VHBncDhXNld2Z3pVejVqaTU4Il0sICJzZXJ2aWNlRW5kcG9pbnQiOiAiaHR0cDovL2xvY2FsaG9zdDo4MDAwIiwgImxhYmVsIjogIkFyaWVzQ2FuYWRhQWdlbnQifQ=="
+}
