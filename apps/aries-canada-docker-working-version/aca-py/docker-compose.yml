@@ -1,6 +1,9 @@
+version: '3.8'
+
 networks:
-  aries-network:
-    driver: bridge
+  default:
+    external: true
+    name: von-network_von
 
 services:
   agent:
@@ -9,8 +12,6 @@ services:
     ports:
       - "3001:3001"
       - "8000:8000"
-    networks:
-      - aries-network
     command: >
       start
       --inbound-transport http 0.0.0.0 8000
@@ -33,15 +34,13 @@ services:
       --monitor-ping
     depends_on:
       - mediator
-
+      
   mediator:
     image: bcgovimages/aries-cloudagent:py36-1.16-1_0.7.4
     container_name: aries-mediator
     ports:
       - "3003:3003"
       - "8001:8001"
-    networks:
-      - aries-network
     command: >
       start
       --inbound-transport http 0.0.0.0 8001
