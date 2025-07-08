@@ -16,7 +16,7 @@ theme: default
 *Ministerial Briefing - June 2025*
 
 ---
-<img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg" alt="Canada" style="height: 10px; width: 50px; margin: 0 0 1px 1px;" />
+<img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg" alt="Canada" style="float: right; width: 150px; margin: 0 0 80px 80px;" />
 
 ## Executive Summary
 
