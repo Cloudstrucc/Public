@@ -1,0 +1,348 @@
+/* ===================================================================
+   Power Platform CoE Portal - Custom Styles for Elections Canada
+   Compatible with WET-BOEW GCWeb Theme
+   =================================================================== */
+
+/* Hero Section Styling */
+.coe-hero {
+    background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+    color: white;
+    padding: 60px 0;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+.coe-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+    opacity: 0.1;
+}
+
+.coe-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.coe-hero .lead {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 2;
+    line-height: 1.6;
+}
+
+/* Service Cards */
+.service-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 30px;
+    height: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,120,212,0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #0078d4;
+}
+
+.service-card:hover::before {
+    left: 100%;
+}
+
+.service-card .icon {
+    width: 60px;
+    height: 60px;
+    background: #f3f9ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: #0078d4;
+    font-size: 24px;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.service-card:hover .icon {
+    background: #0078d4;
+    color: white;
+    transform: scale(1.1);
+}
+
+.service-card h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    position: relative;
+    z-index: 2;
+}
+
+.service-card p {
+    color: #6c757d;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    position: relative;
+    z-index: 2;
+}
+
+/* Buttons */
+.btn-coe {
+    background: #0078d4;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-transform: none;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.btn-coe::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    transform: translate(-50%, -50%);
+}
+
+.btn-coe:hover {
+    background: #106ebe;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,120,212,0.3);
+}
+
+.btn-coe:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Statistics Section */
+.stats-section {
+    background: #f8f9fa;
+    padding: 50px 0;
+    margin: 60px 0;
+    position: relative;
+}
+
+.stats-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0078d4, #106ebe, #0078d4);
+}
+
+.stat-item {
+    text-align: center;
+    padding: 20px;
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #0078d4;
+    display: block;
+    line-height: 1;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+/* Anonymous User Information */
+.anonymous-info {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+.anonymous-info::before {
+    content: '🔒';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    opacity: 0.3;
+}
+
+.anonymous-info h2 {
+    color: #856404;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.anonymous-info p {
+    color: #856404;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+/* Elections Canada Branding */
+.ec-branding {
+    background: #ff0000;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .coe-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .coe-hero .lead {
+        font-size: 1.1rem;
+    }
+    
+    .service-card {
+        margin-bottom: 20px;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+    }
+    
+    .stat-label {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .coe-hero {
+        padding: 40px 0;
+    }
+    
+    .coe-hero h1 {
+        font-size: 1.75rem;
+    }
+    
+    .service-card {
+        padding: 20px;
+    }
+    
+    .service-card .icon {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Accessibility Enhancements */
+.service-card:focus-within {
+    outline: 2px solid #0078d4;
+    outline-offset: 2px;
+}
+
+.btn-coe:focus {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .service-card {
+        border-width: 2px;
+    }
+    
+    .service-card:hover {
+        border-width: 3px;
+    }
+    
+    .coe-hero {
+        background: #000080;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .service-card,
+    .btn-coe,
+    .stat-item,
+    .fade-in {
+        transition: none;
+    }
+    
+    .service-card:hover {
+        transform: none;
+    }
+    
+    .btn-coe:hover {
+        transform: none;
+    }
+}

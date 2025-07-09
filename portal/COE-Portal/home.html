@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% assign sitemarker = sitemarkers["Page Title"] %}{{ sitemarker.value | default: "Power Platform Excellence Centre" }}</title>
+    
+    <!-- WET-BOEW CSS Framework -->
+    <link href="https://wet-boew.github.io/themes-dist/GCWeb/GCWeb/css/theme.min.css" rel="stylesheet">
+    <link href="https://wet-boew.github.io/themes-dist/GCWeb/css/noscript.min.css" rel="stylesheet">
+    
+    <!-- Custom CoE Styles -->
+    <style>
+        .coe-hero {
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+        
+        .coe-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .coe-hero .lead {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+        
+        .service-card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 30px;
+            height: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: #0078d4;
+        }
+        
+        .service-card .icon {
+            width: 60px;
+            height: 60px;
+            background: #f3f9ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: #0078d4;
+            font-size: 24px;
+        }
+        
+        .service-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.25rem;
+        }
+        
+        .service-card p {
+            color: #6c757d;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .btn-coe {
+            background: #0078d4;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s ease;
+        }
+        
+        .btn-coe:hover {
+            background: #106ebe;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .stats-section {
+            background: #f8f9fa;
+            padding: 50px 0;
+            margin: 60px 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #0078d4;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+        
+        .anonymous-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .anonymous-info h2 {
+            color: #856404;
+            margin-bottom: 20px;
+        }
+        
+        .authenticated-services {
+            display: none;
+        }
+        
+        .ec-branding {
+            background: #ff0000;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .breadcrumb-section {
+            background: #f8f9fa;
+            padding: 15px 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Elections Canada Branding -->
+    <div class="ec-branding">
+        Elections Canada | Élections Canada
+    </div>
+    
+    <!-- Skip Links -->
+    <ul id="wb-tphp">
+        <li class="wb-slc"><a class="wb-sl" href="#main">{% assign sitemarker = sitemarkers["Skip to Main Content"] %}{{ sitemarker.value | default: "Skip to main content" }}</a></li>
+        <li class="wb-slc"><a class="wb-sl" href="#wb-info">{% assign sitemarker = sitemarkers["Skip to Footer"] %}{{ sitemarker.value | default: "Skip to footer" }}</a></li>
+    </ul>
+    
+    <!-- Header -->
+    <header>
+        <div id="wb-bnr" class="container">
+            <section id="wb-lng" class="text-right">
+                <h2 class="wb-inv">Language selection</h2>
+                <ul class="list-inline margin-bottom-none">
+                    <li><a lang="fr" href="{% assign sitemarker = sitemarkers["French Page URL"] %}{{ sitemarker.value | default: "#" }}">Français</a></li>
+                </ul>
+            </section>
+            <div class="row">
+                <div class="brand col-xs-5 col-md-4" property="publisher" typeof="GovernmentOrganization">
+                    <a href="{% assign sitemarker = sitemarkers["Elections Canada Home"] %}{{ sitemarker.value | default: "https://www.elections.ca" }}" property="url">
+                        <img src="{% assign sitemarker = sitemarkers["Elections Canada Logo"] %}{{ sitemarker.value | default: "/assets/img/ec-logo.png" }}" alt="Elections Canada" property="logo">
+                        <span class="wb-inv" property="name">Elections Canada</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Breadcrumb -->
+        <nav role="navigation" id="wb-bc" property="breadcrumb">
+            <h2>You are here:</h2>
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li><a href="{% assign sitemarker = sitemarkers["Home Page"] %}{{ sitemarker.value | default: "/" }}">Home</a></li>
+                    <li>Power Platform Excellence Centre</li>
+                </ol>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main property="mainContentOfPage" class="container" id="main">
+        <!-- Anonymous User Information -->
+        {% unless user %}
+        <div class="anonymous-info">
+            <h2>{% assign sitemarker = sitemarkers["Anonymous Welcome Title"] %}{{ sitemarker.value | default: "Welcome to the Power Platform Excellence Centre" }}</h2>
+            <p>{% assign sitemarker = sitemarkers["Anonymous Welcome Text"] %}{{ sitemarker.value | default: "The Power Platform Excellence Centre (CoE) helps Elections Canada staff leverage Microsoft Power Platform tools to create innovative solutions while maintaining security and governance standards." }}</p>
+            <p><strong>{% assign sitemarker = sitemarkers["Sign In Prompt"] %}{{ sitemarker.value | default: "Please sign in to access citizen developer services and request resources." }}</strong></p>
+            <a href="{% assign sitemarker = sitemarkers["Sign In URL"] %}{{ sitemarker.value | default: "/signin" }}" class="btn btn-primary">
+                {% assign sitemarker = sitemarkers["Sign In Button Text"] %}{{ sitemarker.value | default: "Sign In" }}
+            </a>
+        </div>
+        {% endunless %}
+        
+        <!-- Hero Section -->
+        <section class="coe-hero">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1>{% assign sitemarker = sitemarkers["Hero Title"] %}{{ sitemarker.value | default: "Power Platform Excellence Centre" }}</h1>
+                        <p class="lead">{% assign sitemarker = sitemarkers["Hero Subtitle"] %}{{ sitemarker.value | default: "Empowering Elections Canada citizen developers with governed, secure, and innovative Power Platform solutions." }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Statistics Section (Anonymous) -->
+        {% unless user %}
+        <section class="stats-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item">
+                            <span class="stat-number" id="active-apps">{{ snippets["Active Apps Count"] | default: "250+" }}</span>
+                            <div class="stat-label">Active Applications</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item">
+                            <span class="stat-number" id="citizen-devs">{{ snippets["Citizen Developers Count"] | default: "75+" }}</span>
+                            <div class="stat-label">Citizen Developers</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item">
+                            <span class="stat-number" id="environments">{{ snippets["Environments Count"] | default: "12" }}</span>
+                            <div class="stat-label">Managed Environments</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item">
+                            <span class="stat-number" id="processes">{{ snippets["Automated Processes"] | default: "180+" }}</span>
+                            <div class="stat-label">Automated Processes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endunless %}
+        
+        <!-- Authenticated User Services -->
+        {% if user %}
+        <div class="authenticated-services">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>{% assign sitemarker = sitemarkers["Services Title"] %}{{ sitemarker.value | default: "Available Services" }}</h2>
+                    <p>{% assign sitemarker = sitemarkers["Services Description"] %}{{ sitemarker.value | default: "Access the tools and resources you need for Power Platform development at Elections Canada." }}</p>
+                </div>
+            </div>
+            
+            <div class="row" style="margin-top: 30px;">
+                <!-- Environment Request -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3>{% assign sitemarker = sitemarkers["Environment Request Title"] %}{{ sitemarker.value | default: "Environment Request" }}</h3>
+                        <p>{% assign sitemarker = sitemarkers["Environment Request Description"] %}{{ sitemarker.value | default: "Request new development, test, or production environments for your Power Platform projects with proper governance and security controls." }}</p>
+                        <a href="{% assign sitemarker = sitemarkers["Environment Request URL"] %}{{ sitemarker.value | default: "/environment-request" }}" class="btn-coe">Request Environment</a>
+                    </div>
+                </div>
+                
+                <!-- DLP Policy Request -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>{% assign sitemarker = sitemarkers["DLP Request Title"] %}{{ sitemarker.value | default: "DLP Policy Request" }}</h3>
+                        <p>{% assign sitemarker = sitemarkers["DLP Request Description"] %}{{ sitemarker.value | default: "Request changes to Data Loss Prevention policies or analyze the impact of connector usage on your applications and flows." }}</p>
+                        <a href="{% assign sitemarker = sitemarkers["DLP Request URL"] %}{{ sitemarker.value | default: "/dlp-request" }}" class="btn-coe">Manage DLP</a>
+                    </div>
+                </div>
+                
+                <!-- App Catalog -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="fas fa-th-large"></i>
+                        </div>
+                        <h3>{% assign sitemarker = sitemarkers["App Catalog Title"] %}{{ sitemarker.value | default: "App Catalog" }}</h3>
+                        <p>{% assign sitemarker = sitemarkers["App Catalog Description"] %}{{ sitemarker.value | default: "Browse and discover approved Power Platform applications available for use across Elections Canada departments." }}</p>
+                        <a href="{% assign sitemarker = sitemarkers["App Catalog URL"] %}{{ sitemarker.value | default: "/app-catalog" }}" class="btn-coe">Browse Apps</a>
+                    </div>
+                </div>
+                
+                <!-- Developer Compliance -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h3>{% assign sitemarker = sitemarkers["Compliance Title"] %}{{ sitemarker.value | default: "Developer Compliance" }}</h3>
+                        <p>{% assign sitemarker = sitemarkers["Compliance Description"] %}{{ sitemarker.value | default: "Ensure your applications meet Elections Canada standards and compliance requirements through our guided assessment process." }}</p>
+                        <a href="{% assign sitemarker = sitemarkers["Compliance URL"] %}{{ sitemarker.value | default: "/compliance-center" }}" class="btn-coe">Check Compliance</a>
+                    </div>
+                </div>
+                
+                <!-- Training & Resources -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3>{% assign sitemarker = sitemarkers["Training Title"] %}{{ sitemarker.value | default: "Training & Resources" }}</h3>
+                        <p>{% assign sitemarker = sitemarkers["Training Description"] %}{{ sitemarker.value | default: "Access training materials, best practices, templates, and community resources to enhance your Power Platform skills." }}</p>
+                        <a href="{% assign sitemarker = sitemarkers["Training URL"] %}{{ sitemarker.value | default: "/training" }}" class="btn-coe">Learn More</a>
+                    </div>
+                </div>
+                
+                <!-- Support & Feedback -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3>{% assign sitemarker = sitemarkers["Support Title"] %}{{ sitemarker.value | default: "Support & Feedback" }}</h3>
+                        <p>{% assign sitemarker = sitemarkers["Support Description"] %}{{ sitemarker.value | default: "Get help with your Power Platform projects, submit feedback, or connect with the CoE team for guidance and support." }}</p>
+                        <a href="{% assign sitemarker = sitemarkers["Support URL"] %}{{ sitemarker.value | default: "/support" }}" class="btn-coe">Get Support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Additional Information Section -->
+        <section style="margin-top: 60px;">
+            <div class="row">
+                <div class="col-md-8">
+                    <h2>{% assign sitemarker = sitemarkers["About CoE Title"] %}{{ sitemarker.value | default: "About the Power Platform Excellence Centre" }}</h2>
+                    <p>{% assign sitemarker = sitemarkers["About CoE Text"] %}{{ sitemarker.value | default: "The Power Platform Excellence Centre at Elections Canada provides governance, guidance, and support for citizen developers using Microsoft Power Platform tools. Our mission is to enable innovation while maintaining security, compliance, and operational excellence." }}</p>
+                    
+                    <h3>{% assign sitemarker = sitemarkers["Key Benefits Title"] %}{{ sitemarker.value | default: "Key Benefits" }}</h3>
+                    <ul>
+                        <li>{{ snippets["Benefit 1"] | default: "Streamlined environment provisioning with proper governance" }}</li>
+                        <li>{{ snippets["Benefit 2"] | default: "Data Loss Prevention policy management and impact analysis" }}</li>
+                        <li>{{ snippets["Benefit 3"] | default: "Centralized app catalog for discovery and reuse" }}</li>
+                        <li>{{ snippets["Benefit 4"] | default: "Compliance monitoring and developer guidance" }}</li>
+                        <li>{{ snippets["Benefit 5"] | default: "Training resources and community support" }}</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <div class="well">
+                        <h3>{% assign sitemarker = sitemarkers["Quick Links Title"] %}{{ sitemarker.value | default: "Quick Links" }}</h3>
+                        <ul class="list-unstyled">
+                            <li><a href="{% assign sitemarker = sitemarkers["CoE Documentation"] %}{{ sitemarker.value | default: "/documentation" }}">CoE Documentation</a></li>
+                            <li><a href="{% assign sitemarker = sitemarkers["Best Practices"] %}{{ sitemarker.value | default: "/best-practices" }}">Best Practices</a></li>
+                            <li><a href="{% assign sitemarker = sitemarkers["Governance Policies"] %}{{ sitemarker.value | default: "/governance" }}">Governance Policies</a></li>
+                            <li><a href="{% assign sitemarker = sitemarkers["Community Forum"] %}{{ sitemarker.value | default: "/community" }}">Community Forum</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer id="wb-info">
+        <div class="landscape">
+            <nav class="container wb-navcurr">
+                <h2 class="wb-inv">About government</h2>
+                <ul class="list-unstyled colcount-sm-2 colcount-md-3">
+                    <li><a href="{% assign sitemarker = sitemarkers["Elections Canada Contact"] %}{{ sitemarker.value | default: "https://www.elections.ca/content.aspx?section=cont" }}">Contact Elections Canada</a></li>
+                    <li><a href="{% assign sitemarker = sitemarkers["Privacy"] %}{{ sitemarker.value | default: "/privacy" }}">Privacy</a></li>
+                    <li><a href="{% assign sitemarker = sitemarkers["Terms"] %}{{ sitemarker.value | default: "/terms" }}">Terms and conditions</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="brand">
+            <div class="container">
+                <div class="row">
+                    <nav class="col-md-9 col-lg-10 ftr-urlt-lnk">
+                        <h2 class="wb-inv">About this site</h2>
+                        <ul>
+                            <li><a href="{% assign sitemarker = sitemarkers["Social Media"] %}{{ sitemarker.value | default: "https://www.elections.ca/content.aspx?section=med&dir=soc" }}">Social media</a></li>
+                            <li><a href="{% assign sitemarker = sitemarkers["Mobile App"] %}{{ sitemarker.value | default: "https://www.elections.ca/content.aspx?section=vot&dir=mob" }}">Mobile applications</a></li>
+                        </ul>
+                    </nav>
+                    <div class="col-xs-6 visible-sm visible-xs tofpg">
+                        <a href="#wb-cont">Top of Page <span class="glyphicon glyphicon-chevron-up"></span></a>
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-lg-2 text-right">
+                        <img src="{% assign sitemarker = sitemarkers["Canada Wordmark"] %}{{ sitemarker.value | default: "/assets/img/wmms-blk.svg" }}" alt="Symbol of the Government of Canada">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- WET-BOEW JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://wet-boew.github.io/themes-dist/GCWeb/wet-boew/js/wet-boew.min.js"></script>
+    <script src="https://wet-boew.github.io/themes-dist/GCWeb/GCWeb/js/theme.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Initialize user authentication state
+        $(document).ready(function() {
+            {% if user %}
+                $('.authenticated-services').show();
+                $('.anonymous-info').hide();
+            {% else %}
+                $('.authenticated-services').hide();
+                $('.anonymous-info').show();
+            {% endif %}
+            
+            // Animate statistics counters for anonymous users
+            {% unless user %}
+            function animateCounter(element, target) {
+                const counter = document.getElementById(element);
+                const targetNumber = parseInt(target.replace(/\D/g, ''));
+                let current = 0;
+                const increment = targetNumber / 50;
+                const timer = setInterval(function() {
+                    current += increment;
+                    if (current >= targetNumber) {
+                        counter.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current) + '+';
+                    }
+                }, 30);
+            }
+            
+            // Trigger animation when stats section is visible
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        animateCounter('active-apps', '{{ snippets["Active Apps Count"] | default: "250+" }}');
+                        animateCounter('citizen-devs', '{{ snippets["Citizen Developers Count"] | default: "75+" }}');
+                        animateCounter('environments', '{{ snippets["Environments Count"] | default: "12" }}');
+                        animateCounter('processes', '{{ snippets["Automated Processes"] | default: "180+" }}');
+                        observer.disconnect();
+                    }
+                });
+            });
+            
+            const statsSection = document.querySelector('.stats-section');
+            if (statsSection) {
+                observer.observe(statsSection);
+            }
+            {% endunless %}
+        });
+    </script>
+</body>
+</html>

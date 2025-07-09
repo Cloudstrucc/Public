@@ -3,15 +3,16 @@ marp: true
 paginate: true
 theme: default
 ---
-`<img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"
+<img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"
      alt="Government of Canada Signature"
-     style="float: right; width: 300px; margin: 0 0 100px 100px;" /><br>`
+     style="float: right; width: 300px; margin: 0 0 100px 100px;" /><br>
+
 
 # IM/IT Cost Savings Strategy
 
 ## Federal Government of Canada
 
-**Confidential - Protected A**
+**Protected A**
 *Ministerial Briefing - June 2025*
 
 ---
@@ -20,14 +21,15 @@ theme: default
 
 ## Executive Summary
 
-**$2B+ Annual Savings Through Strategic Digital Transformation**
+**Significant & pragramatic spending  approach through strategic digital transformation through optimizing the usage of existing under-uilized tools available to every civil servant via existing licensing (mainly M365) and other applications.**
 
+(based real models/esrtimates)
 - **License Optimization**: $200M+ by fully leveraging existing E3/E5 capabilities
 - **SaaS-First Approach**: $500M+ eliminating custom development waste
 - **Security Consolidation**: $50M+ through centralized assessments
 - **Infrastructure Rightsizing**: $100M+ via SSC optimization
 
-**Service Delivery**: 80% faster, standardized across government
+**Service Delivery**: 60-80% faster, standardized across government
 
 ---
 
@@ -35,14 +37,14 @@ theme: default
 
 ## The ArriveCAN Lesson
 
-**From $80,000 to $60 Million - How We Failed**
+**How We Failed**
 
 - Simple app functionality achievable with **existing Power Apps**
 - Built with expensive consultants instead of **citizen developers**
 - No deliverable accountability or milestone framework
 - 18% of invoices lacked supporting documentation
 
-**The Solution**: Leverage existing Microsoft E3/E5 licenses we already pay for
+**The Solution (that was feasible at the time)**: Leverage existing Microsoft E3/E5 licenses we already pay for to leverage tools such as Power Apps, CRM's, and Web/Mobile App builder's already available as part of our Office 365 licensing instead of a fully built from scratch custom app.
 
 ---
 
@@ -170,7 +172,7 @@ theme: default
 
 **Transform Citizen Services**
 
-**Power Platform AI Capabilities**:
+**(Example) Power Platform AI Capabilities**:
 
 - **Chatbots**: 80% of routine inquiries automated
 - **Document Processing**: 90% reduction in manual data entry
