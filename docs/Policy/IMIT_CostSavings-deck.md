@@ -3,31 +3,33 @@ marp: true
 paginate: true
 theme: default
 ---
-
 <img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"
      alt="Government of Canada Signature"
      style="float: right; width: 300px; margin: 0 0 100px 100px;" /><br>
+
 
 # IM/IT Cost Savings Strategy
 
 ## Federal Government of Canada
 
-**Confidential - Protected A**  
+**Protected A**
 *Ministerial Briefing - June 2025*
 
 ---
+
 <img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg" alt="Canada" style="float: right; width: 150px; margin: 0 0 80px 80px;" />
 
 ## Executive Summary
 
-**$2B+ Annual Savings Through Strategic Digital Transformation**
+**Significant & pragramatic spending  approach through strategic digital transformation through optimizing the usage of existing under-uilized tools available to every civil servant via existing licensing (mainly M365) and other applications.**
 
-- **License Optimization**: $200M+ by fully leveraging existing E3/E5 capabilities  
-- **SaaS-First Approach**: $500M+ eliminating custom development waste  
-- **Security Consolidation**: $50M+ through centralized assessments  
-- **Infrastructure Rightsizing**: $100M+ via SSC optimization  
+(based real models/esrtimates)
+- **License Optimization**: $200M+ by fully leveraging existing E3/E5 capabilities
+- **SaaS-First Approach**: $500M+ eliminating custom development waste
+- **Security Consolidation**: $50M+ through centralized assessments
+- **Infrastructure Rightsizing**: $100M+ via SSC optimization
 
-**Service Delivery**: 80% faster, standardized across government
+**Service Delivery**: 60-80% faster, standardized across government
 
 ---
 
@@ -35,14 +37,14 @@ theme: default
 
 ## The ArriveCAN Lesson
 
-**From $80,000 to $60 Million - How We Failed**
+**How We Failed**
 
 - Simple app functionality achievable with **existing Power Apps**
 - Built with expensive consultants instead of **citizen developers**
 - No deliverable accountability or milestone framework
 - 18% of invoices lacked supporting documentation
 
-**The Solution**: Leverage existing Microsoft E3/E5 licenses we already pay for
+**The Solution (that was feasible at the time)**: Leverage existing Microsoft E3/E5 licenses we already pay for to leverage tools such as Power Apps, CRM's, and Web/Mobile App builder's already available as part of our Office 365 licensing instead of a fully built from scratch custom app.
 
 ---
 
@@ -52,10 +54,11 @@ theme: default
 
 **We're Paying for Premium, Using Basic**
 
-**Current Reality**: 30% utilization of E3/E5 capabilities  
-**Government Cost**: $36–$57/user/month per license  
+**Current Reality**: 30% utilization of E3/E5 capabilities
+**Government Cost**: $36–$57/user/month per license
 
 **Unused Capabilities We Already Own**:
+
 - Power Apps (custom application development)
 - Power Automate (workflow automation)
 - Power BI (analytics and reporting)
@@ -72,11 +75,13 @@ theme: default
 **End the "Time & Materials" Waste**
 
 **Current Problem**:
+
 - Building custom apps when SaaS solutions exist
 - No standardization across 43 departments
 - Predictable cost overruns and scope creep
 
 **SaaS-First Solution**:
+
 - **Predictable Pricing**: Fixed monthly costs, no surprises
 - **Speed**: Weeks instead of years to deploy
 - **Quality**: Microsoft-managed updates and security
@@ -90,11 +95,13 @@ theme: default
 **Same Platform, 43 Different Reviews**
 
 **Current Waste**:
+
 - Each department separately assesses identical platforms
 - 6–12 month cycles for pre-approved solutions
 - Millions in redundant security reviews
 
 **Central Assessment Framework**:
+
 - Single government-wide security approval
 - 30-day deployment for pre-approved platforms
 - Focus reviews on data, not platform re-assessment
@@ -108,6 +115,7 @@ theme: default
 **From ArriveCAN Chaos to Deliverable-Based Success**
 
 **New Procurement Model**:
+
 - Payment tied to **working software**, not hours logged
 - 30–60–90 day milestone deliverables
 - Federal employee project sponsors (not contractors)
@@ -122,16 +130,19 @@ theme: default
 ## Implementation Roadmap
 
 **Quick Wins (0–6 months)**:
+
 - License audit and capability assessment
 - Power Platform pilots for 5 simple applications
 - Central security assessment repository
 
 **Systematic Change (6–18 months)**:
+
 - SaaS-first policy mandate
 - Citizen developer training programs
 - Deliverable-based contracting standards
 
 **Full Optimization (18–36 months)**:
+
 - Cross-department platform standardization
 - Legacy system modernization
 - AI-powered citizen service automation
@@ -145,6 +156,7 @@ theme: default
 **Protecting Mission-Critical Systems**
 
 **Legacy System Strategy**:
+
 - Phased migration with parallel operations
 - Start with non-critical applications
 - Comprehensive rollback procedures
@@ -160,7 +172,8 @@ theme: default
 
 **Transform Citizen Services**
 
-**Power Platform AI Capabilities**:
+**(Example) Power Platform AI Capabilities**:
+
 - **Chatbots**: 80% of routine inquiries automated
 - **Document Processing**: 90% reduction in manual data entry
 - **Predictive Analytics**: Anticipate service demand
@@ -176,6 +189,7 @@ theme: default
 **Mandatory Bi-Annual Review Consortium**
 
 **Project Approval Gateway** (>$1M projects):
+
 - Justify why existing E3/E5 capabilities insufficient
 - Demonstrate inter-departmental collaboration
 - Document SaaS alternatives evaluation
@@ -190,12 +204,14 @@ theme: default
 ## Next Steps & Ministerial Commitment
 
 **Immediate Actions (30 Days)**:
+
 1. Establish comprehensive digital-first policy
 2. Launch 30-day IT portfolio audit (>$500K projects)
 3. Form bi-annual review governance structure
 4. Select 5 departments for Power Platform pilots
 
 **Success Metrics**:
+
 - $2B annual savings within 24 months
 - 80% faster citizen service delivery
 - Zero major procurement scandals

@@ -1,26 +1,22 @@
-<img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"
+`<img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"
      alt="Government of Canada Signature"
-     style="float: right; width: 300px; margin: 0 0 100px 100px;" />
-<br>
+     style="float: right; width: 300px; margin: 0 0 100px 100px;" /><br>`
 
-## DIGITAL TRANSFORMATION & IM/IT EFFICIENCY STRATEGY  
+## DIGITAL TRANSFORMATION & IM/IT EFFICIENCY STRATEGY
 
 ### Ministerial Briefing & Talking Points
 
----
-
-🔒 **CONFIDENTIAL - FOR INTERNAL GOVERNMENT USE ONLY**  
-📅 **Document Date:** June 24, 2025  
-🔐 **Classification:** Protected A  
-👤 **Prepared for:** Federal Minister Meeting  
-📊 **Subject:** Strategic IT Cost Reduction & Digital Transformation  
+📅 **Document Date:** June 24, 2025
+🔐 **Classification:** Protected A
+👤 **Prepared for:** Federal Minister Meeting
+📊 **Subject:** Strategic IT Cost Reduction & Digital Transformation
 
 ---
 
-💰 **POTENTIAL SAVINGS:** $2B+ Annually  
-⚡ **SERVICE IMPROVEMENT:** 80% Faster Delivery  
-🛡️ **SECURITY ENHANCEMENT:** Centralized & Standardized  
-📈 **LICENSE UTILIZATION:** From 30% to 90%+
+💰 **POTENTIAL SAVINGS:** $5-10+ Annually on IM/IT spending (across every budget type)
+⚡ **SERVICE IMPROVEMENT:** 60-80% Faster Delivery
+🛡️ **SECURITY ENHANCEMENT:** Centralized & Standardized
+📈 **LICENSE UTILIZATION:** From ~30% to 80%+
 
 ---
 
@@ -30,13 +26,13 @@
 
 ## Digital Transformation & IT Efficiency Strategy
 
-**CONFIDENTIAL** | **Protected A** | **Internal Government Use Only**
+**Protected A**
 
 </div>
 
 ---
 
-### Executive Summary
+### Executive Summary 
 
 The federal government can achieve billions in cost savings and dramatically improve service delivery by leveraging existing Microsoft E3/E5 licenses, adopting SaaS-first strategies, eliminating redundant security assessments, and implementing accountability-driven procurement practices. **Bottom Line**: We're paying for premium tools but using them at basic levels while simultaneously overpaying for custom solutions that could be built efficiently using existing platform capabilities.
 
