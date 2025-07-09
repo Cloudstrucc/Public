@@ -7,7 +7,6 @@ theme: default
      alt="Government of Canada Signature"
      style="float: right; width: 300px; margin: 0 0 100px 100px;" /><br>
 
-
 # IM/IT Cost Savings Strategy
 
 ## Federal Government of Canada
@@ -24,6 +23,7 @@ theme: default
 **Significant & pragramatic spending  approach through strategic digital transformation through optimizing the usage of existing under-uilized tools available to every civil servant via existing licensing (mainly M365) and other applications.**
 
 (based real models/esrtimates)
+
 - **License Optimization**: $200M+ by fully leveraging existing E3/E5 capabilities
 - **SaaS-First Approach**: $500M+ eliminating custom development waste
 - **Security Consolidation**: $50M+ through centralized assessments
@@ -212,7 +212,7 @@ theme: default
 
 **Success Metrics**:
 
-- $2B annual savings within 24 months
+- 5-10% annual savings within 24 months
 - 80% faster citizen service delivery
 - Zero major procurement scandals
 - 90% cross-agency employee mobility improvement
@@ -227,4 +227,4 @@ theme: default
 
 Stop paying millions for custom solutions when we already own world-class platforms. The ArriveCAN scandal was preventable through proper license utilization and accountable procurement.
 
-**Minister's Decision Required**: Approve digital-first mandate and portfolio governance framework to unlock $2B+ in taxpayer savings.
+**Minister's Decision Required**: Approve digital-first mandate and portfolio governance framework to unlock 5-10% in taxpayer savings.

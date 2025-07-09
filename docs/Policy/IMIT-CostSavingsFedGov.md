@@ -1,6 +1,4 @@
-`<img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"
-     alt="Government of Canada Signature"
-     style="float: right; width: 300px; margin: 0 0 100px 100px;" /><br>`
+<img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"      alt="Government of Canada Signature"      style="float: right; width: 300px; margin: 0 0 100px 100px;" /><br>
 
 ## DIGITAL TRANSFORMATION & IM/IT EFFICIENCY STRATEGY
 
@@ -13,10 +11,10 @@
 
 ---
 
-💰 **POTENTIAL SAVINGS:** $5-10+ Annually on IM/IT spending (across every budget type)
+💰 **POTENTIAL SAVINGS:** 5-10%+ Annually on IM/IT spending (across every budget type)
 ⚡ **SERVICE IMPROVEMENT:** 60-80% Faster Delivery
 🛡️ **SECURITY ENHANCEMENT:** Centralized & Standardized
-📈 **LICENSE UTILIZATION:** From ~30% to 80%+
+📈 **LICENSE UTILIZATION:** From ~30 to 80%+
 
 ---
 
@@ -32,7 +30,7 @@
 
 ---
 
-### Executive Summary 
+### Executive Summary
 
 The federal government can achieve billions in cost savings and dramatically improve service delivery by leveraging existing Microsoft E3/E5 licenses, adopting SaaS-first strategies, eliminating redundant security assessments, and implementing accountability-driven procurement practices. **Bottom Line**: We're paying for premium tools but using them at basic levels while simultaneously overpaying for custom solutions that could be built efficiently using existing platform capabilities.
 
@@ -582,7 +580,7 @@ Most federal employees have E3 or E5 licenses but agencies are only using ~30% o
 
 **Success Metrics**:
 
-- $2B in annual IT cost savings within 24 months
+- 5-10% in annual IT cost savings within 24 months
 - 80% faster service delivery for citizen applications
 - 90% reduction in cross-agency employee onboarding time
 - Zero major procurement scandals through transparent, accountable processes
