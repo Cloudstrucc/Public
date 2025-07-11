@@ -404,7 +404,7 @@ This strategic choice positions your organization for immediate productivity gai
 
 ### 7.1 Technical Risks
 
-#### **Dynamics 365
+#### Dynamics 365**
 
 - **Low Risk**: Mature platform with extensive enterprise adoption
 - Strong security posture with continuous updates
