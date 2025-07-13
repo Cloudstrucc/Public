@@ -4,7 +4,8 @@
 set -e
 
 API_KEY=${API_KEY:-demo-admin-key}
-AGENT_URL=${AGENT_URL:-http://localhost:3001}
+# FIXED: Use correct external endpoint for admin API
+AGENT_URL=${AGENT_URL:-http://52.228.72.173:3001}
 CONNECTION_ID=${1:-}
 
 # Colors for output
