@@ -4,7 +4,7 @@
 set -e
 
 API_KEY=${API_KEY:-demo-admin-key}
-AGENT_URL=${AGENT_URL:-http://localhost:3001}
+AGENT_URL=${AGENT_URL:-http://52.228.72.173:3001}
 
 # Colors for output
 RED='\033[0;31m'
