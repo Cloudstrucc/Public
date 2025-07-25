@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 public static async Task<IActionResult> Run([HttpTrigger] HttpRequest req)
 {
     string hostname = req.Query["hostname"];
-    
-    try 
+
+    try
     {
         // This will use the VNet's internal DNS
         var hostEntry = await Dns.GetHostEntryAsync(hostname);
@@ -17,7 +17,7 @@ public static async Task<IActionResult> Run([HttpTrigger] HttpRequest req)
             addresses = hostEntry.AddressList.Select(ip => ip.ToString()).ToArray(),
             timestamp = DateTime.UtcNow
         };
-        
+
         return new OkObjectResult(result);
     }
     catch (Exception ex)
@@ -25,3 +25,11 @@ public static async Task<IActionResult> Run([HttpTrigger] HttpRequest req)
         return new BadRequestObjectResult($"DNS lookup failed: {ex.Message}");
     }
 }
+
+
+// # Deploy Function App
+// az functionapp vnet-integration add \
+//   --resource-group myResourceGroup \
+//   --name myFunctionApp \
+//   --vnet myVNet \
+//   --subnet myFunctionSubnet
