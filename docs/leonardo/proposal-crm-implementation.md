@@ -387,9 +387,409 @@ The JIRA on-premise integration will leverage Power Platform's enterprise-grade 
 ### Appendix A: Power Platform Security Architecture Diagram
 
 * Detailed network architecture showing private endpoints and VNET integration
+
+```mermaid
+
+graph TB
+    subgraph "Client On-Premises Network"
+        subgraph "DMZ"
+            OPDG[On-Premises Data Gateway<br/>- TLS 1.3 Encryption<br/>- Certificate Auth<br/>- High Availability]
+        end
+        
+        subgraph "Internal Network"
+            JIRA[JIRA Server<br/>- Projects & Tasks<br/>- Budget Modules<br/>- API Endpoints]
+            AD[Active Directory<br/>- User Authentication<br/>- Group Management]
+            FW[Corporate Firewall<br/>- Network Segmentation<br/>- Traffic Filtering]
+        end
+    end
+
+    subgraph "Azure Government Cloud (Canada)"
+        subgraph "Client VNET"
+            subgraph "Private Endpoint Subnet"
+                PE1[Private Endpoint<br/>Power Platform]
+                PE2[Private Endpoint<br/>Dynamics 365]
+                PE3[Private Endpoint<br/>Microsoft Graph]
+                PE4[Private Endpoint<br/>Key Vault]
+            end
+            
+            subgraph "Application Subnet"
+                NSG[Network Security Groups<br/>- Least Privilege Access<br/>- Protected B Controls]
+            end
+        end
+        
+        subgraph "Microsoft 365 Services"
+            subgraph "Power Platform"
+                PP[Power Platform<br/>- Custom Connectors<br/>- Power Automate<br/>- Data Integration]
+            end
+            
+            subgraph "Dynamics 365"
+                D365[Dynamics 365 Sales<br/>- CRM Functionality<br/>- Sales Pipeline<br/>- Customer Data]
+            end
+            
+            subgraph "Security Services"
+                KV[Azure Key Vault<br/>- Customer Managed Keys<br/>- Certificate Storage<br/>- Secret Management]
+                AAD[Azure AD Premium<br/>- Conditional Access<br/>- MFA Enforcement<br/>- Identity Protection]
+            end
+        end
+    end
+
+    subgraph "Microsoft Global Network"
+        subgraph "Compliance & Security"
+            PURVIEW[Microsoft Purview<br/>- Data Classification<br/>- DLP Policies<br/>- Audit Logging]
+            DEFENDER[Microsoft Defender<br/>- Threat Protection<br/>- Security Monitoring<br/>- Incident Response]
+        end
+    end
+
+    %% Network Connections
+    OPDG -.->|Encrypted Tunnel| PE1
+    OPDG -.->|Encrypted Tunnel| PE2
+    JIRA <--> OPDG
+    AD <--> OPDG
+    FW <--> OPDG
+    
+    PE1 <--> PP
+    PE2 <--> D365
+    PE3 <--> AAD
+    PE4 <--> KV
+    
+    PP <--> PURVIEW
+    D365 <--> PURVIEW
+    PP <--> DEFENDER
+    D365 <--> DEFENDER
+    
+    NSG -.->|Traffic Control| PE1
+    NSG -.->|Traffic Control| PE2
+    NSG -.->|Traffic Control| PE3
+    NSG -.->|Traffic Control| PE4
+
+    %% Styling
+    classDef onPrem fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef azure fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef security fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef microsoft fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    
+    class OPDG,JIRA,AD,FW onPrem
+    class PE1,PE2,PE3,PE4,NSG,PP,D365,KV,AAD azure
+    class PURVIEW,DEFENDER security
+
+```
+
 * Data flow diagrams for Protected B information handling
+
+```mermaid
+
+flowchart TD
+    subgraph "Data Classification & Ingestion"
+        USER[End User<br/>Creates/Accesses Data]
+        CLASSIFY[Auto-Classification<br/>- Protected B Detection<br/>- Sensitivity Labels<br/>- Content Scanning]
+    end
+
+    subgraph "Data Processing Layer"
+        DLP[Data Loss Prevention<br/>- Policy Enforcement<br/>- Content Inspection<br/>- Action Blocking]
+        ENCRYPT[Encryption Engine<br/>- Customer Managed Keys<br/>- AES-256 at Rest<br/>- TLS 1.3 in Transit]
+    end
+
+    subgraph "Storage & Retention"
+        subgraph "Dynamics 365"
+            D365_STORE[Customer Records<br/>- Contact Information<br/>- Sales Opportunities<br/>- Protected B Classified]
+        end
+        
+        subgraph "Power Platform"
+            PP_STORE[Integration Data<br/>- JIRA Mappings<br/>- Workflow States<br/>- Audit Logs]
+        end
+        
+        subgraph "Compliance Storage"
+            AUDIT_STORE[Audit Repository<br/>- Access Logs<br/>- Data Modifications<br/>- Compliance Records]
+        end
+    end
+
+    subgraph "Data Access & Controls"
+        CONDITIONAL[Conditional Access<br/>- Device Compliance<br/>- Location Verification<br/>- Risk Assessment]
+        MFA[Multi-Factor Auth<br/>- Government Approved<br/>- Hardware Tokens<br/>- Biometric Options]
+    end
+
+    subgraph "External Integration"
+        JIRA_INT[JIRA Integration<br/>- Budget Data<br/>- Project Information<br/>- Task Assignments]
+        DATA_GATEWAY[On-Premises Gateway<br/>- Encrypted Channel<br/>- Certificate Auth<br/>- DMZ Deployment]
+    end
+
+    subgraph "Monitoring & Compliance"
+        MONITOR[Real-time Monitoring<br/>- Data Access Tracking<br/>- Anomaly Detection<br/>- Incident Alerting]
+        RETENTION[Retention Policies<br/>- Automated Deletion<br/>- Legal Hold<br/>- Archive Management]
+        PURVIEW_AUDIT[Microsoft Purview<br/>- Compliance Dashboard<br/>- Risk Assessment<br/>- Regulatory Reporting]
+    end
+
+    %% Data Flow Connections
+    USER --> CLASSIFY
+    CLASSIFY --> DLP
+    DLP --> ENCRYPT
+    
+    ENCRYPT --> D365_STORE
+    ENCRYPT --> PP_STORE
+    
+    USER --> CONDITIONAL
+    CONDITIONAL --> MFA
+    MFA --> D365_STORE
+    MFA --> PP_STORE
+    
+    PP_STORE <--> DATA_GATEWAY
+    DATA_GATEWAY <--> JIRA_INT
+    
+    D365_STORE --> AUDIT_STORE
+    PP_STORE --> AUDIT_STORE
+    JIRA_INT --> AUDIT_STORE
+    
+    AUDIT_STORE --> MONITOR
+    AUDIT_STORE --> RETENTION
+    MONITOR --> PURVIEW_AUDIT
+    RETENTION --> PURVIEW_AUDIT
+
+    %% Data Classification Labels
+    CLASSIFY -.->|Protected B Label| D365_STORE
+    CLASSIFY -.->|Protected B Label| PP_STORE
+    CLASSIFY -.->|Protected B Label| JIRA_INT
+
+    %% Styling
+    classDef dataClass fill:#e3f2fd,stroke:#0277bd,stroke-width:2px
+    classDef security fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef storage fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef integration fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef compliance fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    
+    class USER,CLASSIFY,DLP dataClass
+    class CONDITIONAL,MFA,ENCRYPT security
+    class D365_STORE,PP_STORE,AUDIT_STORE storage
+    class JIRA_INT,DATA_GATEWAY integration
+    class MONITOR,RETENTION,PURVIEW_AUDIT compliance
+
+```
+
 * Identity and access management architecture
-* Integration security model with JIRA on-premise
+
+```mermaid
+
+graph TB
+    subgraph "Identity Sources"
+        USER_FED[Federal Employee<br/>- Government ID<br/>- Security Clearance<br/>- Device Registered]
+        USER_CONT[Contractor<br/>- Sponsored Account<br/>- Limited Access<br/>- Temporary Credentials]
+        USER_EXT[External User<br/>- Guest Account<br/>- Restricted Access<br/>- Time-Limited]
+    end
+
+    subgraph "Authentication Layer"
+        subgraph "Primary Authentication"
+            AAD[Azure AD Premium P2<br/>- Primary Identity Store<br/>- Hybrid Sync<br/>- Password Policies]
+            ADFS[AD FS Integration<br/>- On-Premises Auth<br/>- Claims-Based<br/>- Federation Trust]
+        end
+        
+        subgraph "Multi-Factor Authentication"
+            MFA_HW[Hardware Tokens<br/>- FIDO2 Keys<br/>- Smart Cards<br/>- Government Approved]
+            MFA_APP[Authenticator Apps<br/>- Microsoft Authenticator<br/>- Push Notifications<br/>- Time-based Codes]
+            MFA_BIO[Biometric Auth<br/>- Windows Hello<br/>- Fingerprint<br/>- Face Recognition]
+        end
+    end
+
+    subgraph "Authorization & Access Control"
+        subgraph "Conditional Access"
+            CA_DEVICE[Device Compliance<br/>- Managed Devices<br/>- Encryption Required<br/>- Health Attestation]
+            CA_LOCATION[Location-Based<br/>- Trusted Networks<br/>- Geographic Restrictions<br/>- VPN Requirements]
+            CA_RISK[Risk-Based Access<br/>- Sign-in Risk<br/>- User Risk<br/>- Behavioral Analysis]
+        end
+        
+        subgraph "Role-Based Access"
+            RBAC_ADMIN[Administrative Roles<br/>- Global Admin<br/>- Security Admin<br/>- Compliance Admin]
+            RBAC_USER[User Roles<br/>- Sales Professional<br/>- Project Manager<br/>- Read-Only Access]
+            RBAC_CUSTOM[Custom Roles<br/>- Dynamics Permissions<br/>- Power Platform Access<br/>- JIRA Integration Rights]
+        end
+    end
+
+    subgraph "Privileged Access Management"
+        PIM[Privileged Identity Management<br/>- Just-in-Time Access<br/>- Approval Workflows<br/>- Time-Limited Elevation]
+        PAM[Privileged Access Workstation<br/>- Secure Admin Access<br/>- Isolated Environment<br/>- Enhanced Monitoring]
+        BREAK_GLASS[Emergency Access<br/>- Break-Glass Accounts<br/>- Audit Trail<br/>- Executive Approval]
+    end
+
+    subgraph "Application Access"
+        subgraph "Microsoft 365 Services"
+            D365_ACCESS[Dynamics 365<br/>- Sales Professional<br/>- Customer Data<br/>- Pipeline Management]
+            PP_ACCESS[Power Platform<br/>- Custom Apps<br/>- Workflow Automation<br/>- Data Integration]
+            M365_ACCESS[Microsoft 365<br/>- Email & Calendar<br/>- SharePoint<br/>- Teams Integration]
+        end
+        
+        subgraph "Integrated Systems"
+            JIRA_ACCESS[JIRA Access<br/>- Project Management<br/>- Budget Modules<br/>- Task Tracking]
+            REPORTING[Reporting Access<br/>- Power BI<br/>- Compliance Dashboards<br/>- Audit Reports]
+        end
+    end
+
+    subgraph "Session Management"
+        SESSION[Session Controls<br/>- Persistent Access<br/>- Idle Timeout<br/>- Device Registration]
+        MONITOR_ACCESS[Access Monitoring<br/>- Real-time Alerts<br/>- Anomaly Detection<br/>- Risk Scoring]
+        REVIEW[Access Reviews<br/>- Quarterly Certification<br/>- Manager Approval<br/>- Automated Cleanup]
+    end
+
+    %% Authentication Flow
+    USER_FED --> AAD
+    USER_CONT --> AAD
+    USER_EXT --> AAD
+    
+    AAD <--> ADFS
+    AAD --> MFA_HW
+    AAD --> MFA_APP
+    AAD --> MFA_BIO
+
+    %% Authorization Flow
+    MFA_HW --> CA_DEVICE
+    MFA_APP --> CA_LOCATION
+    MFA_BIO --> CA_RISK
+    
+    CA_DEVICE --> RBAC_ADMIN
+    CA_LOCATION --> RBAC_USER
+    CA_RISK --> RBAC_CUSTOM
+
+    %% Privileged Access Flow
+    RBAC_ADMIN --> PIM
+    PIM --> PAM
+    PIM --> BREAK_GLASS
+
+    %% Application Access Flow
+    RBAC_USER --> D365_ACCESS
+    RBAC_USER --> PP_ACCESS
+    RBAC_USER --> M365_ACCESS
+    RBAC_CUSTOM --> JIRA_ACCESS
+    RBAC_ADMIN --> REPORTING
+
+    %% Session Management Flow
+    D365_ACCESS --> SESSION
+    PP_ACCESS --> SESSION
+    JIRA_ACCESS --> SESSION
+    
+    SESSION --> MONITOR_ACCESS
+    MONITOR_ACCESS --> REVIEW
+    REVIEW --> AAD
+
+    %% Styling
+    classDef identity fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px
+    classDef auth fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    classDef access fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef privileged fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef apps fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef session fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    
+    class USER_FED,USER_CONT,USER_EXT identity
+    class AAD,ADFS,MFA_HW,MFA_APP,MFA_BIO auth
+    class CA_DEVICE,CA_LOCATION,CA_RISK,RBAC_ADMIN,RBAC_USER,RBAC_CUSTOM access
+    class PIM,PAM,BREAK_GLASS privileged
+    class D365_ACCESS,PP_ACCESS,M365_ACCESS,JIRA_ACCESS,REPORTING apps
+    class SESSION,MONITOR_ACCESS,REVIEW session
+
+```
+
+* Integration security model with JIRA on-premise (EXAMPLE)
+
+```mermaid
+
+sequenceDiagram
+    participant User as Sales User
+    participant D365 as Dynamics 365 Sales
+    participant PP as Power Platform
+    participant Gateway as On-Premises Gateway
+    participant JIRA as JIRA Server
+    participant Budget as Budget Module
+    participant Audit as Audit System
+
+    Note over User,Audit: Sales Opportunity to JIRA Project Integration Flow
+
+    %% Authentication & Authorization
+    User->>D365: Create Sales Opportunity
+    D365->>PP: Trigger Integration Workflow
+    
+    Note over PP,Gateway: Secure Authentication Process
+    PP->>Gateway: Request Connection (Certificate Auth)
+    Gateway->>Gateway: Validate Certificate & Permissions
+    Gateway->>JIRA: Authenticate (Service Account)
+    JIRA-->>Gateway: Authentication Success
+    Gateway-->>PP: Secure Channel Established
+
+    %% Data Synchronization Process
+    Note over D365,JIRA: Bi-Directional Data Sync
+    PP->>Gateway: Send Opportunity Data (Encrypted)
+    Gateway->>Gateway: Decrypt & Validate Data
+    Gateway->>JIRA: Create/Update Project
+    JIRA->>Budget: Link to Budget Module
+    Budget-->>JIRA: Budget Line Item Created
+    JIRA-->>Gateway: Project Created Successfully
+    Gateway-->>PP: Success Response (Encrypted)
+    PP-->>D365: Update Opportunity Status
+
+    %% Task Mapping Process
+    Note over User,Budget: Task-Level Integration
+    User->>D365: Create Sales Activity
+    D365->>PP: Trigger Task Sync
+    PP->>Gateway: Send Task Data
+    Gateway->>JIRA: Create Work Item
+    JIRA->>JIRA: Map to Project Structure
+    JIRA-->>Gateway: Task Created
+    Gateway-->>PP: Task Reference
+    PP-->>D365: Link Task Reference
+
+    %% Financial Integration
+    Note over PP,Audit: Budget & Financial Sync
+    JIRA->>Budget: Update Budget Status
+    Budget->>Gateway: Financial Data Update
+    Gateway->>PP: Budget Information
+    PP->>D365: Update Opportunity Value
+    D365->>Audit: Log Financial Changes
+
+    %% Security & Compliance Monitoring
+    Note over Gateway,Audit: Continuous Security Monitoring
+    par Security Monitoring
+        Gateway->>Audit: Log All Transactions
+        PP->>Audit: Log Integration Activities
+        D365->>Audit: Log Data Modifications
+        JIRA->>Audit: Log Project Changes
+    and Data Validation
+        Gateway->>Gateway: Validate Data Integrity
+        PP->>PP: Apply DLP Policies
+        D365->>D365: Check Sensitivity Labels
+    and Compliance Checking
+        Audit->>Audit: Protected B Classification Check
+        Audit->>Audit: Access Permission Validation
+        Audit->>Audit: Data Residency Verification
+    end
+
+    %% Error Handling & Recovery
+    Note over PP,JIRA: Error Handling Process
+    alt Integration Failure
+        Gateway->>PP: Connection Error
+        PP->>PP: Initiate Retry Logic
+        PP->>Audit: Log Error Details
+        PP->>User: Notification of Failure
+    else Data Validation Failure
+        Gateway->>Gateway: Data Validation Failed
+        Gateway->>PP: Validation Error
+        PP->>D365: Mark for Manual Review
+        D365->>User: Request Data Correction
+    else Security Violation
+        Gateway->>Audit: Security Alert
+        Audit->>Audit: Incident Response
+        Audit->>User: Access Suspended
+    end
+
+    %% Real-time Status Updates
+    Note over JIRA,D365: Status Synchronization
+    loop Every 15 Minutes
+        JIRA->>Gateway: Send Status Updates
+        Gateway->>PP: Process Updates
+        PP->>D365: Update Opportunity Status
+        D365->>User: Refresh Dashboard
+    end
+
+    %% Styling Notes
+    Note over User,Audit: All communications use TLS 1.3 encryption
+    Note over Gateway,JIRA: Certificate-based authentication required
+    Note over PP,Audit: All activities logged for compliance audit
+
+```
 
 ### Appendix B: JIRA Integration Technical Specifications
 
