@@ -7,7 +7,7 @@ size: 16:9
 
 ![bg](./image/cloudstrucc_word_template.png)
 
-# Proposal: Microsoft Teams & OneDrive Security Hardening
+# Proposal: Microsoft Power Platform & Dynamics 365 Implementation Project
 
 ## For Leonardo Company - Canada
 
