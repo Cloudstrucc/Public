@@ -9,13 +9,13 @@ size: 16:9
 
 # Proposal: Microsoft Power Platform & Dynamics 365 Sales Professional Implementation Project
 
-## For [Client Name] - Federal Government Entity
+## For Leonardo Company Ottawa - Federal Government Entity
 
 ### Prepared by Cloudstrucc Inc.
---- 
+---
 # 🛍️ Executive Summary
 
-[Client Name], operating under the stringent requirements of the **Protected B classification** and governed by **Treasury Board of Canada Secretariat (TBS)** cybersecurity directives, requires a comprehensive Customer Relationship Management (CRM) solution that aligns with federal government security standards and operational requirements.
+Leonardo Company Ottawa, operating under the stringent requirements of the **Protected B classification** and governed by **Treasury Board of Canada Secretariat (TBS)** cybersecurity directives, requires a comprehensive Customer Relationship Management (CRM) solution that aligns with federal government security standards and operational requirements.
 
 To deliver secure, compliant, and mission-critical CRM capabilities, the implementation must ensure alignment with:
 
@@ -29,9 +29,9 @@ To deliver secure, compliant, and mission-critical CRM capabilities, the impleme
 
 This proposal outlines how Cloudstrucc will implement a **Microsoft Dynamics 365 Sales Professional and Power Platform solution** that creates a **fully secure, Protected B-compliant CRM environment** with advanced threat protection, data loss prevention, customer-managed encryption keys, and **network isolation using Azure Private Endpoints and Virtual Network (VNET) integration**.
 
-These enhancements ensure data sovereignty, prevent unauthorized access, and provide granular control over Microsoft 365 and Power Platform traffic through approved network pathways — critical requirements for federal government compliance.
+These enhancements ensure data sovereignty, prevent unauthorized access, and provide granular control over Microsoft 365 and Power Platform traffic through approved network pathways — critical requirements for aligning & complying with the security stardards listed above.
 
-The end state will position [Client Name] with a secure, modern, and scalable CRM platform that maximizes existing Microsoft 365 E5 investments while ensuring comprehensive compliance with federal security regulations and seamless integration with existing JIRA on-premise infrastructure, including project/task mapping and budget module connectivity for enhanced financial visibility from lead generation through project completion.
+The end state will position Leonardo Company Ottawa with a secure, modern, and scalable CRM platform that maximizes existing Microsoft 365 E5 investments while ensuring comprehensive compliance with federal security regulations and seamless integration with existing JIRA on-premise infrastructure, including project/task mapping and budget module connectivity for enhanced financial visibility from lead generation through project completion.
 
 **Important Note**: This proposal is based on high-level requirements gathered to date. Final scope and implementation details will be refined during the discovery phase to ensure all specific organizational needs are addressed.
 
@@ -103,16 +103,17 @@ Cloudstrucc will require:
   * **SharePoint Administrator** (for integrated document management)
   * **Privileged Role Administrator** (for conditional access configuration)
   * **Azure Network Contributor** (for private endpoint and VNET provisioning)
-  * **Application Administrator** (for JIRA integration setup)
+  * **Application Administrator** (for JIRA integration setup)  
+* Acess to an on-premises user account for JIRA integration build
 
-Access must be granted by the [Client Name] Entra administrator prior to production deployment.
+Access must be granted by the Leonardo Company Ottawa Entra/AD administrator(s) prior to the build activities & deployment to the organization's Azure/M365 tenant.
 
 ### 🏗️ Cloudstrucc Build & Staging Environment Model
 
 To support structured, low-risk implementation aligned with federal change management requirements:
 
 * Cloudstrucc will use its **own Azure subscription and Microsoft 365 tenant** for initial **build, configuration, and templating**.
-* This isolated tenant will mirror [Client Name]'s Protected B compliance requirements and baseline.
+* This isolated tenant will mirror Leonardo Company Ottawa's Protected B compliance requirements and baseline.
 * Implementation phases:
 
   * **Development Environment**: Initial configuration and testing in Cloudstrucc tenant
@@ -123,12 +124,12 @@ To support structured, low-risk implementation aligned with federal change manag
 
 * **ARM/Bicep templates** for Azure resource provisioning
 * **PowerShell scripts** for Power Platform configuration
-* **Power Automate solutions** for JIRA integration
+* **Custom D365 build artifacts, Power Automate & Plugin solutions (unmanaged & source in organization's code repository)** for JIRA integration
 * **Compliance policy templates** for Protected B requirements
 
 **This model ensures:**
 
-* Minimal disruption to existing [Client Name] services
+* Minimal disruption to existing Leonardo Company Ottawa services
 * Compliance with federal change management protocols
 * Reproducible security posture across environments
 * Audit trail for all configuration changes
@@ -150,15 +151,15 @@ The implementation will address specific Protected B requirements:
 
 ### Project Duration: **45 to 90 Calendar Days**
 
-| Phase   | Duration   | Milestone                                    | Outcome                                       |
-| ------- | ---------- | -------------------------------------------- | --------------------------------------------- |
-| Phase 1 | Week 1-2   | Discovery & Protected B Assessment           | Gap analysis and compliance baseline         |
-| Phase 2 | Week 3-4   | Core D365 Sales Professional Deployment     | CRM foundation with basic security controls   |
-| Phase 3 | Week 5-7   | Power Platform Security Hardening           | Protected B compliance and network isolation  |
-| Phase 4 | Week 8-10  | JIRA Integration & Workflow Automation      | Bi-directional sync and automated workflows  |
-| Phase 5 | Week 11-12 | Advanced Security & Compliance              | Full DLP, labeling, and monitoring active    |
-| Phase 6 | Week 13    | Testing, Training & Documentation           | User training, documentation, handover       |
-| Final   | Day 90     | Go-Live & Support Transition                | Production ready, support period begins      |
+| Phase   | Duration  | Milestone                               | Outcome                                      |
+| ------- | ---------- | --------------------------------------- | -------------------------------------------- |
+| Phase 1 | Week 1-2   | Discovery & Protected B Assessment      | Gap analysis and compliance baseline         |
+| Phase 2 | Week 3-4   | Core D365 Sales Professional Deployment & Build | CRM foundation with basic security controls  |
+| Phase 3 | Week 5-7   | Power Platform Security Hardening       | Protected B compliance and network isolation |
+| Phase 4 | Week 5-11  | JIRA Integration & Workflow Automation  | Bi-directional sync and automated workflows  |
+| Phase 5 | Week 11-13 | Advanced Security & Compliance          | Full DLP, labeling, and monitoring active    |
+| Phase 6 | Week 13-14    | Testing, Training & Documentation       | User training, documentation, handover       |
+| Final   | Day 90     | Go-Live & Support Transition            | Production ready, support period begins      |
 
 ---
 
@@ -166,20 +167,20 @@ The implementation will address specific Protected B requirements:
 
 *Implementation timeline and costs to be finalized based on detailed requirements gathering.*
 
-| Item                                          | Description                                           | Estimated Cost (CAD) | Estimated Due Date |
-| --------------------------------------------- | ----------------------------------------------------- | -------------------- | ------------------ |
-| Discovery & Protected B Compliance Assessment | Security audit, gap analysis, compliance mapping     | $[TBD]               | [TBD]              |
-| Dynamics 365 Sales Professional Setup        | Core CRM deployment, configuration, customization    | $[TBD]               | [TBD]              |
-| Power Platform Security Hardening            | Private endpoints, VNET integration, CMK setup       | $[TBD]               | [TBD]              |
-| JIRA Integration Development                  | Bi-directional sync, budget module connectivity      | $[TBD]               | [TBD]              |
-| Advanced Security Configuration              | DLP, labels, monitoring, incident response setup     | $[TBD]               | [TBD]              |
-| Data Migration & Legacy System Integration   | Data import, cleansing, legacy system connectivity   | $[TBD]               | [TBD]              |
-| User Training & Change Management            | End-user training, admin training, adoption support  | $[TBD]               | [TBD]              |
-| Documentation & Knowledge Transfer           | Admin guides, user manuals, security procedures      | $[TBD]               | [TBD]              |
-| Support (90 days)                            | Post-implementation support, tuning, optimization    | $[TBD]               | [TBD]              |
-| **Subtotal**                                  |                                                       | **$[TBD] CAD**       |                    |
-| HST (13%)                                     |                                                       | **$[TBD] CAD**       |                    |
-| **Total with HST**                           |                                                       | **$[TBD] CAD**       |                    |
+| Item                                                                                                           | Description                                         | Estimated Cost (CAD)     | Estimated Due Date<br />(duration post award) |
+| -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | ------------------------ | --------------------------------------------- |
+| Discovery & Protected B Compliance Assessment                                                                  | Security audit, gap analysis, compliance mapping    | $5,000.00                | Mid-Late September                            |
+| Dynamics 365 Sales Professional Setup                                                                          | Core CRM deployment, configuration, customization   | $10,000.00               | Mid-Late September                            |
+| Power Platform & Azure Artifacts Security Hardening<br />& Configuration                                      | Private endpoints, VNET integration, CMK setup      | $7,000.00                | Mid-Late October                              |
+| JIRA Integration Development & advanced build workflows<br />for Dynamics 365 to meet integration requirements | Bi-directional sync, budget module connectivity     | $12,000.00               | Mid-Late October                              |
+| Advanced Security Configuration                                                                                | DLP, labels, monitoring, incident response setup    | $4,500.00                | Early November                                |
+| Data Migration & Legacy System Integration                                                                     | Data import & cleansing                             | $5,000.00                | Mid November                                  |
+| User Training & Change Management                                                                              | End-user training, admin training, adoption support | $3,000.00                | Mid-Late November                             |
+| Documentation & Knowledge Transfer (for admins)                                                                | Admin guides, user manuals, security procedures     | $3,500.00                | Early-Mid December                                |
+| Support (90 days)                                                                                              | Post-implementation support, tuning, optimizations  | $5,000.00                | December-Late March (2026)                         |
+| **Subtotal**                                                                                             |                                                     | **$55,000.00 CAD** |                                               |
+| HST (13%)                                                                                                      |                                                     | **$7,150 CAD**     |                                               |
+| **Total with HST**                                                                                       |                                                     | **$62,250 CAD**    |                                               |
 
 **Payment Terms**
 The total amount indicated in this proposal, including applicable taxes, shall become payable upon completion of the scope of work as outlined herein. Payment schedule will align with federal government procurement policies and milestone-based deliverables. Final payment shall be due within thirty (30) days of the client's written confirmation of acceptance and sign-off of the completed deliverables. This agreement shall be governed by the laws of the Province of Ontario and the federal laws of Canada applicable therein.
@@ -194,21 +195,20 @@ The total amount indicated in this proposal, including applicable taxes, shall b
 
 **Pre-requisite**: All users must have Microsoft 365 E5 licensing as the foundation for this implementation.
 
-| License Component                    | Features Required                                          | Estimated Monthly Cost (CAD/user) |
-| ------------------------------------ | ---------------------------------------------------------- | ---------------------------------- |
-| Microsoft 365 E5 (Required)         | Base platform, advanced security, Power Platform included | ~$57                               |
-| Dynamics 365 Sales Professional     | Core CRM functionality, sales automation                  | ~$25 (additional to E5)            |
-| Power Platform Premium               | Advanced connectors, extended compute                      | ~$30                               |
-| Microsoft Defender for Business Apps | Advanced threat protection for Dynamics 365               | ~$4                                |
+| License Component                                                                                                                   | Features Required                           | Estimated Monthly Cost (CAD/user) |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------- |
+| Dynamics 365 Sales Professional                                                                                                     | Core CRM functionality, sales automation    | ~$65                              |
+| Power Apps Premium / Power Automate Flow<br />for extended compute (TBD - depending on<br />complexity / throughput of integration) | Advanced connectors, extended compute       | ~$30                              |
+| Microsoft Defender for Business Apps                                                                                                | Advanced threat protection for Dynamics 365 | ~$4                               |
 
 ### Power Platform Security Add-ons
 
-| Security Component                   | Purpose                                         | Estimated Monthly Cost |
-| ------------------------------------ | ----------------------------------------------- | ---------------------- |
-| Customer Managed Keys (CMK)         | Enhanced encryption control for Protected B    | ~$500/month            |
-| Private Endpoint Connectivity       | Network isolation and VNET integration         | ~$200/month            |
-| Power Platform DLP Premium          | Advanced data loss prevention policies         | Included in E5         |
-| Microsoft Purview Information Protection | Sensitivity labeling and classification    | Included in E5         |
+| Security Component                       | Purpose                                     | Estimated Monthly Cost |
+| ---------------------------------------- | ------------------------------------------- | ---------------------- |
+| Customer Managed Keys (CMK)              | Enhanced encryption control for Protected B | ~$500/month            |
+| Private Endpoint Connectivity            | Network isolation and VNET integration      | ~$200/month            |
+| Power Platform DLP Premium               | Advanced data loss prevention policies      | Included in E5         |
+| Microsoft Purview Information Protection | Sensitivity labeling and classification     | Included in E5         |
 
 ### Notes on Federal Government Pricing
 
@@ -395,7 +395,7 @@ graph TB
         subgraph "DMZ"
             OPDG[On-Premises Data Gateway<br/>- TLS 1.3 Encryption<br/>- Certificate Auth<br/>- High Availability]
         end
-        
+    
         subgraph "Internal Network"
             JIRA[JIRA Server<br/>- Projects & Tasks<br/>- Budget Modules<br/>- API Endpoints]
             AD[Active Directory<br/>- User Authentication<br/>- Group Management]
@@ -411,21 +411,21 @@ graph TB
                 PE3[Private Endpoint<br/>Microsoft Graph]
                 PE4[Private Endpoint<br/>Key Vault]
             end
-            
+        
             subgraph "Application Subnet"
                 NSG[Network Security Groups<br/>- Least Privilege Access<br/>- Protected B Controls]
             end
         end
-        
+    
         subgraph "Microsoft 365 Services"
             subgraph "Power Platform"
                 PP[Power Platform<br/>- Custom Connectors<br/>- Power Automate<br/>- Data Integration]
             end
-            
+        
             subgraph "Dynamics 365"
                 D365[Dynamics 365 Sales<br/>- CRM Functionality<br/>- Sales Pipeline<br/>- Customer Data]
             end
-            
+        
             subgraph "Security Services"
                 KV[Azure Key Vault<br/>- Customer Managed Keys<br/>- Certificate Storage<br/>- Secret Management]
                 AAD[Azure AD Premium<br/>- Conditional Access<br/>- MFA Enforcement<br/>- Identity Protection]
@@ -446,17 +446,17 @@ graph TB
     JIRA <--> OPDG
     AD <--> OPDG
     FW <--> OPDG
-    
+  
     PE1 <--> PP
     PE2 <--> D365
     PE3 <--> AAD
     PE4 <--> KV
-    
+  
     PP <--> PURVIEW
     D365 <--> PURVIEW
     PP <--> DEFENDER
     D365 <--> DEFENDER
-    
+  
     NSG -.->|Traffic Control| PE1
     NSG -.->|Traffic Control| PE2
     NSG -.->|Traffic Control| PE3
@@ -467,7 +467,7 @@ graph TB
     classDef azure fill:#fff3e0,stroke:#e65100,stroke-width:2px
     classDef security fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
     classDef microsoft fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
-    
+  
     class OPDG,JIRA,AD,FW onPrem
     class PE1,PE2,PE3,PE4,NSG,PP,D365,KV,AAD azure
     class PURVIEW,DEFENDER security
@@ -493,11 +493,11 @@ flowchart TD
         subgraph "Dynamics 365"
             D365_STORE[Customer Records<br/>- Contact Information<br/>- Sales Opportunities<br/>- Protected B Classified]
         end
-        
+    
         subgraph "Power Platform"
             PP_STORE[Integration Data<br/>- JIRA Mappings<br/>- Workflow States<br/>- Audit Logs]
         end
-        
+    
         subgraph "Compliance Storage"
             AUDIT_STORE[Audit Repository<br/>- Access Logs<br/>- Data Modifications<br/>- Compliance Records]
         end
@@ -523,22 +523,22 @@ flowchart TD
     USER --> CLASSIFY
     CLASSIFY --> DLP
     DLP --> ENCRYPT
-    
+  
     ENCRYPT --> D365_STORE
     ENCRYPT --> PP_STORE
-    
+  
     USER --> CONDITIONAL
     CONDITIONAL --> MFA
     MFA --> D365_STORE
     MFA --> PP_STORE
-    
+  
     PP_STORE <--> DATA_GATEWAY
     DATA_GATEWAY <--> JIRA_INT
-    
+  
     D365_STORE --> AUDIT_STORE
     PP_STORE --> AUDIT_STORE
     JIRA_INT --> AUDIT_STORE
-    
+  
     AUDIT_STORE --> MONITOR
     AUDIT_STORE --> RETENTION
     MONITOR --> PURVIEW_AUDIT
@@ -555,7 +555,7 @@ flowchart TD
     classDef storage fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
     classDef integration fill:#fff3e0,stroke:#f57c00,stroke-width:2px
     classDef compliance fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    
+  
     class USER,CLASSIFY,DLP dataClass
     class CONDITIONAL,MFA,ENCRYPT security
     class D365_STORE,PP_STORE,AUDIT_STORE storage
@@ -580,7 +580,7 @@ graph TB
             AAD[Azure AD Premium P2<br/>- Primary Identity Store<br/>- Hybrid Sync<br/>- Password Policies]
             ADFS[AD FS Integration<br/>- On-Premises Auth<br/>- Claims-Based<br/>- Federation Trust]
         end
-        
+    
         subgraph "Multi-Factor Authentication"
             MFA_HW[Hardware Tokens<br/>- FIDO2 Keys<br/>- Smart Cards<br/>- Government Approved]
             MFA_APP[Authenticator Apps<br/>- Microsoft Authenticator<br/>- Push Notifications<br/>- Time-based Codes]
@@ -594,7 +594,7 @@ graph TB
             CA_LOCATION[Location-Based<br/>- Trusted Networks<br/>- Geographic Restrictions<br/>- VPN Requirements]
             CA_RISK[Risk-Based Access<br/>- Sign-in Risk<br/>- User Risk<br/>- Behavioral Analysis]
         end
-        
+    
         subgraph "Role-Based Access"
             RBAC_ADMIN[Administrative Roles<br/>- Global Admin<br/>- Security Admin<br/>- Compliance Admin]
             RBAC_USER[User Roles<br/>- Sales Professional<br/>- Project Manager<br/>- Read-Only Access]
@@ -614,7 +614,7 @@ graph TB
             PP_ACCESS[Power Platform<br/>- Custom Apps<br/>- Workflow Automation<br/>- Data Integration]
             M365_ACCESS[Microsoft 365<br/>- Email & Calendar<br/>- SharePoint<br/>- Teams Integration]
         end
-        
+    
         subgraph "Integrated Systems"
             JIRA_ACCESS[JIRA Access<br/>- Project Management<br/>- Budget Modules<br/>- Task Tracking]
             REPORTING[Reporting Access<br/>- Power BI<br/>- Compliance Dashboards<br/>- Audit Reports]
@@ -631,7 +631,7 @@ graph TB
     USER_FED --> AAD
     USER_CONT --> AAD
     USER_EXT --> AAD
-    
+  
     AAD <--> ADFS
     AAD --> MFA_HW
     AAD --> MFA_APP
@@ -641,7 +641,7 @@ graph TB
     MFA_HW --> CA_DEVICE
     MFA_APP --> CA_LOCATION
     MFA_BIO --> CA_RISK
-    
+  
     CA_DEVICE --> RBAC_ADMIN
     CA_LOCATION --> RBAC_USER
     CA_RISK --> RBAC_CUSTOM
@@ -662,7 +662,7 @@ graph TB
     D365_ACCESS --> SESSION
     PP_ACCESS --> SESSION
     JIRA_ACCESS --> SESSION
-    
+  
     SESSION --> MONITOR_ACCESS
     MONITOR_ACCESS --> REVIEW
     REVIEW --> AAD
@@ -674,7 +674,7 @@ graph TB
     classDef privileged fill:#fce4ec,stroke:#c2185b,stroke-width:2px
     classDef apps fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
     classDef session fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    
+  
     class USER_FED,USER_CONT,USER_EXT identity
     class AAD,ADFS,MFA_HW,MFA_APP,MFA_BIO auth
     class CA_DEVICE,CA_LOCATION,CA_RISK,RBAC_ADMIN,RBAC_USER,RBAC_CUSTOM access
@@ -702,7 +702,7 @@ sequenceDiagram
     %% Authentication & Authorization
     User->>D365: Create Sales Opportunity
     D365->>PP: Trigger Integration Workflow
-    
+  
     Note over PP,Gateway: Secure Authentication Process
     PP->>Gateway: Request Connection (Certificate Auth)
     Gateway->>Gateway: Validate Certificate & Permissions
@@ -826,4 +826,5 @@ sequenceDiagram
 * [Microsoft Power Platform Security Documentation](https://docs.microsoft.com/en-us/power-platform/admin/security)
 
 ---
-![bg right:50%](./image/cloudstrucc_sig_transbg.png)
+
+![bg right:80%](./image/cloudstrucc_sig_transbg.png)
