@@ -3,8 +3,7 @@ marp: true
 paginate: true
 theme: default
 size: 16:9
-----------
-
+---
 ![bg](./image/cloudstrucc_word_template.png)
 
 # Proposal: Microsoft Power Platform & Dynamics 365 Sales Professional Implementation Project
@@ -12,10 +11,53 @@ size: 16:9
 ## For Leonardo Company Ottawa - Federal Government Entity
 
 ### Prepared by Cloudstrucc Inc.
----
-# 🛍️ Executive Summary
 
-Leonardo Company Ottawa requires a comprehensive Customer Relationship Management (CRM) solution that aligns with federal government security standards and operational requirements.
+---
+
+<!-- _paginate: false -->
+
+# Table of Contents
+
+## Section 1: Executive Overview
+
+- [Executive Summary](#executive-summary) ................................................... Page 3
+- [Scope of Work](#scope-of-work) ............................................................. Page 4
+
+## Section 2: Technical Requirements
+
+- [Pre-Requisites and Deployment Approach](#pre-requisites-and-deployment-approach) .............. Page 5
+- [Duration and Phasing](#duration-and-phasing) ............................................... Page 7
+
+## Section 3: Financial Information
+
+- [Implementation Cost Estimate](#implementation-cost-estimate-cad) ........................... Page 8
+- [Licensing Requirements](#licensing-requirements-cad-pricing) ............................... Page 9
+
+## Section 4: Integration Architecture
+
+- [JIRA Integration Architecture](#jira-integration-architecture) ............................. Page 10
+- [Power Platform Security Best Practices](#power-platform-security-best-practices) .......... Page 12
+
+## Section 5: Security & Compliance
+
+- [Detailed Security Checklist](#detailed-security-checklist) ................................ Page 14
+
+## Section 6: Technical Documentation
+
+- [Appendices](#appendices) .................................................................. Page 15
+  - [Appendix A: Power Platform Security Architecture Diagram](#appendix-a-power-platform-security-architecture-diagram) .. Page 15
+  - [Appendix B: JIRA Integration Technical Specifications](#appendix-b-jira-integration-technical-specifications) ....... Page 18
+  - [Appendix C: Compliance Mapping Matrix](#appendix-c-compliance-mapping-matrix) ............ Page 18
+  - [Appendix D: Assumptions and Caveats](#appendix-d-assumptions-and-caveats) ................ Page 18
+  - [Appendix E: Federal Government Compliance References](#appendix-e-federal-government-compliance-references) ........ Page 19
+
+---
+
+<!-- Page 3 -->
+
+# Executive Summary
+
+Leonardo Company Ottawa, operating under the stringent requirements of the **Protected B classification** and governed by **Treasury Board of Canada Secretariat (TBS)** cybersecurity directives, requires a comprehensive Customer Relationship Management (CRM) solution that aligns with federal government security standards and operational requirements.
 
 To deliver secure, compliant, and mission-critical CRM capabilities, the implementation must ensure alignment with:
 
@@ -29,7 +71,7 @@ To deliver secure, compliant, and mission-critical CRM capabilities, the impleme
 
 This proposal outlines how Cloudstrucc will implement a **Microsoft Dynamics 365 Sales Professional and Power Platform solution** that creates a **fully secure, Protected B-compliant CRM environment** with advanced threat protection, data loss prevention, customer-managed encryption keys, and **network isolation using Azure Private Endpoints and Virtual Network (VNET) integration**.
 
-These enhancements ensure data sovereignty, prevent unauthorized access, and provide granular control over Microsoft 365 and Power Platform traffic through approved network pathways — critical requirements for aligning & complying with the security stardards listed above.
+These enhancements ensure data sovereignty, prevent unauthorized access, and provide granular control over Microsoft 365 and Power Platform traffic through approved network pathways — critical requirements for aligning & complying with the security standards listed above.
 
 The end state will position Leonardo Company Ottawa with a secure, modern, and scalable CRM platform that maximizes existing Microsoft 365 E5 investments while ensuring comprehensive compliance with federal security regulations and seamless integration with existing JIRA on-premise infrastructure, including project/task mapping and budget module connectivity for enhanced financial visibility from lead generation through project completion.
 
@@ -37,7 +79,9 @@ The end state will position Leonardo Company Ottawa with a secure, modern, and s
 
 ---
 
-## 🔐 Scope of Work
+<!-- Page 4 -->
+
+# Scope of Work
 
 ### Core Dynamics 365 Sales Professional Implementation
 
@@ -84,7 +128,9 @@ The end state will position Leonardo Company Ottawa with a secure, modern, and s
 
 ---
 
-## 🧰 Pre-Requisites and Deployment Approach
+<!-- Page 5 -->
+
+# Pre-Requisites and Deployment Approach
 
 To perform the activities outlined in this proposal, the following pre-requisites and operating model must be established:
 
@@ -104,9 +150,13 @@ Cloudstrucc will require:
   * **Privileged Role Administrator** (for conditional access configuration)
   * **Azure Network Contributor** (for private endpoint and VNET provisioning)
   * **Application Administrator** (for JIRA integration setup)
-* Acess to an on-premises user account for JIRA integration build
+* Access to an on-premises user account for JIRA integration build
 
 Access must be granted by the Leonardo Company Ottawa Entra/AD administrator(s) prior to the build activities & deployment to the organization's Azure/M365 tenant.
+
+---
+
+<!-- Page 6 -->
 
 ### 🏗️ Cloudstrucc Build & Staging Environment Model
 
@@ -147,7 +197,9 @@ The implementation will address specific Protected B requirements:
 
 ---
 
-## ⏳ Duration and Phasing
+<!-- Page 7 -->
+
+# Duration and Phasing
 
 ### Project Duration: **45 to 90 Calendar Days**
 
@@ -163,7 +215,9 @@ The implementation will address specific Protected B requirements:
 
 ---
 
-## 💸 Implementation Cost Estimate (CAD)
+<!-- Page 8 -->
+
+# Implementation Cost Estimate (CAD)
 
 *Implementation timeline and costs to be finalized based on detailed requirements gathering.*
 
@@ -171,16 +225,16 @@ The implementation will address specific Protected B requirements:
 | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | ------------------------ | --------------------------------------------- |
 | Discovery & Protected B Compliance Assessment                                                                  | Security audit, gap analysis, compliance mapping    | $5,000.00                | Mid-Late September                            |
 | Dynamics 365 Sales Professional Setup                                                                          | Core CRM deployment, configuration, customization   | $10,000.00               | Mid-Late September                            |
-| Power Platform & Azure Artifacts Security Hardening<br />& Configuration                                      | Private endpoints, VNET integration, CMK setup      | $7,000.00                | Mid-Late October                              |
+| Power Platform & Azure Artifacts Security Hardening<br />& Configuration                                       | Private endpoints, VNET integration, CMK setup      | $7,000.00                | Mid-Late October                              |
 | JIRA Integration Development & advanced build workflows<br />for Dynamics 365 to meet integration requirements | Bi-directional sync, budget module connectivity     | $12,000.00               | Mid-Late October                              |
 | Advanced Security Configuration                                                                                | DLP, labels, monitoring, incident response setup    | $4,500.00                | Early November                                |
 | Data Migration & Legacy System Integration                                                                     | Data import & cleansing                             | $5,000.00                | Mid November                                  |
 | User Training & Change Management                                                                              | End-user training, admin training, adoption support | $3,000.00                | Mid-Late November                             |
-| Documentation & Knowledge Transfer (for admins)                                                                | Admin guides, user manuals, security procedures     | $3,500.00                | Early-Mid December                            |
-| Support (90 days)                                                                                              | Post-implementation support, tuning, optimizations  | $5,000.00                | December-Late March (2026)                    |
+| Documentation & Knowledge Transfer (for admins)                                                                | Admin guides, user manuals, security procedures     | $3,500.00                | Early December                                |
+| Support (90 days)                                                                                              | Post-implementation support, tuning, optimizations  | $5,000.00                | December-March (2026)                         |
 | **Subtotal**                                                                                             |                                                     | **$55,000.00 CAD** |                                               |
-| HST (13%)                                                                                                      |                                                     | **$7,150 CAD**     |                                               |
-| **Total with HST**                                                                                       |                                                     | **$62,250 CAD**    |                                               |
+| HST (13%)                                                                                                      |                                                     | **$7,150.00 CAD**  |                                               |
+| **Total with HST**                                                                                       |                                                     | **$62,150.00 CAD** |                                               |
 
 **Payment Terms**
 The total amount indicated in this proposal, including applicable taxes, shall become payable upon completion of the scope of work as outlined herein. Payment schedule will align with federal government procurement policies and milestone-based deliverables. Final payment shall be due within thirty (30) days of the client's written confirmation of acceptance and sign-off of the completed deliverables. This agreement shall be governed by the laws of the Province of Ontario and the federal laws of Canada applicable therein.
@@ -189,7 +243,9 @@ The total amount indicated in this proposal, including applicable taxes, shall b
 
 ---
 
-## 📦 Licensing Requirements (CAD Pricing)
+<!-- Page 9 -->
+
+# Licensing Requirements (CAD Pricing)
 
 ### Microsoft 365 & Dynamics 365 Licensing (CAD)
 
@@ -212,7 +268,9 @@ The total amount indicated in this proposal, including applicable taxes, shall b
 
 ---
 
-## 🔄 JIRA Integration Architecture
+<!-- Page 10 -->
+
+# JIRA Integration Architecture
 
 ### Integration Overview
 
@@ -233,6 +291,10 @@ The JIRA on-premise integration will leverage Power Platform's enterprise-grade 
 * **Encrypted Communication**: All data transfer encrypted using TLS 1.3 between gateway and Microsoft cloud services
 * **Network Isolation**: No direct internet connectivity to JIRA systems, all communication through gateway
 * **High Availability**: Clustered gateway configuration for redundancy and load balancing
+
+---
+
+<!-- Page 11 -->
 
 #### **Project and Task Mapping Framework**
 
@@ -271,25 +333,11 @@ The JIRA on-premise integration will leverage Power Platform's enterprise-grade 
 * **Streamlined Handoffs**: Seamless transition from sales team to project delivery teams
 * **Unified Reporting**: Consolidated dashboards showing sales and project metrics in single view
 
-### Security Considerations
-
-#### **Network Security**
-
-* **DMZ Gateway Deployment**: Secure placement of data gateway in network demilitarized zone
-* **Certificate-Based Authentication**: X.509 certificates for gateway authentication and API security
-* **Data Encryption**: End-to-end encryption for all data transfers between systems
-* **Network Segmentation**: Isolated network paths for integration traffic with firewall controls
-
-#### **Compliance Alignment**
-
-* **Protected B Data Handling**: Appropriate classification and handling of sensitive financial and project data
-* **Comprehensive Audit Logging**: Full audit trail of all integration activities and data modifications
-* **Role-Based Access Controls**: Granular permissions for integration management and data access
-* **Data Residency**: Ensuring Canadian data sovereignty requirements for all synchronized data
-
 ---
 
-## 🔒 Power Platform Security Best Practices
+<!-- Page 12 -->
+
+# Power Platform Security Best Practices
 
 ### Protected B Compliance Framework
 
@@ -321,6 +369,10 @@ The JIRA on-premise integration will leverage Power Platform's enterprise-grade 
 * **Incident Response Automation**: Automated threat response workflows
 * **SIEM Integration Readiness**: Platform configured to support client's existing SIEM solutions (client responsibility)
 
+---
+
+<!-- Page 13 -->
+
 ### Federal Government Security Standards
 
 #### **Treasury Board Directive Compliance**
@@ -337,9 +389,27 @@ The JIRA on-premise integration will leverage Power Platform's enterprise-grade 
 * **Supplier Security Requirements**: Vendor security compliance verification
 * **Security Incident Reporting**: Government security incident procedures
 
+### Security Considerations
+
+#### **Network Security**
+
+* **DMZ Gateway Deployment**: Secure placement of data gateway in network demilitarized zone
+* **Certificate-Based Authentication**: X.509 certificates for gateway authentication and API security
+* **Data Encryption**: End-to-end encryption for all data transfers between systems
+* **Network Segmentation**: Isolated network paths for integration traffic with firewall controls
+
+#### **Compliance Alignment**
+
+* **Protected B Data Handling**: Appropriate classification and handling of sensitive financial and project data
+* **Comprehensive Audit Logging**: Full audit trail of all integration activities and data modifications
+* **Role-Based Access Controls**: Granular permissions for integration management and data access
+* **Data Residency**: Ensuring Canadian data sovereignty requirements for all synchronized data
+
 ---
 
-## 📋 Detailed Security Checklist
+<!-- Page 14 -->
+
+# Detailed Security Checklist
 
 ### Infrastructure Security
 
@@ -375,9 +445,11 @@ The JIRA on-premise integration will leverage Power Platform's enterprise-grade 
 
 ---
 
-## 📄 Appendices
+<!-- Page 15 -->
 
-### Appendix A: Power Platform Security Architecture Diagram
+# Appendices
+
+## Appendix A: Power Platform Security Architecture Diagram
 
 * Detailed network architecture showing private endpoints and VNET integration
 
@@ -466,6 +538,10 @@ graph TB
     class PURVIEW,DEFENDER security
 
 ```
+
+---
+
+<!-- Page 16 -->
 
 * Data flow diagrams for Protected B information handling
 
@@ -557,6 +633,10 @@ flowchart TD
 
 ```
 
+---
+
+<!-- Page 17 -->
+
 * Identity and access management architecture
 
 ```mermaid
@@ -598,226 +678,4 @@ graph TB
     subgraph "Privileged Access Management"
         PIM[Privileged Identity Management<br/>- Just-in-Time Access<br/>- Approval Workflows<br/>- Time-Limited Elevation]
         PAM[Privileged Access Workstation<br/>- Secure Admin Access<br/>- Isolated Environment<br/>- Enhanced Monitoring]
-        BREAK_GLASS[Emergency Access<br/>- Break-Glass Accounts<br/>- Audit Trail<br/>- Executive Approval]
-    end
-
-    subgraph "Application Access"
-        subgraph "Microsoft 365 Services"
-            D365_ACCESS[Dynamics 365<br/>- Sales Professional<br/>- Customer Data<br/>- Pipeline Management]
-            PP_ACCESS[Power Platform<br/>- Custom Apps<br/>- Workflow Automation<br/>- Data Integration]
-            M365_ACCESS[Microsoft 365<br/>- Email & Calendar<br/>- SharePoint<br/>- Teams Integration]
-        end
-  
-        subgraph "Integrated Systems"
-            JIRA_ACCESS[JIRA Access<br/>- Project Management<br/>- Budget Modules<br/>- Task Tracking]
-            REPORTING[Reporting Access<br/>- Power BI<br/>- Compliance Dashboards<br/>- Audit Reports]
-        end
-    end
-
-    subgraph "Session Management"
-        SESSION[Session Controls<br/>- Persistent Access<br/>- Idle Timeout<br/>- Device Registration]
-        MONITOR_ACCESS[Access Monitoring<br/>- Real-time Alerts<br/>- Anomaly Detection<br/>- Risk Scoring]
-        REVIEW[Access Reviews<br/>- Quarterly Certification<br/>- Manager Approval<br/>- Automated Cleanup]
-    end
-
-    %% Authentication Flow
-    USER_FED --> AAD
-    USER_CONT --> AAD
-    USER_EXT --> AAD
-  
-    AAD <--> ADFS
-    AAD --> MFA_HW
-    AAD --> MFA_APP
-    AAD --> MFA_BIO
-
-    %% Authorization Flow
-    MFA_HW --> CA_DEVICE
-    MFA_APP --> CA_LOCATION
-    MFA_BIO --> CA_RISK
-  
-    CA_DEVICE --> RBAC_ADMIN
-    CA_LOCATION --> RBAC_USER
-    CA_RISK --> RBAC_CUSTOM
-
-    %% Privileged Access Flow
-    RBAC_ADMIN --> PIM
-    PIM --> PAM
-    PIM --> BREAK_GLASS
-
-    %% Application Access Flow
-    RBAC_USER --> D365_ACCESS
-    RBAC_USER --> PP_ACCESS
-    RBAC_USER --> M365_ACCESS
-    RBAC_CUSTOM --> JIRA_ACCESS
-    RBAC_ADMIN --> REPORTING
-
-    %% Session Management Flow
-    D365_ACCESS --> SESSION
-    PP_ACCESS --> SESSION
-    JIRA_ACCESS --> SESSION
-  
-    SESSION --> MONITOR_ACCESS
-    MONITOR_ACCESS --> REVIEW
-    REVIEW --> AAD
-
-    %% Styling
-    classDef identity fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px
-    classDef auth fill:#e0f2f1,stroke:#00695c,stroke-width:2px
-    classDef access fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
-    classDef privileged fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-    classDef apps fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-    classDef session fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-  
-    class USER_FED,USER_CONT,USER_EXT identity
-    class AAD,ADFS,MFA_HW,MFA_APP,MFA_BIO auth
-    class CA_DEVICE,CA_LOCATION,CA_RISK,RBAC_ADMIN,RBAC_USER,RBAC_CUSTOM access
-    class PIM,PAM,BREAK_GLASS privileged
-    class D365_ACCESS,PP_ACCESS,M365_ACCESS,JIRA_ACCESS,REPORTING apps
-    class SESSION,MONITOR_ACCESS,REVIEW session
-
 ```
-
-* Integration security model with JIRA on-premise (EXAMPLE)
-
-```mermaid
-
-sequenceDiagram
-    participant User as Sales User
-    participant D365 as Dynamics 365 Sales
-    participant PP as Power Platform
-    participant Gateway as On-Premises Gateway
-    participant JIRA as JIRA Server
-    participant Budget as Budget Module
-    participant Audit as Audit System
-
-    Note over User,Audit: Sales Opportunity to JIRA Project Integration Flow
-
-    %% Authentication & Authorization
-    User->>D365: Create Sales Opportunity
-    D365->>PP: Trigger Integration Workflow
-  
-    Note over PP,Gateway: Secure Authentication Process
-    PP->>Gateway: Request Connection (Certificate Auth)
-    Gateway->>Gateway: Validate Certificate & Permissions
-    Gateway->>JIRA: Authenticate (Service Account)
-    JIRA-->>Gateway: Authentication Success
-    Gateway-->>PP: Secure Channel Established
-
-    %% Data Synchronization Process
-    Note over D365,JIRA: Bi-Directional Data Sync
-    PP->>Gateway: Send Opportunity Data (Encrypted)
-    Gateway->>Gateway: Decrypt & Validate Data
-    Gateway->>JIRA: Create/Update Project
-    JIRA->>Budget: Link to Budget Module
-    Budget-->>JIRA: Budget Line Item Created
-    JIRA-->>Gateway: Project Created Successfully
-    Gateway-->>PP: Success Response (Encrypted)
-    PP-->>D365: Update Opportunity Status
-
-    %% Task Mapping Process
-    Note over User,Budget: Task-Level Integration
-    User->>D365: Create Sales Activity
-    D365->>PP: Trigger Task Sync
-    PP->>Gateway: Send Task Data
-    Gateway->>JIRA: Create Work Item
-    JIRA->>JIRA: Map to Project Structure
-    JIRA-->>Gateway: Task Created
-    Gateway-->>PP: Task Reference
-    PP-->>D365: Link Task Reference
-
-    %% Financial Integration
-    Note over PP,Audit: Budget & Financial Sync
-    JIRA->>Budget: Update Budget Status
-    Budget->>Gateway: Financial Data Update
-    Gateway->>PP: Budget Information
-    PP->>D365: Update Opportunity Value
-    D365->>Audit: Log Financial Changes
-
-    %% Security & Compliance Monitoring
-    Note over Gateway,Audit: Continuous Security Monitoring
-    par Security Monitoring
-        Gateway->>Audit: Log All Transactions
-        PP->>Audit: Log Integration Activities
-        D365->>Audit: Log Data Modifications
-        JIRA->>Audit: Log Project Changes
-    and Data Validation
-        Gateway->>Gateway: Validate Data Integrity
-        PP->>PP: Apply DLP Policies
-        D365->>D365: Check Sensitivity Labels
-    and Compliance Checking
-        Audit->>Audit: Protected B Classification Check
-        Audit->>Audit: Access Permission Validation
-        Audit->>Audit: Data Residency Verification
-    end
-
-    %% Error Handling & Recovery
-    Note over PP,JIRA: Error Handling Process
-    alt Integration Failure
-        Gateway->>PP: Connection Error
-        PP->>PP: Initiate Retry Logic
-        PP->>Audit: Log Error Details
-        PP->>User: Notification of Failure
-    else Data Validation Failure
-        Gateway->>Gateway: Data Validation Failed
-        Gateway->>PP: Validation Error
-        PP->>D365: Mark for Manual Review
-        D365->>User: Request Data Correction
-    else Security Violation
-        Gateway->>Audit: Security Alert
-        Audit->>Audit: Incident Response
-        Audit->>User: Access Suspended
-    end
-
-    %% Real-time Status Updates
-    Note over JIRA,D365: Status Synchronization
-    loop Every 15 Minutes
-        JIRA->>Gateway: Send Status Updates
-        Gateway->>PP: Process Updates
-        PP->>D365: Update Opportunity Status
-        D365->>User: Refresh Dashboard
-    end
-
-    %% Styling Notes
-    Note over User,Audit: All communications use TLS 1.3 encryption
-    Note over Gateway,JIRA: Certificate-based authentication required
-    Note over PP,Audit: All activities logged for compliance audit
-
-```
-
-### Appendix B: JIRA Integration Technical Specifications
-
-* On-Premises Data Gateway configuration and DMZ deployment guidelines
-* Project and task mapping specifications between Dynamics Sales and JIRA
-* Budget module integration technical architecture and data flows
-* API endpoint configurations and authentication methods
-* Workflow automation sequences and business logic
-* Error handling and recovery procedures
-
-### Appendix C: Compliance Mapping Matrix
-
-* Protected B requirements mapped to Power Platform security controls
-* ITSG-33 security control implementation details
-* Privacy protection measures and PIPEDA compliance
-* Sensitivity label requirements (client-provided or default classifications)
-* Audit and reporting capabilities for government oversight
-
-### Appendix D: Assumptions and Caveats
-
-* **High-Level Requirements**: This proposal is based on preliminary requirements gathering; detailed specifications will be refined during discovery phase
-* **JIRA Integration Scope**: Integration assumes standard JIRA project/task structure and budget module configuration
-* **Network Infrastructure**: Assumes client has appropriate DMZ network infrastructure for On-Premises Data Gateway deployment
-* **Sensitivity Labels**: Implementation will use client-provided sensitivity label taxonomy or implement default Protected B classifications
-* **SIEM Integration**: Platform will be configured to support SIEM integration as a recommended best practice (client responsibility)
-* **Change Management**: Assumes standard federal government change management and approval processes will be followed
-
-### Appendix D: Federal Government Compliance References
-
-* [Treasury Board Directive on Security Management](https://www.tbs-sct.gc.ca/pol/doc-eng.aspx?id=16578)
-* [Government of Canada ITSG-33](https://www.cse-cst.gc.ca/en/itsg-33)
-* [Protected B Information Handling Guidelines](https://www.tpsgc-pwgsc.gc.ca/esc-src/protection-protection/niveaux-levels-eng.html)
-* [Cloud Security Assessment Framework](https://www.canada.ca/en/government/system/digital-government/digital-government-innovations/cloud-services/cloud-security.html)
-* [Microsoft Power Platform Security Documentation](https://docs.microsoft.com/en-us/power-platform/admin/security)
-
----
-
-![bg right:80%](./image/cloudstrucc_sig_transbg.png)
