@@ -1,6 +1,24 @@
-# Nintex Workflow vs. Microsoft Power Platform (Power Automate, Dataverse, etc.)
+<div align="center">
+
+# 🇨🇦 **ÉLECTIONS CANADA | ELECTIONS CANADA**
+
+<p align="center">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfSAYy3IK4Dz7D9a53L9k_Y8gnC9LjyobBow&s"
+       alt="Microsoft Power Platform"
+       height="100">
+  <span style="font-size: 40px; font-weight: bold; margin: 0 20px;">+</span>
+  <img src="https://pbs.twimg.com/profile_images/1494408594254671874/Z-FoS_Gc_400x400.png"
+       alt="Nintex"
+       height="100">
+</p>
+
+## **E-Signatures Project Options Analysis**
+### *Nintex Workflow vs. Microsoft Power Platform (Power Automate, Dataverse, etc.)*
+
+</div>
 
 ---
+
 
 ## What is Nintex Workflow?
 
