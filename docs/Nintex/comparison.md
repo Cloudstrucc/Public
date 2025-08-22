@@ -12,7 +12,7 @@
        height="100">
 </p>
 
-## **E-Signatures Project Options Analysis**
+## **E-Signatures Workflow Solutions Approach Options Analysis**
 ### *Nintex Workflow vs. Microsoft Power Platform (Power Automate, Dataverse, etc.)*
 
 </div>
