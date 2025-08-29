@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: { appDir: false } // Force Pages Router
+  // Force Pages Router so pages/ is used (not app/)
+  experimental: { appDir: false }
 };
 module.exports = nextConfig;

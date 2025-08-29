@@ -12,7 +12,9 @@ export default function Import() {
     <Layout title="Import Credential">
       <p>Paste or prefilled VC JWT:</p>
       <textarea className="form-control" rows={6} value={vc} onChange={e=>setVc(e.target.value)} />
-      <div className="mt-3"><button className="btn btn-primary" onClick={() => alert('Saved locally (demo).')}>Save</button></div>
+      <div className="mt-3">
+        <button className="btn btn-primary" onClick={() => alert('Saved locally (demo).')}>Save</button>
+      </div>
     </Layout>
   );
 }

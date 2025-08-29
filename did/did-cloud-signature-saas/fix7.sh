@@ -1,22 +1,37 @@
-# 0) Make sure the employee portal exists
-test -d apps/employee-portal || { echo "employee-portal missing"; exit 1; }
+#!/usr/bin/env bash
+set -euo pipefail
 
-# 1) Remove any App Router folder that might shadow pages/
-rm -rf apps/employee-portal/app 2>/dev/null || true
+PORTAL=apps/employee-portal
 
-# 2) Create a next.config.js that forces Pages Router
-cat > apps/employee-portal/next.config.js <<'JS'
+echo "==> Verifying employee portal exists..."
+test -d "$PORTAL" || { echo "ERROR: $PORTAL not found"; exit 1; }
+
+echo "==> Removing App Router dir (if present)..."
+rm -rf "$PORTAL/app" 2>/dev/null || true
+
+echo "==> Forcing Pages Router via next.config.js..."
+cat > "$PORTAL/next.config.js" <<'JS'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: { appDir: false } // Force Pages Router
+  // Force Pages Router so pages/ is used (not app/)
+  experimental: { appDir: false }
 };
 module.exports = nextConfig;
 JS
 
-# 3) Ensure a minimal Layout component
-mkdir -p apps/employee-portal/components
-cat > apps/employee-portal/components/Layout.tsx <<'TSX'
+echo "==> Ensuring Bootstrap CSS is loaded via _app.tsx..."
+mkdir -p "$PORTAL/pages" "$PORTAL/components"
+cat > "$PORTAL/pages/_app.tsx" <<'TSX'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import type { AppProps } from 'next/app';
+export default function App({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />;
+}
+TSX
+
+echo "==> Writing a minimal Layout component..."
+cat > "$PORTAL/components/Layout.tsx" <<'TSX'
 import Head from 'next/head';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -44,18 +59,8 @@ export default function Layout({ title = 'Employee Portal', children }: Props) {
 }
 TSX
 
-# 4) Ensure _app.tsx to load bootstrap CSS
-mkdir -p apps/employee-portal/pages
-cat > apps/employee-portal/pages/_app.tsx <<'TSX'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import type { AppProps } from 'next/app';
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
-}
-TSX
-
-# 5) Create the home page
-cat > apps/employee-portal/pages/index.tsx <<'TSX'
+echo "==> Creating Home page at / ..."
+cat > "$PORTAL/pages/index.tsx" <<'TSX'
 import Layout from '../components/Layout';
 import { Card } from 'react-bootstrap';
 
@@ -64,15 +69,15 @@ export default function Home() {
     <Layout title="Employee Dashboard">
       <Card><Card.Body>
         <h2>Welcome</h2>
-        <p>Use the sidebar to Scan or Import a credential, then Present & Verify it.</p>
+        <p>Use the navbar to Scan or Import a credential, then Present & Verify it.</p>
       </Card.Body></Card>
     </Layout>
   );
 }
 TSX
 
-# 6) (Optional) create /scan and /import pages so links don’t 404
-cat > apps/employee-portal/pages/scan.tsx <<'TSX'
+echo "==> (Optional) Creating /scan and /import so links do not 404..."
+cat > "$PORTAL/pages/scan.tsx" <<'TSX'
 import Layout from '../components/Layout';
 export default function Scan() {
   return (
@@ -83,7 +88,7 @@ export default function Scan() {
 }
 TSX
 
-cat > apps/employee-portal/pages/import.tsx <<'TSX'
+cat > "$PORTAL/pages/import.tsx" <<'TSX'
 import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 
@@ -98,18 +103,39 @@ export default function Import() {
     <Layout title="Import Credential">
       <p>Paste or prefilled VC JWT:</p>
       <textarea className="form-control" rows={6} value={vc} onChange={e=>setVc(e.target.value)} />
-      <div className="mt-3"><button className="btn btn-primary" onClick={() => alert('Saved locally (demo).')}>Save</button></div>
+      <div className="mt-3">
+        <button className="btn btn-primary" onClick={() => alert('Saved locally (demo).')}>Save</button>
+      </div>
     </Layout>
   );
 }
 TSX
 
-# 7) Make sure TypeScript knows about Next types (harmless if exists)
-cat > apps/employee-portal/next-env.d.ts <<'TS'
+echo "==> Ensuring Next types shim (harmless if already present)..."
+cat > "$PORTAL/next-env.d.ts" <<'TS'
 /// <reference types="next" />
 /// <reference types="next/image-types/global" />
 TS
 
-# 8) Add Popper peer for Bootstrap (clears Yarn warning)
-yarn workspace @saas/employee-portal add -E @popperjs/core
+echo "==> Installing @popperjs/core peer for Bootstrap (quiet if present)..."
+yarn workspace @saas/employee-portal add -E @popperjs/core >/dev/null
+
+echo "==> Verifying root dev script includes employee portal..."
+node - <<'NODE'
+const fs=require('fs'); const f='package.json';
+const j=JSON.parse(fs.readFileSync(f,'utf8'));
+const want='"yarn workspace @saas/employee-portal dev"';
+if(!j.scripts || !j.scripts.dev){ console.error('No root "dev" script found.'); process.exit(0); }
+if(!j.scripts.dev.includes('@saas/employee-portal')){
+  j.scripts.dev = j.scripts.dev + ' ' + want;
+  fs.writeFileSync(f, JSON.stringify(j,null,2) + '\n');
+  console.log('Updated root scripts.dev to include employee-portal.');
+} else {
+  console.log('Root scripts.dev already includes employee-portal.');
+}
+NODE
+
+echo "==> All set. Start just the portal with:"
+echo "    yarn workspace @saas/employee-portal dev"
+echo "    # then visit http://localhost:3010/"
 
