@@ -5,7 +5,6 @@ import { Container, Nav, Navbar } from 'react-bootstrap';
 export default function Layout({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="d-flex" style={{ minHeight: '100vh' }}>
-      {/* Sidebar */}
       <div className="bg-light border-end" style={{ width: 260 }}>
         <div className="p-3 border-bottom">
           <strong>DID + Cloud Signature</strong>
@@ -19,7 +18,6 @@ export default function Layout({ title, children }: { title: string; children: R
         </Nav>
       </div>
 
-      {/* Main */}
       <div className="flex-grow-1">
         <Navbar bg="white" className="border-bottom">
           <Container fluid>

@@ -5,11 +5,13 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "clean": "rm -rf .next"
+    "clean": "rm -rf .next",
+    "predev": "yarn build:packages"
   },
   "dependencies": {
     "@azure/msal-browser": "^3.0.0",
     "@azure/msal-react": "^2.0.0",
+    "@saas/agent": "workspace:*",
     "autoprefixer": "^10.4.0",
     "bootstrap": "^5.3.8",
     "next": "^14.0.0",

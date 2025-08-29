@@ -1,18 +1,23 @@
-import { useEffect, useState } from 'react';
-import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import QRCode from 'qrcode.react';
-import { useToaster } from '../../src/toaster';
-import Layout from '../../components/Layout';
+// temporary probe
+console.log('Layout is', Layout); // should log a function, not undefined
 
+
+import { useEffect, useState } from 'react';
+import Layout from '../../components/Layout';
+import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
+import { QRCodeCanvas as QRCode } from 'qrcode.react';   // <-- named export
+import { useToaster } from '../../components/toaster';
 
 export default function IssuancePage() {
   const [orgs, setOrgs] = useState<any[]>([]);
   const [form, setForm] = useState({ orgId: '', givenName: '', employeeId: '', department: 'IT' });
-  const [vc, setVc] = useState<string>(''); const [error, setError] = useState<string>('');
+  const [vc, setVc] = useState<string>(''); 
+  const [error, setError] = useState<string>('');
   const { push } = useToaster();
 
   useEffect(()=>{(async()=>{
-    const j = await (await fetch('/api/orgs')).json(); setOrgs(j.orgs);
+    const j = await (await fetch('/api/orgs')).json(); 
+    setOrgs(j.orgs);
     setForm(f=>({...f, orgId:j.orgs?.[0]?.id || ''}));
   })()},[]);
 
@@ -66,15 +71,19 @@ export default function IssuancePage() {
               <Card.Title>Credential QR (VC-JWT)</Card.Title>
               {!vc ? <p className="text-muted">Issue a credential to see the QR here.</p> :
                 <>
-                  <div className="d-flex justify-content-center my-3"><QRCode value={vc} size={240} /></div>
+                  <div className="d-flex justify-content-center my-3">
+                    <QRCode value={vc} size={240} />
+                  </div>
                   <div className="d-flex gap-2">
                     <Button onClick={()=>navigator.clipboard.writeText(vc)}>Copy VC</Button>
                     <Button variant="secondary" onClick={()=>{
-                      const blob=new Blob([vc],{type:'text/plain'}); const url=URL.createObjectURL(blob);
-                      const a=document.createElement('a'); a.href=url; a.download='credential.jwt.txt'; a.click(); URL.revokeObjectURL(url);
+                      const blob=new Blob([vc],{type:'text/plain'});
+                      const url=URL.createObjectURL(blob);
+                      const a=document.createElement('a'); a.href=url; a.download='credential.jwt.txt'; a.click();
+                      URL.revokeObjectURL(url);
                     }}>Download</Button>
                   </div>
-                  <p className="mt-3 small text-muted">For Entra, swap this QR to the Issuance Request QR. UI stays the same.</p>
+                  <p className="mt-3 small text-muted">For Entra, swap this to the Issuance Request QR.</p>
                 </>
               }
             </Card.Body></Card>
