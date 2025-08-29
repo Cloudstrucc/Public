@@ -1,103 +1,86 @@
-import express, { type Request, type Response, type Express } from 'express'
-import QRCode from 'qrcode'
-import { v4 as uuidv4 } from 'uuid'
+import express, { type Request, type Response, type Express } from 'express';
+import QRCode from 'qrcode';
+import { v4 as uuidv4 } from 'uuid';
 
-
-
-/**
- * Minimal in-memory stores for dev.
- * In production, replace with Redis/DB and add expiry/cleanup.
- */
 type Offer = {
-  code: string
-  txCode?: string
-  claims: Record<string, any>
-  credentialConfigurationId: string
-  orgId?: string
-  createdAt: number
-}
+  code: string;
+  txCode?: string;
+  claims: Record<string, any>;
+  credentialConfigurationId: string;
+  orgId?: string;
+  createdAt: number;
+};
 type Token = {
-  accessToken: string
-  offerCode: string
-  scope: string
-  cNonce: string
-  cNonceExpiresAt: number
-  expiresAt: number
-}
+  accessToken: string;
+  offerCode: string;
+  scope: string;
+  cNonce: string;
+  cNonceExpiresAt: number;
+  expiresAt: number;
+};
 
-const offers = new Map<string, Offer>()
-const tokens = new Map<string, Token>()
+const offers = new Map<string, Offer>();
+const tokens = new Map<string, Token>();
 
-/**
- * Helper: absolute origin for metadata/links.
- */
+// NEW: dev store for “is my credential ready?”
+const issuedByCode = new Map<string, { credential: string; issuedAt: number }>();
+
 function resolveOrigin(envOrigin?: string, req?: Request) {
-  if (envOrigin) return envOrigin.replace(/\/+$/, '')
+  if (envOrigin) return envOrigin.replace(/\/+$/, '');
   if (req) {
-    const proto = (req.headers['x-forwarded-proto'] as string) || 'http'
-    const host = req.headers['host']
-    return `${proto}://${host}`
+    const proto = (req.headers['x-forwarded-proto'] as string) || 'http';
+    const host = req.headers['host'];
+    return `${proto}://${host}`;
   }
-  return 'http://localhost:3004'
+  return 'http://localhost:3004';
 }
 
 export function registerOidc4vciRoutes(app: Express, agent: any, explicitOrigin?: string) {
-  // ---- 1) WELL-KNOWN (Issuer Metadata)
   app.get('/.well-known/openid-credential-issuer', (req: Request, res: Response) => {
-    const origin = resolveOrigin(explicitOrigin, req)
-
-    // Draft/Final OID4VCI metadata using credential_configurations_supported (jwt_vc_json)
+    const origin = resolveOrigin(explicitOrigin, req);
     const metadata = {
       credential_issuer: origin,
       token_endpoint: `${origin}/oidc/token`,
       credential_endpoint: `${origin}/oidc/credential`,
       display: [
-        { name: 'Cloud Signature Issuer', locale: 'en-US', description: 'Demo OIDC4VCI issuer' }
+        { name: 'Cloud Signature Issuer', locale: 'en-US', description: 'Demo OIDC4VCI issuer' },
       ],
-      // Link your AS if it’s separate; here issuer == AS for dev
       authorization_server: origin,
-
-      // Key bit: what credentials you can issue
       credential_configurations_supported: {
         employee_jwt_vc: {
           format: 'jwt_vc_json',
           scope: 'employee_vc',
-          cryptographic_binding_methods_supported: ['did:key','did:web','did:jwk'],
-          cryptographic_suites_supported: ['EdDSA','ES256','ES256K'],
+          cryptographic_binding_methods_supported: ['did:key', 'did:web', 'did:jwk'],
+          cryptographic_suites_supported: ['EdDSA', 'ES256', 'ES256K'],
           display: [
-            { locale:'en-US', name:'Employee ID', description:'Employee entitlement credential' }
+            { locale: 'en-US', name: 'Employee ID', description: 'Employee entitlement credential' },
           ],
           credential_definition: {
             '@context': ['https://www.w3.org/2018/credentials/v1'],
-            'type': ['VerifiableCredential','EmployeeCredential'],
-            // (Optional) provide hints to wallets on subject claims
-            credentialSubject: {
-              givenName: {},
-              employeeId: {},
-              department: {}
-            }
-          }
-        }
-      }
-    }
-    res.json(metadata)
-  })
+            type: ['VerifiableCredential', 'EmployeeCredential'],
+            credentialSubject: { givenName: {}, employeeId: {}, department: {} },
+          },
+        },
+      },
+    };
+    res.json(metadata);
+  });
 
-  /**
-   * ---- 2) ADMIN: Create a pre-authorized offer
-   * POST /oidc/admin/create-offer
-   * body: { claims: {...}, orgId?: string, tx_code_length?: number, credential_configuration_id?: string }
-   * returns: { preAuthorizedCode, offer_uri, deep_link, qr_png_data_url }
-   */
   app.post('/oidc/admin/create-offer', async (req: Request, res: Response) => {
     try {
-      const origin = resolveOrigin(explicitOrigin, req)
-      const { claims = {}, orgId, tx_code_length = 0, credential_configuration_id = 'employee_jwt_vc' } = req.body || {}
+      const origin = resolveOrigin(explicitOrigin, req);
+      const {
+        claims = {},
+        orgId,
+        tx_code_length = 0,
+        credential_configuration_id = 'employee_jwt_vc',
+      } = req.body || {};
 
-      const code = uuidv4()
-      const txCode = tx_code_length && tx_code_length > 0
-        ? (Math.random().toString().slice(2).padStart(tx_code_length, '0').slice(0, tx_code_length))
-        : undefined
+      const code = uuidv4();
+      const txCode =
+        tx_code_length && tx_code_length > 0
+          ? Math.random().toString().slice(2).padStart(tx_code_length, '0').slice(0, tx_code_length)
+          : undefined;
 
       offers.set(code, {
         code,
@@ -105,83 +88,80 @@ export function registerOidc4vciRoutes(app: Express, agent: any, explicitOrigin?
         claims,
         credentialConfigurationId: credential_configuration_id,
         orgId,
-        createdAt: Date.now()
-      })
+        createdAt: Date.now(),
+      });
 
-      // Spec-compliant credential offer (served via URI)
-      const offerUri = `${origin}/oidc/credential-offer/${code}`
-      const deepLink = `openid-credential-offer://?credential_offer_uri=${encodeURIComponent(offerUri)}`
-      const qr_png_data_url = await QRCode.toDataURL(deepLink)
+      issuedByCode.delete(code); // reset any previous status for this code
+
+      const offerUri = `${origin}/oidc/credential-offer/${code}`;
+      const deepLink = `openid-credential-offer://?credential_offer_uri=${encodeURIComponent(offerUri)}`;
+      const qr_png_data_url = await QRCode.toDataURL(deepLink);
 
       res.json({
         preAuthorizedCode: code,
         offer_uri: offerUri,
         deep_link: deepLink,
-        qr_png_data_url
-      })
-    } catch (e:any) {
-      res.status(500).json({ error: String(e?.message || e) })
+        qr_png_data_url,
+      });
+    } catch (e: any) {
+      res.status(500).json({ error: String(e?.message || e) });
     }
-  })
+  });
 
-  /**
-   * ---- 3) Public: serve the offer for a code
-   * GET /oidc/credential-offer/:code
-   */
   app.get('/oidc/credential-offer/:code', (req: Request, res: Response) => {
-    const origin = resolveOrigin(explicitOrigin, req)
-    const code = req.params.code
-    const offer = offers.get(code)
-    if (!offer) return res.status(404).json({ error: 'unknown_offer' })
+    const origin = resolveOrigin(explicitOrigin, req);
+    const code = req.params.code;
+    const offer = offers.get(code);
+    if (!offer) return res.status(404).json({ error: 'unknown_offer' });
 
     const body: any = {
       credential_issuer: origin,
       credential_configuration_ids: [offer.credentialConfigurationId],
       grants: {
         'urn:ietf:params:oauth:grant-type:pre-authorized_code': {
-          'pre-authorized_code': offer.code
-        }
-      }
-    }
+          'pre-authorized_code': offer.code,
+        },
+      },
+    };
     if (offer.txCode) {
       body.grants['urn:ietf:params:oauth:grant-type:pre-authorized_code'].tx_code = {
         length: offer.txCode.length,
-        input_mode: 'numeric'
-      }
+        input_mode: 'numeric',
+      };
     }
-    res.json(body)
-  })
+    res.json(body);
+  });
 
-  /**
-   * ---- 4) Token endpoint (pre-authorized_code flow)
-   * POST x-www-form-urlencoded:
-   *   grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
-   *   pre-authorized_code=...
-   *   tx_code=... (if required)
-   */
   app.post('/oidc/token', express.urlencoded({ extended: true }), (req: Request, res: Response) => {
-    const { grant_type, ['pre-authorized_code']: pre, pre_authorized_code, tx_code } = req.body || {}
-    const code = pre || pre_authorized_code
+    const {
+      grant_type,
+      ['pre-authorized_code']: preAlt,
+      pre_authorized_code,
+      tx_code,
+    } = (req.body || {}) as Record<string, string>;
+
     if (grant_type !== 'urn:ietf:params:oauth:grant-type:pre-authorized_code') {
-      return res.status(400).json({ error: 'unsupported_grant_type' })
-    }
-    const offer = code && offers.get(code)
-    if (!offer) return res.status(400).json({ error: 'invalid_grant' })
-    if (offer.txCode && offer.txCode !== String(tx_code || '')) {
-      return res.status(400).json({ error: 'invalid_tx_code' })
+      return res.status(400).json({ error: 'unsupported_grant_type' });
     }
 
-    const accessToken = uuidv4()
-    const cNonce = uuidv4()
-    const now = Date.now()
+    const code = preAlt || pre_authorized_code;
+    const offer = code && offers.get(code);
+    if (!offer) return res.status(400).json({ error: 'invalid_grant' });
+    if (offer.txCode && offer.txCode !== String(tx_code || '')) {
+      return res.status(400).json({ error: 'invalid_tx_code' });
+    }
+
+    const accessToken = uuidv4();
+    const cNonce = uuidv4();
+    const now = Date.now();
     tokens.set(accessToken, {
       accessToken,
       offerCode: offer.code,
       scope: 'employee_vc',
       cNonce,
       cNonceExpiresAt: now + 5 * 60 * 1000,
-      expiresAt: now + 10 * 60 * 1000
-    })
+      expiresAt: now + 10 * 60 * 1000,
+    });
 
     res.json({
       access_token: accessToken,
@@ -189,92 +169,84 @@ export function registerOidc4vciRoutes(app: Express, agent: any, explicitOrigin?
       expires_in: 600,
       scope: 'employee_vc',
       c_nonce: cNonce,
-      c_nonce_expires_in: 300
-    })
-  })
+      c_nonce_expires_in: 300,
+    });
+  });
 
-  /**
-   * ---- 5) Credential endpoint
-   * POST application/json:
-   *   {
-   *     "format": "jwt_vc_json",
-   *     "credential_definition": { "type": [...], "@context":[...], "credentialSubject": {...optional hints...} },
-   *     "proof": { "proof_type":"jwt", "jwt":"<holder proof bound to c_nonce>" }
-   *   }
-   * Authorization: Bearer <access_token>
-   */
   app.post('/oidc/credential', async (req: Request, res: Response) => {
     try {
-      const auth = req.headers.authorization || ''
-      const token = auth.startsWith('Bearer ') ? auth.slice(7) : ''
-      const t = token && tokens.get(token)
-      if (!t) return res.status(401).json({ error: 'invalid_token' })
-      if (Date.now() > t.expiresAt) return res.status(401).json({ error: 'token_expired' })
+      const auth = req.headers.authorization || '';
+      const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+      const t = token && tokens.get(token);
+      if (!t) return res.status(401).json({ error: 'invalid_token' });
+      if (Date.now() > t.expiresAt) return res.status(401).json({ error: 'token_expired' });
 
-      const offer = offers.get(t.offerCode)
-      if (!offer) return res.status(400).json({ error: 'invalid_request' })
+      const offer = offers.get(t.offerCode);
+      if (!offer) return res.status(400).json({ error: 'invalid_request' });
 
-      const { format, credential_definition, proof } = req.body || {}
+      const { format, credential_definition, proof } = req.body || {};
       if (format !== 'jwt_vc_json') {
-        return res.status(400).json({ error: 'unsupported_credential_format' })
+        return res.status(400).json({ error: 'unsupported_credential_format' });
       }
 
-      // Very light proof check for dev (verify JWT if present)
-      // Wallets will sign a proof JWT including the c_nonce we returned.
-      // For production, parse & verify per spec claims (nonce, audience, etc).
-      let subjectDid = undefined as string | undefined
+      let subjectDid: string | undefined;
       if (proof?.jwt) {
-        // Use Veramo to verify the proof JWT (best-effort)
         try {
-          const verified = await agent.verifyJWT({ jwt: proof.jwt })
-          subjectDid = verified?.payload?.iss as string | undefined
-          // (Optional) verify nonce binding here (c_nonce in the proof)
-        } catch (e) {
-          // For dev we won't fail if your wallet doesn't send proof yet
-          // return res.status(400).json({ error: 'invalid_proof' })
+          const verified = await agent.verifyJWT({ jwt: proof.jwt });
+          subjectDid = verified?.payload?.iss as string | undefined;
+        } catch {
+          // for dev we tolerate, for prod: return res.status(400)…
         }
       }
-      // Fallback to subject from proof-less flows (not recommended for prod)
       if (!subjectDid) {
-        // If no proof, we can't reliably know holder DID — reject in prod
-        return res.status(400).json({ error: 'missing_or_invalid_proof' })
+        return res.status(400).json({ error: 'missing_or_invalid_proof' });
       }
 
-      // Compose VC claims from the stored offer + subjectDid
-      const employeeClaims = { ...offer.claims }
-      const vc = await agent.createVerifiableCredential({
+      const employeeClaims = { ...offer.claims };
+      const issued = await agent.createVerifiableCredential({
         credential: {
-          issuer: { id: (await agent.didManagerGet({ did: (await agent.didManagerGetOrCreate({ alias: 'issuer' })).did })).did },
+          issuer: {
+            id: (await agent.didManagerGetOrCreate({ alias: 'issuer' })).did,
+          },
           '@context': credential_definition?.['@context'] || ['https://www.w3.org/2018/credentials/v1'],
-          type: credential_definition?.type || ['VerifiableCredential','EmployeeCredential'],
+          type: credential_definition?.type || ['VerifiableCredential', 'EmployeeCredential'],
           issuanceDate: new Date().toISOString(),
           credentialSubject: {
             id: subjectDid,
-            ...employeeClaims
-          }
+            ...employeeClaims,
+          },
         },
-        proofFormat: 'jwt' // → returns { verifiableCredential: string | object }
-      })
+        proofFormat: 'jwt',
+      });
 
-      // Veramo returns an object or JWT depending on plugin version.
-      // Normalize to a JWT string for OIDC4VCI response.
       const jwt =
-        typeof (vc?.verifiableCredential) === 'string'
-          ? vc.verifiableCredential
-          : vc?.verifiableCredential?.proof?.jwt
+        typeof issued?.verifiableCredential === 'string'
+          ? issued.verifiableCredential
+          : issued?.verifiableCredential?.proof?.jwt;
 
-      if (!jwt) {
-        return res.status(500).json({ error: 'issuance_failed' })
-      }
+      if (!jwt) return res.status(500).json({ error: 'issuance_failed' });
 
-      // OIDC4VCI response for jwt_vc_json:
-      res.json({
-        format: 'jwt_vc_json',
-        credential: jwt
-      })
-    } catch (e:any) {
-      res.status(500).json({ error: String(e?.message || e) })
+      // save for polling by the employee portal (dev only)
+      issuedByCode.set(offer.code, { credential: jwt, issuedAt: Date.now() });
+
+      res.json({ format: 'jwt_vc_json', credential: jwt });
+    } catch (e: any) {
+      res.status(500).json({ error: String(e?.message || e) });
     }
-  })
-}
+  });
 
+  // NEW: Dev status endpoint so the employee portal can poll by code
+  app.get('/oidc/dev/status', (req: Request, res: Response) => {
+    const code = String(req.query.code || '');
+    if (!code) return res.status(400).json({ error: 'code required' });
+
+    const ready = issuedByCode.get(code);
+    if (!ready) return res.json({ status: 'pending' });
+
+    res.json({
+      status: 'ready',
+      issuedAt: ready.issuedAt,
+      credential: ready.credential,
+    });
+  });
+}

@@ -1,11 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 import { createDIDAgent } from '@saas/agent';
-import { registerOidc4vciRoutes } from './oidc4vci'
+import { registerOidc4vciRoutes } from './oidc4vci';
 
 const app = express();
-const PORT = process.env.PORT || 3004;
-const ORIGIN = process.env.ISSUER_ORIGIN // e.g., https://YOUR-NGROK-ID.ngrok.io
+const PORT = Number(process.env.PORT || 3004);
+
+// Public origin for deep links / metadata (e.g., your ngrok URL). Falls back to http://localhost:3004
+const ISSUER_PUBLIC_ORIGIN =
+  (process.env.ISSUER_ORIGIN || process.env.ISSUER_PUBLIC_ORIGIN || '').replace(/\/+$/, '') ||
+  `http://localhost:${PORT}`;
 
 app.use(cors());
 app.use(express.json());
@@ -13,18 +17,23 @@ app.use(express.json());
 const agent = createDIDAgent();
 let issuerDid: string;
 
-async function ensureIssuerDid() {
-  const ALIAS = 'service-issuer';
+/** Create or load an issuer DID once, at boot */
+async function initIssuerDid() {
+  // try a stable alias first so we reuse the same DID across restarts
+  const alias = 'issuer';
   try {
-    const list = await agent.didManagerFind({ alias: ALIAS });
-    if (list.length) {
-      issuerDid = list[0].did;
+    const found = await agent.didManagerFind({ alias });
+    if (found?.length) {
+      issuerDid = found[0].did;
       return;
     }
   } catch { /* ignore */ }
-  const identity = await agent.didManagerCreate({ provider: 'did:key', alias: ALIAS });
-  issuerDid = identity.did;
+
+  const id = await agent.didManagerGetOrCreate({ alias, provider: 'did:key' });
+  issuerDid = id.did;
 }
+
+app.get('/health', (_req, res) => res.json({ ok: true }));
 
 app.get('/issuer-did', (_req, res) => {
   if (!issuerDid) return res.status(503).json({ error: 'issuer not ready' });
@@ -49,21 +58,21 @@ app.post('/issue', async (req, res) => {
       issuer: { id: issuerDid },
       issuanceDate: now.toISOString(),
       expirationDate: exp.toISOString(),
-      credentialSubject: { id: subject, ...(claims || {}) }
+      credentialSubject: { id: subject, ...(claims || {}) },
     };
 
     const result = await agent.createVerifiableCredential({
       credential,
-      proofFormat: 'jwt'
+      proofFormat: 'jwt',
     });
 
-    // Robust extraction across library versions:
+    // Normalize result across veramo versions
     const vcJwt =
-      (typeof result === 'string' && result) ||                 // some versions return the jwt string
-      (result && (result as any).jwt) ||                        // sometimes { jwt }
-      (result && (result as any).verifiableCredential) ||       // sometimes { verifiableCredential: <jwt> }
-      (result && (result as any).vc) ||                         // sometimes { vc: <jwt> }
-      (result && (result as any).proof && (result as any).proof.jwt) || // VC object with proof.jwt  <-- your case
+      (typeof result === 'string' && result) ||
+      (result && (result as any).jwt) ||
+      (result && (result as any).verifiableCredential) ||
+      (result && (result as any).vc) ||
+      (result && (result as any).proof && (result as any).proof.jwt) ||
       null;
 
     if (!vcJwt || typeof vcJwt !== 'string') {
@@ -78,17 +87,10 @@ app.post('/issue', async (req, res) => {
   }
 });
 
-// 🔗 Register OIDC4VCI routes
-registerOidc4vciRoutes(app, agent, ORIGIN)
+// 🔗 Register OIDC4VCI routes (well-known, offer, token, credential)
+registerOidc4vciRoutes(app, agent, ISSUER_PUBLIC_ORIGIN);
 
 app.listen(PORT, async () => {
-  const issuer = await agent.didManagerGetOrCreate({ alias: 'issuer' })
-  console.log(`VC Issuer API running on port ${PORT} with issuer ${issuer.did}`)
-})
-
-
-// app.listen(PORT, async () => {
-//   await ensureIssuerDid();
-//   console.log(`VC Issuer API running on port ${PORT} with issuer ${issuerDid}`);
-// });
-
+  await initIssuerDid();
+  console.log(`VC Issuer API running on port ${PORT} with issuer ${issuerDid}`);
+});
