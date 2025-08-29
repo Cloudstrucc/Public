@@ -1,0 +1,38 @@
+# 1) back up the broken file
+cp package.json package.json.broken.$(date +%s) 2>/dev/null || true
+
+# 2) write a clean root package.json
+cat > package.json <<'JSON'
+{
+  "name": "did-cloud-signature-saas",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"yarn workspace @saas/admin-portal dev\" \"yarn workspace @saas/teams-ext dev\" \"yarn workspace @saas/secure-note-a dev\" \"yarn workspace @saas/secure-note-b dev\" \"yarn workspace @saas/issuer-api dev\" \"yarn workspace @saas/verifier-api dev\" \"yarn workspace @saas/employee-portal dev\"",
+    "build:packages": "yarn workspace @saas/kv-hsm build && yarn workspace @saas/policy-engine build && yarn workspace @saas/agent build && yarn workspace @saas/mip-wrapper build",
+    "build:apps": "yarn workspaces run build",
+    "build": "yarn build:packages && yarn build:apps",
+    "test": "yarn workspaces run test",
+    "lint": "yarn workspaces run lint",
+    "clean": "yarn workspaces run clean",
+    "setup": "yarn install && yarn build:packages"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "prettier": "^3.0.0",
+    "eslint": "^8.0.0",
+    "concurrently": "^8.2.0",
+    "ts-node-dev": "^2.0.0",
+    "jest": "^29.0.0"
+  }
+}
+JSON
+
+# 3) reinstall
+yarn install
+

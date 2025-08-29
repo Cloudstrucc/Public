@@ -6,11 +6,10 @@
     "apps/*",
     "packages/*"
   ],
-  "packageManager": "yarn@1.22.22",
   "scripts": {
-    "dev": "concurrently \"yarn workspace @saas/admin-portal dev\" \"yarn workspace @saas/teams-ext dev\" \"yarn workspace @saas/secure-note-a dev\" \"yarn workspace @saas/secure-note-b dev\" \"yarn workspace @saas/issuer-api dev\" \"yarn workspace @saas/verifier-api dev\"",
+    "dev": "concurrently \"yarn workspace @saas/admin-portal dev\" \"yarn workspace @saas/teams-ext dev\" \"yarn workspace @saas/secure-note-a dev\" \"yarn workspace @saas/secure-note-b dev\" \"yarn workspace @saas/issuer-api dev\" \"yarn workspace @saas/verifier-api dev\" \"yarn workspace @saas/employee-portal dev\"",
     "build:packages": "yarn workspace @saas/kv-hsm build && yarn workspace @saas/policy-engine build && yarn workspace @saas/agent build && yarn workspace @saas/mip-wrapper build",
-    "build:apps": "yarn workspaces foreach -v --topological run build",
+    "build:apps": "yarn workspaces run build",
     "build": "yarn build:packages && yarn build:apps",
     "test": "yarn workspaces run test",
     "lint": "yarn workspaces run lint",

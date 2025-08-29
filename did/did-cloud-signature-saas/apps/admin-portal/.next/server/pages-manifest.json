@@ -2,9 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/orgs": "pages/orgs.js",
-  "/api/orgs": "pages/api/orgs.js",
-  "/issuance": "pages/issuance.js",
-  "/api/holder-did": "pages/api/holder-did.js",
-  "/api/issue": "pages/api/issue.js"
+  "/": "pages/index.js"
 }
