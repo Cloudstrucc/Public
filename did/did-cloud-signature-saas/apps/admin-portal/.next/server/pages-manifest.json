@@ -1,1 +1,13 @@
-{}
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/": "pages/index.js",
+  "/issuance": "pages/issuance.js",
+  "/api/orgs": "pages/api/orgs.js",
+  "/api/holder-did": "pages/api/holder-did.js",
+  "/orgs": "pages/orgs.js",
+  "/policies": "pages/policies.js",
+  "/api/issue": "pages/api/issue.js",
+  "/api/policies": "pages/api/policies.js"
+}

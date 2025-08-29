@@ -1,9 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import { createDIDAgent } from '@saas/agent';
+import { registerOidc4vciRoutes } from './oidc4vci'
 
 const app = express();
 const PORT = process.env.PORT || 3004;
+const ORIGIN = process.env.ISSUER_ORIGIN // e.g., https://YOUR-NGROK-ID.ngrok.io
 
 app.use(cors());
 app.use(express.json());
@@ -76,9 +78,17 @@ app.post('/issue', async (req, res) => {
   }
 });
 
+// 🔗 Register OIDC4VCI routes
+registerOidc4vciRoutes(app, agent, ORIGIN)
 
 app.listen(PORT, async () => {
-  await ensureIssuerDid();
-  console.log(`VC Issuer API running on port ${PORT} with issuer ${issuerDid}`);
-});
+  const issuer = await agent.didManagerGetOrCreate({ alias: 'issuer' })
+  console.log(`VC Issuer API running on port ${PORT} with issuer ${issuer.did}`)
+})
+
+
+// app.listen(PORT, async () => {
+//   await ensureIssuerDid();
+//   console.log(`VC Issuer API running on port ${PORT} with issuer ${issuerDid}`);
+// });
 
