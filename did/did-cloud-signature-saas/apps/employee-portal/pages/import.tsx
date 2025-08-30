@@ -1,114 +1,176 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
+// apps/employee-portal/pages/import.tsx
+import React, { useEffect, useState } from 'react';
+import type { GetServerSideProps } from 'next';
+import { Card, Row, Col, Alert, Spinner, Container } from 'react-bootstrap';
 
-type Result = {
-  status: 'pending' | 'issued' | 'error';
-  vc?: string;
-  error?: string;
+const Layout: React.FC<{ title?: string; children: React.ReactNode }> = ({ title, children }) => (
+  <Container className="mt-4">
+    {title && <h2 className="mb-4">{title}</h2>}
+    {children}
+  </Container>
+);
+
+// If you already have a shared env util, import from there instead:
+const ISSUER_URL =
+  process.env.NEXT_PUBLIC_ISSUER_URL ||
+  process.env.ISSUER_URL ||
+  'http://localhost:3004';
+
+type OfferGrants = {
+  ['urn:ietf:params:oauth:grant-type:pre-authorized_code']: {
+    'pre-authorized_code': string;
+    tx_code?: { length: number; input_mode: string };
+  };
 };
 
-export default function ImportPage() {
-  const [status, setStatus] = useState<'idle'|'pending'|'issued'|'error'>('idle');
-  const [vc, setVc] = useState<string | null>(null);
-  const [err, setErr] = useState<string | null>(null);
+type OfferPayload = {
+  credential_issuer: string;
+  credential_configuration_ids: string[];
+  grants: OfferGrants;
+};
 
-  const txId = useMemo(() => {
-    if (typeof window === 'undefined') return '';
-    const u = new URL(window.location.href);
-    return u.searchParams.get('txId') || '';
-  }, []);
+type Props = {
+  initialTxId: string | null;
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
+  const txId = ctx.query.txId?.toString() ?? null;
+  return { props: { initialTxId: txId } };
+};
+
+export default function ImportPage({ initialTxId }: Props) {
+  const [offer, setOffer] = useState<OfferPayload | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(!!initialTxId);
 
   useEffect(() => {
-    if (!txId) return;
+    let abort = false;
 
-    setStatus('pending');
-    let stop = false;
-
-    async function once() {
+    async function fetchOffer() {
+      if (!initialTxId) return;
+      setLoading(true);
+      setError(null);
       try {
-        const r = await fetch(`/api/oidc/status?txId=${encodeURIComponent(txId)}`);
-        const json: Result = await r.json();
-        if (!r.ok) throw new Error(json?.error || 'poll_failed');
-
-        if (json.status === 'issued' && json.vc) {
-          setVc(json.vc);
-          setStatus('issued');
-          return true; // stop
+        const res = await fetch(
+          `${ISSUER_URL}/oidc/credential-offer/${encodeURIComponent(initialTxId)}`
+        );
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(
+            `Offer not found (status ${res.status}). ${txt?.slice(0, 200)}`
+          );
         }
-        if (json.status === 'error') {
-          setErr(json?.error || 'issuer_error');
-          setStatus('error');
-          return true; // stop
-        }
-        // still pending
-        return false;
+        const json = (await res.json()) as OfferPayload;
+        if (!abort) setOffer(json);
       } catch (e: any) {
-        setErr(String(e?.message || e));
-        setStatus('error');
-        return true; // stop
+        if (!abort) setError(String(e?.message || e));
+      } finally {
+        if (!abort) setLoading(false);
       }
     }
 
-    // poll until issued/error
-    (async () => {
-      while (!stop) {
-        const done = await once();
-        if (done) break;
-        await new Promise((r) => setTimeout(r, 2000));
-      }
-    })();
-
-    return () => { stop = true; };
-  }, [txId]);
-
-  function downloadVc() {
-    if (!vc) return;
-    const blob = new Blob([vc], { type: 'application/jwt' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `credential-${txId}.jwt.txt`;
-    a.click();
-  }
+    fetchOffer();
+    return () => {
+      abort = true;
+    };
+  }, [initialTxId]);
 
   return (
-    <div style={{ maxWidth: 720, margin: '40px auto', padding: 16 }}>
-      <h3>Import Credential</h3>
-      {!txId && (
-        <p className="text-muted">No <code>txId</code> was provided. Try opening this page from the Admin “Open Employee Portal to Track” button.</p>
-      )}
+    <Layout title="Import Credential">
+      <Row className="mb-4">
+        <Col>
+          <h3>Import Credential</h3>
+          {!initialTxId && (
+            <Alert variant="warning" className="mt-3">
+              No <code>txId</code> was provided. Open this page from the Admin
+              portal “Open Employee Portal to Track” button, or visit:
+              <div className="mt-2">
+                <code>http://localhost:3010/import?txId=&lt;offerCode&gt;</code>
+              </div>
+            </Alert>
+          )}
+        </Col>
+      </Row>
 
-      {txId && (
-        <p className="text-muted">
-          Tracking transaction <code>{txId}</code>. Keep this page open while you scan and accept the offer in your wallet.
-        </p>
-      )}
+      {initialTxId && (
+        <Row>
+          <Col md={8}>
+            <Card className="mb-3">
+              <Card.Body>
+                <Card.Title>Tracking transaction</Card.Title>
+                <div className="text-muted mb-2">
+                  txId: <code>{initialTxId}</code>
+                </div>
 
-      {status === 'pending' && (
-        <p>Waiting for wallet to complete issuance…</p>
-      )}
+                {loading && (
+                  <div className="d-flex align-items-center">
+                    <Spinner animation="border" size="sm" className="me-2" />
+                    <span>Loading offer…</span>
+                  </div>
+                )}
 
-      {status === 'issued' && vc && (
-        <>
-          <div className="alert alert-success">
-            Credential issued! You can save the raw JWT below or import into a developer wallet.
-          </div>
-          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', background:'#f6f6f6', padding:12, borderRadius:8 }}>
-{vc}
-          </pre>
+                {error && (
+                  <Alert variant="danger" className="mt-3">
+                    {error}
+                  </Alert>
+                )}
 
-          <div className="d-flex gap-2">
-            <button className="btn btn-primary" onClick={downloadVc}>Download VC (JWT)</button>
-            <Link className="btn btn-outline-secondary" href="/scan">Scan Another</Link>
-          </div>
-        </>
-      )}
+                {offer && (
+                  <>
+                    <Alert variant="success" className="mt-3">
+                      Offer found from issuer: <code>{offer.credential_issuer}</code>
+                    </Alert>
+                    <div className="mb-2">
+                      <strong>Configuration IDs:</strong>{' '}
+                      {offer.credential_configuration_ids.join(', ')}
+                    </div>
 
-      {status === 'error' && (
-        <div className="alert alert-danger">
-          {err || 'An error occurred'}
-        </div>
+                    {'urn:ietf:params:oauth:grant-type:pre-authorized_code' in
+                      offer.grants && (
+                      <div className="text-muted">
+                        Grant type: <code>pre-authorized_code</code>
+                        {offer.grants[
+                          'urn:ietf:params:oauth:grant-type:pre-authorized_code'
+                        ]?.tx_code && (
+                          <>
+                            {' '}
+                            • Requires TX code of length{' '}
+                            {
+                              offer.grants[
+                                'urn:ietf:params:oauth:grant-type:pre-authorized_code'
+                              ]!.tx_code!.length
+                            }{' '}
+                            (
+                            {
+                              offer.grants[
+                                'urn:ietf:params:oauth:grant-type:pre-authorized_code'
+                              ]!.tx_code!.input_mode
+                            }
+                            )
+                          </>
+                        )}
+                      </div>
+                    )}
+
+                    <Alert variant="info" className="mt-3">
+                      <div className="mb-2 fw-bold">How to complete on a wallet:</div>
+                      <ol className="mb-0">
+                        <li>In the Admin portal, show the QR (OIDC4VCI offer).</li>
+                        <li>
+                          Scan with an OIDC4VCI-capable wallet (e.g., Trinsic, Lissi).
+                          For mobile testing, expose issuer with <code>ngrok http 3004</code>{' '}
+                          and regenerate the QR.
+                        </li>
+                        <li>The wallet redeems the offer and receives the credential.</li>
+                      </ol>
+                    </Alert>
+                  </>
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       )}
-    </div>
+    </Layout>
   );
 }
-
