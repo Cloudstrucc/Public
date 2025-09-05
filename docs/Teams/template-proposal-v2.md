@@ -53,7 +53,6 @@ The end state will position Leonardo Company Canada with a secure, modern, and s
 
 ---
 
-
 ## 🧰 Pre-Requisites and Deployment Approach
 
 To perform the activities outlined in this proposal, the following pre-requisites and operating model must be established:
@@ -113,21 +112,21 @@ This is reflected in the project schedule.
 
 ## 💸 Implementation Cost Estimate (CAD)
 
-*Starting from the week of **July 7, 2025**, estimated due dates are projected based on a 60-day delivery schedule.*
+*Starting from the week of **September 2, 2025**, estimated due dates are projected based on a 60-day delivery schedule.*
 
-| Item                               | Description                                   | Estimated Cost (CAD)   | Estimated Due Date |
-| ---------------------------------- | --------------------------------------------- | ---------------------- | ------------------ |
-| Discovery & Assessment             | Initial audit, kickoff, stakeholder alignment | \$4,500                | July 11, 2025      |
-| Conditional Access & MFA Setup     | Configure policies, guest restrictions        | \$5,500                | July 18, 2025      |
-| Meeting & Collaboration Hardening  | Meeting options, lobby, link lockdown         | \$5,000                | July 25, 2025      |
-| DLP, Sensitivity Labels, IBs       | Purview config, segmenting, rollout           | \$6,500                | August 2, 2025     |
-| CMK & Private Endpoint Support     | Azure setup, encryption config                | \$7,000                | August 9, 2025     |
-| Audit, Defender XDR Integration    | Logging, detection, incident setup            | \$4,000                | August 16, 2025    |
-| Documentation & Knowledge Transfer | Wiki + live walkthroughs / training           | \$3,500                | August 23, 2025    |
-| Support (60 days)                  | Response, tuning, questions                   | \$2,500                | September 6, 2025  |
-| **Subtotal**                 |                                               | **\$38,500 CAD** |                    |
-| HST (13%)                          |                                               | **\$5,005 CAD**  |                    |
-| **Total with HST**           |                                               | **\$43,505 CAD** |                    |
+| Item                               | Description                                               | Estimated Cost (CAD)   | Estimated Due Date |
+| ---------------------------------- | --------------------------------------------------------- | ---------------------- | ------------------ |
+| Discovery & Assessment             | Initial audit, kickoff, stakeholder alignment & lab setup | \$4,500                | September 10, 2025 |
+| Conditional Access & MFA Setup     | Configure policies, guest restrictions                    | \$5,500                | September 17, 2025 |
+| Meeting & Collaboration Hardening  | Meeting options, lobby, link lockdown                     | \$5,000                | September 24, 2025 |
+| DLP, Sensitivity Labels, IBs       | Purview config, segmenting, rollout                       | \$6,500                | October 2, 2025    |
+| CMK & Private Endpoint Support     | Azure setup, encryption config                            | \$7,000                | October 9, 2025    |
+| Audit, Defender XDR Integration    | Logging, detection, incident setup                        | \$4,000                | October 16, 2025   |
+| Documentation & Knowledge Transfer | Wiki + live walkthroughs / training                       | \$3,500                | October 23, 2025   |
+| Support (60 days)                  | Response, tuning, questions                               | \$2,500                | November 6, 2025   |
+| **Subtotal**                 |                                                           | **\$38,500 CAD** |                    |
+| HST (13%)                          |                                                           | **\$5,005 CAD**  |                    |
+| **Total with HST**           |                                                           | **\$43,505 CAD** |                    |
 
 **Payment Terms**
 The total amount indicated in this proposal, including applicable taxes, shall become payable upon completion of the scope of work as outlined herein. Final payment shall be due within thirty (30) days of the client’s written confirmation of acceptance and sign-off of the completed deliverables. For greater certainty, such acceptance shall not be unreasonably withheld. This agreement shall be governed by the laws of the Province of Ontario and the federal laws of Canada applicable therein.
@@ -162,13 +161,13 @@ To implement the described security hardening, Leonardo Company Canada will requ
 * [Apply Microsoft Purview DLP rules and auto-classification labels to OneDrive](#%EF%B8%8F-onedrive-for-business-security-best-practices)
 * [Enforce compliance-based access controls (only compliant devices)](#%EF%B8%8F-onedrive-for-business-security-best-practices)
 * [Enable OneDrive sync policy for work files from corporate desktops/laptops only](#%EF%B8%8F-onedrive-for-business-security-best-practices)
-* [Restrict download/sharing from untrusted sessions using Defender & Purview](#%EF%B8%8F-onedrive-for-business-security-best-practices)
+* [Restrict download/sharing from untrusted sessions using Defender &amp; Purview](#%EF%B8%8F-onedrive-for-business-security-best-practices)
 * [Enable logging and retention policies for OneDrive access and edits](#%EF%B8%8F-onedrive-for-business-security-best-practices)
 
 ### Appendix A: Detailed Microsoft Teams Security Checklist
 
 * [MFA enforcement for guests/internal staff](#1-%EF%B8%8F-enforce-mfa-for-guests-and-external-users)
-* [Meeting policies & Teams Premium configurations](#2-%EF%B8%8F-block-forwarded-meeting-invites)
+* [Meeting policies &amp; Teams Premium configurations](#2-%EF%B8%8F-block-forwarded-meeting-invites)
 * [Teams DLP and sensitivity label mappings](#6-%EF%B8%8F-microsoft-teams-security-features-setup-guide)
 * [CMK encryption and key rotation policy](#4-%EF%B8%8F-microsoft-teams--customer-key-cmk)
 * [Azure Private Endpoint and DNS integration](#5-%EF%B8%8F-microsoft-teams--private-endpoints)
@@ -185,4 +184,5 @@ To implement the described security hardening, Leonardo Company Canada will requ
 * [Microsoft Compliance Center (Purview)](https://compliance.microsoft.com/)
 
 ---
+
 ![bg right:50%](./image/cloudstrucc_sig_transbg.png)
