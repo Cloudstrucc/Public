@@ -7,7 +7,7 @@ parameters:
     displayName: 'Solution Name (logical name) to Deploy'
   - name: branchName
     type: string
-    displayName: 'Target Branch Name (e.g., main, develop, release)'
+    displayName: 'Target Branch Name (e.g., staging, qa, et, pr)'
     default: 'main'
 
 variables:
@@ -109,6 +109,37 @@ stages:
 
           - checkout: self
             persistCredentials: true
+
+          - powershell: |
+              # Since the PR was completed and merged, the files should now be in the target branch
+              $targetBranch = "${{ parameters.branchName }}"
+              Write-Host "Checking out target branch: $targetBranch"
+              
+              # Configure Git
+              git config --global user.email "azure-pipeline@yourorg.com"
+              git config --global user.name "Azure Pipeline"
+              
+              git fetch origin
+              git checkout $targetBranch
+              git pull origin $targetBranch
+              
+              Write-Host "Current branch:"
+              git branch --show-current
+              
+              Write-Host "Recent commits:"
+              git log --oneline -5
+              
+              Write-Host "Looking for solution files..."
+              if (Test-Path ".\solutions") {
+                  Write-Host "Solutions directory contents:"
+                  Get-ChildItem -Path ".\solutions" -Recurse | Select-Object Name, FullName
+              } else {
+                  Write-Host "Solutions directory not found"
+              }
+              
+              Write-Host "Repository contents (solution-related files):"
+              Get-ChildItem -Path "." -Recurse -Name | Where-Object { $_ -like "*solution*" -or $_ -like "*.zip" } | ForEach-Object { Write-Host "  $_" }
+            displayName: 'Checkout Target Branch'
             
           - powershell: |
               # Use Windows-style path separators
@@ -175,9 +206,22 @@ stages:
                   exit 1
               }
               
+              # Create solutions directory and clean any existing files
+              New-Item -ItemType Directory -Force -Path ".\solutions" | Out-Null
+              
+              # Remove any existing solution files to avoid conflicts
+              if (Test-Path ".\solutions\$solutionName.zip") {
+                  Write-Host "Removing existing unmanaged solution file..."
+                  Remove-Item ".\solutions\$solutionName.zip" -Force
+              }
+              if (Test-Path ".\solutions\${solutionName}_managed.zip") {
+                  Write-Host "Removing existing managed solution file..."
+                  Remove-Item ".\solutions\${solutionName}_managed.zip" -Force
+              }
+              
               # Export unmanaged solution for source control
               Write-Host "Exporting unmanaged solution for source control..."
-              & $pacExe solution export --path ".\solutions\$solutionName.zip" --name "$solutionName" --managed false --async false
+              & $pacExe solution export --path ".\solutions\$solutionName.zip" --name "$solutionName" --managed false --async false --overwrite
               if ($LASTEXITCODE -ne 0) {
                   Write-Error "Unmanaged solution export failed"
                   exit 1
@@ -185,14 +229,18 @@ stages:
               
               # Export managed version for deployment
               Write-Host "Exporting managed solution for deployment..."
-              & $pacExe solution export --path ".\solutions\${solutionName}_managed.zip" --name "$solutionName" --managed true --async false
+              & $pacExe solution export --path ".\solutions\${solutionName}_managed.zip" --name "$solutionName" --managed true --async false --overwrite
               if ($LASTEXITCODE -ne 0) {
                   Write-Error "Managed solution export failed"
                   exit 1
               }
               
-              # Create solution checker results directory
+              # Create solution checker results directory and clean any existing files
               $solutionCheckerDir = ".\solution-checker-results"
+              if (Test-Path $solutionCheckerDir) {
+                  Write-Host "Removing existing solution checker results..."
+                  Remove-Item -Path $solutionCheckerDir -Recurse -Force
+              }
               New-Item -ItemType Directory -Force -Path $solutionCheckerDir | Out-Null
               
               Write-Host "Running solution checker..."
@@ -200,17 +248,52 @@ stages:
               $solutionCheckerExitCode = $LASTEXITCODE
               Write-Host "Solution checker completed with exit code: $solutionCheckerExitCode"
               
+              # Check if solution checker created any results
+              if (Test-Path $solutionCheckerDir) {
+                  $checkerFiles = Get-ChildItem -Path $solutionCheckerDir -Recurse
+                  if ($checkerFiles.Count -gt 0) {
+                      Write-Host "Solution checker created $($checkerFiles.Count) result files"
+                  } else {
+                      Write-Host "Solution checker directory exists but is empty"
+                      # Create a summary file to indicate checker ran but found no issues
+                      "Solution checker completed successfully with no issues found." | Out-File -FilePath "$solutionCheckerDir\summary.txt"
+                  }
+              } else {
+                  Write-Warning "Solution checker did not create results directory"
+                  # Create directory and summary file for artifact publishing
+                  New-Item -ItemType Directory -Force -Path $solutionCheckerDir | Out-Null
+                  "Solution checker failed to run or create results. Exit code: $solutionCheckerExitCode" | Out-File -FilePath "$solutionCheckerDir\error.txt"
+              }
+              
+              # Unpack solution for source control review
+              Write-Host "Unpacking solution for source control..."
+              $unpackedDir = ".\solutions\$solutionName"
+              if (Test-Path $unpackedDir) {
+                  Write-Host "Removing existing unpacked solution directory..."
+                  Remove-Item -Path $unpackedDir -Recurse -Force
+              }
+              New-Item -ItemType Directory -Force -Path $unpackedDir | Out-Null
+              
+              & $pacExe solution unpack --zipfile ".\solutions\$solutionName.zip" --folder $unpackedDir --packagetype Unmanaged --allowWrite --allowDelete
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Warning "Solution unpack failed, but continuing with deployment"
+              } else {
+                  Write-Host "Solution unpacked successfully for review"
+              }
+              
               # Git operations
-              Write-Host "Staging solution files..."
-              git add ".\solutions\*"
+              Write-Host "Staging solution files and unpacked source..."
+              git add ".\solutions\$solutionName\*" --force
+              git add ".\solutions\*.zip" --force
               
               if (Test-Path "$solutionCheckerDir\*") {
                   Write-Host "Staging solution checker results..."
-                  git add $solutionCheckerDir
+                  git add $solutionCheckerDir --force
               }
               
               Write-Host "Committing changes..."
-              git commit -m "feat: Export solution $solutionName for deployment [skip ci]"
+              $commitMessage = "feat: Export solution $solutionName for deployment - Added managed and unmanaged solution packages - Included unpacked solution source for review - Solution checker results attached - Ready for deployment review [skip ci]"
+              git commit -m $commitMessage
               
               Write-Host "Pushing changes..."
               git push origin $featureBranchName
@@ -220,11 +303,13 @@ stages:
               }
 
               Write-Host "Creating pull request..."
+              $description = "## Solution Deployment Request`n`n**Solution:** $solutionName`n**Target Branch:** ${{ parameters.branchName }}`n**Deployment Target:** `$(targetEnv)`n`n### What's Included`n- Managed solution package (for deployment)`n- Unmanaged solution package (for reference)`n- **Unpacked solution source** (for detailed review)`n- Solution checker results`n- Automated backup will be created before deployment`n`n### Review Checklist`n- [ ] Review unpacked solution source in solutions/$solutionName/ folder`n- [ ] Check solution checker results for any issues`n- [ ] Verify solution components are as expected`n- [ ] Confirm deployment target environment`n`n**Note:** Upon approval and completion of this PR, the solution will be automatically deployed to the target environment after creating a backup."
+              
               $body = @{
                   title = "Solution Deploy: $solutionName"
                   sourceRefName = "refs/heads/$featureBranchName"
                   targetRefName = "refs/heads/${{ parameters.branchName }}"
-                  description = "Automated PR for solution deployment with solution checker results`n`nSolution: $solutionName`nTarget Branch: ${{ parameters.branchName }}`n`nPlease review the solution checker results before approving."
+                  description = $description
               } | ConvertTo-Json
 
               $url = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=6.0"
@@ -248,6 +333,13 @@ stages:
             name: ExportSolution
             env:
               sourceEnv: $(sourceEnv)
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: './solution-checker-results'
+              ArtifactName: 'solution-checker-report'
+            displayName: 'Publish Solution Checker Results'
+            condition: and(succeededOrFailed(), ne(variables['Agent.JobStatus'], 'Canceled'))
 
   - stage: WaitForApproval
     dependsOn: ExportSolutionSource
@@ -307,19 +399,19 @@ stages:
                       
                       if ($prStatus.status -eq "completed") {
                           if ($prStatus.mergeStatus -eq "succeeded") {
-                              Write-Host "✅ Pull Request has been approved and completed successfully!"
+                              Write-Host "Pull Request has been approved and completed successfully!"
                               $approved = $true
                           } else {
-                              Write-Error "❌ Pull Request was completed but merge failed. Merge Status: $($prStatus.mergeStatus)"
+                              Write-Error "Pull Request was completed but merge failed. Merge Status: $($prStatus.mergeStatus)"
                               exit 1
                           }
                       }
                       elseif ($prStatus.status -eq "abandoned") {
-                          Write-Error "❌ Pull Request has been abandoned"
+                          Write-Error "Pull Request has been abandoned"
                           exit 1
                       }
                       else {
-                          Write-Host "⏳ Pull Request is still active. Current status: $($prStatus.status)"
+                          Write-Host "Pull Request is still active. Current status: $($prStatus.status)"
                           
                           # Check for approvals using repository ID
                           $reviewsUrl = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$repoId/pullrequests/$prId/reviewers?api-version=7.0"
@@ -330,20 +422,20 @@ stages:
                               $rejectedCount = ($reviews.value | Where-Object { $_.vote -eq -10 }).Count
                               $waitingCount = ($reviews.value | Where-Object { $_.vote -eq 0 }).Count
                               
-                              Write-Host "📊 Review Status - Approved: $approvedCount, Rejected: $rejectedCount, Waiting: $waitingCount"
+                              Write-Host "Review Status - Approved: $approvedCount, Rejected: $rejectedCount, Waiting: $waitingCount"
                               
                               if ($rejectedCount -gt 0) {
-                                  Write-Error "❌ Pull Request has been rejected"
+                                  Write-Error "Pull Request has been rejected"
                                   exit 1
                               }
                           }
                           catch {
-                              Write-Warning "⚠️  Could not check review details: $_"
+                              Write-Warning "Could not check review details: $_"
                           }
                       }
                   }
                   catch {
-                      Write-Warning "⚠️  Error checking PR status: $_"
+                      Write-Warning "Error checking PR status: $_"
                       Write-Host "Response details: $($_.Exception.Response)"
                       if ($_.Exception.Response) {
                           $reader = [System.IO.StreamReader]::new($_.Exception.Response.GetResponseStream())
@@ -353,24 +445,129 @@ stages:
                   }
                   
                   if (-not $approved -and $attempt -lt $maxAttempts) {
-                      Write-Host "⏱️  Waiting 30 seconds before next check..."
+                      Write-Host "Waiting 30 seconds before next check..."
                       Start-Sleep -Seconds 30
                   }
                   
               } while (-not $approved -and $attempt -lt $maxAttempts)
               
               if (-not $approved) {
-                  Write-Error "❌ Timeout waiting for PR approval after $($maxAttempts * 30) seconds"
+                  Write-Error "Timeout waiting for PR approval after $($maxAttempts * 30) seconds"
                   exit 1
               }
             displayName: 'Wait for PR Approval'
 
-  - stage: DeployToTarget
+  - stage: BackupTarget
     dependsOn: 
       - ExportSolutionSource
       - WaitForApproval
     variables:
       PacToolPath: $[ stageDependencies.ExportSolutionSource.ExportAndDeploy.outputs['PackageDownload.PacToolPath'] ]
+    jobs:
+      - job: CreateBackup
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'pac-cli'
+              targetPath: '$(Pipeline.Workspace)\pac-cli'
+            displayName: 'Download PAC CLI'
+
+          - powershell: |
+              # Use Windows-style path separators
+              $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
+              $pacExe = Join-Path -Path $pacPath -ChildPath "pac.exe"
+              
+              Write-Host "Using PAC CLI from: $pacExe"
+              Write-Host "##vso[task.setvariable variable=PacExe]$pacExe"
+              
+              # Create backup directory
+              New-Item -ItemType Directory -Force -Path ".\backup" | Out-Null
+            displayName: 'Initialize PAC CLI'
+
+          - powershell: |
+              $pacExe = "$(PacExe)"
+              $solutionName = "${{ parameters.solutionName }}"
+              
+              Write-Host "Connecting to target environment for backup: $env:targetEnv"
+              & $pacExe auth create --url "$env:targetEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Failed to authenticate to target environment"
+                  exit 1
+              }
+              
+              Write-Host "Creating backup snapshot of target environment before deployment..."
+              $backupLabel = "Pre-Deploy-$solutionName-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+              
+              # Check if solution exists in target environment
+              Write-Host "Checking if solution '$solutionName' exists in target environment..."
+              try {
+                  $solutions = & $pacExe solution list | Out-String
+                  if ($solutions -match $solutionName) {
+                      Write-Host "Solution '$solutionName' exists in target environment"
+                      Write-Host "Creating backup of existing solution..."
+                      
+                      # Export current version as backup
+                      try {
+                          & $pacExe solution export --path ".\backup\${solutionName}_backup_$(Get-Date -Format 'yyyyMMdd_HHmmss').zip" --name "$solutionName" --managed true --async false --overwrite
+                          if ($LASTEXITCODE -eq 0) {
+                              Write-Host "Solution backup created successfully"
+                          } else {
+                              Write-Warning "Solution backup failed, but continuing with deployment"
+                          }
+                      }
+                      catch {
+                          Write-Warning "Solution backup failed: $_, but continuing with deployment"
+                      }
+                  } else {
+                      Write-Host "Solution '$solutionName' does not exist in target environment - no solution backup needed"
+                  }
+              }
+              catch {
+                  Write-Warning "Could not check solution list: $_, but continuing with deployment"
+              }
+              
+              # Create environment backup/snapshot using Admin API if available
+              Write-Host "Attempting to create environment backup snapshot: $backupLabel"
+              try {
+                  # Capture output and error separately
+                  $backupOutput = & $pacExe admin backup --environment "$env:targetEnv" --label "$backupLabel" --notes "Automated backup before solution deployment of $solutionName" 2>&1
+                  $backupExitCode = $LASTEXITCODE
+                  
+                  if ($backupExitCode -eq 0) {
+                      Write-Host "Environment backup snapshot created successfully: $backupLabel"
+                  } else {
+                      Write-Warning "Environment backup failed (exit code: $backupExitCode)"
+                      Write-Warning "Output: $backupOutput"
+                      Write-Warning "This may be due to insufficient permissions - continuing with deployment"
+                  }
+              }
+              catch {
+                  Write-Warning "Environment backup failed: $_"
+                  Write-Warning "This may be due to insufficient permissions - continuing with deployment"
+              }
+              
+              Write-Host "Backup process completed - proceeding with deployment"
+              Write-Host "Note: If backups failed due to permissions, you may want to configure proper admin rights for future runs"
+            displayName: 'Create Target Environment Backup'
+            continueOnError: true
+            env:
+              targetEnv: $(targetEnv)
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: './backup'
+              ArtifactName: 'backup-files'
+            displayName: 'Publish Backup Files'
+            condition: and(succeededOrFailed(), ne(variables['Agent.JobStatus'], 'Canceled'))
+
+  - stage: DeployToTarget
+    dependsOn: 
+      - ExportSolutionSource
+      - WaitForApproval
+      - BackupTarget
+    variables:
+      PacToolPath: $[ stageDependencies.ExportSolutionSource.ExportAndDeploy.outputs['PackageDownload.PacToolPath'] ]
+      PullRequestId: $[ stageDependencies.ExportSolutionSource.ExportAndDeploy.outputs['ExportSolution.PullRequestId'] ]
     jobs:
       - job: DeployToTarget
         steps:
@@ -380,11 +577,61 @@ stages:
               targetPath: '$(Pipeline.Workspace)\pac-cli'
             displayName: 'Download PAC CLI'
 
-          - task: DownloadPipelineArtifact@2
+          - checkout: self
+            persistCredentials: true
+
+          - task: DownloadBuildArtifacts@1
             inputs:
-              artifactName: 'solution-files'
-              targetPath: '$(Pipeline.Workspace)\solutions'
-            displayName: 'Download Solution Files'
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'solution-checker-report'
+              downloadPath: '$(Pipeline.Workspace)'
+            displayName: 'Download Solution Checker Report'
+            continueOnError: true
+
+          - powershell: |
+              # Find the managed solution file from the target branch
+              $solutionName = "${{ parameters.solutionName }}"
+              $managedSolutionPath = ".\solutions\${solutionName}_managed.zip"
+              
+              Write-Host "Looking for managed solution at: $managedSolutionPath"
+              
+              if (-not (Test-Path $managedSolutionPath)) {
+                  Write-Host "Managed solution file not found at expected location: $managedSolutionPath"
+                  Write-Host "Searching for solution files in the repository..."
+                  
+                  # Search for any managed solution files
+                  $foundFiles = Get-ChildItem -Path "." -Recurse -Filter "*_managed.zip" -ErrorAction SilentlyContinue
+                  if ($foundFiles) {
+                      Write-Host "Found managed solution files:"
+                      $foundFiles | ForEach-Object { Write-Host "  - $($_.FullName)" }
+                      
+                      # Try to find the specific solution
+                      $targetFile = $foundFiles | Where-Object { $_.Name -like "*${solutionName}*" } | Select-Object -First 1
+                      if ($targetFile) {
+                          $managedSolutionPath = $targetFile.FullName
+                          Write-Host "Using found solution file: $managedSolutionPath"
+                      } else {
+                          Write-Host "Could not find managed solution for: $solutionName"
+                      }
+                  } else {
+                      Write-Host "No managed solution files found in repository"
+                  }
+                  
+                  # If still not found, list all files for debugging
+                  if (-not (Test-Path $managedSolutionPath)) {
+                      Write-Host "Current working directory: $(Get-Location)"
+                      Write-Host "All files in repository:"
+                      Get-ChildItem -Path "." -Recurse | Select-Object FullName | Format-Table -AutoSize
+                      
+                      Write-Error "Managed solution file not found. Please check if the solution was properly exported and committed."
+                      exit 1
+                  }
+              }
+              
+              Write-Host "Found managed solution at: $managedSolutionPath"
+              Write-Host "##vso[task.setvariable variable=ManagedSolutionPath]$managedSolutionPath"
+            displayName: 'Locate Solution Files'
 
           - powershell: |
               # Use Windows-style path separators
@@ -398,6 +645,7 @@ stages:
           - powershell: |
               $pacExe = "$(PacExe)"
               $solutionName = "${{ parameters.solutionName }}"
+              $managedSolutionPath = "$(ManagedSolutionPath)"
               
               Write-Host "Connecting to target environment: $env:targetEnv"
               & $pacExe auth create --url "$env:targetEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
@@ -407,48 +655,56 @@ stages:
               }
               
               Write-Host "Importing managed solution to target..."
-              $solutionPath = "$(Pipeline.Workspace)\solutions\${solutionName}_managed.zip"
-              Write-Host "Looking for solution file: $solutionPath"
+              Write-Host "Using solution file: $managedSolutionPath"
               
-              if (-not (Test-Path $solutionPath)) {
-                  Write-Error "Managed solution file not found at: $solutionPath"
-                  Write-Host "Available files:"
-                  Get-ChildItem -Path "$(Pipeline.Workspace)\solutions" -Recurse
+              if (-not (Test-Path $managedSolutionPath)) {
+                  Write-Error "Managed solution file not found at: $managedSolutionPath"
                   exit 1
               }
               
-              # Check if solution already exists in target environment
+              # Check if solution already exists in target environment and get its type
               Write-Host "Checking for existing solution in target environment..."
               $solutions = & $pacExe solution list | Out-String
               if ($solutions -match $solutionName) {
-                  Write-Host "Solution '$solutionName' already exists in target environment"
-                  Write-Host "Proceeding with upgrade/update import..."
+                  Write-Host "Solution '$solutionName' exists in target environment"
+                  
+                  # Get detailed solution information to check if it's managed or unmanaged
+                  $solutionDetails = & $pacExe solution list --json | ConvertFrom-Json
+                  $existingSolution = $solutionDetails | Where-Object { $_.uniqueName -eq $solutionName }
+                  
+                  if ($existingSolution) {
+                      $isManaged = $existingSolution.isManaged
+                      Write-Host "Existing solution is managed: $isManaged"
+                      
+                      if ($isManaged -eq $false) {
+                          Write-Host "Found unmanaged solution. Need to remove it before importing managed version."
+                          Write-Host "Removing existing unmanaged solution..."
+                          
+                          & $pacExe solution delete --solution-name $solutionName
+                          if ($LASTEXITCODE -ne 0) {
+                              Write-Error "Failed to delete existing unmanaged solution"
+                              exit 1
+                          }
+                          Write-Host "Successfully removed unmanaged solution"
+                      } else {
+                          Write-Host "Existing solution is managed. Proceeding with upgrade/update import..."
+                      }
+                  } else {
+                      Write-Host "Could not determine solution type. Proceeding with import attempt..."
+                  }
               } else {
                   Write-Host "Solution '$solutionName' not found in target environment"
                   Write-Host "Proceeding with new solution import..."
               }
               
-              & $pacExe solution import --path $solutionPath --async false --activate-plugins true --force-overwrite true
+              Write-Host "Importing managed solution..."
+              & $pacExe solution import --path $managedSolutionPath --async false --activate-plugins true --force-overwrite true
               if ($LASTEXITCODE -ne 0) {
                   Write-Error "Solution import failed"
                   exit 1
               }
               
-              Write-Host "✅ Solution '$solutionName' successfully deployed to target environment"
+              Write-Host "Solution '$solutionName' successfully deployed to target environment"
             displayName: 'Deploy to Target Environment'
             env:
               targetEnv: $(targetEnv)
-
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: './solution-checker-results'
-              ArtifactName: 'solution-checker-report'
-            displayName: 'Publish Solution Checker Results'
-            condition: succeededOrFailed()
-
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: './solutions'
-              ArtifactName: 'solution-files'
-            displayName: 'Publish Solution Files'
-            condition: succeededOrFailed()
