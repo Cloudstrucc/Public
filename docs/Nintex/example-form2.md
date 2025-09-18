@@ -1,4 +1,4 @@
-# ![Elections Canada Logo](https://www.elections.ca/images/ec_logo2.gif)
+# ![Elections Canada Logo](ec_logo2.gif)
 
 ## ELECTIONS CANADA  
 ### POLLING STATION ESTABLISHMENT AUTHORIZATION
