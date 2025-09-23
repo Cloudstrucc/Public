@@ -9,19 +9,17 @@
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;">
             <div style="flex: 1; min-width: 300px;">
                 <h1 style="font-size: 2.8rem; font-weight: 700; letter-spacing: -1px; margin: 0 0 8px 0; background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Leonardo Company Canada</h1>
-                <p style="font-size: 1.1rem; color: #e0e7ff; font-weight: 300; margin: 0 0 15px 0; letter-spacing: 0.5px;">Electronic Warfare Excellence</p>
-                <p style="font-size: 0.95rem; color: #c7d2fe; line-height: 1.6; max-width: 500px; margin: 0;">
-                    Global leader in Electronic Attack, Electronic Protection and Electronic Support technologies.
-                    Specializing in advanced EW simulation solutions including Newton and SkyTender systems.
+                <p style="font-size: 1.1rem; color: #e0e7ff; font-weight: 300; margin: 0 0 15px 0; letter-spacing: 0.5px;"></p>
+                <p style="font-size: 0.95rem; color: #c7d2fe; line-height: 1.6; max-width: 500px; margin: 0;">                    
                 </p>
             </div>
             <div style="background: rgba(239, 68, 68, 0.9); color: white; padding: 8px 20px; border-radius: 25px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); border: 1px solid rgba(255, 255, 255, 0.2);">
-                Defense Grade Security
+                Defense Grade M65 Security Configuration Guide
             </div>
         </div>
   <div style="border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 25px; margin-top: 25px;">
             <h2 style="font-size: 2.2rem; font-weight: 600; margin: 0 0 15px 0; color: #ffffff;">Microsoft Teams Customer Managed Keys</h2>
-            <p style="font-size: 1.3rem; color: #e0e7ff; font-weight: 400; margin: 0 0 20px 0;">Implementation Guide for Defense Organizations</p>  
+            <p style="font-size: 1.3rem; color: #e0e7ff; font-weight: 400; margin: 0 0 20px 0;">Implementation Guide</p>  
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 25px;">
                 <div style="background: rgba(255, 255, 255, 0.1); padding: 15px 20px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px);">
                     <div style="font-size: 0.8rem; color: #c7d2fe; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: 600;">Document Version</div>
@@ -30,11 +28,7 @@
                 <div style="background: rgba(255, 255, 255, 0.1); padding: 15px 20px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px);">
                     <div style="font-size: 0.8rem; color: #c7d2fe; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: 600;">Date</div>
                     <div style="font-size: 1rem; color: #ffffff; font-weight: 500;">September 2025</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.1); padding: 15px 20px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px);">
-                    <div style="font-size: 0.8rem; color: #c7d2fe; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: 600;">Department</div>
-                    <div style="font-size: 1rem; color: #ffffff; font-weight: 500;">Electronic Warfare Division</div>
-                </div>
+                </div>               
                 <div style="background: rgba(255, 255, 255, 0.1); padding: 15px 20px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px);">
                     <div style="font-size: 0.8rem; color: #c7d2fe; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: 600;">Security Level</div>
                     <div style="font-size: 1rem; color: #ffffff; font-weight: 500;">HSM-Backed CMK</div>
@@ -62,8 +56,6 @@
 ---
 
 ### About Leonardo Company Canada
-
-Leonardo Canada Electronics is a global leader in Electronic Attack, Electronic Protection and Electronic Support tools and technologies, specializing in electronic warfare simulation solutions including Newton and SkyTender systems. As pioneers in Electronic Countermeasure (ECM) and Electronic Counter-Countermeasure (ECCM) capabilities, Leonardo Canada takes a leading role in the dynamic field of EW and synthetic environments, with over 30 years of expertise in electronic warfare simulation.
 
 This document provides comprehensive guidance for implementing Customer Managed Keys (CMK) for Microsoft Teams within Leonardo's secure defense and aerospace operational environment.
 
