@@ -1,7 +1,6 @@
 <div class="classification-banner" style="background: #dc2626; color: white; text-align: center; padding: 8px; font-weight: 700; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3); margin: 0; font-family: 'Segoe UI', sans-serif;">
     INTERNAL USE ONLY
 </div>
-
 <header style="background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #1e40af 100%); color: white; padding: 40px 50px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; position: relative; overflow: hidden; margin: 0;">
     <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: conic-gradient(from 0deg, transparent 0%, rgba(255,255,255,0.03) 25%, transparent 50%, rgba(255,255,255,0.03) 75%, transparent 100%); border-radius: 50%; animation: rotate 60s linear infinite;"></div>
     <div style="position: absolute; top: 20px; right: 20px; font-size: 2rem; opacity: 0.1; color: white;">⚡📡🛡️</div>
