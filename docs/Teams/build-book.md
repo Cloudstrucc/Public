@@ -51,7 +51,7 @@
 **Prepared for:** Leonardo Company Canada  
 **Document Version:** 1.0  
 **Date:** September 2025  
-**Classification:** Confidential - Internal Use Only
+**Classification:** Internal Use Only
 
 ---
 
