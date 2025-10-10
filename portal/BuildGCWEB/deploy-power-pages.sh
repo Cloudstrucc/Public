@@ -9,6 +9,28 @@
 # UPDATE the breadcrumbs webtemplate & the language toggle
 ##############
 
+#####################################
+# PRE-REQUISITES BEFORE RUNNING THIS SCRIPT
+# STEP 1: INSTALL A LANGUAGE PACK (E.G. FRENCH) AND UPDATE THE FRENCH_LANGUAGE_CODE VARIABLE BELOW
+# STEP 2: ONCE THE LANGUAGE PACK IS INSTALLED, CREATE A NEW BLANK WEBSITE IN YOUR DATAVERSE ENVIRONMENT (MUST BE ENHANCED DATAMODEL)
+# STEP 3: ONCE THE WEBSITE IS CREATED, GO TO THE POWER PAGES MANAGEMENT APP, THEN OPEN THE WEBSITE RECORD AND ADD FRENCH AS AN ADDITIONAL LANGUAGE
+# STEP 4: COPY THE WEBSITE ID (GUID) FOR THE CONFIGURATION FILE (SEE STEP 6)
+# STEP 5: INSTALL THE FILE_UPLOAD_FLOW.ZIP SOLUTION IN YOUR DATAVERSE ENVIRONMENT
+# STEP 6: ONCE THE FILE_UPDLOAD_FLOW.ZIP SOLUTION IS INSTALL, OPEN THE SOLUTION AND OPEN THE CLOUD FLOW. PRESS EDIT, AND COPY THE FIRST TRIGGER ACTION'S HTTP POST URL FOR THE CONFIGURATION FILE (SEE STEP 6)
+# STEP 6: CREATE A CONNECTION.JSON FILE SOMEWHERE ON YOUR FILE SYSTEM AND POPULATE THESE VARIABLES (NOTE YOU CAN IGNORE THE BLOB ADDRESS VARIABLE AS THIS IS NOT YET SUPPORTED):
+# {
+#   "clientId": "",
+#   "tenantId": "",
+#   "crmInstance": "",
+#   "redirectUri": "https://login.onmicrosoft.com",
+#   "websiteId": "",
+#   "blobAddress": "https://yourstorageaccount.blob.core.windows.net/yourcontainer/",
+#   "FlowURL": "https://SOMEID.f3.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b361d67fd1SOMEID954a569a01efdcfd7337c4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SOMESIG",
+#   "clientSecret": ""
+# }
+
+#####################################
+
 # Configuration variables
 BASE_PATH="/Users/frederickpearson/projects/Public/portal/BuildGCWEB/files/"
 BASE_PATH_SNIPPETS="${BASE_PATH}liquid/contentsnippets/snippets.json"
@@ -16,8 +38,8 @@ PORTAL_BASIC_THEME_PATH="${BASE_PATH}portalbasictheme.css"
 THEME_PATH="${BASE_PATH}theme.css"
 BOOTSTRAP_PATH="${BASE_PATH}bootstrap.min.css"
 FAVICON_PATH="${BASE_PATH}favicon.ico"
-ZIP_FILE_PATH="/Users/frederickpearson/projects/Public/files/themes-dist-15.2.0-gcweb.zip"
-EXTRACTION_PATH="${BASE_PATH}extracted_files/"
+ZIP_FILE_PATH="${BASE_PATH}themes-dist-15.2.0-gcweb.zip"
+EXTRACTION_PATH="${BASE_PATH}"
 THEME_ROOT_FOLDER_NAME="themes-dist-15.2.0-gcweb"
 BASE_PATH_TEMPLATES="${BASE_PATH}liquid/webtemplates"
 PAGE_TEMPLATE_NAME_NEW_HOME="CS-Home-WET"
@@ -25,6 +47,11 @@ WEB_TEMPLATE_HEADER="CS-header"
 WEB_TEMPLATE_FOOTER="CS-footer"
 ENGLISH_LANGUAGE_CODE=1033
 FRENCH_LANGUAGE_CODE=1036
+
+# URL encode function for query parameters
+urlencode() {
+    python3 -c "import sys; from urllib.parse import quote; print(quote(sys.argv[1], safe=''))" "$1"
+}
 
 ####################################
 # Functions
@@ -161,11 +188,18 @@ update_record_api() {
 get_record_api() {
     local url="$1"
     
-    curl -s -X GET "$url" \
+    # URL encode spaces and special characters
+    url="${url// /%20}"
+    url="${url//\'/%27}"
+    
+    local response
+    response=$(curl -s "$url" \
         -H "Authorization: Bearer $TOKEN" \
         -H "OData-MaxVersion: 4.0" \
         -H "OData-Version: 4.0" \
-        -H "Accept: application/json"
+        -H "Accept: application/json")
+    
+    echo "$response"
 }
 
 # Get IDs functions
@@ -177,7 +211,7 @@ get_page_template_id() {
     local response
     response=$(get_record_api "$query")
     PAGE_TEMPLATE_ID=$(echo "$response" | jq -r '.value[0].mspp_pagetemplateid')
-    echo "Page Template ID: $PAGE_TEMPLATE_ID"
+    >&2 echo "Page Template ID: $PAGE_TEMPLATE_ID"
 }
 
 get_publishing_state_id() {
@@ -188,7 +222,7 @@ get_publishing_state_id() {
     local response
     response=$(get_record_api "$query")
     PUBLISHING_STATE_ID=$(echo "$response" | jq -r '.value[0].mspp_publishingstateid')
-    echo "Publishing State ID: $PUBLISHING_STATE_ID"
+    >&2 echo "Publishing State ID: $PUBLISHING_STATE_ID"
 }
 
 get_english_language_id() {
@@ -199,7 +233,7 @@ get_english_language_id() {
     local response
     response=$(get_record_api "$query")
     ENGLISH_LANGUAGE_ID=$(echo "$response" | jq -r '.value[0].mspp_websitelanguageid')
-    echo "English Language ID: $ENGLISH_LANGUAGE_ID"
+    >&2 echo "English Language ID: $ENGLISH_LANGUAGE_ID"
 }
 
 get_french_language_id() {
@@ -209,17 +243,24 @@ get_french_language_id() {
     local response
     response=$(get_record_api "$query")
     FRENCH_LANGUAGE_ID=$(echo "$response" | jq -r '.value[0].mspp_websitelanguageid')
-    echo "French Language ID: $FRENCH_LANGUAGE_ID"
+    >&2 echo "French Language ID: $FRENCH_LANGUAGE_ID"
 }
 
 get_root_home_page_id() {
     local filter="_mspp_websiteid_value eq '$WEBSITE_ID' and mspp_isroot eq true and mspp_name eq 'Home'"
     local query="${API_URL}mspp_webpages?\$filter=$filter"
     
+    >&2 echo "DEBUG: Query for home page: $query"
+    
     local response
     response=$(get_record_api "$query")
+    
+    >&2 echo "DEBUG: API Response: $response"
+    
     HOME_PAGE_ID=$(echo "$response" | jq -r '.value[0].mspp_webpageid')
-    echo "Home Web Page ID: $HOME_PAGE_ID"
+    
+    >&2 echo "DEBUG: Extracted HOME_PAGE_ID: $HOME_PAGE_ID"
+    >&2 echo "Home Web Page ID: $HOME_PAGE_ID"
 }
 
 get_english_home_page_id() {
@@ -230,7 +271,7 @@ get_english_home_page_id() {
     local response
     response=$(get_record_api "$query")
     HOME_CONTENT_PAGE_EN=$(echo "$response" | jq -r '.value[0].mspp_webpageid')
-    echo "EN Home Web Page ID: $HOME_CONTENT_PAGE_EN"
+    >&2 echo "EN Home Web Page ID: $HOME_CONTENT_PAGE_EN"
 }
 
 get_french_home_page_id() {
@@ -240,7 +281,7 @@ get_french_home_page_id() {
     local response
     response=$(get_record_api "$query")
     HOME_CONTENT_PAGE_FR=$(echo "$response" | jq -r '.value[0].mspp_webpageid')
-    echo "FR Home Web Page ID: $HOME_CONTENT_PAGE_FR"
+    >&2 echo "FR Home Web Page ID: $HOME_CONTENT_PAGE_FR"
 }
 
 # Update baseline styles
@@ -285,17 +326,16 @@ get_mime_type() {
 create_web_page() {
     local name="$1"
     local parent_page_id="$2"
-    local is_home_page=false
     
-    if [[ "$name" == "$THEME_ROOT_FOLDER_NAME" || -z "$parent_page_id" ]]; then
-        is_home_page=true
-        echo "Page Name: $name, Parent Page ID: $parent_page_id, Is Home Page: $is_home_page"
-        return
+    # Validate inputs
+    if [[ -z "$name" || -z "$parent_page_id" ]]; then
+        >&2 echo "ERROR: create_web_page called with empty name or parent_page_id"
+        return 1
     fi
     
     local partial_url=$(echo "$name" | tr '[:upper:]' '[:lower:]')
     
-    echo "Page Name: $name, Parent Page ID: $parent_page_id, Is Home Page: $is_home_page"
+    >&2 echo "Creating/Updating page: $name (parent: $parent_page_id)"
     
     local filter="mspp_partialurl eq '$partial_url' and _mspp_websiteid_value eq '$WEBSITE_ID'"
     
@@ -304,7 +344,6 @@ create_web_page() {
     fi
     
     local check_url="${API_URL}mspp_webpages?\$filter=$filter"
-    echo "Checking URL: $check_url"
     
     local existing_pages
     existing_pages=$(get_record_api "$check_url")
@@ -329,16 +368,23 @@ create_web_page() {
         }')
     
     if [[ -n "$existing_page_id" && "$existing_page_id" != "null" ]]; then
-        echo "Web page already exists. Updating existing page."
+        >&2 echo "Web page already exists with ID: $existing_page_id"
         local update_url="${API_URL}mspp_webpages($existing_page_id)"
-        update_record_api "$update_url" "$web_page_json"
+        update_record_api "$update_url" "$web_page_json" > /dev/null 2>&1
         echo "$existing_page_id"
     else
         local response
         response=$(create_record_api "${API_URL}mspp_webpages" "$web_page_json")
         local new_page_id
         new_page_id=$(echo "$response" | jq -r '.mspp_webpageid')
-        echo "$new_page_id"
+        
+        if [[ -n "$new_page_id" && "$new_page_id" != "null" ]]; then
+            >&2 echo "Created new page with ID: $new_page_id"
+            echo "$new_page_id"
+        else
+            >&2 echo "ERROR: Failed to create page. API response: $response"
+            return 1
+        fi
     fi
 }
 
@@ -346,6 +392,17 @@ create_web_page() {
 create_web_file() {
     local file_path="$1"
     local parent_page_id="$2"
+    
+    # Validate inputs
+    if [[ -z "$file_path" || ! -f "$file_path" ]]; then
+        >&2 echo "ERROR: Invalid file path: $file_path"
+        return 1
+    fi
+    
+    if [[ -z "$parent_page_id" || "$parent_page_id" == "null" ]]; then
+        >&2 echo "ERROR: Invalid parent_page_id for file $(basename "$file_path"): '$parent_page_id'"
+        return 1
+    fi
     
     local file_name=$(basename "$file_path")
     local partial_url=$(echo "$file_name" | tr -d ' ' | tr '[:upper:]' '[:lower:]')
@@ -399,32 +456,45 @@ create_web_file() {
     
     local web_file_id
     if [[ "$existing_count" -gt 0 ]]; then
-        echo "Web file already exists: $file_path"
         local existing_file_id
         existing_file_id=$(echo "$existing_files" | jq -r '.value[0].mspp_webfileid')
         local update_url="${API_URL}mspp_webfiles($existing_file_id)"
-        update_record_api "$update_url" "$web_file_json"
+        local update_response
+        update_response=$(update_record_api "$update_url" "$web_file_json" 2>&1)
         web_file_id="$existing_file_id"
+        >&2 echo "Updated web file: $file_name (ID: $web_file_id)"
     else
         local response
-        response=$(create_record_api "${API_URL}mspp_webfiles" "$web_file_json")
-        web_file_id=$(echo "$response" | jq -r '.mspp_webfileid')
+        response=$(create_record_api "${API_URL}mspp_webfiles" "$web_file_json" 2>&1)
+        web_file_id=$(echo "$response" | jq -r '.mspp_webfileid // empty')
         
         if [[ -z "$web_file_id" || "$web_file_id" == "null" ]]; then
-            echo "Failed to create web file for $file_name"
-            return
+            >&2 echo "ERROR: Failed to create web file for $file_name"
+            >&2 echo "API Response: $response"
+            return 1
         fi
+        >&2 echo "Created web file: $file_name (ID: $web_file_id)"
     fi
     
+    # Get the power page component
     local existing_row
-    existing_row=$(get_record_api "${API_URL}powerpagecomponents($web_file_id)")
+    existing_row=$(get_record_api "${API_URL}powerpagecomponents($web_file_id)" 2>&1)
     
-    echo "File Name: $(echo "$existing_row" | jq -r '.name')"
+    local component_id
+    component_id=$(echo "$existing_row" | jq -r '.powerpagecomponentid // empty')
+    
+    if [[ -z "$component_id" || "$component_id" == "null" ]]; then
+        >&2 echo "WARNING: Could not get power page component for $file_name"
+        return 0
+    fi
+    
+    local component_name
+    component_name=$(echo "$existing_row" | jq -r '.name // empty')
     
     local flow_body
     flow_body=$(jq -n \
-        --arg id "$(echo "$existing_row" | jq -r '.powerpagecomponentid')" \
-        --arg name "$(echo "$existing_row" | jq -r '.name')" \
+        --arg id "$component_id" \
+        --arg name "$component_name" \
         --arg content "$file_content" \
         '{
             "powerpagecomponentid": $id,
@@ -432,9 +502,13 @@ create_web_file() {
             "filecontent": $content
         }')
     
-    curl -s -X POST "$FLOW_URL" \
+    # Send to Flow
+    local flow_response
+    flow_response=$(curl -s -X POST "$FLOW_URL" \
         -H "Content-Type: application/json; charset=utf-8" \
-        -d "$flow_body"
+        -d "$flow_body" 2>&1)
+    
+    >&2 echo "Uploaded file content for: $file_name"
 }
 
 # Write hierarchy
@@ -442,18 +516,46 @@ write_hierarchy() {
     local path="$1"
     local parent_page_id="$2"
     
+    # If parent_page_id is empty and this is the root theme folder, use HOME_PAGE_ID
+    if [[ -z "$parent_page_id" ]]; then
+        >&2 echo "WARNING: parent_page_id is empty, using HOME_PAGE_ID"
+        parent_page_id="$HOME_PAGE_ID"
+    fi
+    
+    # Validate HOME_PAGE_ID is set
+    if [[ -z "$HOME_PAGE_ID" || "$HOME_PAGE_ID" == "null" ]]; then
+        >&2 echo "ERROR: HOME_PAGE_ID is not set! Cannot continue."
+        return 1
+    fi
+    
     for item in "$path"/*; do
+        # Skip if glob doesn't match any files
+        [[ -e "$item" ]] || continue
+        
         if [[ -f "$item" ]]; then
-            if [[ -z "$parent_page_id" ]]; then
-                parent_page_id="$HOME_PAGE_ID"
-            fi
-            echo "IS NOT FOLDER + $parent_page_id + $item"
+            >&2 echo "Processing file: $(basename "$item") with parent: $parent_page_id"
             create_web_file "$item" "$parent_page_id"
         elif [[ -d "$item" ]]; then
-            echo "IS FOLDER + $parent_page_id + $item"
-            local new_page_id
-            new_page_id=$(create_web_page "$(basename "$item")" "$parent_page_id")
-            write_hierarchy "$item" "$new_page_id"
+            local folder_name=$(basename "$item")
+            
+            # Skip the root theme folder itself
+            if [[ "$folder_name" == "$THEME_ROOT_FOLDER_NAME" ]]; then
+                >&2 echo "ROOT FOLDER detected: $folder_name - recursing with HOME_PAGE_ID"
+                write_hierarchy "$item" "$HOME_PAGE_ID"
+            else
+                >&2 echo "Processing folder: $folder_name with parent: $parent_page_id"
+                local new_page_id
+                new_page_id=$(create_web_page "$folder_name" "$parent_page_id")
+                
+                # Only recurse if we got a valid page ID
+                if [[ -n "$new_page_id" && "$new_page_id" != "null" ]]; then
+                    >&2 echo "Successfully created page for $folder_name (ID: $new_page_id)"
+                    write_hierarchy "$item" "$new_page_id"
+                else
+                    >&2 echo "WARNING: Failed to create page for $folder_name, using parent ID ($parent_page_id) for children"
+                    write_hierarchy "$item" "$parent_page_id"
+                fi
+            fi
         fi
     done
 }
@@ -520,7 +622,7 @@ create_web_template() {
         create_record_api "${API_URL}mspp_pagetemplates" "$page_template_payload"
         
         if [[ -n "$response" ]]; then
-            echo "mspp_webtemplate created successfully with ID: $wt_id"
+            >&2 echo "mspp_webtemplate created successfully with ID: $wt_id"
             
             if [[ "$filename" == "$WEB_TEMPLATE_HEADER" || "$filename" == "$WEB_TEMPLATE_FOOTER" ]]; then
                 local lookup_name="mspp_headerwebtemplateid@odata.bind"
@@ -579,13 +681,14 @@ create_snippets() {
         existing_count_en=$(echo "$existing_snippets_en" | jq -r '.value | length')
         
         if [[ "$existing_count_en" -gt 0 ]]; then
-            echo "Snippet already exists: $snippet_name (EN)"
+            >&2 echo "Snippet already exists: $snippet_name (EN)"
             local existing_snippet_id
             existing_snippet_id=$(echo "$existing_snippets_en" | jq -r '.value[0].mspp_contentsnippetid')
             local update_url="${API_URL}mspp_contentsnippets($existing_snippet_id)"
-            update_record_api "$update_url" "$snippet_payload_en"
+            update_record_api "$update_url" "$snippet_payload_en" > /dev/null 2>&1
         else
-            create_record_api "${API_URL}mspp_contentsnippets" "$snippet_payload_en"
+            create_record_api "${API_URL}mspp_contentsnippets" "$snippet_payload_en" > /dev/null 2>&1
+            >&2 echo "Created snippet: $snippet_name (EN)"
         fi
         
         # French snippet
@@ -611,15 +714,16 @@ create_snippets() {
         existing_count_fr=$(echo "$existing_snippets_fr" | jq -r '.value | length')
         
         if [[ "$existing_count_fr" -gt 0 ]]; then
-            echo "Snippet already exists: $snippet_name (FR)"
+            >&2 echo "Snippet already exists: $snippet_name (FR)"
             local existing_snippet_id
             existing_snippet_id=$(echo "$existing_snippets_fr" | jq -r '.value[0].mspp_contentsnippetid')
             local update_url="${API_URL}mspp_contentsnippets($existing_snippet_id)"
-            update_record_api "$update_url" "$snippet_payload_fr"
+            update_record_api "$update_url" "$snippet_payload_fr" > /dev/null 2>&1
         else
-            create_record_api "${API_URL}mspp_contentsnippets" "$snippet_payload_fr"
+            create_record_api "${API_URL}mspp_contentsnippets" "$snippet_payload_fr" > /dev/null 2>&1
+            >&2 echo "Created snippet: $snippet_name (FR)"
         fi
-    done
+    done <<< "$snippet_names"
 }
 
 # Write templates
@@ -700,6 +804,8 @@ run_portal_template_install() {
     update_home_page "$PAGE_TEMPLATE_NAME_NEW_HOME"
     
     echo "Writing hierarchy..."
+    >&2 echo "DEBUG: HOME_PAGE_ID before write_hierarchy: $HOME_PAGE_ID"
+    >&2 echo "DEBUG: Calling write_hierarchy with path: ${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}"
     write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
     
     echo "Updating baseline styles..."
@@ -740,6 +846,14 @@ main() {
     
     # Setup configuration
     setup_config
+
+    # Debug: Verify config was loaded
+    >&2 echo "========== CONFIG DEBUG =========="
+    >&2 echo "CLIENT_ID: ${CLIENT_ID:0:10}..."
+    >&2 echo "WEBSITE_ID: $WEBSITE_ID"
+    >&2 echo "API_URL: $API_URL"
+    >&2 echo "CRM_INSTANCE: $CRM_INSTANCE"
+    >&2 echo "=================================="
     
     # Acquire authentication token
     echo "Acquiring authentication token..."
@@ -754,6 +868,10 @@ main() {
     get_root_home_page_id
     get_english_home_page_id
     get_french_home_page_id
+
+    # Debug: Check if critical variables are set
+    >&2 echo "DEBUG: WEBSITE_ID = $WEBSITE_ID"
+    >&2 echo "DEBUG: API_URL = $API_URL"
     
     # Run the installation
     echo "Starting portal template installation..."
