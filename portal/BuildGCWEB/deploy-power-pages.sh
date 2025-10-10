@@ -647,16 +647,34 @@ create_web_template() {
 
 # Create snippets
 create_snippets() {
+    # Check if language IDs are set
+    if [[ -z "$ENGLISH_LANGUAGE_ID" || "$ENGLISH_LANGUAGE_ID" == "null" ]]; then
+        >&2 echo "ERROR: English Language ID is not set. Cannot create snippets."
+        return 1
+    fi
+    
+    if [[ -z "$FRENCH_LANGUAGE_ID" || "$FRENCH_LANGUAGE_ID" == "null" ]]; then
+        >&2 echo "ERROR: French Language ID is not set. Cannot create snippets."
+        return 1
+    fi
+
+    # Read snippet content from the JSON file
     local snippets_json
     snippets_json=$(cat "$BASE_PATH_SNIPPETS")
     
-    echo "$snippets_json" | jq -r 'to_entries | .[]' | while IFS= read -r entry; do
-        local snippet_name
-        snippet_name=$(echo "$entry" | jq -r '.key')
+    # Get all keys from the JSON object
+    local snippet_names
+    snippet_names=$(echo "$snippets_json" | jq -r 'keys[]')
+    
+    while IFS= read -r snippet_name; do
+        [[ -z "$snippet_name" ]] && continue
+        
         local snippet_content_english
-        snippet_content_english=$(echo "$entry" | jq -r '.value[0]')
+        snippet_content_english=$(echo "$snippets_json" | jq -r --arg name "$snippet_name" '.[$name][0]')
         local snippet_content_french
-        snippet_content_french=$(echo "$entry" | jq -r '.value[1]')
+        snippet_content_french=$(echo "$snippets_json" | jq -r --arg name "$snippet_name" '.[$name][1]')
+        
+        >&2 echo "Processing snippet: $snippet_name"
         
         # English snippet
         local snippet_payload_en
@@ -672,13 +690,13 @@ create_snippets() {
                 "mspp_contentsnippetlanguageid@odata.bind": ("/mspp_websitelanguages(" + $lang_id + ")")
             }')
         
-        local filter_en="(mspp_name eq '$snippet_name' and _mspp_contentsnippetlanguageid_value eq $ENGLISH_LANGUAGE_ID)"
+        local filter_en="(mspp_name%20eq%20'$snippet_name'%20and%20_mspp_contentsnippetlanguageid_value%20eq%20$ENGLISH_LANGUAGE_ID)"
         local check_url_en="${API_URL}mspp_contentsnippets?\$filter=$filter_en"
         local existing_snippets_en
         existing_snippets_en=$(get_record_api "$check_url_en")
         
         local existing_count_en
-        existing_count_en=$(echo "$existing_snippets_en" | jq -r '.value | length')
+        existing_count_en=$(echo "$existing_snippets_en" | jq -r '.value | length // 0')
         
         if [[ "$existing_count_en" -gt 0 ]]; then
             >&2 echo "Snippet already exists: $snippet_name (EN)"
@@ -705,13 +723,13 @@ create_snippets() {
                 "mspp_contentsnippetlanguageid@odata.bind": ("/mspp_websitelanguages(" + $lang_id + ")")
             }')
         
-        local filter_fr="(mspp_name eq '$snippet_name' and _mspp_contentsnippetlanguageid_value eq $FRENCH_LANGUAGE_ID)"
+        local filter_fr="(mspp_name%20eq%20'$snippet_name'%20and%20_mspp_contentsnippetlanguageid_value%20eq%20$FRENCH_LANGUAGE_ID)"
         local check_url_fr="${API_URL}mspp_contentsnippets?\$filter=$filter_fr"
         local existing_snippets_fr
         existing_snippets_fr=$(get_record_api "$check_url_fr")
         
         local existing_count_fr
-        existing_count_fr=$(echo "$existing_snippets_fr" | jq -r '.value | length')
+        existing_count_fr=$(echo "$existing_snippets_fr" | jq -r '.value | length // 0')
         
         if [[ "$existing_count_fr" -gt 0 ]]; then
             >&2 echo "Snippet already exists: $snippet_name (FR)"
@@ -811,7 +829,7 @@ run_portal_template_install() {
 # STEP 1: EXTRACT GCWEB FILES
 #####################################
     echo "Extracting theme files..."
-    # unzip -o "$ZIP_FILE_PATH" -d "$EXTRACTION_PATH"
+    unzip -o "$ZIP_FILE_PATH" -d "$EXTRACTION_PATH"
 
 #####################################
 # STEP 2: CREATE SNIPPETS
@@ -823,13 +841,13 @@ run_portal_template_install() {
 # STEP 3: CREATE TEMPLATES
 #####################################
     echo "Writing templates..."
-    # write_templates "$BASE_PATH_TEMPLATES"
+    write_templates "$BASE_PATH_TEMPLATES"
 
 #####################################
 # STEP 4: UPDATE HOME PAGE COPY
 #####################################
     echo "Updating home page..."
-    # update_home_page "$PAGE_TEMPLATE_NAME_NEW_HOME"
+    update_home_page "$PAGE_TEMPLATE_NAME_NEW_HOME"
     
 #####################################
 # STEP 5: CREATE WEB PAGES & WEB FILES
@@ -838,13 +856,13 @@ run_portal_template_install() {
     >&2 echo "DEBUG: HOME_PAGE_ID before write_hierarchy: $HOME_PAGE_ID"
     >&2 echo "DEBUG: Calling write_hierarchy with path: ${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}"
     
-    # write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
+    write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
 
 #####################################
 # STEP 6: UPSERT THE BASELINE STYLES REQUIRED BY POWER PAGES
 #####################################
     echo "Updating baseline styles..."
-    # update_baseline_styles
+    update_baseline_styles
     
     echo "Portal template installation complete!"
 }
