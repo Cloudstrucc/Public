@@ -34,6 +34,7 @@
 # Configuration variables
 BASE_PATH="/Users/frederickpearson/projects/Public/portal/BuildGCWEB/files/"
 BASE_PATH_SNIPPETS="${BASE_PATH}liquid/contentsnippets/snippets.json"
+BASE_PATH_TEMPLATES="${BASE_PATH}liquid/webtemplates/"
 PORTAL_BASIC_THEME_PATH="${BASE_PATH}portalbasictheme.css"
 THEME_PATH="${BASE_PATH}theme.css"
 BOOTSTRAP_PATH="${BASE_PATH}bootstrap.min.css"
@@ -41,7 +42,6 @@ FAVICON_PATH="${BASE_PATH}favicon.ico"
 ZIP_FILE_PATH="${BASE_PATH}themes-dist-15.2.0-gcweb.zip"
 EXTRACTION_PATH="${BASE_PATH}"
 THEME_ROOT_FOLDER_NAME="themes-dist-15.2.0-gcweb"
-BASE_PATH_TEMPLATES="${BASE_PATH}liquid/webtemplates"
 PAGE_TEMPLATE_NAME_NEW_HOME="CS-Home-WET"
 WEB_TEMPLATE_HEADER="CS-header"
 WEB_TEMPLATE_FOOTER="CS-footer"
@@ -730,13 +730,28 @@ create_snippets() {
 write_templates() {
     local folder_path="$1"
     
-    echo "Folder: $(basename "$folder_path")"
+    >&2 echo "Folder: $(basename "$folder_path")"
     
+    # Process .html files
     for file in "$folder_path"/*.html; do
+        [[ -e "$file" ]] || continue
         if [[ -f "$file" ]]; then
             local filename
             filename=$(basename "$file" .html)
-            echo "  File: $filename"
+            >&2 echo "  File: $filename"
+            local html
+            html=$(cat "$file")
+            create_web_template "$html" "$filename"
+        fi
+    done
+    
+    # Process .liquid files
+    for file in "$folder_path"/*.liquid; do
+        [[ -e "$file" ]] || continue
+        if [[ -f "$file" ]]; then
+            local filename
+            filename=$(basename "$file" .liquid)
+            >&2 echo "  File: $filename"
             local html
             html=$(cat "$file")
             create_web_template "$html" "$filename"
@@ -803,9 +818,10 @@ run_portal_template_install() {
     echo "Updating home page..."
     update_home_page "$PAGE_TEMPLATE_NAME_NEW_HOME"
     
-    echo "Writing hierarchy..."
+    echo "Writing hierarchy (using the extracted gcweb zip file structure & files)..."
     >&2 echo "DEBUG: HOME_PAGE_ID before write_hierarchy: $HOME_PAGE_ID"
     >&2 echo "DEBUG: Calling write_hierarchy with path: ${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}"
+    
     write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
     
     echo "Updating baseline styles..."
