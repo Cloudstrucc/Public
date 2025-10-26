@@ -37,6 +37,7 @@ BASE_PATH_SNIPPETS="${BASE_PATH}liquid/contentsnippets/snippets.json"
 BASE_PATH_TEMPLATES="${BASE_PATH}liquid/webtemplates/"
 PORTAL_BASIC_THEME_PATH="${BASE_PATH}portalbasictheme.css"
 THEME_PATH="${BASE_PATH}theme.css"
+CUSTOMCSS_PATH="${BASE_PATH}custom-styles.css"
 BOOTSTRAP_PATH="${BASE_PATH}bootstrap.min.css"
 FAVICON_PATH="${BASE_PATH}favicon.ico"
 ZIP_FILE_PATH="${BASE_PATH}themes-dist-15.2.0-gcweb.zip"
@@ -287,9 +288,10 @@ get_french_home_page_id() {
 # Update baseline styles
 update_baseline_styles() {
     create_web_file "$PORTAL_BASIC_THEME_PATH" "$HOME_PAGE_ID"
-    create_web_file "$THEME_PATH" "$HOME_PAGE_ID"
+    create_web_file "$THEME_PATH" "$HOME_PAGE_ID"    
     create_web_file "$BOOTSTRAP_PATH" "$HOME_PAGE_ID"
     create_web_file "$FAVICON_PATH" "$HOME_PAGE_ID"
+    create_web_file "$CUSTOMCSS_PATH" "$HOME_PAGE_ID"
 }
 
 # Get relative path
@@ -829,25 +831,25 @@ run_portal_template_install() {
 # STEP 1: EXTRACT GCWEB FILES
 #####################################
     echo "Extracting theme files..."
-    unzip -o "$ZIP_FILE_PATH" -d "$EXTRACTION_PATH"
+    # unzip -o "$ZIP_FILE_PATH" -d "$EXTRACTION_PATH"
 
 #####################################
 # STEP 2: CREATE SNIPPETS
 #####################################
     echo "Creating snippets..."
-    create_snippets
+    # create_snippets
 
 #####################################
 # STEP 3: CREATE TEMPLATES
 #####################################
     echo "Writing templates..."
-    write_templates "$BASE_PATH_TEMPLATES"
+    # write_templates "$BASE_PATH_TEMPLATES"
 
 #####################################
 # STEP 4: UPDATE HOME PAGE COPY
 #####################################
     echo "Updating home page..."
-    update_home_page "$PAGE_TEMPLATE_NAME_NEW_HOME"
+    # update_home_page "$PAGE_TEMPLATE_NAME_NEW_HOME"
     
 #####################################
 # STEP 5: CREATE WEB PAGES & WEB FILES
@@ -856,7 +858,7 @@ run_portal_template_install() {
     >&2 echo "DEBUG: HOME_PAGE_ID before write_hierarchy: $HOME_PAGE_ID"
     >&2 echo "DEBUG: Calling write_hierarchy with path: ${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}"
     
-    write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
+    # write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
 
 #####################################
 # STEP 6: UPSERT THE BASELINE STYLES REQUIRED BY POWER PAGES

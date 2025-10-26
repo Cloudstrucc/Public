@@ -1,42 +1,352 @@
+<style>
+/* Elections Canada Custom Styles - Official FIP Colors */
+
+:root {
+  --fip-red: #EB2D37;
+  --ec-yellow: #FAD714;
+  --ec-blue: #005A9B;
+  --ec-green: #008750;
+  --ec-light-gray: #C8C8C8;
+  --ec-dark-gray: #4B4B4B;
+  --ec-border-gray: #E0E0E0;
+  --pewter-grey: #969696;
+}
+
+.bg-primary-ec {
+  background-color: var(--ec-blue) !important;
+  color: white;
+}
+
+.ec-header {
+  background-color: white;
+  padding: 40px 0;
+  border-top: 4px solid var(--fip-red);
+  border-bottom: 1px solid var(--ec-border-gray);
+}
+
+.ec-header h1 {
+  border-bottom: 3px solid var(--fip-red);
+  display: inline-block;
+  padding-bottom: 10px;
+  color: #000;
+  margin-top: 0;
+}
+
+/* Override GCWeb theme paragraph sizes */
+.ec-header p,
+.ec-header .lead,
+p.lead {
+  color: var(--ec-dark-gray);
+  font-size: 1.5rem !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  margin-bottom: 15px !important;
+}
+
+/* Sub-lead styling - slightly smaller than lead */
+.ec-header .sub-lead,
+p.sub-lead {
+  color: var(--ec-dark-gray);
+  font-size: 1.25rem !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  margin-bottom: 15px !important;
+}
+
+/* Responsive sizing for paragraphs and lead text */
+@media (min-width: 768px) {
+  .ec-header p,
+  .ec-header .lead,
+  p.lead {
+    font-size: 1.75rem !important;
+  }
+  
+  .ec-header .sub-lead,
+  p.sub-lead {
+    font-size: 1.4rem !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .ec-header p,
+  .ec-header .lead,
+  p.lead {
+    font-size: 2rem !important;
+  }
+  
+  .ec-header .sub-lead,
+  p.sub-lead {
+    font-size: 1.6rem !important;
+  }
+}
+
+.btn-ec-primary,
+.btn-ec-primary:link,
+.btn-ec-primary:visited {
+  background-color: var(--fip-red);
+  color: white !important;
+  border: 2px solid var(--fip-red);
+  border-radius: 0;
+  padding: 12px 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+}
+
+.btn-ec-primary:hover,
+.btn-ec-primary:focus,
+.btn-ec-primary:active {
+  background-color: #C71F2D;
+  color: white !important;
+  border-color: #C71F2D;
+  text-decoration: none !important;
+}
+
+.btn-ec-outline,
+.btn-ec-outline:link,
+.btn-ec-outline:visited {
+  background-color: transparent;
+  color: var(--fip-red) !important;
+  border: 2px solid var(--fip-red);
+  border-radius: 0;
+  padding: 12px 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+}
+
+.btn-ec-outline:hover,
+.btn-ec-outline:focus,
+.btn-ec-outline:active {
+  background-color: var(--fip-red);
+  color: white !important;
+  text-decoration: none !important;
+}
+
+.home-most-requested {
+  background-color: var(--ec-yellow);
+  border: none;
+  padding: 30px 0;
+}
+
+.home-most-requested h2 {
+  color: #000;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.home-most-requested a {
+  color: #000;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.home-most-requested a:hover,
+.home-most-requested a:focus {
+  color: var(--fip-red);
+  text-decoration: underline;
+}
+
+.gc-srvinfo h2 {
+  color: #000;
+  font-weight: 600;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--ec-border-gray);
+}
+
+.gc-srvinfo h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.gc-srvinfo h3 a {
+  color: var(--ec-blue);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.gc-srvinfo h3 a:hover,
+.gc-srvinfo h3 a:focus {
+  color: var(--fip-red);
+  text-decoration: underline;
+}
+
+.gc-srvinfo p {
+  color: #424242;
+  line-height: 1.6;
+}
+
+.home-your-gov {
+  background-color: var(--ec-dark-gray);
+  color: white;
+  border: none;
+  padding: 30px 0;
+}
+
+.home-your-gov h2 {
+  color: white;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.home-your-gov a {
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.home-your-gov a:hover,
+.home-your-gov a:focus {
+  color: var(--ec-yellow);
+  text-decoration: underline;
+}
+
+.gc-features h2 {
+  color: #000;
+  font-weight: 600;
+  margin: 40px 0 30px 0;
+}
+
+.gc-features .well {
+  border: 2px solid var(--ec-border-gray);
+  transition: box-shadow 0.3s ease;
+}
+
+.gc-features .well:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.gc-features h3 a {
+  color: var(--ec-blue);
+  font-weight: 600;
+}
+
+.gc-features h3 a:hover,
+.gc-features h3 a:focus {
+  color: var(--fip-red);
+}
+
+.stretched-link::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  content: "";
+}
+
+.position-relative {
+  position: relative;
+}
+
+.pagedetails {
+  margin-top: 40px;
+  padding: 20px 0;
+  border-top: 1px solid var(--ec-border-gray);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ec-header {
+    padding: 20px 0;
+  }
+  
+  .btn-ec-primary, 
+  .btn-ec-outline {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+/* Fallback for browsers that don't support CSS variables */
+.btn-ec-primary {
+  background-color: #EB2D37;
+  border-color: #EB2D37;
+}
+
+.btn-ec-outline {
+  color: #EB2D37;
+  border-color: #EB2D37;
+}
+
+.home-most-requested {
+  background-color: #FAD714;
+}
+
+.gc-srvinfo h3 a {
+  color: #005A9B;
+}
+
+.home-your-gov {
+  background-color: #4B4B4B;
+}
+</style>
+
 {% if user %}
 
+<!-- =============================================== -->
+<!-- AUTHENTICATED USER VIEW -->
+<!-- =============================================== -->
 
 <main class="container" property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
-  <h1 id="wb-cont" property="name">Services and information - Working examples</h1>
+  <h1 id="wb-cont" property="name">{{ snippets['EC/ADMIN/PAGE_TITLE'] | default: 'Services and information - Working examples' }}</h1>
   <div class="wb-prettify all-pre hide wb-init wb-prettify-inited" id="wb-auto-4"></div>
 
   <div class="alert alert-info">
-    <p>The following working examples are based on the <a href="gc-srvinfo.html">services and information technical specification</a>. The content and structure of this page might not consistant with the rest of this site.</p>
+    <p>{{ snippets['EC/ADMIN/ALERT_MESSAGE'] | default: 'The following working examples are based on the services and information technical specification. The content and structure of this page might not consistant with the rest of this site.' }}</p>
   </div>
 
   <ul class="list-inline">
-    <li><a class="btn btn-primary" href="/reference">Documentation</a></li>
-    <li><a class="btn btn-primary" href="https://github.com/wet-boew/GCWeb/issues/new?title=gc-srvinfo">Questions ou commentaires?</a></li>
+    {% assign admin_tools = weblinks['EC Admin Tools'] %}
+    {% if admin_tools and admin_tools.weblinks.size > 0 %}
+      {% for link in admin_tools.weblinks %}
+        <li><a class="btn btn-primary" href="{{ link.url | h }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a></li>
+      {% endfor %}
+    {% else %}
+      <li><a class="btn btn-primary" href="/reference">{{ snippets['EC/ADMIN/DOC_TEXT'] | default: 'Documentation' }}</a></li>
+      <li><a class="btn btn-primary" href="https://github.com/wet-boew/GCWeb/issues/new?title=gc-srvinfo">{{ snippets['EC/ADMIN/FEEDBACK_TEXT'] | default: 'Questions or comments?' }}</a></li>
+    {% endif %}
   </ul>
 
-  <h2 id="eg1">Example 1: Doormat links in 2 columns pattern</h2>
+  <h2 id="eg1">{{ snippets['EC/ADMIN/EXAMPLE1_TITLE'] | default: 'Example 1: Doormat links in 2 columns pattern' }}</h2>
   <section class="gc-srvinfo">
-    <h2>Services and information</h2>
+    <h2>{{ snippets['EC/ADMIN/SERVICES_INFO_TITLE'] | default: 'Services and information' }}</h2>
     <div class="wb-eqht row wb-init wb-eqht-inited" id="wb-auto-5">
-      <div class="col-md-6" style="vertical-align: top; min-height: 139px;">
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </div>
-      <div class="col-md-6" style="vertical-align: top; min-height: 139px;">
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </div>
-      <div class="col-md-6" style="vertical-align: top; min-height: 139px;">
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </div>
-      <div class="col-md-6" style="vertical-align: top; min-height: 139px;">
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </div>
+      {% assign example_links = weblinks['EC Admin Example Links'] %}
+      {% if example_links and example_links.weblinks.size > 0 %}
+        {% for link in example_links.weblinks limit:4 %}
+          <div class="col-md-6" style="vertical-align: top; min-height: 139px;">
+            <h3><a href="{{ link.url | h }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a></h3>
+            <p>{{ link.description | h | default: snippets['EC/ADMIN/PLACEHOLDER_DESC'] }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-md-6" style="vertical-align: top; min-height: 139px;">
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </div>
+        <div class="col-md-6" style="vertical-align: top; min-height: 139px;">
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </div>
+        <div class="col-md-6" style="vertical-align: top; min-height: 139px;">
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </div>
+        <div class="col-md-6" style="vertical-align: top; min-height: 139px;">
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </div>
+      {% endif %}
     </div>
   </section>
-  <h3>Code</h3>
+  
+  <h3>{{ snippets['EC/ADMIN/CODE_HEADING'] | default: 'Code' }}</h3>
   <pre class="prettyprint prettyprinted" style=""><code><span class="pln">
 </span><span class="tag">&lt;section</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"gc-srvinfo"</span><span class="tag">&gt;</span><span class="pln">
 	</span><span class="tag">&lt;h2&gt;</span><span class="pln">Services and information</span><span class="tag">&lt;/h2&gt;</span><span class="pln">
@@ -45,107 +355,127 @@
 			</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
 			</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</span><span class="tag">&lt;/p&gt;</span><span class="pln">
 		</span><span class="tag">&lt;/div&gt;</span><span class="pln">
-	</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"col-md-6"</span><span class="tag">&gt;</span><span class="pln">
-			</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-			</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</span><span class="tag">&lt;/p&gt;</span><span class="pln">
-		</span><span class="tag">&lt;/div&gt;</span><span class="pln">
-	</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"col-md-6"</span><span class="tag">&gt;</span><span class="pln">
-			</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-			</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</span><span class="tag">&lt;/p&gt;</span><span class="pln">
-		</span><span class="tag">&lt;/div&gt;</span><span class="pln">
-	</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"col-md-6"</span><span class="tag">&gt;</span><span class="pln">
-			</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-			</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</span><span class="tag">&lt;/p&gt;</span><span class="pln">
-		</span><span class="tag">&lt;/div&gt;</span><span class="pln">
 	</span><span class="tag">&lt;/div&gt;</span><span class="pln">
 </span><span class="tag">&lt;/section&gt;</span></code></pre>
-  <h2 id="eg2">Example 2: <strong>Doormat links in single column pattern</strong></h2>
+
+  <h2 id="eg2">{{ snippets['EC/ADMIN/EXAMPLE2_TITLE'] | default: 'Example 2: Doormat links in single column pattern' }}</h2>
   <section class="gc-srvinfo">
-    <h2>Services and information</h2>
-    <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-    <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-    <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-    <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-    <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-    <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
+    <h2>{{ snippets['EC/ADMIN/SERVICES_INFO_TITLE'] | default: 'Services and information' }}</h2>
+    {% if example_links and example_links.weblinks.size > 0 %}
+      {% for link in example_links.weblinks limit:3 %}
+        <h3><a href="{{ link.url | h }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a></h3>
+        <p>{{ link.description | h | default: snippets['EC/ADMIN/PLACEHOLDER_DESC'] }}</p>
+      {% endfor %}
+    {% else %}
+      <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+      <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+      <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+      <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+      <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+      <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+    {% endif %}
   </section>
-  <h3>Code</h3>
+  
+  <h3>{{ snippets['EC/ADMIN/CODE_HEADING'] | default: 'Code' }}</h3>
   <pre class="prettyprint prettyprinted" style=""><code><span class="pln">
 </span><span class="tag">&lt;section</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"gc-srvinfo"</span><span class="tag">&gt;</span><span class="pln">
 	</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
 	</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</span><span class="tag">&lt;/p&gt;</span><span class="pln">
-	</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-	</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</span><span class="tag">&lt;/p&gt;</span><span class="pln">
-	</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-	</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</span><span class="tag">&lt;/p&gt;</span><span class="pln">
 </span><span class="tag">&lt;/section&gt;</span></code></pre>
-  <h2 id="eg3">Example 3: Sequential doormat links in single column pattern</h2>
+
+  <h2 id="eg3">{{ snippets['EC/ADMIN/EXAMPLE3_TITLE'] | default: 'Example 3: Sequential doormat links in single column pattern' }}</h2>
   <section class="gc-srvinfo">
-    <h2>Services and information</h2>
+    <h2>{{ snippets['EC/ADMIN/SERVICES_INFO_TITLE'] | default: 'Services and information' }}</h2>
     <ol>
-      <li>
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </li>
-      <li>
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </li>
-      <li>
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </li>
+      {% if example_links and example_links.weblinks.size > 0 %}
+        {% for link in example_links.weblinks limit:3 %}
+          <li>
+            <h3><a href="{{ link.url | h }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a></h3>
+            <p>{{ link.description | h | default: snippets['EC/ADMIN/PLACEHOLDER_DESC'] }}</p>
+          </li>
+        {% endfor %}
+      {% else %}
+        <li>
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </li>
+        <li>
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </li>
+        <li>
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </li>
+      {% endif %}
     </ol>
   </section>
-  <h3>Code</h3>
+  
+  <h3>{{ snippets['EC/ADMIN/CODE_HEADING'] | default: 'Code' }}</h3>
   <pre class="prettyprint prettyprinted" style=""><code><span class="pln">
 </span><span class="tag">&lt;section</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"gc-srvinfo"</span><span class="tag">&gt;</span><span class="pln">
 </span><span class="tag">&lt;h2&gt;</span><span class="pln">Services and information</span><span class="tag">&lt;/h2&gt;</span><span class="pln">
 </span><span class="tag">&lt;ol&gt;</span><span class="pln">
 	</span><span class="tag">&lt;li&gt;&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
 		</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</span><span class="tag">&lt;/p&gt;&lt;/li&gt;</span><span class="pln">
-	</span><span class="tag">&lt;li&gt;&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-		</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</span><span class="tag">&lt;/p&gt;&lt;/li&gt;</span><span class="pln">
-	</span><span class="tag">&lt;li&gt;&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-		</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</span><span class="tag">&lt;/p&gt;&lt;/li&gt;</span><span class="pln">
 </span><span class="tag">&lt;/ol&gt;</span><span class="pln">
 </span><span class="tag">&lt;/section&gt;</span></code></pre>
-  <h2 id="eg4">Example 4:<strong> Doormat links in 3 columns grouped with headings pattern</strong></h2>
+
+  <h2 id="eg4">{{ snippets['EC/ADMIN/EXAMPLE4_TITLE'] | default: 'Example 4: Doormat links in 3 columns grouped with headings pattern' }}</h2>
   <section class="gc-srvinfo">
-    <h2>Services for Canadians in Canada</h2>
+    <h2>{{ snippets['EC/ADMIN/EXAMPLE4_SECTION1'] | default: 'Services for Canadians in Canada' }}</h2>
     <div class="wb-eqht row wb-init">
-      <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </div>
-      <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </div>
-      <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </div>
+      {% if example_links and example_links.weblinks.size > 0 %}
+        {% for link in example_links.weblinks limit:3 %}
+          <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
+            <h3><a href="{{ link.url | h }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a></h3>
+            <p>{{ link.description | h | default: snippets['EC/ADMIN/PLACEHOLDER_DESC'] }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </div>
+        <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </div>
+        <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </div>
+      {% endif %}
     </div>
   </section>
   <section class="gc-srvinfo">
-    <h2>Services for Canadians abroad</h2>
+    <h2>{{ snippets['EC/ADMIN/EXAMPLE4_SECTION2'] | default: 'Services for Canadians abroad' }}</h2>
     <div class="wb-eqht row wb-init">
-      <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </div>
-      <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </div>
-      <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
-        <h3><a href="#">[Subtopic hyperlink text]</a></h3>
-        <p>Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.</p>
-      </div>
+      {% if example_links and example_links.weblinks.size > 3 %}
+        {% for link in example_links.weblinks offset:3 limit:3 %}
+          <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
+            <h3><a href="{{ link.url | h }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a></h3>
+            <p>{{ link.description | h | default: snippets['EC/ADMIN/PLACEHOLDER_DESC'] }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </div>
+        <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </div>
+        <div class="col-md-6 col-lg-4" style="vertical-align: top; min-height: 165px;">
+          <h3><a href="#">{{ snippets['EC/ADMIN/PLACEHOLDER_LINK'] | default: '[Subtopic hyperlink text]' }}</a></h3>
+          <p>{{ snippets['EC/ADMIN/PLACEHOLDER_DESC'] | default: 'Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs.' }}</p>
+        </div>
+      {% endif %}
     </div>
   </section>
-  <h3>Code</h3>
+  
+  <h3>{{ snippets['EC/ADMIN/CODE_HEADING'] | default: 'Code' }}</h3>
   <pre class="prettyprint prettyprinted" style=""><code><span class="pln">
 </span><span class="tag">&lt;section</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"gc-srvinfo"</span><span class="tag">&gt;</span><span class="pln">
 </span><span class="tag">&lt;h2&gt;</span><span class="pln">Services for Canadians in Canada</span><span class="tag">&lt;/h2&gt;</span><span class="pln">
@@ -154,246 +484,253 @@
 		</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
 		</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs. </span><span class="tag">&lt;/p&gt;</span><span class="pln">
 	</span><span class="tag">&lt;/div&gt;</span><span class="pln">
-	</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"col-md-6 col-lg-4"</span><span class="tag">&gt;</span><span class="pln">
-		</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-		</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs. </span><span class="tag">&lt;/p&gt;</span><span class="pln">
-	</span><span class="tag">&lt;/div&gt;</span><span class="pln">
-	</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"col-md-6 col-lg-4"</span><span class="tag">&gt;</span><span class="pln">
-		</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-		</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs. </span><span class="tag">&lt;/p&gt;</span><span class="pln">
-	</span><span class="tag">&lt;/div&gt;</span><span class="pln">
-</span><span class="tag">&lt;/div&gt;</span><span class="pln">
-</span><span class="tag">&lt;/section&gt;</span><span class="pln">
-</span><span class="tag">&lt;section</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"gc-srvinfo"</span><span class="tag">&gt;</span><span class="pln">
-</span><span class="tag">&lt;h2&gt;</span><span class="pln">Services for Canadians abroad</span><span class="tag">&lt;/h2&gt;</span><span class="pln">
-</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"wb-eqht row"</span><span class="tag">&gt;</span><span class="pln">
-	</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"col-md-6 col-lg-4"</span><span class="tag">&gt;</span><span class="pln">
-		</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-		</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs. </span><span class="tag">&lt;/p&gt;</span><span class="pln">
-	</span><span class="tag">&lt;/div&gt;</span><span class="pln">
-	</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"col-md-6 col-lg-4"</span><span class="tag">&gt;</span><span class="pln">
-		</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-		</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs. </span><span class="tag">&lt;/p&gt;</span><span class="pln">
-	</span><span class="tag">&lt;/div&gt;</span><span class="pln">
-	</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"col-md-6 col-lg-4"</span><span class="tag">&gt;</span><span class="pln">
-		</span><span class="tag">&lt;h3&gt;&lt;a</span><span class="pln"> </span><span class="atn">href</span><span class="pun">=</span><span class="atv">"#"</span><span class="tag">&gt;</span><span class="pln">[Subtopic hyperlink text]</span><span class="tag">&lt;/a&gt;&lt;/h3&gt;</span><span class="pln">
-		</span><span class="tag">&lt;p&gt;</span><span class="pln">Summary of the information or tasks that can be accomplished on the sub-topic page. Remove prose or promotional messaging. Use action verbs. </span><span class="tag">&lt;/p&gt;</span><span class="pln">
-	</span><span class="tag">&lt;/div&gt;</span><span class="pln">
 </span><span class="tag">&lt;/div&gt;</span><span class="pln">
 </span><span class="tag">&lt;/section&gt;</span></code></pre>
 
   <section class="pagedetails">
-    <h2 class="wb-inv">Page details</h2>
-
+    <h2 class="wb-inv">{{ snippets['EC/ADMIN/PAGE_DETAILS'] | default: 'Page details' }}</h2>
     <div class="row">
-      <div class="wb-share col-sm-4 col-md-3 col-sm-push-8 col-md-push-9 wb-init wb-share-inited" data-wb-share='{"lnkClass": "btn btn-default btn-block"}' id="wb-auto-6">
-        <section id="shr-pg0" class="shr-pg mfp-hide modal-dialog modal-content overlay-def">
-          <header class="modal-header"><h2 class="modal-title">Share this page</h2></header>
-          <div class="modal-body">
-            <ul class="list-unstyled colcount-xs-2">
-              <li><a href="https://www.blogger.com/blog_this.pyra?t=&amp;u=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html&amp;n=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca" class="shr-lnk blogger btn btn-default" rel="noreferrer noopener">Blogger</a></li>
-              <li><a href="https://www.diigo.com/post?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html&amp;title=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca" class="shr-lnk diigo btn btn-default" rel="noreferrer noopener">Diigo</a></li>
-              <li><a href="mailto:?subject=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca&amp;body=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html%0A" class="shr-lnk email btn btn-default" rel="noreferrer noopener">Email</a></li>
-              <li><a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html&amp;t=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca" class="shr-lnk facebook btn btn-default" rel="noreferrer noopener">Facebook</a></li>
-              <li><a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;tf=1&amp;to=&amp;su=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca&amp;body=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html%0A" class="shr-lnk gmail btn btn-default" rel="noreferrer noopener">Gmail</a></li>
-              <li><a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html&amp;title=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca&amp;ro=false&amp;summary=&amp;source=" class="shr-lnk linkedin btn btn-default" rel="noreferrer noopener">LinkedIn®</a></li>
-              <li><a href="https://www.myspace.com/Modules/PostTo/Pages/?u=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html&amp;t=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca" class="shr-lnk myspace btn btn-default" rel="noreferrer noopener">MySpace</a></li>
-              <li><a href="https://www.pinterest.com/pin/create/button/?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html&amp;media=&amp;description=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca" class="shr-lnk pinterest btn btn-default" rel="noreferrer noopener">Pinterest</a></li>
-              <li><a href="https://reddit.com/submit?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html&amp;title=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca" class="shr-lnk reddit btn btn-default" rel="noreferrer noopener">reddit</a></li>
-              <li><a href="https://tinyurl.com/create.php?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html" class="shr-lnk tinyurl btn btn-default" rel="noreferrer noopener">TinyURL</a></li>
-              <li><a href="https://www.tumblr.com/share/link?url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html&amp;name=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca&amp;description=" class="shr-lnk tumblr btn btn-default" rel="noreferrer noopener">tumblr</a></li>
-              <li><a href="https://twitter.com/intent/tweet?text=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca&amp;url=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html" class="shr-lnk twitter btn btn-default" rel="noreferrer noopener">Twitter</a></li>
-              <li><a href="https://api.whatsapp.com/send?text=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca%0A%0Ahttps%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html" class="shr-lnk whatsapp btn btn-default" rel="noreferrer noopener">Whatsapp</a></li>
-              <li><a href="https://compose.mail.yahoo.com/?to=&amp;subject=Services%20and%20information%20-%20Working%20examples%20-%20Canada.ca&amp;body=https%3A%2F%2Fwet-boew.github.io%2FGCWeb%2Fcomponents%2Fgc-servinfo%2Fgc-srvinfo-examples.html%0A" class="shr-lnk yahoomail btn btn-default" rel="noreferrer noopener">Yahoo! Mail</a></li>
-            </ul>
-            <p class="col-sm-12 shr-dscl">No endorsement of any products or services is expressed or implied.</p>
-            <div class="clearfix"></div>
-          </div>
-        </section>
-        <a href="#shr-pg0" aria-controls="shr-pg0" class="shr-opn wb-lbx btn btn-default btn-block wb-lbx-inited wb-init" id="wb-auto-7"><span class="glyphicon glyphicon-share"></span>Share this page</a>
-      </div>
-      <div class="col-sm-6 col-md-5 col-lg-4 col-sm-pull-4 col-md-pull-3">
+      <div class="col-sm-6 col-md-5 col-lg-4">
         <dl id="wb-dtmd">
-          <dt>Date modified:</dt>
-          <dd><time property="dateModified">2019-01-16</time></dd>
+          <dt>{{ snippets['EC/ADMIN/DATE_MODIFIED_LABEL'] | default: 'Date modified:' }}</dt>
+          <dd><time property="dateModified">{{ now | date: '%Y-%m-%d' }}</time></dd>
         </dl>
       </div>
     </div>
   </section>
 </main>
 
-<div id="iacs5gg" class="row sectionBlockLayout text-left" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;">
-  <div class="container" id="igxbayg" style="padding: 0px; display: flex; flex-wrap: wrap;"><div class="col-md-12 columnBlockLayout" style="flex-grow: 1; display: flex; flex-direction: column; min-width: 250px; word-break: break-word;"></div></div>
-</div>
-
 {% else %}
 
+<!-- =============================================== -->
+<!-- ANONYMOUS USER VIEW -->
+<!-- =============================================== -->
+
 <main property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
-  <div class="bg-primary text-white" style="background-color:#284162; padding-top: 40px; padding-bottom: 40px;">
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <h1 style="border-bottom: 3px solid red; display: inline-block; padding-bottom: 10px;">{{ snippets['CS/HOME/TITLE'] }}</h1>
-        <p class="lead" style="font-size: 2rem;">{{ snippets['CS/HOME/SUBTITLE'] }}</p>
-        <p>{{ snippets['CS/HOME/DESC'] }}</p>
- <a href="/Account/Login" class="btn btn-light mr-2" style="margin-top: 20px; background-color: #fff; color: #284162; border-radius: 0;">{{ snippets['CS/HOME/ACCOUNT'] }}</a>
-        <a href="/Account/Login" class="btn btn-outline-light" style="margin-top: 20px; color: #fff; border-color: #fff; border-radius: 0;">{{ snippets['CS/HOME/SIGNIN'] }}</a>
+  <div class="ec-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h1>{{ snippets['EC/HOME/TITLE'] | default: 'Elections Canada' }}</h1>
+          <p class="lead">{{ snippets['EC/HOME/TAGLINE'] | default: 'Strengthening Democracy for All Canadians' }}</p>
+          <p class="sub-lead">{{ snippets['EC/HOME/DESCRIPTION'] | default: 'Your trusted source for federal election information, voter registration, and electoral services.' }}</p>
+          
+          {% assign header_buttons = weblinks['EC Header Buttons'] %}
+          {% if header_buttons and header_buttons.weblinks.size > 0 %}
+            {% for link in header_buttons.weblinks limit:2 %}
+              {% if forloop.first %}
+                <a href="{{ link.url | h }}" class="btn btn-ec-primary" style="margin-top: 20px; margin-right: 10px;" title="{{ link.tooltip | h }}">{{ link.name | h }}</a>
+              {% else %}
+                <a href="{{ link.url | h }}" class="btn btn-ec-outline" style="margin-top: 20px;" title="{{ link.tooltip | h }}">{{ link.name | h }}</a>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <a href="/Account/Login" class="btn btn-ec-primary" style="margin-top: 20px; margin-right: 10px;">{{ snippets['EC/HOME/BTN_REGISTER'] | default: 'Register' }}</a>
+            <a href="/Account/Login" class="btn btn-ec-outline" style="margin-top: 20px;">{{ snippets['EC/HOME/BTN_SIGNIN'] | default: 'Sign In' }}</a>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- Most Requested Services Section -->
   <section class="home-most-requested well well-sm brdr-0">
     <div class="container">
-      <h2 class="mrgn-tp-md">{{ snippets['CS/HOME/MOSTREQ'] }}</h2>
-      <ul id="wb-auto-6" class="wb-eqht list-unstyled mrgn-tp-md mrgn-bttm-sm lst-spcd-2 list-responsive wb-init wb-eqht-inited">
-        <li id="i5gf7yy" style="vertical-align: top; min-height: 27px;"><a href="https://www.canada.ca/en/government/sign-in-online-account.html">Login to an account</a></li>
-        <li id="ilexezm" style="vertical-align: top; min-height: 27px;"><a href="https://www.canada.ca/en/services/benefits/ei.html">Employment Insurance and leave</a></li>
-        <li id="ixrr2cg" style="vertical-align: top; min-height: 27px;"><a href="https://www.canada.ca/en/services/benefits/publicpensions.html">Public pensions (CPP and OAS)</a></li>
-        <li id="iia0fq5" style="vertical-align: top; min-height: 27px;"><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-passports.html">Get a passport</a></li>
-        <li id="isy1gsz" style="vertical-align: top; min-height: 27px;"><a href="https://weather.gc.ca/canada_e.html">Weather</a></li>
-        <li id="i5nlhel" style="vertical-align: top; min-height: 27px;"><a href="https://www.canada.ca/en/government/grants-funding.html">Grants and funding</a></li>
-        <li id="ijnx0xh" style="vertical-align: top; min-height: 27px;"><a href="https://www.canada.ca/en/government/change-address.html">Change your address</a></li>
-        <li id="i76sdmq" style="vertical-align: top; min-height: 27px;"><a href="http://www.healthycanadians.gc.ca/recall-alert-rappel-avis/index-eng.php">Product recalls and alerts</a></li>
+      <h2 class="mrgn-tp-md">{{ snippets['EC/HOME/MOSTREQ_TITLE'] | default: 'Most Requested Services' }}</h2>
+      <ul class="wb-eqht list-unstyled mrgn-tp-md mrgn-bttm-sm lst-spcd-2 list-responsive">
+        {% assign most_requested = weblinks['EC Most Requested'] %}
+        {% if most_requested and most_requested.weblinks.size > 0 %}
+          {% for link in most_requested.weblinks %}
+            <li><a href="{{ link.url | h }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a></li>
+          {% endfor %}
+        {% else %}
+          <li><a href="#">Check voter registration status</a></li>
+          <li><a href="#">Find your polling station</a></li>
+          <li><a href="#">Register to vote online</a></li>
+          <li><a href="#">Apply for a mail-in ballot</a></li>
+          <li><a href="#">Election results and statistics</a></li>
+          <li><a href="#">Become an election worker</a></li>
+          <li><a href="#">Political party registration</a></li>
+          <li><a href="#">Electoral district maps</a></li>
+        {% endif %}
       </ul>
     </div>
   </section>
+
+  <!-- Services and Information Section -->
   <section class="gc-srvinfo container">
-    <h2 class="wb-inv">Services and information</h2>
-    <div class="wb-eqht row wb-init">
-      <div class="col-lg-4 col-md-6" id="i0lc2x8" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="{{ sitemarkers['Search'].url }}">Jobs</a></h3>
-        <p>Find a job, training, hiring programs, work permits, Social Insurance Number (SIN)</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="ixrj3di" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/immigration-citizenship.html">Immigration and citizenship</a></h3>
-        <p>Visit, work, study, immigrate, refugees, permanant residents, apply, check status</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="isf4ogu" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://travel.gc.ca">Travel and tourism</a></h3>
-        <p>In Canada or abroad, advice, advisories, passports, visit Canada, events, attractions</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="i4puu2k" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/business.html">Business and industry</a></h3>
-        <p>Starting a business, permits, copyright, business support, selling to government</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="i7b1rio" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/benefits.html">Benefits</a></h3>
-        <p>EI, family and sickness leave, pensions, housing, student aid, disabilities</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="iwr1fhc" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/health.html">Health</a></h3>
-        <p>Food, nutrition, diseases, vaccines, drugs, product safety and recalls</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="i1twirb" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/taxes.html">Taxes</a></h3>
-        <p>Income tax, payroll, GST/HST, contribution limits, tax credits, charities</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="ia9ot4x" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/environment.html">Environment and natural resources</a></h3>
-        <p>Weather, climate, agriculture, wildlife, pollution, conservation, fisheries</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="i19tz7z" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/defence.html">National security and defence</a></h3>
-        <p>Military, transportation and cyber security, securing the border, counter-terrorism</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="i3opbdq" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/culture.html">Culture, history and sport</a></h3>
-        <p>Arts, media, heritage, official languages, national identity and funding</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="irps1bg" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/policing.html">Policing, justice and emergencies</a></h3>
-        <p>Safety, justice system, prepare for emergencies, services for victims of crime</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="ibvmw1c" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/transport.html">Transport and infrastructure</a></h3>
-        <p>Aviation, marine, road, rail, dangerous goods, infrastructure projects</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="i8uobst" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://international.gc.ca/world-monde/index.aspx?lang=eng">Canada and the world</a></h3>
-        <p>Foreign policy, trade agreements, development work, global issues</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="ioni1b2" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/finance.html">Money and finances</a></h3>
-        <p>Personal finance, credit reports, fraud protection, paying for education</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="iyoizsg" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/science.html">Science and innovation</a></h3>
-        <p>Scientific research on health, environment and space, grants and funding</p>
-      </div>
+    <h2 class="wb-inv">{{ snippets['EC/HOME/SERVICES_TITLE'] | default: 'Services and Information' }}</h2>
+    <div class="wb-eqht row">
+      {% assign services = weblinks['EC Services'] %}
+      {% if services and services.weblinks.size > 0 %}
+        {% for link in services.weblinks %}
+          <div class="col-lg-4 col-md-6">
+            <h3><a href="{{ link.url | h }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a></h3>
+            <p>{{ link.description | h }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Voter Information</a></h3>
+          <p>Register to vote, update your information, check eligibility, and learn about voting options</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Elections and Referendums</a></h3>
+          <p>Current and past election information, results, voter turnout, and referendum details</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Political Financing</a></h3>
+          <p>Contributions, spending limits, financial returns, and compliance requirements</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Electoral Districts</a></h3>
+          <p>Find your district, view maps, population data, and redistribution information</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Political Entities</a></h3>
+          <p>Registered parties, candidates, nomination contestants, and third parties</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Accessibility Services</a></h3>
+          <p>Voting assistance, accessible polling locations, and support for voters with disabilities</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Electoral Modernization</a></h3>
+          <p>Innovations, research, technology initiatives, and democratic engagement programs</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Education and Outreach</a></h3>
+          <p>Civic education resources, youth programs, teaching materials, and community engagement</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">International Cooperation</a></h3>
+          <p>Electoral assistance, international partnerships, observer missions, and democracy support</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Reports and Publications</a></h3>
+          <p>Annual reports, research studies, statistical data, and regulatory documents</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Employment Opportunities</a></h3>
+          <p>Election worker positions, careers at Elections Canada, and training programs</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Contact and Support</a></h3>
+          <p>Get help, file a complaint, request information, and connect with our team</p>
+        </div>
+      {% endif %}
     </div>
   </section>
+
+  <!-- Voting in Canada Section -->
   <section class="gc-srvinfo container mrgn-bttm-lg">
-    <h2>{{ snippets['CS/HOME/FOCUSON'] }}</h2>
-    <div class="wb-eqht row wb-init">
-      <div class="col-lg-4 col-md-6" id="igodoki" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.aadnc-aandc.gc.ca/eng/1461766373625/1461766394598">Indigenous peoples</a></h3>
-        <p>Programs and services for First Nations, Inuit and Métis</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="ihnz1td" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/veterans.html">Veterans</a></h3>
-        <p>Services for current and former military, <abbr title="Royal Canadian Mounted Police">RCMP</abbr> and their families</p>
-      </div>
-      <div class="col-lg-4 col-md-6" id="ico48zf" style="vertical-align: top; min-height: 114px;">
-        <h3><a href="https://www.canada.ca/en/services/youth.html">Youth</a></h3>
-        <p>Programs and services for teenagers and young adults</p>
-      </div>
+    <h2>{{ snippets['EC/HOME/VOTING_TITLE'] | default: 'Voting in Canada' }}</h2>
+    <div class="wb-eqht row">
+      {% assign voting = weblinks['EC Voting in Canada'] %}
+      {% if voting and voting.weblinks.size > 0 %}
+        {% for link in voting.weblinks %}
+          <div class="col-lg-4 col-md-6">
+            <h3><a href="{{ link.url | h }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a></h3>
+            <p>{{ link.description | h }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">First-Time Voters</a></h3>
+          <p>Everything you need to know about voting in your first federal election</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Students</a></h3>
+          <p>Information for student voters, campus voting, and where to vote while studying</p>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h3><a href="#">Indigenous Peoples</a></h3>
+          <p>Resources and support for First Nations, Inuit, and Métis voters</p>
+        </div>
+      {% endif %}
     </div>
   </section>
+
+  <!-- About Elections Canada Section -->
   <section class="home-your-gov well well-bold well-sm brdr-0">
     <div class="container">
-      <h2>{{ snippets['CS/HOME/YOURGOV'] }}</h2>
+      <h2>{{ snippets['EC/HOME/ABOUT_TITLE'] | default: 'About Elections Canada' }}</h2>
       <div class="row mrgn-bttm-lg">
         <div class="col-lg-7 col-xs-12 col-md-6">
           <ul class="row wb-eqht-grd list-unstyled small">
-            <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="https://www.canada.ca/en/contact.html">Contact us</a></li>
-            <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="https://www.canada.ca/en/news.html">News</a></li>
-            <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="https://pm.gc.ca/en">Prime Minister</a></li>
-            <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="https://www.canada.ca/en/government/dept.html">Departments and agencies</a></li>
-            <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="https://www.canada.ca/en/government/system.html">About government</a></li>
-            <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="https://open.canada.ca/en">Open government and data</a></li>
-            <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="https://www.canada.ca/en/government/publicservice.html">Working for the government</a></li>
-            <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="https://www.canada.ca/en/government/system/laws.html">Treaties, laws and regulations</a></li>
+            {% assign about = weblinks['EC About'] %}
+            {% if about and about.weblinks.size > 0 %}
+              {% for link in about.weblinks %}
+                <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm">
+                  <a href="{{ link.url | h }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a>
+                </li>
+              {% endfor %}
+            {% else %}
+              <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="#">Contact us</a></li>
+              <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="#">News and announcements</a></li>
+              <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="#">Chief Electoral Officer</a></li>
+              <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="#">Our mandate</a></li>
+              <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="#">Transparency and accountability</a></li>
+              <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="#">Canada Elections Act</a></li>
+              <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="#">Careers at Elections Canada</a></li>
+              <li class="col-xs-12 col-sm-6 mrgn-tp-sm mrgn-bttm-sm"><a href="#">Privacy and legal notices</a></li>
+            {% endif %}
           </ul>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Featured Initiatives Section -->
   <section class="container gc-features">
-    <h2>{{ snippets['CS/HOME/GOVINITIATIVES'] }}</h2>
-    <div class="row wb-eqht wb-init">
-      <div class="col-sm-6">
-        <div class="well well-sm brdr-rds-0 eqht-trgt" id="ibuw016" style="vertical-align: top; min-height: 314px;">
-          <img src="../../components/gc-features/img/initiative-520x200.png" alt="" class="img-responsive full-width" />
-          <h3 class="h5"><a href="#" class="stretched-link">[Feature hyperlink text]</a></h3>
-          <p>Brief description of the feature being promoted.</p>
+    <h2>{{ snippets['EC/HOME/FEATURES_TITLE'] | default: 'Featured Initiatives' }}</h2>
+    <div class="row wb-eqht">
+      {% assign features = weblinks['EC Featured Initiatives'] %}
+      {% if features and features.weblinks.size > 0 %}
+        {% for link in features.weblinks limit:2 %}
+          <div class="col-sm-6">
+            <div class="well well-sm brdr-rds-0 eqht-trgt" style="position: relative;">
+              {% if link.image %}
+                <img src="{{ link.image.url }}" alt="{{ link.image.alternate_text | h }}" class="img-responsive full-width" />
+              {% else %}
+                <img src="https://via.placeholder.com/520x200/005A9B/FFFFFF?text={{ link.name | url_encode }}" alt="" class="img-responsive full-width" />
+              {% endif %}
+              <h3 class="h5"><a href="{{ link.url | h }}" class="stretched-link" title="{{ link.tooltip | h }}">{{ link.name | h }}</a></h3>
+              <p>{{ link.description | h }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-sm-6">
+          <div class="well well-sm brdr-rds-0 eqht-trgt" style="position: relative;">
+            <img src="https://via.placeholder.com/520x200/005A9B/FFFFFF?text=Electoral+Modernization" alt="" class="img-responsive full-width" />
+            <h3 class="h5"><a href="#" class="stretched-link">Electoral Modernization Initiative</a></h3>
+            <p>Learn about our efforts to modernize Canada's electoral system and improve voter accessibility.</p>
+          </div>
         </div>
-      </div>
-      <div class="col-sm-6">
-        <div class="well well-sm brdr-rds-0 eqht-trgt" id="iadzdlk" style="vertical-align: top; min-height: 314px;">
-          <img src="../../components/gc-features/img/initiative-520x200.png" alt="" class="img-responsive full-width" />
-          <h3 class="h5"><a href="#" class="stretched-link">[Feature hyperlink text]</a></h3>
-          <p>Brief description of the feature being promoted.</p>
+        <div class="col-sm-6">
+          <div class="well well-sm brdr-rds-0 eqht-trgt" style="position: relative;">
+            <img src="https://via.placeholder.com/520x200/EB2D37/FFFFFF?text=Future+Voter+Program" alt="" class="img-responsive full-width" />
+            <h3 class="h5"><a href="#" class="stretched-link">Future Voter Program</a></h3>
+            <p>Engaging youth and building democratic participation through education and outreach.</p>
+          </div>
         </div>
-      </div>
+      {% endif %}
     </div>
   </section>
+
+  <!-- Page Details Section -->
   <section class="pagedetails container">
-    <h2 class="wb-inv">Page details</h2>
+    <h2 class="wb-inv">{{ snippets['EC/HOME/PAGE_DETAILS'] | default: 'Page details' }}</h2>
     <div class="row">
       <div class="col-xs-12">
         <dl id="wb-dtmd">
-          <dt>Date modified:</dt>
-          <dd><time property="dateModified">2021-07-07</time></dd>
+          <dt>{{ snippets['EC/HOME/DATE_MODIFIED_LABEL'] | default: 'Date modified:' }}</dt>
+          <dd><time property="dateModified">{{ now | date: '%Y-%m-%d' }}</time></dd>
         </dl>
       </div>
     </div>
   </section>
 </main>
-<div id="ismkcwc" class="row sectionBlockLayout text-left" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;">
-  <div class="container" id="isvvdva" style="padding: 0px; display: flex; flex-wrap: wrap;"><div class="col-md-12 columnBlockLayout" style="flex-grow: 1; display: flex; flex-direction: column; min-width: 250px; word-break: break-word;"></div></div>
-</div>
-
-
-
 
 {% endif %}
