@@ -1,27 +1,29 @@
-# Azure Customer Managed Keys (CMK) Configuration Guide v4
+# Azure Customer Managed Keys (CMK) Configuration Guide v4.1
 ## For OneDrive, SharePoint Online, and Teams - User or Group Deployment
-## Canadian Deployment with RBAC Configuration
+## Canadian Deployment with RBAC Configuration - Azure Cloud Shell & Local PowerShell Support
 
-This guide provides detailed configuration steps for implementing Azure Customer Managed Keys (CMK) for users or groups with E5 and Teams Premium licenses, using Azure Key Vault with RBAC method in Canadian regions.
+This guide provides detailed configuration steps for implementing Azure Customer Managed Keys (CMK) for users or groups with E5 and Teams Premium licenses, using Azure Key Vault with RBAC method in Canadian regions. Supports both Azure Cloud Shell and local PowerShell environments.
 
 ---
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
-2. [Initial Setup and Parameters](#initial-setup-and-parameters)
-3. [Environment Authentication](#environment-authentication)
-4. [Create Azure Subscriptions](#create-azure-subscriptions)
-5. [Register Service Principals](#register-service-principals)
-6. [Create Resource Groups](#create-resource-groups)
-7. [Create Azure Key Vaults](#create-azure-key-vaults)
-8. [Configure RBAC Permissions](#configure-rbac-permissions)
-9. [Create Encryption Keys](#create-encryption-keys)
-10. [Verify and Get Key URIs](#verify-and-get-key-uris)
-11. [Onboard to Customer Key](#onboard-to-customer-key)
-12. [Configure SharePoint/OneDrive](#configure-sharepointonedrive)
-13. [Apply to Users or Groups](#apply-to-users-or-groups)
-14. [Troubleshooting](#troubleshooting)
-15. [Annex: Complete Automated Script](#annex-complete-automated-script)
+2. [PowerShell Environment Setup](#powershell-environment-setup)
+3. [Initial Setup and Parameters](#initial-setup-and-parameters)
+4. [Environment Authentication](#environment-authentication)
+5. [Create Azure Subscriptions](#create-azure-subscriptions)
+6. [Register Service Principals](#register-service-principals)
+7. [Create Resource Groups](#create-resource-groups)
+8. [Create Azure Key Vaults](#create-azure-key-vaults)
+9. [Configure RBAC Permissions](#configure-rbac-permissions)
+10. [Create Encryption Keys](#create-encryption-keys)
+11. [Verify and Get Key URIs](#verify-and-get-key-uris)
+12. [Onboard to Customer Key](#onboard-to-customer-key)
+13. [Configure SharePoint/OneDrive](#configure-sharepointonedrive)
+14. [Apply to Users or Groups](#apply-to-users-or-groups)
+15. [VS Code Tips and Best Practices](#vs-code-tips-and-best-practices)
+16. [Troubleshooting](#troubleshooting)
+17. [Annex: Complete Automated Script](#annex-complete-automated-script)
 
 ---
 
@@ -41,6 +43,53 @@ This guide provides detailed configuration steps for implementing Azure Customer
 - **Two separate Azure subscriptions are mandatory** - Customer Key will not work with a single subscription
 - Both subscriptions must be under the same Azure AD tenant as your Microsoft 365 organization
 - All resources will be deployed in **Canada Central** and **Canada East** regions
+
+---
+
+## PowerShell Environment Setup
+
+You can run these scripts in either Azure Cloud Shell (recommended for simplicity) or locally using PowerShell with VS Code.
+
+### Option 1: Using Azure Cloud Shell (Recommended)
+
+1. Navigate to [https://shell.azure.com](https://shell.azure.com)
+2. Select **PowerShell** (not Bash)
+3. Azure Cloud Shell comes pre-configured with all required modules
+
+### Option 2: Using VS Code with PowerShell
+
+For those preferring to use VS Code instead of Azure Cloud Shell, follow these setup steps:
+
+#### 1. Install Required Software
+- Install [Visual Studio Code](https://code.visualstudio.com/)
+- Install [PowerShell 7.x](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
+- Install the PowerShell extension for VS Code
+
+#### 2. Install Azure PowerShell Module
+```powershell
+# Open PowerShell as Administrator
+Install-Module -Name Az -Repository PSGallery -Force -AllowClobber
+```
+
+#### 3. Configure VS Code for Azure Development
+- Open VS Code
+- Install the "Azure Account" extension
+- Install the "PowerShell" extension
+- Press `Ctrl+Shift+P` and select "PowerShell: Show Session Menu"
+- Ensure PowerShell 7.x is selected
+
+#### 4. Verify Installation
+```powershell
+# In VS Code Terminal (Ctrl+`)
+$PSVersionTable.PSVersion
+Get-Module -ListAvailable Az*
+```
+
+### Option 3: Using Regular PowerShell Console
+
+1. Install PowerShell 7.x from [Microsoft's download page](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
+2. Run PowerShell as Administrator
+3. Install Azure PowerShell module as shown above
 
 ---
 
@@ -92,7 +141,7 @@ Write-Host "=====================================" -ForegroundColor Cyan
 $global:CMKParams.GetEnumerator() | Where-Object { $_.Value } | Sort-Object Name | Format-Table -AutoSize
 
 # Create backup directory
-mkdir -p $global:CMKParams.BackupPath
+New-Item -ItemType Directory -Path $global:CMKParams.BackupPath -Force | Out-Null
 ```
 
 ### Initialize Resource Names
@@ -127,18 +176,16 @@ $global:ResourceNames = @{
 ## Environment Authentication
 
 ### Connect to Azure with Correct Tenant
+
+The authentication method varies based on your environment:
+
+#### For Azure Cloud Shell Users:
 ```powershell
 # Clear any existing contexts
 Clear-AzContext -Force
 
-# Connect to the specified tenant
-if ($env:AZURE_HTTP_USER_AGENT -like "*cloud-shell*") {
-    # Running in Azure Cloud Shell - use device authentication
-    Connect-AzAccount -TenantId $global:CMKParams.TenantId -UseDeviceAuthentication
-} else {
-    # Running locally
-    Connect-AzAccount -TenantId $global:CMKParams.TenantId
-}
+# Connect using device authentication (Cloud Shell requirement)
+Connect-AzAccount -TenantId $global:CMKParams.TenantId -UseDeviceAuthentication
 
 # Verify connection
 $context = Get-AzContext
@@ -149,6 +196,66 @@ if ($context.Tenant.Id -ne $global:CMKParams.TenantId) {
 
 Write-Host "Successfully connected to tenant: $($context.Tenant.Id)" -ForegroundColor Green
 ```
+
+#### For VS Code or Local PowerShell Users:
+```powershell
+# Clear any existing contexts
+Clear-AzContext -Force
+
+# For VS Code/Local - Interactive authentication (opens browser)
+Connect-AzAccount -TenantId $global:CMKParams.TenantId
+
+# Alternative: If browser authentication fails, use device code
+# Connect-AzAccount -TenantId $global:CMKParams.TenantId -UseDeviceAuthentication
+
+# Verify connection
+$context = Get-AzContext
+if ($context.Tenant.Id -ne $global:CMKParams.TenantId) {
+    Write-Error "Connected to wrong tenant. Expected: $($global:CMKParams.TenantId), Got: $($context.Tenant.Id)"
+    return
+}
+
+Write-Host "Successfully connected to tenant: $($context.Tenant.Id)" -ForegroundColor Green
+```
+
+### Authentication Methods for Different Scenarios
+
+1. **Interactive Browser Authentication** (Recommended for local sessions):
+   ```powershell
+   Connect-AzAccount -TenantId "YOUR-TENANT-ID"
+   ```
+
+2. **Device Code Authentication** (for restricted environments):
+   ```powershell
+   Connect-AzAccount -TenantId "YOUR-TENANT-ID" -UseDeviceAuthentication
+   ```
+
+3. **Service Principal Authentication** (for automation):
+   ```powershell
+   $credential = Get-Credential
+   Connect-AzAccount -ServicePrincipal -Credential $credential -TenantId "YOUR-TENANT-ID"
+   ```
+
+### Troubleshooting Authentication Issues
+
+If you encounter authentication issues:
+
+1. **Clear cached credentials**:
+   ```powershell
+   Disconnect-AzAccount
+   Clear-AzContext -Force
+   ```
+
+2. **Check proxy settings** (if behind corporate firewall):
+   ```powershell
+   [System.Net.WebRequest]::DefaultWebProxy.Credentials = [System.Net.CredentialCache]::DefaultCredentials
+   ```
+
+3. **Use alternative authentication**:
+   ```powershell
+   # Try device code authentication
+   Connect-AzAccount -TenantId $global:CMKParams.TenantId -UseDeviceAuthentication
+   ```
 
 ---
 
@@ -894,6 +1001,68 @@ Write-Host "`nResults saved to: $($global:CMKParams.BackupPath)/cmk-application-
 
 ---
 
+## VS Code Tips and Best Practices
+
+### Running Scripts in VS Code
+
+1. **Execute Scripts Block by Block**:
+   - Select code blocks with your mouse
+   - Press `F8` to run the selected code
+   - Monitor output in the terminal
+
+2. **Save Your Session**:
+   ```powershell
+   # Save your Azure context for reuse
+   Save-AzContext -Path "$HOME/AzureProfile.json"
+   
+   # Restore in new session
+   Import-AzContext -Path "$HOME/AzureProfile.json"
+   ```
+
+3. **Use PowerShell Profiles**:
+   Create a profile to auto-load modules:
+   ```powershell
+   # Check profile path
+   $PROFILE
+   
+   # Create/edit profile
+   New-Item -ItemType File -Path $PROFILE -Force
+   notepad $PROFILE
+   
+   # Add to profile:
+   Import-Module Az
+   Set-PSReadLineOption -PredictionSource History
+   ```
+
+4. **Debugging in VS Code**:
+   - Set breakpoints by clicking left of line numbers
+   - Use `F5` to start debugging
+   - Use the Debug Console for interactive debugging
+
+### Common VS Code Issues
+
+1. **Module Import Failures**:
+   ```powershell
+   # Force reload modules
+   Remove-Module Az.Accounts -Force -ErrorAction SilentlyContinue
+   Import-Module Az.Accounts -Force
+   ```
+
+2. **Execution Policy Issues**:
+   ```powershell
+   # Check current policy
+   Get-ExecutionPolicy
+   
+   # Set for current user (if needed)
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   ```
+
+3. **IntelliSense Not Working**:
+   - Restart PowerShell extension: `Ctrl+Shift+P` → "PowerShell: Restart Session"
+   - Ensure you're using PowerShell 7.x, not Windows PowerShell 5.1
+
+---
+
 ## Troubleshooting
 
 ### Common Issues and Solutions
@@ -938,6 +1107,7 @@ Save the following script as `Deploy-CustomerKey.ps1` and run in Azure Cloud She
 .DESCRIPTION
     This script automates the complete setup of Azure Customer Key for Microsoft 365
     including OneDrive, SharePoint Online, and Teams for users or groups.
+    Supports both Azure Cloud Shell and local PowerShell environments.
 
 .PARAMETER TenantId
     Your Microsoft 365 tenant ID
@@ -977,7 +1147,7 @@ Save the following script as `Deploy-CustomerKey.ps1` and run in Azure Cloud She
 
 .NOTES
     Author: Customer Key Deployment Script
-    Version: 4.0
+    Version: 4.1
     Requirements: Azure PowerShell, Global Admin rights, Two Azure subscriptions
 #>
 
@@ -1064,16 +1234,29 @@ function Test-Prerequisites {
     # Check if running in Azure Cloud Shell
     $isCloudShell = $env:AZURE_HTTP_USER_AGENT -like "*cloud-shell*"
     
+    # Check if running in VS Code
+    $isVSCode = $env:TERM_PROGRAM -eq "vscode" -or $env:VSCODE_PID
+    
+    if ($isVSCode) {
+        Write-ColorOutput "Detected VS Code environment" -Color $colors.Info
+    } elseif ($isCloudShell) {
+        Write-ColorOutput "Detected Azure Cloud Shell environment" -Color $colors.Info
+    }
+    
     # Check required modules
     $requiredModules = @("Az.Accounts", "Az.Resources", "Az.KeyVault")
     foreach ($module in $requiredModules) {
         if (-not (Get-Module -ListAvailable -Name $module)) {
-            throw "Required module '$module' is not installed"
+            Write-ColorOutput "Installing required module: $module" -Color $colors.Warning
+            Install-Module -Name $module -Force -AllowClobber
         }
     }
     
     Write-ColorOutput "✓ Prerequisites check passed" -Color $colors.Success
-    return $isCloudShell
+    return @{
+        IsCloudShell = $isCloudShell
+        IsVSCode = $isVSCode
+    }
 }
 
 function Confirm-Execution {
@@ -1092,7 +1275,7 @@ try {
     Write-ColorOutput @"
 ╔══════════════════════════════════════════════════════════════╗
 ║          Azure Customer Key Automated Deployment             ║
-║                        Version 4.0                           ║
+║                        Version 4.1                           ║
 ╚══════════════════════════════════════════════════════════════╝
 "@ -Color $colors.Info
 
@@ -1138,7 +1321,7 @@ try {
 
     # Check prerequisites
     Show-Progress -Activity "Customer Key Deployment" -Status "Checking prerequisites..." -PercentComplete 5
-    $isCloudShell = Test-Prerequisites
+    $envInfo = Test-Prerequisites
 
     # Create backup directory
     New-Item -ItemType Directory -Path $global:CMKParams.BackupPath -Force | Out-Null
@@ -1148,9 +1331,19 @@ try {
     Write-ColorOutput "`nStep 1: Authenticating to Azure..." -Color $colors.Progress
     
     Clear-AzContext -Force
-    if ($isCloudShell) {
+    
+    if ($envInfo.IsCloudShell) {
         Connect-AzAccount -TenantId $TenantId -UseDeviceAuthentication
+    } elseif ($envInfo.IsVSCode) {
+        # VS Code - try interactive first, fall back to device auth if needed
+        try {
+            Connect-AzAccount -TenantId $TenantId
+        } catch {
+            Write-ColorOutput "Browser authentication failed, trying device code..." -Color $colors.Warning
+            Connect-AzAccount -TenantId $TenantId -UseDeviceAuthentication
+        }
     } else {
+        # Generic environment - try interactive
         Connect-AzAccount -TenantId $TenantId
     }
 
@@ -1532,12 +1725,3 @@ $targetInfo
     -TargetGroupName "CMK-Enabled-Users" `
     -SkipConfirmation
 ```
-
-The script includes:
-- Progress bars for each major step
-- Y/N confirmation prompts at critical points
-- Support for both single users and Entra ID groups
-- Error handling and validation
-- Automatic backup of keys and configuration
-- Color-coded output for easy reading
-- Complete end-to-end deployment
