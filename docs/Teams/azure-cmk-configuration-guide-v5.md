@@ -545,7 +545,7 @@ Select-AzSubscription -SubscriptionId $global:CMKParams.PrimarySubscriptionId | 
 $m365KeyPrimary = Add-AzKeyVaultKey `
     -VaultName $global:KeyVaultNames.M365Primary `
     -Name $global:ResourceNames.M365KeyPrimaryName `
-    -Destination "HSM" `
+    -Destination "Software" `
     -KeyType RSA `
     -Size 2048 `
     -KeyOps wrapKey,unwrapKey `
@@ -565,7 +565,7 @@ Backup-AzKeyVaultKey `
 $spoKeyPrimary = Add-AzKeyVaultKey `
     -VaultName $global:KeyVaultNames.SPOPrimary `
     -Name $global:ResourceNames.SPOKeyPrimaryName `
-    -Destination "HSM" `
+    -Destination "Software" `
     -KeyType RSA `
     -Size 2048 `
     -KeyOps wrapKey,unwrapKey `
@@ -591,7 +591,7 @@ Select-AzSubscription -SubscriptionId $global:CMKParams.SecondarySubscriptionId 
 $m365KeySecondary = Add-AzKeyVaultKey `
     -VaultName $global:KeyVaultNames.M365Secondary `
     -Name $global:ResourceNames.M365KeySecondaryName `
-    -Destination "HSM" `
+    -Destination "Software" `
     -KeyType RSA `
     -Size 2048 `
     -KeyOps wrapKey,unwrapKey `
@@ -611,7 +611,7 @@ Backup-AzKeyVaultKey `
 $spoKeySecondary = Add-AzKeyVaultKey `
     -VaultName $global:KeyVaultNames.SPOSecondary `
     -Name $global:ResourceNames.SPOKeySecondaryName `
-    -Destination "HSM" `
+    -Destination "Software" `
     -KeyType RSA `
     -Size 2048 `
     -KeyOps wrapKey,unwrapKey `
@@ -628,7 +628,7 @@ Backup-AzKeyVaultKey `
     -Force
 ```
 
-**Important**: If you need to use Software keys instead of HSM, change `-Destination "HSM"` to `-Destination "Software"`.
+**Important**: If you need to use Software keys instead of HSM, change `-Destination "Software"` to `-Destination "Software"`.
 
 ---
 
@@ -1531,7 +1531,7 @@ try {
     Select-AzSubscription -SubscriptionId $PrimarySubscriptionId | Out-Null
     
     $m365KeyPrimary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.M365Primary `
-        -Name $keyNames.M365Primary -Destination "HSM" -KeyType RSA -Size 2048 `
+        -Name $keyNames.M365Primary -Destination "Software" -KeyType RSA -Size 2048 `
         -KeyOps wrapKey,unwrapKey -NotBefore (Get-Date)
     $global:KeyURIs.M365Primary = $m365KeyPrimary.Id.ToString()
     $null = Backup-AzKeyVaultKey -VaultName $global:KeyVaultNames.M365Primary `
@@ -1539,7 +1539,7 @@ try {
     Write-ColorOutput "✓ Created M365 primary key" -Color $colors.Success
     
     $spoKeyPrimary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.SPOPrimary `
-        -Name $keyNames.SPOPrimary -Destination "HSM" -KeyType RSA -Size 2048 `
+        -Name $keyNames.SPOPrimary -Destination "Software" -KeyType RSA -Size 2048 `
         -KeyOps wrapKey,unwrapKey -NotBefore (Get-Date)
     $global:KeyURIs.SPOPrimary = $spoKeyPrimary.Id.ToString()
     $null = Backup-AzKeyVaultKey -VaultName $global:KeyVaultNames.SPOPrimary `
@@ -1550,7 +1550,7 @@ try {
     Select-AzSubscription -SubscriptionId $SecondarySubscriptionId | Out-Null
     
     $m365KeySecondary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.M365Secondary `
-        -Name $keyNames.M365Secondary -Destination "HSM" -KeyType RSA -Size 2048 `
+        -Name $keyNames.M365Secondary -Destination "Software" -KeyType RSA -Size 2048 `
         -KeyOps wrapKey,unwrapKey -NotBefore (Get-Date)
     $global:KeyURIs.M365Secondary = $m365KeySecondary.Id.ToString()
     $null = Backup-AzKeyVaultKey -VaultName $global:KeyVaultNames.M365Secondary `
@@ -1558,7 +1558,7 @@ try {
     Write-ColorOutput "✓ Created M365 secondary key" -Color $colors.Success
     
     $spoKeySecondary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.SPOSecondary `
-        -Name $keyNames.SPOSecondary -Destination "HSM" -KeyType RSA -Size 2048 `
+        -Name $keyNames.SPOSecondary -Destination "Software" -KeyType RSA -Size 2048 `
         -KeyOps wrapKey,unwrapKey -NotBefore (Get-Date)
     $global:KeyURIs.SPOSecondary = $spoKeySecondary.Id.ToString()
     $null = Backup-AzKeyVaultKey -VaultName $global:KeyVaultNames.SPOSecondary `
