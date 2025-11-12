@@ -1,5 +1,7 @@
 # Azure Customer Managed Keys (CMK) Configuration Guide v4.1
+
 ## For OneDrive, SharePoint Online, and Teams - User or Group Deployment
+
 ## Canadian Deployment with RBAC Configuration - Azure Cloud Shell & Local PowerShell Support
 
 This guide provides detailed configuration steps for implementing Azure Customer Managed Keys (CMK) for users or groups with E5 and Teams Premium licenses, using Azure Key Vault with RBAC method in Canadian regions. Supports both Azure Cloud Shell and local PowerShell environments.
@@ -7,6 +9,7 @@ This guide provides detailed configuration steps for implementing Azure Customer
 ---
 
 ## Table of Contents
+
 1. [Prerequisites](#prerequisites)
 2. [PowerShell Environment Setup](#powershell-environment-setup)
 3. [Initial Setup and Parameters](#initial-setup-and-parameters)
@@ -30,16 +33,19 @@ This guide provides detailed configuration steps for implementing Azure Customer
 ## Prerequisites
 
 ### Required Licenses
+
 - Microsoft 365 E5 or Office 365 E5 license (for all target users)
 - Microsoft Teams Premium license (for all target users)
 - **Two paid Azure subscriptions** (Free/Trial subscriptions are NOT eligible)
 
 ### Required Permissions
+
 - Global Administrator or equivalent role in Microsoft 365
 - Owner or User Access Administrator role on Azure subscriptions
 - Azure PowerShell v4.4.0 or higher
 
 ### Critical Requirements
+
 - **Two separate Azure subscriptions are mandatory** - Customer Key will not work with a single subscription
 - Both subscriptions must be under the same Azure AD tenant as your Microsoft 365 organization
 - All resources will be deployed in **Canada Central** and **Canada East** regions
@@ -61,17 +67,20 @@ You can run these scripts in either Azure Cloud Shell (recommended for simplicit
 For those preferring to use VS Code instead of Azure Cloud Shell, follow these setup steps:
 
 #### 1. Install Required Software
+
 - Install [Visual Studio Code](https://code.visualstudio.com/)
 - Install [PowerShell 7.x](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
 - Install the PowerShell extension for VS Code
 
 #### 2. Install Azure PowerShell Module
+
 ```powershell
 # Open PowerShell as Administrator
 Install-Module -Name Az -Repository PSGallery -Force -AllowClobber
 ```
 
 #### 3. Configure VS Code for Azure Development
+
 - Open VS Code
 - Install the "Azure Account" extension
 - Install the "PowerShell" extension
@@ -79,6 +88,7 @@ Install-Module -Name Az -Repository PSGallery -Force -AllowClobber
 - Ensure PowerShell 7.x is selected
 
 #### 4. Verify Installation
+
 ```powershell
 # In VS Code Terminal (Ctrl+`)
 $PSVersionTable.PSVersion
@@ -96,6 +106,7 @@ Get-Module -ListAvailable Az*
 ## Initial Setup and Parameters
 
 ### Define Global Parameters
+
 Save these parameters at the beginning of your session. Update the values according to your environment:
 
 ```powershell
@@ -145,6 +156,7 @@ New-Item -ItemType Directory -Path $global:CMKParams.BackupPath -Force | Out-Nul
 ```
 
 ### Initialize Resource Names
+
 ```powershell
 # Generate consistent resource names
 $global:ResourceNames = @{
@@ -180,6 +192,7 @@ $global:ResourceNames = @{
 The authentication method varies based on your environment:
 
 #### For Azure Cloud Shell Users:
+
 ```powershell
 Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 # Clear any existing contexts
@@ -199,6 +212,7 @@ Write-Host "Successfully connected to tenant: $($context.Tenant.Id)" -Foreground
 ```
 
 #### For VS Code or Local PowerShell Users:
+
 ```powershell
 # Clear any existing contexts
 Clear-AzContext -Force
@@ -263,6 +277,7 @@ If you encounter authentication issues:
 ## Create Azure Subscriptions
 
 ### Verify Two Subscriptions Exist
+
 ```powershell
 # Get subscriptions in the tenant
 $subscriptions = Get-AzSubscription | Where-Object State -eq "Enabled"
@@ -301,6 +316,7 @@ Write-Host "  Secondary: $($secondarySub.Name) ($($secondarySub.Id))" -Foregroun
 ## Register Service Principals
 
 ### Function to Register Service Principals
+
 ```powershell
 function Register-CMKServicePrincipal {
     param (
@@ -320,6 +336,7 @@ function Register-CMKServicePrincipal {
 ```
 
 ### Register Required Applications
+
 ```powershell
 # Service principal registration is tenant-wide, only needs to be done once
 Write-Host "`nRegistering required service principals..." -ForegroundColor Cyan
@@ -339,6 +356,7 @@ Register-CMKServicePrincipal -ApplicationId "00000003-0000-0ff1-ce00-00000000000
 ## Create Resource Groups
 
 ### Create Primary Resource Groups
+
 ```powershell
 Write-Host "`nCreating resource groups..." -ForegroundColor Cyan
 
@@ -354,6 +372,7 @@ Write-Host "✓ Created: $($global:ResourceNames.PrimaryRGSharePoint) in $($glob
 ```
 
 ### Create Secondary Resource Groups
+
 ```powershell
 # Select secondary subscription
 Select-AzSubscription -SubscriptionId $global:CMKParams.SecondarySubscriptionId | Out-Null
@@ -371,11 +390,13 @@ Write-Host "✓ Created: $($global:ResourceNames.SecondaryRGSharePoint) in $($gl
 ## Create Azure Key Vaults
 
 ### Initialize Key Vault Names Storage
+
 ```powershell
 $global:KeyVaultNames = @{}
 ```
 
 ### Create Primary Key Vaults
+
 ```powershell
 Write-Host "`nCreating Key Vaults..." -ForegroundColor Cyan
 
@@ -410,6 +431,7 @@ Write-Host "✓ Created Key Vault: $kvNameSPOPrimary" -ForegroundColor Green
 ```
 
 ### Create Secondary Key Vaults
+
 ```powershell
 # Select secondary subscription
 Select-AzSubscription -SubscriptionId $global:CMKParams.SecondarySubscriptionId | Out-Null
@@ -448,6 +470,7 @@ Write-Host "✓ Created Key Vault: $kvNameSPOSecondary" -ForegroundColor Green
 ## Configure RBAC Permissions
 
 ### Get Current User Identity
+
 ```powershell
 Write-Host "`nConfiguring RBAC permissions..." -ForegroundColor Cyan
 
@@ -457,6 +480,7 @@ Write-Host "Current user: $($currentUser.UserPrincipalName)" -ForegroundColor Ye
 ```
 
 ### Assign Key Vault Administrator Role
+
 ```powershell
 # Function to assign Key Vault Administrator role
 function Set-KeyVaultAdminRole {
@@ -491,6 +515,7 @@ Start-Sleep -Seconds 60
 ```
 
 ### Assign Service Principal Permissions
+
 ```powershell
 # Function to assign Crypto Service Encryption User role
 function Set-CryptoServiceRole {
@@ -531,11 +556,13 @@ Set-CryptoServiceRole -SubscriptionId $global:CMKParams.SecondarySubscriptionId 
 ## Create Encryption Keys
 
 ### Initialize Key URIs Storage
+
 ```powershell
 $global:KeyURIs = @{}
 ```
 
 ### Create Primary Keys
+
 ```powershell
 Write-Host "`nCreating encryption keys..." -ForegroundColor Cyan
 
@@ -584,6 +611,7 @@ Backup-AzKeyVaultKey `
 ```
 
 ### Create Secondary Keys
+
 ```powershell
 # Select secondary subscription
 Select-AzSubscription -SubscriptionId $global:CMKParams.SecondarySubscriptionId | Out-Null
@@ -636,6 +664,7 @@ Backup-AzKeyVaultKey `
 ## Verify and Get Key URIs
 
 ### Display Configuration Summary
+
 ```powershell
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Customer Key Configuration Summary" -ForegroundColor Cyan
@@ -692,6 +721,7 @@ Write-Host "`nConfiguration saved to: $($global:CMKParams.BackupPath)/cmk-config
 ## Onboard to Customer Key
 
 ### Install Onboarding Module
+
 ```powershell
 Write-Host "`nInstalling Customer Key Onboarding module..." -ForegroundColor Cyan
 
@@ -704,6 +734,7 @@ Write-Host "✓ Module loaded successfully" -ForegroundColor Green
 ```
 
 ### Grant Reader Access for Validation
+
 ```powershell
 # Grant Reader role on both subscriptions
 Select-AzSubscription -SubscriptionId $global:CMKParams.PrimarySubscriptionId | Out-Null
@@ -864,6 +895,7 @@ if ($validationRequest.ValidationResult -eq "Success") {
 ## Configure SharePoint/OneDrive
 
 ### MRP Enablement Notice
+
 ```powershell
 Write-Host "`n========================================" -ForegroundColor Yellow
 Write-Host "SharePoint/OneDrive Configuration" -ForegroundColor Yellow
@@ -1090,6 +1122,7 @@ Write-Host "Monitor progress in the Microsoft 365 compliance center." -Foregroun
 ```
 
 ### Exchange Online Configuration
+
 ```powershell
 Write-Host "`n========================================" -ForegroundColor Yellow
 Write-Host "Apply Customer Key to Users or Groups" -ForegroundColor Yellow
@@ -1113,6 +1146,7 @@ New-DataEncryptionPolicy `
 ```
 
 ### Apply to Single User
+
 ```powershell
 if ($global:CMKParams.TargetType -eq "User") {
     Write-Host "`nApplying Customer Key to user: $($global:CMKParams.TargetUserEmail)" -ForegroundColor Cyan
@@ -1132,6 +1166,7 @@ if ($global:CMKParams.TargetType -eq "User") {
 ```
 
 ### Apply to Entra ID Group
+
 ```powershell
 if ($global:CMKParams.TargetType -eq "Group") {
     Write-Host "`nApplying Customer Key to group: $($global:CMKParams.TargetGroupName)" -ForegroundColor Cyan
@@ -1202,6 +1237,7 @@ if ($global:CMKParams.TargetType -eq "Group") {
 ```
 
 ### Alternative: Apply Using Distribution Group or Mail-Enabled Security Group
+
 ```powershell
 # For mail-enabled groups, you can also use this approach:
 # This requires the group to be mail-enabled in Exchange Online
@@ -1220,7 +1256,7 @@ $members | ForEach-Object {
 }
 ```
 
-### TESTING 
+### TESTING
 
 ```powershell
 # ========================================
@@ -1447,6 +1483,7 @@ Write-Host "`nResults saved to: $($global:CMKParams.BackupPath)/cmk-application-
 ## Troubleshooting
 
 ### Common Issues and Solutions
+
 ```powershell
 Write-Host "`n========================================" -ForegroundColor Yellow
 Write-Host "Troubleshooting Commands" -ForegroundColor Yellow
