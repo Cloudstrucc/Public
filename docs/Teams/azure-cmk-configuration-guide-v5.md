@@ -191,7 +191,7 @@ $global:ResourceNames = @{
 
 The authentication method varies based on your environment:
 
-#### For Azure Cloud Shell Users:
+#### For Azure Cloud Shell Users
 
 ```powershell
 Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
@@ -211,7 +211,7 @@ if ($context.Tenant.Id -ne $global:CMKParams.TenantId) {
 Write-Host "Successfully connected to tenant: $($context.Tenant.Id)" -ForegroundColor Green
 ```
 
-#### For VS Code or Local PowerShell Users:
+#### For VS Code or Local PowerShell Users
 
 ```powershell
 # Clear any existing contexts
@@ -236,16 +236,19 @@ Write-Host "Successfully connected to tenant: $($context.Tenant.Id)" -Foreground
 ### Authentication Methods for Different Scenarios
 
 1. **Interactive Browser Authentication** (Recommended for local sessions):
+
    ```powershell
    Connect-AzAccount -TenantId "YOUR-TENANT-ID"
    ```
 
 2. **Device Code Authentication** (for restricted environments):
+
    ```powershell
    Connect-AzAccount -TenantId "YOUR-TENANT-ID" -UseDeviceAuthentication
    ```
 
 3. **Service Principal Authentication** (for automation):
+
    ```powershell
    $credential = Get-Credential
    Connect-AzAccount -ServicePrincipal -Credential $credential -TenantId "YOUR-TENANT-ID"
@@ -256,17 +259,20 @@ Write-Host "Successfully connected to tenant: $($context.Tenant.Id)" -Foreground
 If you encounter authentication issues:
 
 1. **Clear cached credentials**:
+
    ```powershell
    Disconnect-AzAccount
    Clear-AzContext -Force
    ```
 
 2. **Check proxy settings** (if behind corporate firewall):
+
    ```powershell
    [System.Net.WebRequest]::DefaultWebProxy.Credentials = [System.Net.CredentialCache]::DefaultCredentials
    ```
 
 3. **Use alternative authentication**:
+
    ```powershell
    # Try device code authentication
    Connect-AzAccount -TenantId $global:CMKParams.TenantId -UseDeviceAuthentication
@@ -1408,6 +1414,7 @@ Write-Host "`nResults saved to: $($global:CMKParams.BackupPath)/cmk-application-
    - Monitor throttling limits
 
 4. **Verification**:
+
    ```powershell
    # Verify DEP application for a group
    Get-Mailbox -ResultSize Unlimited | 
@@ -1428,6 +1435,7 @@ Write-Host "`nResults saved to: $($global:CMKParams.BackupPath)/cmk-application-
    - Monitor output in the terminal
 
 2. **Save Your Session**:
+
    ```powershell
    # Save your Azure context for reuse
    Save-AzContext -Path "$HOME/AzureProfile.json"
@@ -1438,6 +1446,7 @@ Write-Host "`nResults saved to: $($global:CMKParams.BackupPath)/cmk-application-
 
 3. **Use PowerShell Profiles**:
    Create a profile to auto-load modules:
+
    ```powershell
    # Check profile path
    $PROFILE
@@ -1459,6 +1468,7 @@ Write-Host "`nResults saved to: $($global:CMKParams.BackupPath)/cmk-application-
 ### Common VS Code Issues
 
 1. **Module Import Failures**:
+
    ```powershell
    # Force reload modules
    Remove-Module Az.Accounts -Force -ErrorAction SilentlyContinue
@@ -1466,6 +1476,7 @@ Write-Host "`nResults saved to: $($global:CMKParams.BackupPath)/cmk-application-
    ```
 
 2. **Execution Policy Issues**:
+
    ```powershell
    # Check current policy
    Get-ExecutionPolicy
@@ -2118,6 +2129,7 @@ $targetInfo
 1. **Save the script** as `Deploy-CustomerKey.ps1` in Azure Cloud Shell or locally
 
 2. **For single user deployment**:
+
 ```powershell
 .\Deploy-CustomerKey.ps1 -TenantId "YOUR-TENANT-ID" `
     -PrimarySubscriptionId "YOUR-PRIMARY-SUB-ID" `
@@ -2126,6 +2138,7 @@ $targetInfo
 ```
 
 3. **For Entra ID group deployment**:
+
 ```powershell
 .\Deploy-CustomerKey.ps1 -TenantId "YOUR-TENANT-ID" `
     -PrimarySubscriptionId "YOUR-PRIMARY-SUB-ID" `
@@ -2135,6 +2148,7 @@ $targetInfo
 ```
 
 4. **For unattended execution**, add `-SkipConfirmation`:
+
 ```powershell
 .\Deploy-CustomerKey.ps1 -TenantId "YOUR-TENANT-ID" `
     -PrimarySubscriptionId "YOUR-PRIMARY-SUB-ID" `
