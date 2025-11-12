@@ -72,7 +72,7 @@ This implementation plan outlines the deployment of Microsoft Teams Premium to c
 
 ```powershell
 # Verify current licensing
-Get-MsolAccountSku | Where-Object {$_.SkuPartNumber -like "*TEAMS*"}
+Get-MgSubscribedSku | Where-Object {$_.SkuPartNumber -like "*TEAMS*"}
 
 # Users requiring Premium
 $premiumUsers = @(
