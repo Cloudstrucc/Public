@@ -102,11 +102,11 @@ Save these parameters at the beginning of your session. Update the values accord
 # CRITICAL: Update these values before running any scripts
 $global:CMKParams = @{
     # Tenant Configuration
-    TenantId = "YOUR-M365-TENANT-ID"  # Replace with your M365 tenant ID
+    TenantId = "80b1ce91-e920-49d4-a52e-4ab189c64592"  # Replace with your M365 tenant ID
     
     # Subscription IDs (must be different)
-    PrimarySubscriptionId = "YOUR-PRIMARY-SUBSCRIPTION-ID"    # Replace with first subscription ID
-    SecondarySubscriptionId = "YOUR-SECONDARY-SUBSCRIPTION-ID" # Replace with second subscription ID
+    PrimarySubscriptionId = "6f114bd7-c8d3-4843-b4f8-e30a644bc412"    # Replace with first subscription ID
+    SecondarySubscriptionId = "6fe93f46-fb3b-410b-8d22-540b06cbbfbc" # Replace with second subscription ID
     
     # Regions
     PrimaryLocation = "Canada Central"
@@ -118,7 +118,7 @@ $global:CMKParams = @{
     # Target Configuration - Choose ONE of the following:
     # Option 1: For a single user
     TargetType = "User"  # Set to "User" or "Group"
-    TargetUserEmail = "user@yourdomain.com"  # Replace with target user email
+    TargetUserEmail = "fred.pearson@leonardocompany.ca"  # Replace with target user email
     
     # Option 2: For an Entra ID group
     # TargetType = "Group"
@@ -181,6 +181,7 @@ The authentication method varies based on your environment:
 
 #### For Azure Cloud Shell Users:
 ```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 # Clear any existing contexts
 Clear-AzContext -Force
 
@@ -695,7 +696,7 @@ Write-Host "`nConfiguration saved to: $($global:CMKParams.BackupPath)/cmk-config
 Write-Host "`nInstalling Customer Key Onboarding module..." -ForegroundColor Cyan
 
 if (-not (Get-Module -ListAvailable -Name M365CustomerKeyOnboarding)) {
-    Install-Module -Name M365CustomerKeyOnboarding -Force -AllowClobber
+    Install-Module -Name M365CustomerKeyOnboarding -Force -AllowClobber -Scope CurrentUser
 }
 
 Import-Module M365CustomerKeyOnboarding
@@ -715,7 +716,50 @@ Write-Host "✓ Reader access granted for validation" -ForegroundColor Green
 Start-Sleep -Seconds 30
 ```
 
+### Verify Key Vault settings
+
+```powershell
+Write-Host "`nVerifying Key Vault configurations..." -ForegroundColor Cyan
+ 
+function Test-KeyVaultConfig {
+    param (
+        [string]$SubscriptionId,
+        [string]$VaultName,
+        [string]$KeyName
+    )
+    Select-AzSubscription -SubscriptionId $SubscriptionId | Out-Null
+    Write-Host "`nChecking $VaultName..." -ForegroundColor Yellow
+    # Get vault
+    $vault = Get-AzKeyVault -VaultName $VaultName
+    Write-Host "  RBAC Enabled: $($vault.EnableRbacAuthorization)"
+    Write-Host "  Soft Delete: $($vault.EnableSoftDelete)"
+    Write-Host "  Purge Protection: $($vault.EnablePurgeProtection)"
+    # Get key
+    try {
+        $key = Get-AzKeyVaultKey -VaultName $VaultName -Name $KeyName
+        Write-Host "  Key Found: ✓"
+        Write-Host "  Key Enabled: $($key.Enabled)"
+        Write-Host "  Key Expires: $($key.Expires)"
+        Write-Host "  Key Operations: $($key.Key.KeyOps -join ', ')"
+    } catch {
+        Write-Host "  Key Found: ✗" -ForegroundColor Red
+    }
+    # Test both vaults
+    Test-KeyVaultConfig `
+        -SubscriptionId $global:CMKParams.PrimarySubscriptionId `
+        -VaultName $global:KeyVaultNames.M365Primary `
+        -KeyName $global:ResourceNames.M365KeyPrimaryName
+    
+    Test-KeyVaultConfig `
+        -SubscriptionId $global:CMKParams.SecondarySubscriptionId `
+        -VaultName $global:KeyVaultNames.M365Secondary `
+        -KeyName $global:ResourceNames.M365KeySecondaryName
+    }
+
+```
+
 ### Validate Configuration
+
 ```powershell
 Write-Host "`nValidating Customer Key configuration..." -ForegroundColor Cyan
 
@@ -734,9 +778,41 @@ if ($validationRequest.ValidationResult -eq "Success") {
     Write-Host "✗ Validation failed!" -ForegroundColor Red
     $validationRequest.FailedValidations | Format-Table -AutoSize
 }
+
+Write-Host "`nWaiting 5 minutes for permissions to propagate..." -ForegroundColor Yellow
+Write-Host "This is required for Azure to sync the service principal permissions." -ForegroundColor Yellow
+Start-Sleep -Seconds 300
+ 
+# Retry validation
+Write-Host "`nRetrying Customer Key validation..." -ForegroundColor Cyan
+ 
+$validationRequest = New-CustomerKeyOnboardingRequest `
+    -Organization $global:CMKParams.TenantId `
+    -Scenario MDEP `
+    -Subscription1 $global:CMKParams.PrimarySubscriptionId `
+    -KeyIdentifier1 $global:KeyURIs.M365Primary `
+    -Subscription2 $global:CMKParams.SecondarySubscriptionId `
+    -KeyIdentifier2 $global:KeyURIs.M365Secondary `
+    -OnboardingMode Validate
+ 
+if ($validationRequest.ValidationResult -eq "Success") {
+    Write-Host "✓ Validation passed successfully!" -ForegroundColor Green
+    Write-Host "`nValidation Details:" -ForegroundColor Cyan
+    $validationRequest | Format-List
+} else {
+    Write-Host "✗ Validation still failing!" -ForegroundColor Red
+    $validationRequest.FailedValidations | Format-Table -AutoSize
+    # Additional troubleshooting info
+    Write-Host "`nTroubleshooting suggestions:" -ForegroundColor Yellow
+    Write-Host "1. Ensure both Key Vaults have Purge Protection enabled"
+    Write-Host "2. Verify the service principal has been created in your tenant"
+    Write-Host "3. Check if your Key Vaults are in the correct regions"
+    Write-Host "4. Ensure keys have 'wrapKey' and 'unwrapKey' operations enabled"
+}
 ```
 
 ### Enable Customer Key
+
 ```powershell
 if ($validationRequest.ValidationResult -eq "Success") {
     Write-Host "`nEnabling Customer Key..." -ForegroundColor Cyan

@@ -69,7 +69,7 @@ $global:CMKParams = @{
     # Target Configuration - Choose ONE of the following:
     # Option 1: For a single user
     TargetType = "User"  # Set to "User" or "Group"
-    TargetUserEmail = "user@yourdomain.com"  # Replace with target user email
+    TargetUserEmail = "fred.pearson@leonardocompany.ca"  # Replace with target user email
     
     # Option 2: For an Entra ID group
     # TargetType = "Group"
