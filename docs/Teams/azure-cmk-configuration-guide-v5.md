@@ -716,6 +716,31 @@ Write-Host "✓ Reader access granted for validation" -ForegroundColor Green
 Start-Sleep -Seconds 30
 ```
 
+### Check if the M365 Data at Rest Encryption service principal exists
+
+```powershell
+Write-Host "Checking for Microsoft service principals..." -ForegroundColor Cyan
+ 
+$m365SP = Get-AzADServicePrincipal -DisplayName "M365DataAtRestEncryption" -ErrorAction SilentlyContinue
+if ($m365SP) {
+    Write-Host "✓ Found M365DataAtRestEncryption SP: $($m365SP.Id)" -ForegroundColor Green
+} else {
+    # Try alternative names
+    $m365SP = Get-AzADServicePrincipal -DisplayName "Microsoft 365 Data at Rest Encryption" -ErrorAction SilentlyContinue
+    if ($m365SP) {
+        Write-Host "✓ Found Microsoft 365 Data at Rest Encryption SP: $($m365SP.Id)" -ForegroundColor Green
+    } else {
+        Write-Host "✗ M365 Data at Rest Encryption service principal not found" -ForegroundColor Red
+    }
+}
+ 
+# For SharePoint (if needed)
+$spoSP = Get-AzADServicePrincipal -DisplayName "Office 365 SharePoint Online" -ErrorAction SilentlyContinue
+if ($spoSP) {
+    Write-Host "✓ Found SharePoint Online SP: $($spoSP.Id)" -ForegroundColor Green
+}
+```
+
 ### Verify Key Vault settings
 
 ```powershell
@@ -872,6 +897,198 @@ Register-AzResourceProvider -ProviderNamespace "Microsoft.KeyVault"
 
 ## Apply to Users or Groups
 
+### Exchange Online Configuration(new)
+
+```powershell
+# ========================================
+# Customer Key - Data Encryption Policy Setup
+# ========================================
+ 
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Customer Key - Data Encryption Policy Setup" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+ 
+# Step 1: Check PowerShell version
+Write-Host "`nChecking PowerShell version..." -ForegroundColor Yellow
+$psVersion = $PSVersionTable.PSVersion
+Write-Host "PowerShell version: $($psVersion.Major).$($psVersion.Minor)" -ForegroundColor Gray
+if ($psVersion.Major -lt 5) {
+    Write-Host "⚠ PowerShell 5.1 or later is required for Exchange Online module" -ForegroundColor Red
+    return
+}
+ 
+# Step 2: Set TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+ 
+# Step 3: Check if module is already installed
+Write-Host "`nChecking for Exchange Online Management module..." -ForegroundColor Yellow
+$exoModule = Get-Module -ListAvailable -Name ExchangeOnlineManagement
+ 
+if (-not $exoModule) {
+    Write-Host "Exchange Online module not found. Installing..." -ForegroundColor Yellow
+    try {
+        # Trust PSGallery
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -ErrorAction SilentlyContinue
+        # Install module
+        Install-Module -Name ExchangeOnlineManagement `
+            -Repository PSGallery `
+            -Scope CurrentUser `
+            -Force `
+            -AllowClobber `
+            -MinimumVersion 3.0.0 `
+            -ErrorAction Stop
+        Write-Host "✓ Module installed successfully" -ForegroundColor Green
+    } catch {
+        Write-Host "✗ Failed to install module: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "`nPlease run this command in a new PowerShell window:" -ForegroundColor Yellow
+        Write-Host "Install-Module -Name ExchangeOnlineManagement -Scope CurrentUser -Force" -ForegroundColor Cyan
+        return
+    }
+}
+ 
+# Step 4: Import the module
+Write-Host "`nImporting Exchange Online module..." -ForegroundColor Yellow
+try {
+    Import-Module ExchangeOnlineManagement -Force -ErrorAction Stop
+    Write-Host "✓ Module imported successfully" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Failed to import module: $($_.Exception.Message)" -ForegroundColor Red
+    return
+}
+ 
+# Step 5: Connect to Exchange Online
+Write-Host "`nConnecting to Exchange Online..." -ForegroundColor Yellow
+Write-Host "Please sign in with your Exchange admin account" -ForegroundColor Cyan
+try {
+    Connect-ExchangeOnline -ShowBanner:$false
+    Write-Host "✓ Connected to Exchange Online" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Failed to connect: $($_.Exception.Message)" -ForegroundColor Red
+    return
+}
+ 
+# Step 6: Define DEP parameters (update these if needed)
+$depName = "CMK-DEP-EC-2025"
+$depDescription = "Elections Canada Customer Key Data Encryption Policy"
+ 
+# Use your actual key URIs - these should be set from your global variables
+$keyUri1 = $global:KeyURIs.M365Primary
+$keyUri2 = $global:KeyURIs.M365Secondary
+ 
+# If global variables are not set, use these (update with your actual URIs)
+if (-not $keyUri1) {
+    $keyUri1 = "https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-customer-key-primary/2cd0cae2a2f84cb29bd6442b07649415"
+}
+if (-not $keyUri2) {
+    $keyUri2 = "https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-customer-key-secondary/758b3fac73fd4573a7d48c2840619326"
+}
+ 
+Write-Host "`nDEP Configuration:" -ForegroundColor Cyan
+Write-Host "  Name: $depName"
+Write-Host "  Primary Key: $keyUri1"
+Write-Host "  Secondary Key: $keyUri2"
+ 
+# Step 7: Create Data Encryption Policy
+Write-Host "`nCreating Data Encryption Policy..." -ForegroundColor Yellow
+try {
+    $dep = New-DataEncryptionPolicy `
+        -Name $depName `
+        -Description $depDescription `
+        -AzureKeyIDs @($keyUri1, $keyUri2) `
+        -ErrorAction Stop
+    Write-Host "✓ Data Encryption Policy created successfully!" -ForegroundColor Green
+    $dep | Format-List Name, Description, Enabled
+} catch {
+    if ($_.Exception.Message -like "*already exists*") {
+        Write-Host "DEP already exists. Retrieving existing policy..." -ForegroundColor Yellow
+        $dep = Get-DataEncryptionPolicy -Identity $depName
+        Write-Host "✓ Retrieved existing DEP" -ForegroundColor Green
+    } else {
+        Write-Host "✗ Failed to create DEP: $($_.Exception.Message)" -ForegroundColor Red
+        Disconnect-ExchangeOnline -Confirm:$false
+        return
+    }
+}
+ 
+# Step 8: Apply DEP to users
+Write-Host "`nChoose how to apply the DEP:" -ForegroundColor Yellow
+Write-Host "1. Apply to specific user(s)"
+Write-Host "2. Apply to all users in the organization"
+Write-Host "3. Apply to specific group members"
+Write-Host "4. Skip application (DEP created but not applied)"
+ 
+$choice = Read-Host "`nEnter your choice (1-4)"
+ 
+switch ($choice) {
+    "1" {
+        # Apply to specific users
+        $userEmail = Read-Host "Enter user email address"
+        try {
+            Set-Mailbox -Identity $userEmail -DataEncryptionPolicy $depName -ErrorAction Stop
+            Write-Host "✓ DEP applied to $userEmail" -ForegroundColor Green
+        } catch {
+            Write-Host "✗ Failed to apply DEP: $($_.Exception.Message)" -ForegroundColor Red
+        }
+    }
+    "2" {
+        # Apply to all users
+        Write-Host "Applying DEP to all users (this may take several minutes)..." -ForegroundColor Yellow
+        $confirm = Read-Host "Are you sure you want to apply to ALL users? (yes/no)"
+        if ($confirm -eq "yes") {
+            try {
+                $mailboxes = Get-Mailbox -ResultSize Unlimited
+                $count = 0
+                foreach ($mailbox in $mailboxes) {
+                    Set-Mailbox -Identity $mailbox.Identity -DataEncryptionPolicy $depName
+                    $count++
+                    if ($count % 10 -eq 0) {
+                        Write-Host "  Processed $count mailboxes..." -ForegroundColor Gray
+                    }
+                }
+                Write-Host "✓ DEP applied to $count users" -ForegroundColor Green
+            } catch {
+                Write-Host "✗ Error: $($_.Exception.Message)" -ForegroundColor Red
+            }
+        }
+    }
+    "3" {
+        # Apply to group members
+        $groupName = Read-Host "Enter distribution group name or email"
+        try {
+            $members = Get-DistributionGroupMember -Identity $groupName
+            foreach ($member in $members) {
+                if ($member.RecipientType -like "*Mailbox") {
+                    Set-Mailbox -Identity $member.Identity -DataEncryptionPolicy $depName
+                }
+            }
+            Write-Host "✓ DEP applied to group members" -ForegroundColor Green
+        } catch {
+            Write-Host "✗ Failed: $($_.Exception.Message)" -ForegroundColor Red
+        }
+    }
+    "4" {
+        Write-Host "DEP created but not applied to any users." -ForegroundColor Yellow
+    }
+}
+ 
+# Step 9: Verify DEP status
+Write-Host "`nVerifying DEP status..." -ForegroundColor Yellow
+$depStatus = Get-DataEncryptionPolicy -Identity $depName
+Write-Host "DEP Name: $($depStatus.Name)" -ForegroundColor Green
+Write-Host "Enabled: $($depStatus.Enabled)" -ForegroundColor Green
+Write-Host "Azure Key Count: $($depStatus.AzureKeyIDs.Count)" -ForegroundColor Green
+ 
+# Step 10: Disconnect
+Write-Host "`nDisconnecting from Exchange Online..." -ForegroundColor Yellow
+Disconnect-ExchangeOnline -Confirm:$false
+ 
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host "✓ Data Encryption Policy setup complete!" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "`nNote: It may take up to 24 hours for the encryption to fully apply." -ForegroundColor Yellow
+Write-Host "Monitor progress in the Microsoft 365 compliance center." -ForegroundColor Yellow
+```
+
 ### Exchange Online Configuration
 ```powershell
 Write-Host "`n========================================" -ForegroundColor Yellow
@@ -1003,7 +1220,95 @@ $members | ForEach-Object {
 }
 ```
 
+### TESTING 
+
+```powershell
+# ========================================
+# Teams Encryption Status Check
+# ========================================
+ 
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Teams Customer Key Encryption Status" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+ 
+# Current State
+Write-Host "`nCurrent Encryption State for fred.pearson@leonardocompany.ca:" -ForegroundColor Yellow
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "Service          | Encryption Status    | Key Owner" -ForegroundColor White
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "Teams Chat       | Encrypted ✅         | Microsoft 🔐" -ForegroundColor Yellow
+Write-Host "Teams Files      | Encrypted ✅         | Microsoft 🔐" -ForegroundColor Yellow
+Write-Host "Teams Meetings   | Encrypted ✅         | Microsoft 🔐" -ForegroundColor Yellow
+Write-Host "Exchange Email   | Encrypted ✅         | Microsoft 🔐" -ForegroundColor Yellow
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+ 
+# After DEP Applied
+Write-Host "`nAfter DEP is Applied (24-72 hours):" -ForegroundColor Green
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "Service          | Encryption Status    | Key Owner" -ForegroundColor White
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "Teams Chat       | Encrypted ✅         | Leonardo 🔑" -ForegroundColor Green
+Write-Host "Teams Files*     | Encrypted ✅         | Leonardo 🔑" -ForegroundColor Green
+Write-Host "Teams Meetings   | Encrypted ✅         | Leonardo 🔑" -ForegroundColor Green
+Write-Host "Exchange Email   | Encrypted ✅         | Leonardo 🔑" -ForegroundColor Green
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "*Teams files stored in SharePoint require separate SharePoint DEP" -ForegroundColor Gray
+ 
+# How to Monitor
+Write-Host "`nHow to Monitor When Encryption Switches:" -ForegroundColor Cyan
+ 
+Write-Host "`n1. Azure Key Vault Activity (Most Reliable):" -ForegroundColor Yellow
+Write-Host "   - Go to Azure Portal → Your Key Vaults"
+Write-Host "   - Check 'Monitoring' → 'Insights' or 'Logs'"
+Write-Host "   - Look for operations from 'Microsoft.TeamsCommunication'"
+Write-Host "   - You'll see 'wrapKey' and 'unwrapKey' operations"
+ 
+Write-Host "`n2. Microsoft 365 Audit Logs:" -ForegroundColor Yellow
+Write-Host "   - Go to https://compliance.microsoft.com"
+Write-Host "   - Audit → Search"
+Write-Host "   - Look for 'CustomerKeyService' activities"
+ 
+Write-Host "`n3. PowerShell Verification (After DEP):" -ForegroundColor Yellow
+Write-Host @'
+# Run this after DEP is applied:
+$mailbox = Get-Mailbox -Identity "fred.pearson@leonardocompany.ca"
+if ($mailbox.DataEncryptionPolicy) {
+    Write-Host "✅ Customer Key Active for: $($mailbox.DisplayName)"
+    Write-Host "   Policy: $($mailbox.DataEncryptionPolicy)"
+    Write-Host "   Teams, Exchange, and MDEP services now using YOUR keys!"
+} else {
+    Write-Host "❌ Still using Microsoft keys"
+}
+'@
+ 
+# Timeline
+Write-Host "`n`nEncryption Timeline:" -ForegroundColor Cyan
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "NOW                  → Data encrypted with Microsoft keys"
+Write-Host "DEP Creation (+24h)  → New-DataEncryptionPolicy available"
+Write-Host "DEP Applied          → Policy assigned to mailbox"
+Write-Host "Re-encryption (+48h) → Existing data re-encrypted with YOUR keys"
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+ 
+# Key Points
+Write-Host "`nKey Points:" -ForegroundColor Yellow
+Write-Host "• Your Teams data IS encrypted now (with Microsoft keys)"
+Write-Host "• Your Teams data is NOT YET encrypted with YOUR keys"
+Write-Host "• Once DEP is applied, re-encryption happens automatically"
+Write-Host "• All Teams services (chat, calls, files) will use your keys"
+Write-Host "• No service disruption during the transition"
+ 
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host "Bottom Line:" -ForegroundColor Green
+Write-Host "Teams encryption with YOUR keys starts" -ForegroundColor White
+Write-Host "24-48 hours AFTER you apply the DEP" -ForegroundColor White
+Write-Host "========================================" -ForegroundColor Green
+```
+
+#### Check azure key vault logs to see that MS Teams is accessing your keys for encryption operations
+
 ### Bulk Application Script
+
 ```powershell
 # Script to apply Customer Key DEP to multiple users from CSV
 # CSV should have a column named "UserPrincipalName" or "Email"
