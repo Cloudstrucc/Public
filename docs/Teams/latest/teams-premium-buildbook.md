@@ -563,6 +563,99 @@ graph LR
 
 ## Security Configuration
 
+```password
+# ========================================
+# Teams Secure Meeting Implementation
+# ========================================
+
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Teams Secure Meeting Configuration" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+
+# Step 1: Create Meeting Policies for Different Security Levels
+Write-Host "`nStep 1: Creating Meeting Policies..." -ForegroundColor Yellow
+
+Connect-MicrosoftTeams
+
+# Policy 1: Secure Meeting Policy
+$secureMeetingPolicy = "Leonardo-SecureMeeting"
+try {
+    New-CsTeamsMeetingPolicy -Identity $secureMeetingPolicy `
+        -AllowExternalParticipantGiveRequestControl $false `
+        -AllowAnonymousUsersToJoinMeeting $false `
+        -AllowAnonymousUsersToStartMeeting $false `
+        -AutoAdmittedUsers "EveryoneInCompanyExcludingGuests" `
+        -AllowPSTNUsersToBypassLobby $false `
+        -AllowCloudRecording $true `
+        -AllowRecordingStorageOutsideRegion $false `
+        -WhoCanRegister "EveryoneInCompany" `
+        -AllowMeetingRegistration $true `
+        -AllowWatermarkForCameraVideo $true `
+        -AllowWatermarkForScreenSharing $true `
+        -NewMeetingRecordingExpirationDays 30 `
+        -AllowTranscription $true `
+        -AllowCartCaptionsScheduling $true `
+        -AllowIPAudio $true `
+        -AllowIPVideo $true `
+        -MediaBitRateKb 50000 `
+        -ScreenSharingMode "EntireScreen" `
+        -VideoFiltersMode "AllFilters" `
+        -AllowEngagementReport "Enabled" `
+        -LiveCaptionsEnabledType "DisabledUserOverride"
+        
+    Write-Host "✓ Secure meeting policy created" -ForegroundColor Green
+} catch {
+    Write-Host "Secure meeting policy already exists or error: $($_.Exception.Message)" -ForegroundColor Yellow
+}
+
+# Policy 2: Normal Meeting Policy
+$normalMeetingPolicy = "Leonardo-NormalMeeting"
+try {
+    New-CsTeamsMeetingPolicy -Identity $normalMeetingPolicy `
+        -AllowExternalParticipantGiveRequestControl $true `
+        -AllowAnonymousUsersToJoinMeeting $true `
+        -AutoAdmittedUsers "EveryoneInCompany" `
+        -AllowPSTNUsersToBypassLobby $true `
+        -AllowCloudRecording $true `
+        -AllowWatermarkForCameraVideo $false `
+        -AllowWatermarkForScreenSharing $false `
+        -AllowTranscription $true
+        
+    Write-Host "✓ Normal meeting policy created" -ForegroundColor Green
+} catch {
+    Write-Host "Normal meeting policy already exists or error: $($_.Exception.Message)" -ForegroundColor Yellow
+}
+
+# Step 2: Create Meeting Templates
+Write-Host "`nStep 2: Creating Meeting Templates..." -ForegroundColor Yellow
+
+# Note: Meeting templates must be created in Teams Admin Center
+# We'll provide the configuration here
+$meetingTemplates = @"
+Navigate to Teams Admin Center > Meetings > Meeting templates
+
+Template 1: "Secure Meeting - External 2FA Required"
+- Security Level: High
+- Lobby: Only people in my org can bypass
+- Who can present: Only people in my org
+- Record automatically: Yes
+- Watermark: Yes
+- Allow chat: During meeting only
+- External access: Require authentication
+
+Template 2: "Normal Meeting"
+- Security Level: Standard
+- Lobby: People I invite bypass
+- Who can present: Everyone
+- Record automatically: Optional
+- Watermark: No
+- Allow chat: Before, during, and after
+- External access: Allow anonymous
+"@
+
+Write-Host $meetingTemplates -ForegroundColor Cyan
+```
+
 ### Premium Security Settings
 
 ```powershell
