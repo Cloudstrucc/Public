@@ -1,9 +1,11 @@
 # Teams Secure Meeting Implementation Build Book
+
 ## Leonardo Company - Enhanced Security with Customer Managed Keys
 
 ---
 
 ## Table of Contents
+
 1. [Executive Summary](#executive-summary)
 2. [Architecture Overview](#architecture-overview)
 3. [Prerequisites](#prerequisites)
@@ -29,8 +31,8 @@ This build book provides comprehensive instructions for implementing a secure me
 - **Custom Teams app**: Simplified meeting creation interface
 - **Compliance tracking**: Full audit trail and monitoring
 
-**Implementation Timeline**: 2-3 weeks  
-**Complexity**: Medium-High  
+**Implementation Timeline**: 2-3 weeks
+**Complexity**: Medium-High
 **Required Roles**: Teams Administrator, Conditional Access Administrator, Power Platform Developer
 
 ---
@@ -46,27 +48,27 @@ graph TB
         U2[External User]
         UI[Teams Meeting UI]
     end
-    
+  
     subgraph "Meeting Creation Flow"
         MT{Meeting Type?}
         SM[Secure Meeting]
         NM[Normal Meeting]
         PA[Power Automate]
     end
-    
+  
     subgraph "Security Layer"
         CA[Conditional Access]
         MFA[2FA Requirement]
         MP[Meeting Policies]
         CMK[Customer Keys]
     end
-    
+  
     subgraph "Storage & Encryption"
         SP[SharePoint]
         OD[OneDrive]
         KV[Key Vault]
     end
-    
+  
     U1 --> UI
     UI --> MT
     MT -->|Secure| SM
@@ -74,16 +76,16 @@ graph TB
     SM --> PA
     NM --> PA
     PA --> MP
-    
+  
     U2 --> CA
     CA -->|External + Secure| MFA
     MFA --> SM
-    
+  
     SM --> CMK
     CMK --> KV
     SM --> SP
     SM --> OD
-    
+  
     style SM fill:#f96,stroke:#333,stroke-width:4px
     style CMK fill:#9f9,stroke:#333,stroke-width:2px
     style MFA fill:#f96,stroke:#333,stroke-width:2px
@@ -99,7 +101,7 @@ sequenceDiagram
     participant TM as Teams Meeting
     participant CMK as Customer Keys
     participant KV as Key Vault
-    
+  
     EU->>CA: Attempts to join meeting
     CA->>CA: Check if external user
     CA->>MFA: Require 2FA
@@ -112,7 +114,7 @@ sequenceDiagram
     KV->>CMK: Return keys
     CMK->>TM: Apply encryption
     TM->>EU: Join encrypted meeting
-    
+  
     Note over EU,KV: All meeting data encrypted with Leonardo's Customer Keys
 ```
 
@@ -121,6 +123,7 @@ sequenceDiagram
 ## Prerequisites
 
 ### Technical Requirements
+
 - [ ] Microsoft 365 E5 or E3 + Security licenses
 - [ ] Azure AD Premium P2 licenses
 - [ ] Teams Premium licenses (for watermarking)
@@ -128,8 +131,9 @@ sequenceDiagram
 - [ ] Customer Key implementation (completed ✓)
 
 ### Administrative Access
+
 - [ ] Teams Administrator
-- [ ] Conditional Access Administrator  
+- [ ] Conditional Access Administrator
 - [ ] Exchange Administrator
 - [ ] Power Platform Administrator
 - [ ] Application Administrator (for app registration)
@@ -978,13 +982,13 @@ const SecureMeetingScheduler: React.FC = () => {
       });
 
       const meeting = await response.json();
-      
+    
       // Show success
       app.notifySuccess();
-      
+    
       // Open meeting in Teams
       microsoftTeams.executeDeepLink(meeting.joinUrl);
-      
+    
     } catch (error) {
       app.notifyFailure('Failed to create meeting');
     }
@@ -994,7 +998,7 @@ const SecureMeetingScheduler: React.FC = () => {
     <Provider theme={teamsTheme}>
       <Flex column padding="padding.medium">
         <Header content="Schedule Teams Meeting" />
-        
+      
         <Form onSubmit={handleSubmit}>
           <FormDropdown
             label="Meeting Type"
@@ -1006,14 +1010,14 @@ const SecureMeetingScheduler: React.FC = () => {
             onChange={(e, { value }) => setForm({ ...form, meetingType: value as any })}
             required
           />
-          
+        
           {form.meetingType === 'secure' && (
             <Text 
               content="⚠️ External attendees will be required to authenticate with 2FA" 
               style={{ color: '#f8bb00', marginBottom: '10px' }}
             />
           )}
-          
+        
           <FormInput
             label="Subject"
             value={form.subject}
@@ -1021,14 +1025,14 @@ const SecureMeetingScheduler: React.FC = () => {
             required
             showSuccessIndicator={false}
           />
-          
+        
           <FormDatepicker
             label="Start Date & Time"
             value={form.startDateTime}
             onChange={(e, { value }) => setForm({ ...form, startDateTime: value })}
             required
           />
-          
+        
           <FormDropdown
             label="Duration"
             items={[
@@ -1041,14 +1045,14 @@ const SecureMeetingScheduler: React.FC = () => {
             onChange={(e, { value }) => setForm({ ...form, duration: value as number })}
             required
           />
-          
+        
           <FormInput
             label="Attendees (comma separated)"
             value={form.attendees.join(', ')}
             onChange={(e, { value }) => setForm({ ...form, attendees: value.split(',').map(e => e.trim()) })}
             required
           />
-          
+        
           <FormInput
             label="Description"
             value={form.description}
@@ -1056,10 +1060,10 @@ const SecureMeetingScheduler: React.FC = () => {
             textarea
             height="100px"
           />
-          
+        
           <FormButton content="Schedule Meeting" primary />
         </Form>
-        
+      
         <Dialog
           open={showSecurityDialog}
           header="Security Notice"
@@ -1126,19 +1130,19 @@ export async function createMeeting(req: Request, res: Response) {
   try {
     const meetingData: IMeetingRequest = req.body;
     const userId = req.user.id;
-    
+  
     // Initialize Graph client
     const client = Client.init({
       authProvider: (done) => {
         done(null, req.user.accessToken);
       }
     });
-    
+  
     // Check for external attendees
     const externalAttendees = meetingData.attendees.filter(
       email => !email.endsWith('@leonardocompany.ca')
     );
-    
+  
     // Create base meeting
     const meeting = {
       subject: meetingData.subject,
@@ -1170,32 +1174,32 @@ export async function createMeeting(req: Request, res: Response) {
       importance: meetingData.meetingType === 'secure' ? 'high' : 'normal',
       categories: meetingData.meetingType === 'secure' ? ['Secure Meeting'] : []
     };
-    
+  
     // Create the event
     const createdMeeting = await client
       .api(`/users/${userId}/events`)
       .post(meeting);
-    
+  
     // Apply additional security settings
     if (meetingData.meetingType === 'secure') {
       await applySecureMeetingSettings(createdMeeting.id, meetingData.securitySettings);
-      
+    
       // Send 2FA notifications to external attendees
       if (externalAttendees.length > 0) {
         await sendExternalAttendeeNotifications(externalAttendees, createdMeeting);
       }
-      
+    
       // Log secure meeting creation
       await logSecureMeetingCreation(meetingData, createdMeeting.id);
     }
-    
+  
     res.status(201).json({
       meetingId: createdMeeting.id,
       joinUrl: createdMeeting.onlineMeeting.joinUrl,
       subject: createdMeeting.subject,
       organizer: createdMeeting.organizer.emailAddress.name
     });
-    
+  
   } catch (error) {
     console.error('Failed to create meeting:', error);
     res.status(500).json({ error: 'Failed to create meeting' });
@@ -1440,19 +1444,19 @@ foreach ($phase in $rolloutPhases) {
     Write-Host "`nPhase $($phase.Phase): $($phase.Name)" -ForegroundColor Cyan
     Write-Host "Start Date: $($phase.Date)" -ForegroundColor Gray
     Write-Host "User Count: $($phase.Users.Count)" -ForegroundColor Gray
-    
+  
     if ($phase.Date -le (Get-Date)) {
         # Assign policies
         foreach ($user in $phase.Users) {
             Grant-CsTeamsMeetingPolicy -Identity $user.UserPrincipalName `
                 -PolicyName $normalPolicyName
         }
-        
+      
         # Send training invite if required
         if ($phase.TrainingRequired) {
             Send-TrainingInvite -Users $phase.Users -Phase $phase.Name
         }
-        
+      
         Write-Host "✓ Phase $($phase.Phase) deployed" -ForegroundColor Green
     } else {
         Write-Host "⏳ Scheduled for $($phase.Date)" -ForegroundColor Yellow
@@ -1474,31 +1478,31 @@ graph LR
         CA[Conditional Access Logs]
         KV[Key Vault Logs]
     end
-    
+  
     subgraph "Processing"
         LA[Log Analytics]
         PA[Power Automate]
         PB[Power BI]
     end
-    
+  
     subgraph "Dashboards"
         SD[Security Dashboard]
         CD[Compliance Dashboard]
         UD[Usage Dashboard]
     end
-    
+  
     AL --> LA
     TA --> LA
     CA --> LA
     KV --> LA
-    
+  
     LA --> PA
     PA --> PB
-    
+  
     PB --> SD
     PB --> CD
     PB --> UD
-    
+  
     style LA fill:#f9f,stroke:#333,stroke-width:2px
     style PB fill:#9f9,stroke:#333,stroke-width:2px
 ```
@@ -1609,19 +1613,20 @@ SecureMeetings
 ### Common Issues and Resolutions
 
 #### Issue: External user cannot join secure meeting
+
 ```powershell
 # Diagnostic script
 function Test-ExternalUserAccess {
     param([string]$ExternalEmail)
-    
+  
     # Check if user exists in tenant
     $guestUser = Get-MgUser -Filter "mail eq '$ExternalEmail'" -ErrorAction SilentlyContinue
-    
+  
     if (!$guestUser) {
         Write-Host "❌ User not found in tenant. They need to be invited first." -ForegroundColor Red
         return
     }
-    
+  
     # Check MFA status
     $mfaStatus = Get-MgUserAuthenticationMethod -UserId $guestUser.Id
     if ($mfaStatus.Count -le 1) {
@@ -1630,7 +1635,7 @@ function Test-ExternalUserAccess {
     } else {
         Write-Host "✅ User has MFA configured" -ForegroundColor Green
     }
-    
+  
     # Check Conditional Access
     Write-Host "`nChecking Conditional Access..." -ForegroundColor Yellow
     # This would check CA policy evaluation
@@ -1641,42 +1646,44 @@ Test-ExternalUserAccess -ExternalEmail "partner@external.com"
 ```
 
 #### Issue: Meeting policy not applying
+
 ```powershell
 # Check and fix meeting policy assignment
 function Fix-MeetingPolicyAssignment {
     param([string]$UserPrincipalName)
-    
+  
     Connect-MicrosoftTeams
-    
+  
     # Get current assignment
     $user = Get-CsOnlineUser -Identity $UserPrincipalName
     Write-Host "Current Policy: $($user.TeamsMeetingPolicy)" -ForegroundColor Cyan
-    
+  
     # Re-apply policy
     Grant-CsTeamsMeetingPolicy -Identity $UserPrincipalName `
         -PolicyName "Leonardo-SecureMeeting-Policy"
-    
+  
     Write-Host "✓ Policy re-applied. Changes take effect in 30 minutes." -ForegroundColor Green
-    
+  
     Disconnect-MicrosoftTeams
 }
 ```
 
 #### Issue: Watermark not showing
+
 ```powershell
 # Verify Teams Premium license
 function Test-TeamsPremiumFeatures {
     param([string]$UserPrincipalName)
-    
+  
     Connect-MgGraph -Scopes "User.Read.All"
-    
+  
     $user = Get-MgUser -UserId $UserPrincipalName
     $licenses = Get-MgUserLicenseDetail -UserId $user.Id
-    
+  
     $teamsPremium = $licenses | Where-Object { 
         $_.SkuPartNumber -eq "Microsoft_Teams_Premium" 
     }
-    
+  
     if ($teamsPremium) {
         Write-Host "✅ Teams Premium licensed" -ForegroundColor Green
         $teamsPremium.ServicePlans | Where-Object { 
@@ -1687,7 +1694,7 @@ function Test-TeamsPremiumFeatures {
     } else {
         Write-Host "❌ Teams Premium not licensed - watermarking unavailable" -ForegroundColor Red
     }
-    
+  
     Disconnect-MgGraph
 }
 ```
@@ -1697,6 +1704,7 @@ function Test-TeamsPremiumFeatures {
 ## Appendix
 
 ### A. PowerShell Module Requirements
+
 ```powershell
 # Required modules and versions
 $requiredModules = @{
@@ -1718,6 +1726,7 @@ foreach ($module in $requiredModules.GetEnumerator()) {
 ```
 
 ### B. Security Checklist
+
 - [ ] Customer Key enabled and operational
 - [ ] Conditional Access policy created
 - [ ] Meeting policies configured
@@ -1728,12 +1737,14 @@ foreach ($module in $requiredModules.GetEnumerator()) {
 - [ ] User training completed
 
 ### C. Support Contacts
+
 - **Microsoft Support**: 1-800-936-3100
 - **Teams Admin**: teams-admin@leonardocompany.ca
 - **Security Team**: security@leonardocompany.ca
 - **CMK Administrator**: fred.pearson@leonardocompany.ca
 
 ### D. Reference Links
+
 - [Teams Meeting Policies](https://docs.microsoft.com/microsoftteams/meeting-policies-in-teams)
 - [Conditional Access](https://docs.microsoft.com/azure/active-directory/conditional-access/)
 - [Customer Key Documentation](https://docs.microsoft.com/microsoft-365/compliance/customer-key-overview)
@@ -1741,8 +1752,10 @@ foreach ($module in $requiredModules.GetEnumerator()) {
 
 ---
 
-Annex
+## Annex
 
+
+```powershell
 #requires -Version 5.1
 <#
 .SYNOPSIS
@@ -1776,17 +1789,14 @@ Annex
 
 .EXAMPLE
     # For single user
-    .\Deploy-CustomerKey.ps1 -TenantId "12345678-1234-1234-1234-123456789012" `
-                            -PrimarySubscriptionId "11111111-1111-1111-1111-111111111111" `
+    .\Deploy-CustomerKey.ps1 -TenantId "12345678-1234-1234-1234-123456789012" `                            -PrimarySubscriptionId "11111111-1111-1111-1111-111111111111"`
                             -SecondarySubscriptionId "22222222-2222-2222-2222-222222222222" `
                             -TargetUserEmail "user@domain.com"
 
 .EXAMPLE
     # For Entra ID group
-    .\Deploy-CustomerKey.ps1 -TenantId "12345678-1234-1234-1234-123456789012" `
-                            -PrimarySubscriptionId "11111111-1111-1111-1111-111111111111" `
-                            -SecondarySubscriptionId "22222222-2222-2222-2222-222222222222" `
-                            -TargetType "Group" `
+    .\Deploy-CustomerKey.ps1 -TenantId "12345678-1234-1234-1234-123456789012" `                            -PrimarySubscriptionId "11111111-1111-1111-1111-111111111111"`
+                            -SecondarySubscriptionId "22222222-2222-2222-2222-222222222222" `                            -TargetType "Group"`
                             -TargetGroupName "CMK-Enabled-Users"
 
 .NOTES
@@ -1832,6 +1842,7 @@ param(
 )
 
 # Validate parameters based on target type
+
 if ($TargetType -eq "User" -and -not $TargetUserEmail) {
     throw "TargetUserEmail is required when TargetType is 'User'"
 }
@@ -1841,10 +1852,12 @@ if ($TargetType -eq "Group" -and -not $TargetGroupName -and -not $TargetGroupId)
 }
 
 # Script configuration
+
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "Continue"
 
 # Colors for output
+
 $colors = @{
     Success = "Green"
     Warning = "Yellow"
@@ -1854,6 +1867,7 @@ $colors = @{
 }
 
 # Helper Functions
+
 function Write-ColorOutput {
     param(
         [string]$Message,
@@ -1874,19 +1888,17 @@ function Show-Progress {
 
 function Test-Prerequisites {
     Write-ColorOutput "`nChecking prerequisites..." -Color $colors.Info
-    
-    # Check if running in Azure Cloud Shell
-    $isCloudShell = $env:AZURE_HTTP_USER_AGENT -like "*cloud-shell*"
-    
-    # Check if running in VS Code
-    $isVSCode = $env:TERM_PROGRAM -eq "vscode" -or $env:VSCODE_PID
-    
+
+    # Check if running in Azure Cloud Shell$isCloudShell = $env:AZURE_HTTP_USER_AGENT -like "*cloud-shell*"
+
+    # Check if running in VS Code$isVSCode = $env:TERM_PROGRAM -eq "vscode" -or $env:VSCODE_PID
+
     if ($isVSCode) {
         Write-ColorOutput "Detected VS Code environment" -Color $colors.Info
     } elseif ($isCloudShell) {
         Write-ColorOutput "Detected Azure Cloud Shell environment" -Color $colors.Info
     }
-    
+
     # Check required modules
     $requiredModules = @("Az.Accounts", "Az.Resources", "Az.KeyVault")
     foreach ($module in $requiredModules) {
@@ -1895,7 +1907,7 @@ function Test-Prerequisites {
             Install-Module -Name $module -Force -AllowClobber
         }
     }
-    
+
     Write-ColorOutput "✓ Prerequisites check passed" -Color $colors.Success
     return @{
         IsCloudShell = $isCloudShell
@@ -1905,15 +1917,16 @@ function Test-Prerequisites {
 
 function Confirm-Execution {
     param([string]$Message)
-    
+
     if ($SkipConfirmation) { return $true }
-    
+
     Write-ColorOutput "`n$Message" -Color $colors.Warning
     $response = Read-Host "Do you want to continue? (Y/N)"
     return $response -eq 'Y' -or $response -eq 'y'
 }
 
 # Main execution
+
 try {
     Clear-Host
     Write-ColorOutput @"
@@ -1936,8 +1949,7 @@ try {
     }
 
     # Add target-specific parameters
-    if ($TargetType -eq "User") {
-        $global:CMKParams.TargetUserEmail = $TargetUserEmail
+    if ($TargetType -eq "User") {$global:CMKParams.TargetUserEmail = $TargetUserEmail
         $global:CMKParams.TargetDisplay = $TargetUserEmail
     } else {
         $global:CMKParams.TargetGroupName = $TargetGroupName
@@ -1952,14 +1964,12 @@ try {
 
     # Display configuration
     Write-ColorOutput "`nConfiguration Summary:" -Color $colors.Info
-    Write-ColorOutput "=====================" -Color $colors.Info
-    $global:CMKParams.GetEnumerator() | Where-Object { $_.Value } | Sort-Object Name | ForEach-Object {
+    Write-ColorOutput "=====================" -Color $colors.Info$global:CMKParams.GetEnumerator() | Where-Object { $_.Value } | Sort-Object Name | ForEach-Object {
         Write-ColorOutput "$($_.Key): " -Color $colors.Warning -NoNewline
         Write-ColorOutput $_.Value
     }
 
-    if (-not (Confirm-Execution -Message "`nThis script will create Azure resources. Charges may apply.")) {
-        Write-ColorOutput "`nDeployment cancelled by user." -Color $colors.Warning
+    if (-not (Confirm-Execution -Message "`nThis script will create Azure resources. Charges may apply.")) {         Write-ColorOutput "`nDeployment cancelled by user." -Color $colors.Warning
         return
     }
 
@@ -1973,9 +1983,9 @@ try {
     # Step 1: Authentication
     Show-Progress -Activity "Customer Key Deployment" -Status "Authenticating to Azure..." -PercentComplete 10
     Write-ColorOutput "`nStep 1: Authenticating to Azure..." -Color $colors.Progress
-    
+
     Clear-AzContext -Force
-    
+
     if ($envInfo.IsCloudShell) {
         Connect-AzAccount -TenantId $TenantId -UseDeviceAuthentication
     } elseif ($envInfo.IsVSCode) {
@@ -2000,28 +2010,27 @@ try {
     # Step 2: Verify Subscriptions
     Show-Progress -Activity "Customer Key Deployment" -Status "Verifying subscriptions..." -PercentComplete 15
     Write-ColorOutput "`nStep 2: Verifying subscriptions..." -Color $colors.Progress
-    
-    $subscriptions = Get-AzSubscription | Where-Object State -eq "Enabled"
-    $primarySub = $subscriptions | Where-Object Id -eq $PrimarySubscriptionId
+
+    $subscriptions = Get-AzSubscription | Where-Object State -eq "Enabled"$primarySub = $subscriptions | Where-Object Id -eq $PrimarySubscriptionId
     $secondarySub = $subscriptions | Where-Object Id -eq $SecondarySubscriptionId
-    
-    if (-not $primarySub -or -not $secondarySub) {
+
+    if (-not$primarySub -or -not $secondarySub) {
         throw "One or both subscriptions not found in tenant"
     }
-    
-    Write-ColorOutput "✓ Primary subscription verified: $($primarySub.Name)" -Color $colors.Success
+
+    Write-ColorOutput "✓ Primary subscription verified:$($primarySub.Name)" -Color $colors.Success
     Write-ColorOutput "✓ Secondary subscription verified: $($secondarySub.Name)" -Color $colors.Success
 
     # Step 3: Register Service Principals
     Show-Progress -Activity "Customer Key Deployment" -Status "Registering service principals..." -PercentComplete 20
     Write-ColorOutput "`nStep 3: Registering service principals..." -Color $colors.Progress
-    
+
     $servicePrincipals = @(
         @{Id = "19f7f505-34aa-44a4-9dcc-6a768854d2ea"; Name = "Customer Key Onboarding"},
         @{Id = "c066d759-24ae-40e7-a56f-027002b5d3e4"; Name = "M365DataAtRestEncryption"},
         @{Id = "00000003-0000-0ff1-ce00-000000000000"; Name = "Office 365 SharePoint Online"}
     )
-    
+
     foreach ($sp in $servicePrincipals) {
         $existing = Get-AzADServicePrincipal -ApplicationId $sp.Id -ErrorAction SilentlyContinue
         if (-not $existing) {
@@ -2035,7 +2044,7 @@ try {
     # Step 4: Create Resource Groups
     Show-Progress -Activity "Customer Key Deployment" -Status "Creating resource groups..." -PercentComplete 25
     Write-ColorOutput "`nStep 4: Creating resource groups..." -Color $colors.Progress
-    
+
     # Initialize resource names
     $global:ResourceNames = @{
         PrimaryRGMultiworkload = "rg-$NamingPrefix-primary-multiworkload"
@@ -2044,49 +2053,49 @@ try {
         SecondaryRGSharePoint = "rg-$NamingPrefix-secondary-sharepoint"
         DEPName = "CMK-DEP-$(Get-Date -Format 'yyyyMMdd')"
     }
-    
+
     # Create primary resource groups
     Select-AzSubscription -SubscriptionId $PrimarySubscriptionId | Out-Null
-    New-AzResourceGroup -Name $global:ResourceNames.PrimaryRGMultiworkload -Location $global:CMKParams.PrimaryLocation -Force | Out-Null
+    New-AzResourceGroup -Name$global:ResourceNames.PrimaryRGMultiworkload -Location $global:CMKParams.PrimaryLocation -Force | Out-Null
     New-AzResourceGroup -Name $global:ResourceNames.PrimaryRGSharePoint -Location $global:CMKParams.PrimaryLocation -Force | Out-Null
     Write-ColorOutput "✓ Created primary resource groups in $($global:CMKParams.PrimaryLocation)" -Color $colors.Success
-    
+
     # Create secondary resource groups
     Select-AzSubscription -SubscriptionId $SecondarySubscriptionId | Out-Null
-    New-AzResourceGroup -Name $global:ResourceNames.SecondaryRGMultiworkload -Location $global:CMKParams.SecondaryLocation -Force | Out-Null
+    New-AzResourceGroup -Name$global:ResourceNames.SecondaryRGMultiworkload -Location $global:CMKParams.SecondaryLocation -Force | Out-Null
     New-AzResourceGroup -Name $global:ResourceNames.SecondaryRGSharePoint -Location $global:CMKParams.SecondaryLocation -Force | Out-Null
     Write-ColorOutput "✓ Created secondary resource groups in $($global:CMKParams.SecondaryLocation)" -Color $colors.Success
 
     # Step 5: Create Key Vaults
     Show-Progress -Activity "Customer Key Deployment" -Status "Creating Key Vaults..." -PercentComplete 35
     Write-ColorOutput "`nStep 5: Creating Key Vaults..." -Color $colors.Progress
-    
+
     $global:KeyVaultNames = @{}
-    
+
     # Primary Key Vaults
     Select-AzSubscription -SubscriptionId $PrimarySubscriptionId | Out-Null
-    
+
     $kvNameM365Primary = "kv-$NamingPrefix-m365-pri-$(Get-Random -Maximum 9999)"
     $null = New-AzKeyVault -Name $kvNameM365Primary -ResourceGroupName $global:ResourceNames.PrimaryRGMultiworkload `
         -Location $global:CMKParams.PrimaryLocation -SKU Premium -EnablePurgeProtection -SoftDeleteRetentionInDays 90
     $global:KeyVaultNames.M365Primary = $kvNameM365Primary
     Write-ColorOutput "✓ Created Key Vault: $kvNameM365Primary" -Color $colors.Success
-    
+
     $kvNameSPOPrimary = "kv-$NamingPrefix-spo-pri-$(Get-Random -Maximum 9999)"
     $null = New-AzKeyVault -Name $kvNameSPOPrimary -ResourceGroupName $global:ResourceNames.PrimaryRGSharePoint `
         -Location $global:CMKParams.PrimaryLocation -SKU Premium -EnablePurgeProtection -SoftDeleteRetentionInDays 90
     $global:KeyVaultNames.SPOPrimary = $kvNameSPOPrimary
     Write-ColorOutput "✓ Created Key Vault: $kvNameSPOPrimary" -Color $colors.Success
-    
+
     # Secondary Key Vaults
     Select-AzSubscription -SubscriptionId $SecondarySubscriptionId | Out-Null
-    
+
     $kvNameM365Secondary = "kv-$NamingPrefix-m365-sec-$(Get-Random -Maximum 9999)"
     $null = New-AzKeyVault -Name $kvNameM365Secondary -ResourceGroupName $global:ResourceNames.SecondaryRGMultiworkload `
         -Location $global:CMKParams.SecondaryLocation -SKU Premium -EnablePurgeProtection -SoftDeleteRetentionInDays 90
     $global:KeyVaultNames.M365Secondary = $kvNameM365Secondary
     Write-ColorOutput "✓ Created Key Vault: $kvNameM365Secondary" -Color $colors.Success
-    
+
     $kvNameSPOSecondary = "kv-$NamingPrefix-spo-sec-$(Get-Random -Maximum 9999)"
     $null = New-AzKeyVault -Name $kvNameSPOSecondary -ResourceGroupName $global:ResourceNames.SecondaryRGSharePoint `
         -Location $global:CMKParams.SecondaryLocation -SKU Premium -EnablePurgeProtection -SoftDeleteRetentionInDays 90
@@ -2096,33 +2105,27 @@ try {
     # Step 6: Configure RBAC
     Show-Progress -Activity "Customer Key Deployment" -Status "Configuring RBAC permissions..." -PercentComplete 45
     Write-ColorOutput "`nStep 6: Configuring RBAC permissions..." -Color $colors.Progress
-    
-    $currentUser = Get-AzADUser -UserPrincipalName (Get-AzContext).Account.Id
-    $userId = $currentUser.Id
-    
+
+    $currentUser = Get-AzADUser -UserPrincipalName (Get-AzContext).Account.Id$userId = $currentUser.Id
+
     # Function to assign Key Vault Administrator role
     function Set-KeyVaultAdminRole {
         param($SubscriptionId, $ResourceGroup, $VaultName, $ObjectId)
-        
-        Select-AzSubscription -SubscriptionId $SubscriptionId | Out-Null
-        $scope = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.KeyVault/vaults/$VaultName"
-        
-        $null = New-AzRoleAssignment -ObjectId $ObjectId -RoleDefinitionName "Key Vault Administrator" `
+
+    Select-AzSubscription -SubscriptionId $SubscriptionId | Out-Null$scope = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.KeyVault/vaults/$VaultName"
+
+    $null = New-AzRoleAssignment -ObjectId $ObjectId -RoleDefinitionName "Key Vault Administrator" `
             -Scope $scope -ErrorAction SilentlyContinue
     }
-    
+
     # Assign to all vaults
-    Set-KeyVaultAdminRole -SubscriptionId $PrimarySubscriptionId -ResourceGroup $global:ResourceNames.PrimaryRGMultiworkload `
-        -VaultName $global:KeyVaultNames.M365Primary -ObjectId $userId
-    Set-KeyVaultAdminRole -SubscriptionId $PrimarySubscriptionId -ResourceGroup $global:ResourceNames.PrimaryRGSharePoint `
+    Set-KeyVaultAdminRole -SubscriptionId$PrimarySubscriptionId -ResourceGroup $global:ResourceNames.PrimaryRGMultiworkload `        -VaultName $global:KeyVaultNames.M365Primary -ObjectId $userId     Set-KeyVaultAdminRole -SubscriptionId $PrimarySubscriptionId -ResourceGroup $global:ResourceNames.PrimaryRGSharePoint`
         -VaultName $global:KeyVaultNames.SPOPrimary -ObjectId $userId
-    Set-KeyVaultAdminRole -SubscriptionId $SecondarySubscriptionId -ResourceGroup $global:ResourceNames.SecondaryRGMultiworkload `
-        -VaultName $global:KeyVaultNames.M365Secondary -ObjectId $userId
-    Set-KeyVaultAdminRole -SubscriptionId $SecondarySubscriptionId -ResourceGroup $global:ResourceNames.SecondaryRGSharePoint `
+    Set-KeyVaultAdminRole -SubscriptionId $SecondarySubscriptionId -ResourceGroup $global:ResourceNames.SecondaryRGMultiworkload `        -VaultName $global:KeyVaultNames.M365Secondary -ObjectId $userId     Set-KeyVaultAdminRole -SubscriptionId $SecondarySubscriptionId -ResourceGroup $global:ResourceNames.SecondaryRGSharePoint`
         -VaultName $global:KeyVaultNames.SPOSecondary -ObjectId $userId
-    
+
     Write-ColorOutput "✓ Key Vault Administrator role assigned" -Color $colors.Success
-    
+
     # Wait for propagation
     Write-ColorOutput "Waiting 60 seconds for role propagation..." -Color $colors.Warning
     Start-Sleep -Seconds 60
@@ -2130,39 +2133,31 @@ try {
     # Assign Service Principal permissions
     $m365SP = Get-AzADServicePrincipal -DisplayName "M365DataAtRestEncryption"
     $spoSP = Get-AzADServicePrincipal -DisplayName "Office 365 SharePoint Online"
-    
+
     if ($m365SP) {
         # M365 permissions
-        Select-AzSubscription -SubscriptionId $PrimarySubscriptionId | Out-Null
-        $null = New-AzRoleAssignment -ObjectId $m365SP.Id -RoleDefinitionName "Key Vault Crypto Service Encryption User" `
-            -Scope "/subscriptions/$PrimarySubscriptionId/resourceGroups/$($global:ResourceNames.PrimaryRGMultiworkload)/providers/Microsoft.KeyVault/vaults/$($global:KeyVaultNames.M365Primary)" `
+        Select-AzSubscription -SubscriptionId $PrimarySubscriptionId | Out-Null$null = New-AzRoleAssignment -ObjectId $m365SP.Id -RoleDefinitionName "Key Vault Crypto Service Encryption User" `            -Scope "/subscriptions/$PrimarySubscriptionId/resourceGroups/$($global:ResourceNames.PrimaryRGMultiworkload)/providers/Microsoft.KeyVault/vaults/$($global:KeyVaultNames.M365Primary)"`
             -ErrorAction SilentlyContinue
-            
-        Select-AzSubscription -SubscriptionId $SecondarySubscriptionId | Out-Null
-        $null = New-AzRoleAssignment -ObjectId $m365SP.Id -RoleDefinitionName "Key Vault Crypto Service Encryption User" `
-            -Scope "/subscriptions/$SecondarySubscriptionId/resourceGroups/$($global:ResourceNames.SecondaryRGMultiworkload)/providers/Microsoft.KeyVault/vaults/$($global:KeyVaultNames.M365Secondary)" `
+
+    Select-AzSubscription -SubscriptionId $SecondarySubscriptionId | Out-Null$null = New-AzRoleAssignment -ObjectId $m365SP.Id -RoleDefinitionName "Key Vault Crypto Service Encryption User" `            -Scope "/subscriptions/$SecondarySubscriptionId/resourceGroups/$($global:ResourceNames.SecondaryRGMultiworkload)/providers/Microsoft.KeyVault/vaults/$($global:KeyVaultNames.M365Secondary)"`
             -ErrorAction SilentlyContinue
     }
-    
+
     if ($spoSP) {
         # SPO permissions
-        Select-AzSubscription -SubscriptionId $PrimarySubscriptionId | Out-Null
-        $null = New-AzRoleAssignment -ObjectId $spoSP.Id -RoleDefinitionName "Key Vault Crypto Service Encryption User" `
-            -Scope "/subscriptions/$PrimarySubscriptionId/resourceGroups/$($global:ResourceNames.PrimaryRGSharePoint)/providers/Microsoft.KeyVault/vaults/$($global:KeyVaultNames.SPOPrimary)" `
+        Select-AzSubscription -SubscriptionId $PrimarySubscriptionId | Out-Null$null = New-AzRoleAssignment -ObjectId $spoSP.Id -RoleDefinitionName "Key Vault Crypto Service Encryption User" `            -Scope "/subscriptions/$PrimarySubscriptionId/resourceGroups/$($global:ResourceNames.PrimaryRGSharePoint)/providers/Microsoft.KeyVault/vaults/$($global:KeyVaultNames.SPOPrimary)"`
             -ErrorAction SilentlyContinue
-            
-        Select-AzSubscription -SubscriptionId $SecondarySubscriptionId | Out-Null
-        $null = New-AzRoleAssignment -ObjectId $spoSP.Id -RoleDefinitionName "Key Vault Crypto Service Encryption User" `
-            -Scope "/subscriptions/$SecondarySubscriptionId/resourceGroups/$($global:ResourceNames.SecondaryRGSharePoint)/providers/Microsoft.KeyVault/vaults/$($global:KeyVaultNames.SPOSecondary)" `
+
+    Select-AzSubscription -SubscriptionId $SecondarySubscriptionId | Out-Null$null = New-AzRoleAssignment -ObjectId $spoSP.Id -RoleDefinitionName "Key Vault Crypto Service Encryption User" `            -Scope "/subscriptions/$SecondarySubscriptionId/resourceGroups/$($global:ResourceNames.SecondaryRGSharePoint)/providers/Microsoft.KeyVault/vaults/$($global:KeyVaultNames.SPOSecondary)"`
             -ErrorAction SilentlyContinue
     }
-    
+
     Write-ColorOutput "✓ Service principal permissions configured" -Color $colors.Success
 
     # Step 7: Create Encryption Keys
     Show-Progress -Activity "Customer Key Deployment" -Status "Creating encryption keys..." -PercentComplete 60
     Write-ColorOutput "`nStep 7: Creating encryption keys..." -Color $colors.Progress
-    
+
     $global:KeyURIs = @{}
     $keyNames = @{
         M365Primary = "m365-customer-key-primary"
@@ -2170,39 +2165,35 @@ try {
         SPOPrimary = "spo-customer-key-primary"
         SPOSecondary = "spo-customer-key-secondary"
     }
-    
+
     # Primary keys
     Select-AzSubscription -SubscriptionId $PrimarySubscriptionId | Out-Null
-    
-    $m365KeyPrimary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.M365Primary `
-        -Name $keyNames.M365Primary -Destination "Software" -KeyType RSA -Size 2048 `
+
+    $m365KeyPrimary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.M365Primary `        -Name $keyNames.M365Primary -Destination "Software" -KeyType RSA -Size 2048`
         -KeyOps wrapKey,unwrapKey -NotBefore (Get-Date)
     $global:KeyURIs.M365Primary = $m365KeyPrimary.Id.ToString()
     $null = Backup-AzKeyVaultKey -VaultName $global:KeyVaultNames.M365Primary `
         -Name $keyNames.M365Primary -OutputFile "$($global:CMKParams.BackupPath)/m365-key-primary.blob" -Force
     Write-ColorOutput "✓ Created M365 primary key" -Color $colors.Success
-    
-    $spoKeyPrimary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.SPOPrimary `
-        -Name $keyNames.SPOPrimary -Destination "Software" -KeyType RSA -Size 2048 `
+
+    $spoKeyPrimary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.SPOPrimary `        -Name $keyNames.SPOPrimary -Destination "Software" -KeyType RSA -Size 2048`
         -KeyOps wrapKey,unwrapKey -NotBefore (Get-Date)
     $global:KeyURIs.SPOPrimary = $spoKeyPrimary.Id.ToString()
     $null = Backup-AzKeyVaultKey -VaultName $global:KeyVaultNames.SPOPrimary `
         -Name $keyNames.SPOPrimary -OutputFile "$($global:CMKParams.BackupPath)/spo-key-primary.blob" -Force
     Write-ColorOutput "✓ Created SPO primary key" -Color $colors.Success
-    
+
     # Secondary keys
     Select-AzSubscription -SubscriptionId $SecondarySubscriptionId | Out-Null
-    
-    $m365KeySecondary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.M365Secondary `
-        -Name $keyNames.M365Secondary -Destination "Software" -KeyType RSA -Size 2048 `
+
+    $m365KeySecondary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.M365Secondary `        -Name $keyNames.M365Secondary -Destination "Software" -KeyType RSA -Size 2048`
         -KeyOps wrapKey,unwrapKey -NotBefore (Get-Date)
     $global:KeyURIs.M365Secondary = $m365KeySecondary.Id.ToString()
     $null = Backup-AzKeyVaultKey -VaultName $global:KeyVaultNames.M365Secondary `
         -Name $keyNames.M365Secondary -OutputFile "$($global:CMKParams.BackupPath)/m365-key-secondary.blob" -Force
     Write-ColorOutput "✓ Created M365 secondary key" -Color $colors.Success
-    
-    $spoKeySecondary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.SPOSecondary `
-        -Name $keyNames.SPOSecondary -Destination "Software" -KeyType RSA -Size 2048 `
+
+    $spoKeySecondary = Add-AzKeyVaultKey -VaultName $global:KeyVaultNames.SPOSecondary `        -Name $keyNames.SPOSecondary -Destination "Software" -KeyType RSA -Size 2048`
         -KeyOps wrapKey,unwrapKey -NotBefore (Get-Date)
     $global:KeyURIs.SPOSecondary = $spoKeySecondary.Id.ToString()
     $null = Backup-AzKeyVaultKey -VaultName $global:KeyVaultNames.SPOSecondary `
@@ -2211,16 +2202,16 @@ try {
 
     # Step 8: Save Configuration
     Show-Progress -Activity "Customer Key Deployment" -Status "Saving configuration..." -PercentComplete 70
-    
+
     $targetInfo = if ($TargetType -eq "User") {
         "TARGET USER: $($TargetUserEmail)"
     } else {
         "TARGET GROUP: $($TargetGroupName)"
     }
-    
-    $configContent = @"
+
+$configContent = @"
 Customer Key Configuration - Generated $(Get-Date)
-================================================
+==================================================
 
 TENANT INFORMATION:
 Tenant ID: $($global:CMKParams.TenantId)
@@ -2252,51 +2243,43 @@ $targetInfo
     # Step 9: Customer Key Onboarding
     Show-Progress -Activity "Customer Key Deployment" -Status "Installing onboarding module..." -PercentComplete 75
     Write-ColorOutput "`nStep 8: Customer Key onboarding..." -Color $colors.Progress
-    
+
     if (-not (Get-Module -ListAvailable -Name M365CustomerKeyOnboarding)) {
         Install-Module -Name M365CustomerKeyOnboarding -Force -AllowClobber
     }
     Import-Module M365CustomerKeyOnboarding
-    
+
     # Grant Reader access
-    Select-AzSubscription -SubscriptionId $PrimarySubscriptionId | Out-Null
-    $null = New-AzRoleAssignment -ObjectId $userId -RoleDefinitionName "Reader" `
+    Select-AzSubscription -SubscriptionId $PrimarySubscriptionId | Out-Null$null = New-AzRoleAssignment -ObjectId $userId -RoleDefinitionName "Reader" `
         -Scope "/subscriptions/$PrimarySubscriptionId" -ErrorAction SilentlyContinue
-        
-    Select-AzSubscription -SubscriptionId $SecondarySubscriptionId | Out-Null
-    $null = New-AzRoleAssignment -ObjectId $userId -RoleDefinitionName "Reader" `
+
+    Select-AzSubscription -SubscriptionId $SecondarySubscriptionId | Out-Null$null = New-AzRoleAssignment -ObjectId $userId -RoleDefinitionName "Reader" `
         -Scope "/subscriptions/$SecondarySubscriptionId" -ErrorAction SilentlyContinue
-    
+
     Start-Sleep -Seconds 30
 
     if (Confirm-Execution -Message "Ready to validate Customer Key configuration. Continue?") {
         Show-Progress -Activity "Customer Key Deployment" -Status "Validating configuration..." -PercentComplete 80
-        
-        $validationRequest = New-CustomerKeyOnboardingRequest `
-            -Organization $TenantId `
-            -Scenario MDEP `
-            -Subscription1 $PrimarySubscriptionId `
-            -KeyIdentifier1 $global:KeyURIs.M365Primary `
-            -Subscription2 $SecondarySubscriptionId `
+
+    $validationRequest = New-CustomerKeyOnboardingRequest`            -Organization $TenantId`
+            -Scenario MDEP `            -Subscription1 $PrimarySubscriptionId`
+            -KeyIdentifier1 $global:KeyURIs.M365Primary `            -Subscription2 $SecondarySubscriptionId`
             -KeyIdentifier2 $global:KeyURIs.M365Secondary `
             -OnboardingMode Validate
-        
-        if ($validationRequest.ValidationResult -eq "Success") {
+
+    if ($validationRequest.ValidationResult -eq "Success") {
             Write-ColorOutput "✓ Validation passed!" -Color $colors.Success
-            
-            if (Confirm-Execution -Message "Validation successful. Enable Customer Key now?") {
+
+    if (Confirm-Execution -Message "Validation successful. Enable Customer Key now?") {
                 Show-Progress -Activity "Customer Key Deployment" -Status "Enabling Customer Key..." -PercentComplete 90
-                
-                $enableRequest = New-CustomerKeyOnboardingRequest `
-                    -Organization $TenantId `
-                    -Scenario MDEP `
-                    -Subscription1 $PrimarySubscriptionId `
-                    -KeyIdentifier1 $global:KeyURIs.M365Primary `
-                    -Subscription2 $SecondarySubscriptionId `
+
+    $enableRequest = New-CustomerKeyOnboardingRequest`                    -Organization $TenantId`
+                    -Scenario MDEP `                    -Subscription1 $PrimarySubscriptionId`
+                    -KeyIdentifier1 $global:KeyURIs.M365Primary `                    -Subscription2 $SecondarySubscriptionId`
                     -KeyIdentifier2 $global:KeyURIs.M365Secondary `
                     -OnboardingMode Enable
-                
-                if ($enableRequest.EnablementResult -eq "Success") {
+
+    if ($enableRequest.EnablementResult -eq "Success") {
                     Write-ColorOutput "✓ Customer Key successfully enabled!" -Color $colors.Success
                 } else {
                     Write-ColorOutput "✗ Enablement failed!" -Color $colors.Error
@@ -2310,38 +2293,38 @@ $targetInfo
 
     # Complete
     Show-Progress -Activity "Customer Key Deployment" -Status "Deployment complete!" -PercentComplete 100
-    
+
     Write-ColorOutput "`n╔══════════════════════════════════════════════════════════════╗" -Color $colors.Success
     Write-ColorOutput   "║                  DEPLOYMENT COMPLETE!                        ║" -Color $colors.Success
     Write-ColorOutput   "╚══════════════════════════════════════════════════════════════╝" -Color $colors.Success
-    
-    Write-ColorOutput "`nNext Steps:" -Color $colors.Info
-    Write-ColorOutput "1. For SharePoint/OneDrive: Contact Microsoft Support to enable MRP" -Color $colors.Warning
-    Write-ColorOutput "2. To apply to $TargetType`: Use Exchange Online PowerShell commands" -Color $colors.Warning
+
+    Write-ColorOutput "`nNext Steps:" -Color $colors.Info     Write-ColorOutput "1. For SharePoint/OneDrive: Contact Microsoft Support to enable MRP" -Color $colors.Warning     Write-ColorOutput "2. To apply to $TargetType`: Use Exchange Online PowerShell commands" -Color $colors.Warning
     Write-ColorOutput "3. Configuration saved to: $($global:CMKParams.BackupPath)/cmk-configuration.txt" -Color $colors.Warning
     Write-ColorOutput "4. Key backups saved to: $($global:CMKParams.BackupPath)/" -Color $colors.Warning
-    
+
     # Output Exchange commands for reference
     Write-ColorOutput "`nExchange Online Commands:" -Color $colors.Info
     Write-ColorOutput "Connect-ExchangeOnline" -Color White
     Write-ColorOutput "New-DataEncryptionPolicy -Name '$($global:ResourceNames.DEPName)' -AzureKeyIDs @('$($global:KeyURIs.M365Primary)', '$($global:KeyURIs.M365Secondary)')" -Color White
-    
+
     if ($TargetType -eq "User") {
         Write-ColorOutput "Set-Mailbox -Identity '$TargetUserEmail' -DataEncryptionPolicy '$($global:ResourceNames.DEPName)'" -Color White
     } else {
         Write-ColorOutput "# Apply to group members - see guide for group application script" -Color White
     }
-    
+
 } catch {
     Write-ColorOutput "`n✗ Deployment failed: $_" -Color $colors.Error
     Write-ColorOutput $_.Exception.StackTrace -Color $colors.Error
 } finally {
     Write-Progress -Activity "Customer Key Deployment" -Completed
 }
+```
 
 ## Change Log
+
 - **v1.0** (November 2025): Initial build book creation
 - **Next Review**: February 2026
-- **Document Owner**: Fred Pearson, Leonardo Company IT
+- **Document Owner**: Fred Pearson, Leonardo Company
 
 ---
