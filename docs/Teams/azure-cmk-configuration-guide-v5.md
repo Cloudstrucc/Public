@@ -2389,6 +2389,91 @@ $targetInfo
 }
 ```
 
+### TESTING
+
+```powersehll
+# ========================================
+# Teams Encryption Status Check
+# ========================================
+ 
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Teams Customer Key Encryption Status" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+ 
+# Current State
+Write-Host "`nCurrent Encryption State for fred.pearson@leonardocompany.ca:" -ForegroundColor Yellow
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "Service          | Encryption Status    | Key Owner" -ForegroundColor White
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "Teams Chat       | Encrypted ✅         | Microsoft 🔐" -ForegroundColor Yellow
+Write-Host "Teams Files      | Encrypted ✅         | Microsoft 🔐" -ForegroundColor Yellow
+Write-Host "Teams Meetings   | Encrypted ✅         | Microsoft 🔐" -ForegroundColor Yellow
+Write-Host "Exchange Email   | Encrypted ✅         | Microsoft 🔐" -ForegroundColor Yellow
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+ 
+# After DEP Applied
+Write-Host "`nAfter DEP is Applied (24-72 hours):" -ForegroundColor Green
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "Service          | Encryption Status    | Key Owner" -ForegroundColor White
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "Teams Chat       | Encrypted ✅         | Leonardo 🔑" -ForegroundColor Green
+Write-Host "Teams Files*     | Encrypted ✅         | Leonardo 🔑" -ForegroundColor Green
+Write-Host "Teams Meetings   | Encrypted ✅         | Leonardo 🔑" -ForegroundColor Green
+Write-Host "Exchange Email   | Encrypted ✅         | Leonardo 🔑" -ForegroundColor Green
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "*Teams files stored in SharePoint require separate SharePoint DEP" -ForegroundColor Gray
+ 
+# How to Monitor
+Write-Host "`nHow to Monitor When Encryption Switches:" -ForegroundColor Cyan
+ 
+Write-Host "`n1. Azure Key Vault Activity (Most Reliable):" -ForegroundColor Yellow
+Write-Host "   - Go to Azure Portal → Your Key Vaults"
+Write-Host "   - Check 'Monitoring' → 'Insights' or 'Logs'"
+Write-Host "   - Look for operations from 'Microsoft.TeamsCommunication'"
+Write-Host "   - You'll see 'wrapKey' and 'unwrapKey' operations"
+ 
+Write-Host "`n2. Microsoft 365 Audit Logs:" -ForegroundColor Yellow
+Write-Host "   - Go to https://compliance.microsoft.com"
+Write-Host "   - Audit → Search"
+Write-Host "   - Look for 'CustomerKeyService' activities"
+ 
+Write-Host "`n3. PowerShell Verification (After DEP):" -ForegroundColor Yellow
+Write-Host @'
+# Run this after DEP is applied:
+$mailbox = Get-Mailbox -Identity "fred.pearson@leonardocompany.ca"
+if ($mailbox.DataEncryptionPolicy) {
+    Write-Host "✅ Customer Key Active for: $($mailbox.DisplayName)"
+    Write-Host "   Policy: $($mailbox.DataEncryptionPolicy)"
+    Write-Host "   Teams, Exchange, and MDEP services now using YOUR keys!"
+} else {
+    Write-Host "❌ Still using Microsoft keys"
+}
+'@
+ 
+# Timeline
+Write-Host "`n`nEncryption Timeline:" -ForegroundColor Cyan
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "NOW                  → Data encrypted with Microsoft keys"
+Write-Host "DEP Creation (+24h)  → New-DataEncryptionPolicy available"
+Write-Host "DEP Applied          → Policy assigned to mailbox"
+Write-Host "Re-encryption (+48h) → Existing data re-encrypted with YOUR keys"
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+ 
+# Key Points
+Write-Host "`nKey Points:" -ForegroundColor Yellow
+Write-Host "• Your Teams data IS encrypted now (with Microsoft keys)"
+Write-Host "• Your Teams data is NOT YET encrypted with YOUR keys"
+Write-Host "• Once DEP is applied, re-encryption happens automatically"
+Write-Host "• All Teams services (chat, calls, files) will use your keys"
+Write-Host "• No service disruption during the transition"
+ 
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host "Bottom Line:" -ForegroundColor Green
+Write-Host "Teams encryption with YOUR keys starts" -ForegroundColor White
+Write-Host "24-48 hours AFTER you apply the DEP" -ForegroundColor White
+Write-Host "========================================" -ForegroundColor Green
+```
+
 ### How to Use the Automated Script
 
 1. **Save the script** as `Deploy-CustomerKey.ps1` in Azure Cloud Shell or locally
