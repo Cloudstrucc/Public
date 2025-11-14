@@ -2617,7 +2617,9 @@ CONFIRMATION:
 - Both keys in Canadian datacenters for sovereignty compliance
 
 Despite proper key configuration, DEP cmdlets remain unavailable after 40+ hours.
+
 ================================
+
 ---
 
 **The bottom line**: You're not missing anything, there's no workaround, and Microsoft has designed this as a gate-kept process. Your 40+ hour wait is abnormal and requires their intervention.
