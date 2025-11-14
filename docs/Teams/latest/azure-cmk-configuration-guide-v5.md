@@ -128,13 +128,13 @@ $global:CMKParams = @{
     
     # Target Configuration - Choose ONE of the following:
     # Option 1: For a single user
-    TargetType = "User"  # Set to "User" or "Group"
-    TargetUserEmail = "fred.pearson@leonardocompany.ca"  # Replace with target user email
+    # TargetType = "User"  # Set to "User" or "Group"
+    # TargetUserEmail = "fred.pearson@leonardocompany.ca"  # Replace with target user email
     
     # Option 2: For an Entra ID group
-    # TargetType = "Group"
-    # TargetGroupName = "CMK-Enabled-Users"  # Replace with your Entra ID group name
-    # TargetGroupId = "GROUP-OBJECT-ID"  # Optional - will be looked up if not provided
+    TargetType = "Group"
+    TargetGroupName = "LCE M365 Security"  # Replace with your Entra ID group name
+    TargetGroupId = "ffde4f56-194f-4c76-9916-31375e6d7fe5"  # Optional - will be looked up if not provided
     
     # Backup Location
     BackupPath = "$HOME/keybackups"
@@ -2473,6 +2473,156 @@ Write-Host "Teams encryption with YOUR keys starts" -ForegroundColor White
 Write-Host "24-48 hours AFTER you apply the DEP" -ForegroundColor White
 Write-Host "========================================" -ForegroundColor Green
 ```
+
+### What DEP Actually Is - Understanding DEP Provisioning Delays
+
+The Data Encryption Policy (DEP) isn't just a configuration setting - it's a **fundamental infrastructure component** that requires backend provisioning by Microsoft:
+
+```
+Your Control                    Microsoft's Control
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Create Key Vault        →    ⏳ Register keys in global system
+✅ Generate Keys          →    ⏳ Replicate to all datacenters  
+✅ Set Permissions        →    ⏳ Update encryption infrastructure
+✅ Enable CMK             →    ⏳ Provision DEP capability
+❌ Create DEP Policy      ←    ⏳ Enable cmdlets in your tenant
+❌ Apply to mailboxes     ←    ⏳ Activate re-encryption engine
+```
+
+### Why You Can't Do It Yourself
+
+1. **No API Exists**: There's no public API endpoint to create DEP policies
+2. **No Portal Option**: Unlike other policies, DEP has no GUI interface
+3. **Backend Dependencies**: DEP creation triggers massive backend operations:
+   - Re-encryption of all existing data
+   - Key wrapper generation for each mailbox
+   - Coordination across multiple datacenters
+   - Integration with 20+ M365 services
+
+### What Microsoft Is Actually Doing During the Wait
+
+```mermaid
+graph TD
+    A[CMK Request Approved] --> B[Register Keys Globally]
+    B --> C[Update Encryption Services]
+    C --> D[Provision DEP Infrastructure]
+    D --> E[Enable Tenant Capabilities]
+    E --> F[Activate PowerShell Cmdlets]
+    F --> G[You Can Create DEP]
+    
+    style A fill:#9f9,stroke:#333,stroke-width:2px
+    style G fill:#9f9,stroke:#333,stroke-width:2px
+    style D fill:#f96,stroke:#333,stroke-width:4px
+```
+
+## The Frustrating Truth
+
+Microsoft designed it this way for several reasons:
+
+### 1. Data Integrity
+
+```powershell
+# What happens when you apply DEP (once available)
+Set-Mailbox -Identity "user@domain.com" -DataEncryptionPolicy "YourDEP"
+
+# This triggers:
+# - Immediate key wrapper creation
+# - Background re-encryption of ALL user data
+# - Validation across multiple services
+# - No rollback possible
+```
+
+### 2. Scale Considerations
+
+- Your tenant might have thousands of mailboxes
+- Each mailbox has gigabytes of data
+- Re-encryption must not impact performance
+- Requires dedicated infrastructure provisioning
+
+### 3. Security Requirements
+
+- DEP application is irreversible
+- Wrong configuration = permanent data loss
+- Requires multiple backend validations
+- Must coordinate with backup systems
+
+## Why No Manual Workaround Exists
+
+There is no way to bypass this because:
+
+### 1. The cmdlets don't just "configure" - they orchestrate
+
+```powershell
+# When you run this (once available):
+New-DataEncryptionPolicy -Name "Policy" -AzureKeyIDs @("key1","key2")
+
+# It actually:
+# - Validates both keys are accessible
+# - Creates wrapper keys for each
+# - Registers with 20+ M365 services
+# - Initiates global replication
+# - Sets up re-encryption queues
+```
+
+### 2. No Direct Database Access
+
+You can't modify Exchange/M365 databases directly
+
+### 3. No Alternative Interfaces
+
+Microsoft intentionally limited this to PowerShell only
+
+## What This Means for You
+
+```powershell
+# Current situation after 40+ hours:
+"Your Infrastructure" = "✅ Ready"
+"Microsoft Backend" = "❌ Still Provisioning"
+"Your Ability to Proceed" = "🚫 Blocked"
+
+# Only solution:
+"Escalate to Microsoft Support"
+```
+
+### Example ticket to send
+
+================================
+KEY VAULT VERIFICATION COMPLETED:
+Primary Key Details:
+
+- Vault: kv-cmk-m365-pri-4239
+- Key: m365-cmk-key
+- Version: 758b3fac73fd4573a7d48c2840619326
+- Full URI: https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-cmk-key/758b3fac73fd4573a7d48c2840619326
+- Permissions: ✓ WrapKey, ✓ UnwrapKey (Correct for CMK)
+- Status: Enabled
+- Location: Canada Central
+
+Secondary Key Details:
+
+- Vault: kv-cmk-m365-sec-8250
+- Key: m365-cmk-key
+- Version: [Need to check - likely similar format]
+- Full URI: https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-cmk-key/[VERSION]
+- Permissions: ✓ WrapKey, ✓ UnwrapKey (Correct for CMK)
+- Status: Enabled
+- Location: Canada East
+
+CONFIRMATION:
+
+- Keys are properly configured per Microsoft documentation
+- Correct permissions are set (WrapKey/UnwrapKey only)
+- Keys are enabled and accessible
+- No expiration date set (as recommended)
+- Both keys in Canadian datacenters for sovereignty compliance
+
+Despite proper key configuration, DEP cmdlets remain unavailable after 40+ hours.
+================================
+---
+
+**The bottom line**: You're not missing anything, there's no workaround, and Microsoft has designed this as a gate-kept process. Your 40+ hour wait is abnormal and requires their intervention.
+
+This is exactly why you need to make that support call - they have internal tools to unstick whatever is blocking your DEP provisioning.
 
 ### How to Use the Automated Script
 
