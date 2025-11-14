@@ -2478,7 +2478,7 @@ Write-Host "========================================" -ForegroundColor Green
 
 The Data Encryption Policy (DEP) isn't just a configuration setting - it's a **fundamental infrastructure component** that requires backend provisioning by Microsoft:
 
-```
+```powershell
 Your Control                    Microsoft's Control
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ Create Key Vault        →    ⏳ Register keys in global system
@@ -2574,7 +2574,7 @@ Microsoft intentionally limited this to PowerShell only
 
 ## What This Means for You
 
-```powershell
+```markdown
 # Current situation after 40+ hours:
 "Your Infrastructure" = "✅ Ready"
 "Microsoft Backend" = "❌ Still Provisioning"
@@ -2593,7 +2593,7 @@ Primary Key Details:
 - Vault: kv-cmk-m365-pri-4239
 - Key: m365-cmk-key
 - Version: 758b3fac73fd4573a7d48c2840619326
-- Full URI: https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-cmk-key/758b3fac73fd4573a7d48c2840619326
+- Full URI: <https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-cmk-key/758b3fac73fd4573a7d48c2840619326>
 - Permissions: ✓ WrapKey, ✓ UnwrapKey (Correct for CMK)
 - Status: Enabled
 - Location: Canada Central
@@ -2603,7 +2603,7 @@ Secondary Key Details:
 - Vault: kv-cmk-m365-sec-8250
 - Key: m365-cmk-key
 - Version: [Need to check - likely similar format]
-- Full URI: https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-cmk-key/[VERSION]
+- Full URI: <https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-cmk-key/[VERSION>]
 - Permissions: ✓ WrapKey, ✓ UnwrapKey (Correct for CMK)
 - Status: Enabled
 - Location: Canada East
