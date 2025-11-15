@@ -1347,6 +1347,122 @@ Write-Host "24-48 hours AFTER you apply the DEP" -ForegroundColor White
 Write-Host "========================================" -ForegroundColor Green
 ```
 
+### SHAREPOINT DEP 
+```powershell
+# Check if SharePoint DEP cmdlets are available
+Connect-SPOService -Url "https://leonardocompany-admin.sharepoint.com"
+
+# Try to get DEP commands for SharePoint
+Get-Command -Module Microsoft.Online.SharePoint.PowerShell | Where-Object { 
+    $_.Name -like "*DataEncryption*" 
+}
+
+# If no commands found, SharePoint DEP uses different approach
+Write-Host "SharePoint uses the same DEP policy but requires additional configuration" -ForegroundColor Yellow
+
+Disconnect-SPOService
+```
+
+### STEP 2 SharePoint DEP Configuration (After Exchange DEP)
+
+```powershell
+# ========================================
+# SharePoint/OneDrive CMK Configuration
+# ========================================
+
+# Note: SharePoint/OneDrive use the SAME DEP policy as Exchange
+# But require additional service configuration
+
+# After your Exchange DEP is created and applied:
+$depName = "Leonardo-CMK-DEP"  # Same policy name
+
+# Step 1: Enable for SharePoint Online
+Connect-SPOService -Url "https://leonardocompany-admin.sharepoint.com"
+
+# Set tenant-wide encryption
+Set-SPOTenant -EnableCustomerManagedEncryptionKey $true `
+              -CustomerManagedEncryptionKeyName $depName
+
+Write-Host "✓ SharePoint CMK enabled at tenant level" -ForegroundColor Green
+
+# Step 2: Apply to specific sites (optional for granular control)
+$sites = @(
+    "https://leonardocompany.sharepoint.com/sites/Teams"
+    "https://leonardocompany.sharepoint.com/sites/SecureProjects"
+)
+
+foreach ($site in $sites) {
+    Set-SPOSite -Identity $site -EncryptionPolicy $depName
+    Write-Host "✓ CMK applied to: $site" -ForegroundColor Green
+}
+
+Disconnect-SPOService
+```
+
+### STEP 3: ONEDRIVE CONFIGURATION
+
+```powershell
+# ========================================
+# OneDrive for Business CMK
+# ========================================
+
+# OneDrive URLs follow pattern: https://[tenant]-my.sharepoint.com/personal/[user]
+
+Connect-SPOService -Url "https://leonardocompany-admin.sharepoint.com"
+
+# Get user's OneDrive URL
+$userEmail = "fred.pearson@leonardocompany.ca"
+$oneDriveUrl = Get-SPOSite -IncludePersonalSite $true -Filter "Url -like '*personal*'" |
+    Where-Object { $_.Url -like "*$($userEmail.Replace('@','_').Replace('.','_'))*" }
+
+if ($oneDriveUrl) {
+    Set-SPOSite -Identity $oneDriveUrl.Url -EncryptionPolicy $depName
+    Write-Host "✓ CMK applied to OneDrive: $($oneDriveUrl.Url)" -ForegroundColor Green
+}
+
+Disconnect-SPOService
+```
+
+### STEP 4 - CMK COVERAGE
+
+```powershell
+# ========================================
+# Verify Complete CMK Coverage
+# ========================================
+
+Write-Host "`nCMK Coverage Verification" -ForegroundColor Cyan
+Write-Host "=========================" -ForegroundColor Cyan
+
+# Exchange/Teams Check
+Connect-ExchangeOnline -ShowBanner:$false
+$mailbox = Get-Mailbox -Identity "fred.pearson@leonardocompany.ca"
+$exchangeDEP = $mailbox.DataEncryptionPolicy
+
+Write-Host "`n✓ Exchange/Teams DEP: $(if($exchangeDEP){'Applied - ' + $exchangeDEP}else{'Not Applied'})" `
+    -ForegroundColor $(if($exchangeDEP){'Green'}else{'Red'})
+
+Disconnect-ExchangeOnline -Confirm:$false
+
+# SharePoint Check
+Connect-SPOService -Url "https://leonardocompany-admin.sharepoint.com"
+$tenant = Get-SPOTenant
+$spoDEP = $tenant.CustomerManagedEncryptionKeyName
+
+Write-Host "✓ SharePoint DEP: $(if($spoDEP){'Applied - ' + $spoDEP}else{'Not Applied'})" `
+    -ForegroundColor $(if($spoDEP){'Green'}else{'Red'})
+
+Disconnect-SPOService
+
+# Summary
+Write-Host "`nFull CMK Coverage Status:" -ForegroundColor Yellow
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "Teams Chat/Meetings: $(if($exchangeDEP){'✅ Protected'}else{'❌ Waiting'})"
+Write-Host "Email/Calendar: $(if($exchangeDEP){'✅ Protected'}else{'❌ Waiting'})"
+Write-Host "Teams Files: $(if($spoDEP){'✅ Protected'}else{'❌ Waiting'})"
+Write-Host "OneDrive Files: $(if($spoDEP){'✅ Protected'}else{'❌ Waiting'})"
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+```
+
 #### Check azure key vault logs to see that MS Teams is accessing your keys for encryption operations
 
 ```powershell
