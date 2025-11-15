@@ -1242,6 +1242,520 @@ if ($global:CMKParams.TargetType -eq "Group") {
 }
 ```
 
+### Apply DEP / CMK to Security group (LCE M365 Security)
+
+```powershell
+# ========================================
+# Apply CMK DEP to Security Group
+# Complete Implementation with Embedded Configuration
+# ========================================
+
+# CONFIGURATION - Update these values as needed
+$global:CMKParams = @{
+    # Tenant Configuration
+    TenantId = "80b1ce91-e920-49d4-a52e-4ab189c64592"
+    
+    # Subscription IDs
+    PrimarySubscriptionId = "6f114bd7-c8d3-4843-b4f8-e30a644bc412"
+    SecondarySubscriptionId = "6fe93f46-fb3b-410b-8d22-540b06cbbfbc"
+    
+    # Regions
+    PrimaryLocation = "Canada Central"
+    SecondaryLocation = "Canada East"
+    
+    # Resource Naming Prefix
+    NamingPrefix = "cmk"
+    
+    # Target Configuration for Group
+    TargetType = "Group"
+    TargetGroupName = "LCE M365 Security"
+    TargetGroupId = "ffde4f56-194f-4c76-9916-31375e6d7fe5"
+    
+    # Backup Location
+    BackupPath = "$HOME/keybackups"
+}
+
+# Resource names based on your actual infrastructure
+$global:ResourceNames = @{
+    PrimaryRG = "rg-cmk-primary-multiworkload"
+    SecondaryRG = "rg-cmk-secondary-multiworkload"
+    PrimaryKV = "kv-cmk-m365-pri-4239"  # Your actual primary Key Vault
+    SecondaryKV = "kv-cmk-m365-sec-8250"  # Your actual secondary Key Vault
+    DEPName = "Leonardo-CMK-DEP"
+    LogWorkspace = "law-leonardo-cmk-monitor"
+}
+
+# Validate configuration
+if ($global:CMKParams.TargetType -ne "Group") {
+    Write-Error "This script is for group processing. TargetType is set to: $($global:CMKParams.TargetType)"
+    return
+}
+
+if (-not $global:CMKParams.ContainsKey("TargetGroupName")) {
+    Write-Error "TargetGroupName must be specified when TargetType is 'Group'"
+    return
+}
+
+Write-Host @"
+========================================
+CMK DEP Group Application
+========================================
+Target Group: $($global:CMKParams.TargetGroupName)
+Group ID: $($global:CMKParams.TargetGroupId)
+Tenant: $($global:CMKParams.TenantId)
+DEP Policy: $($global:ResourceNames.DEPName)
+========================================
+"@ -ForegroundColor Cyan
+
+# Function to create log entry
+function Write-CMKLog {
+    param(
+        [string]$Message,
+        [string]$Level = "INFO"
+    )
+    
+    $logEntry = @{
+        Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        Level = $Level
+        Message = $Message
+        Group = $global:CMKParams.TargetGroupName
+        TenantId = $global:CMKParams.TenantId
+    }
+    
+    # Create backup directory if it doesn't exist
+    if (-not (Test-Path $global:CMKParams.BackupPath)) {
+        New-Item -Path $global:CMKParams.BackupPath -ItemType Directory -Force | Out-Null
+    }
+    
+    # Log to file
+    $logFile = "$($global:CMKParams.BackupPath)\CMK-GroupApplication-$(Get-Date -Format 'yyyyMMdd').log"
+    "$($logEntry.Timestamp) [$($logEntry.Level)] $($logEntry.Message)" | 
+        Out-File -FilePath $logFile -Append -Encoding UTF8
+    
+    # Display based on level
+    switch ($Level) {
+        "ERROR" { Write-Host $Message -ForegroundColor Red }
+        "WARNING" { Write-Host $Message -ForegroundColor Yellow }
+        "SUCCESS" { Write-Host $Message -ForegroundColor Green }
+        default { Write-Host $Message -ForegroundColor White }
+    }
+}
+
+# Step 1: Pre-flight checks
+Write-CMKLog "Starting CMK DEP application for group: $($global:CMKParams.TargetGroupName)"
+
+try {
+    # Connect to services
+    Write-CMKLog "Connecting to required services..."
+    Connect-ExchangeOnline -ShowBanner:$false
+    Connect-MgGraph -Scopes "Group.Read.All", "User.Read.All", "Directory.Read.All" `
+                    -TenantId $global:CMKParams.TenantId -NoWelcome
+    
+    # Verify DEP cmdlets are available
+    if (-not (Get-Command New-DataEncryptionPolicy -ErrorAction SilentlyContinue)) {
+        Write-CMKLog "DEP cmdlets not yet available. Cannot proceed." "ERROR"
+        throw "DEP cmdlets not available. Still waiting for Microsoft provisioning."
+    }
+    
+    Write-CMKLog "DEP cmdlets confirmed available" "SUCCESS"
+    
+} catch {
+    Write-CMKLog "Pre-flight check failed: $($_.Exception.Message)" "ERROR"
+    throw
+}
+
+# Step 2: Get group information
+try {
+    Write-CMKLog "Retrieving group information..."
+    
+    # If GroupId not provided, look it up
+    if (-not $global:CMKParams.ContainsKey("TargetGroupId") -or -not $global:CMKParams.TargetGroupId) {
+        $group = Get-MgGroup -Filter "displayName eq '$($global:CMKParams.TargetGroupName)'"
+        if (-not $group) {
+            throw "Group not found: $($global:CMKParams.TargetGroupName)"
+        }
+        $global:CMKParams.TargetGroupId = $group.Id
+    } else {
+        $group = Get-MgGroup -GroupId $global:CMKParams.TargetGroupId
+    }
+    
+    Write-CMKLog "Group found: $($group.DisplayName) (ID: $($group.Id))"
+    
+    # Get group members
+    $members = Get-MgGroupMember -GroupId $global:CMKParams.TargetGroupId -All
+    Write-CMKLog "Total group members: $($members.Count)"
+    
+} catch {
+    Write-CMKLog "Failed to get group information: $($_.Exception.Message)" "ERROR"
+    throw
+}
+
+# Step 3: Process group members
+$processingReport = @{
+    StartTime = Get-Date
+    Group = $global:CMKParams.TargetGroupName
+    GroupId = $global:CMKParams.TargetGroupId
+    TotalMembers = $members.Count
+    ProcessedUsers = @()
+    SuccessCount = 0
+    SkippedCount = 0
+    FailedCount = 0
+}
+
+Write-CMKLog "`nProcessing group members..."
+
+foreach ($member in $members) {
+    try {
+        # Get user details
+        $user = Get-MgUser -UserId $member.Id -Property UserPrincipalName,DisplayName,Mail
+        
+        $userResult = @{
+            UserPrincipalName = $user.UserPrincipalName
+            DisplayName = $user.DisplayName
+            Status = "Pending"
+            Message = ""
+            ProcessedAt = Get-Date
+        }
+        
+        # Check if user has a mailbox
+        try {
+            $mailbox = Get-Mailbox -Identity $user.UserPrincipalName -ErrorAction Stop
+            
+            # Check current DEP status
+            if ($mailbox.DataEncryptionPolicy -eq $global:ResourceNames.DEPName) {
+                $userResult.Status = "Skipped"
+                $userResult.Message = "Already has DEP applied"
+                $processingReport.SkippedCount++
+                Write-CMKLog "  ⏭️  Skipped (already applied): $($user.UserPrincipalName)" "WARNING"
+            } else {
+                # Apply DEP
+                Set-Mailbox -Identity $user.UserPrincipalName `
+                           -DataEncryptionPolicy $global:ResourceNames.DEPName
+                
+                $userResult.Status = "Success"
+                $userResult.Message = "DEP applied successfully"
+                $processingReport.SuccessCount++
+                Write-CMKLog "  ✅ Applied DEP to: $($user.UserPrincipalName)" "SUCCESS"
+            }
+            
+        } catch {
+            if ($_.Exception.Message -like "*object*not*found*") {
+                $userResult.Status = "Skipped"
+                $userResult.Message = "No mailbox"
+                $processingReport.SkippedCount++
+                Write-CMKLog "  ⚠️  No mailbox: $($user.UserPrincipalName)" "WARNING"
+            } else {
+                throw
+            }
+        }
+        
+    } catch {
+        $userResult.Status = "Failed"
+        $userResult.Message = $_.Exception.Message
+        $processingReport.FailedCount++
+        Write-CMKLog "  ❌ Failed: $($user.UserPrincipalName) - $($_.Exception.Message)" "ERROR"
+    }
+    
+    $processingReport.ProcessedUsers += $userResult
+}
+
+$processingReport.EndTime = Get-Date
+$processingReport.Duration = $processingReport.EndTime - $processingReport.StartTime
+
+# Step 4: Verification
+Write-CMKLog "`nVerifying DEP application..."
+
+$verificationCount = [Math]::Min(5, $processingReport.SuccessCount)
+$verifiedUsers = $processingReport.ProcessedUsers | 
+    Where-Object { $_.Status -eq "Success" } | 
+    Select-Object -First $verificationCount
+
+foreach ($verifyUser in $verifiedUsers) {
+    try {
+        $mailbox = Get-Mailbox -Identity $verifyUser.UserPrincipalName
+        if ($mailbox.DataEncryptionPolicy -eq $global:ResourceNames.DEPName) {
+            Write-CMKLog "  ✓ Verified: $($verifyUser.UserPrincipalName)" "SUCCESS"
+        } else {
+            Write-CMKLog "  ✗ Verification failed: $($verifyUser.UserPrincipalName)" "ERROR"
+        }
+    } catch {
+        Write-CMKLog "  ✗ Cannot verify: $($verifyUser.UserPrincipalName)" "ERROR"
+    }
+}
+
+# Step 5: Generate reports
+Write-CMKLog "`nGenerating reports..."
+
+# Summary report
+$summaryReport = @"
+========================================
+CMK DEP Group Application Summary
+========================================
+Date: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+Group: $($processingReport.Group)
+Total Members: $($processingReport.TotalMembers)
+
+Results:
+  ✅ Successfully Applied: $($processingReport.SuccessCount)
+  ⏭️  Skipped: $($processingReport.SkippedCount)
+  ❌ Failed: $($processingReport.FailedCount)
+
+DEP Policy: $($global:ResourceNames.DEPName)
+Duration: $($processingReport.Duration.TotalMinutes.ToString("0.00")) minutes
+========================================
+"@
+
+Write-Host $summaryReport -ForegroundColor Cyan
+
+# Save detailed report
+$reportPath = "$($global:CMKParams.BackupPath)\CMK-GroupApplication-$(Get-Date -Format 'yyyyMMdd-HHmmss').json"
+$processingReport | ConvertTo-Json -Depth 10 | Out-File $reportPath -Encoding UTF8
+Write-CMKLog "Detailed report saved to: $reportPath" "SUCCESS"
+
+# Save CSV for easy viewing
+$csvPath = "$($global:CMKParams.BackupPath)\CMK-GroupApplication-$(Get-Date -Format 'yyyyMMdd-HHmmss').csv"
+$processingReport.ProcessedUsers | Export-Csv -Path $csvPath -NoTypeInformation
+Write-CMKLog "CSV report saved to: $csvPath" "SUCCESS"
+
+# Step 6: Monitor re-encryption
+if ($processingReport.SuccessCount -gt 0) {
+    Write-Host @"
+
+Next Steps:
+===========
+1. Re-encryption will begin automatically for all users
+2. Process takes 24-48 hours per mailbox
+3. Monitor Key Vault for wrapKey/unwrapKey operations
+4. Users can continue working normally during re-encryption
+
+To monitor progress:
+  - Check Azure Key Vault logs
+  - Run verification script: .\Verify-CMKEncryption.ps1
+  - Look for increased key operations in monitoring dashboard
+"@ -ForegroundColor Yellow
+}
+
+# Cleanup
+Disconnect-ExchangeOnline -Confirm:$false
+Disconnect-MgGraph
+
+Write-CMKLog "CMK DEP group application completed" "SUCCESS"
+
+# Return summary
+return @{
+    Success = ($processingReport.FailedCount -eq 0)
+    Summary = $summaryReport
+    DetailedReportPath = $reportPath
+    CSVReportPath = $csvPath
+}
+```
+
+### If the above script hangs try this alternative using a different connection method
+
+```powershell
+# ========================================
+# CMK DEP Group Application - Browser Auth Version
+# ========================================
+
+# Your configuration
+$global:CMKParams = @{
+    TenantId = "80b1ce91-e920-49d4-a52e-4ab189c64592"
+    TargetType = "Group"
+    TargetGroupName = "LCE M365 Security"
+    TargetGroupId = "ffde4f56-194f-4c76-9916-31375e6d7fe5"
+    BackupPath = "$HOME/keybackups"
+    UserEmail = "fred.pearson@leonardocompany.ca"  # Added for authentication
+}
+
+$global:ResourceNames = @{
+    DEPName = "Leonardo-CMK-DEP"
+}
+
+Write-Host @"
+========================================
+CMK DEP Group Application - Browser Auth
+========================================
+Target Group: $($global:CMKParams.TargetGroupName)
+DEP Policy: $($global:ResourceNames.DEPName)
+Auth User: $($global:CMKParams.UserEmail)
+========================================
+"@ -ForegroundColor Cyan
+
+# Step 1: Connect to Exchange using Browser Authentication
+Write-Host "`nConnecting to Exchange Online via browser..." -ForegroundColor Yellow
+Write-Host "A browser window will open for authentication" -ForegroundColor Cyan
+
+# Clear any existing sessions
+Get-PSSession | Remove-PSSession -ErrorAction SilentlyContinue
+
+# Force TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+# Connect using browser authentication
+try {
+    # This forces browser-based modern authentication
+    Connect-ExchangeOnline -UserPrincipalName $global:CMKParams.UserEmail `
+                          -UseRPSSession:$false `
+                          -ShowBanner:$false `
+                          -CommandName @("Get-Mailbox", "Set-Mailbox", "Get-DistributionGroupMember", "Get-DataEncryptionPolicy", "New-DataEncryptionPolicy")
+    
+    Write-Host "✅ Connected to Exchange Online successfully" -ForegroundColor Green
+    
+    # Verify connection
+    $testConnection = Get-Mailbox -Identity $global:CMKParams.UserEmail -ErrorAction SilentlyContinue
+    if ($testConnection) {
+        Write-Host "✅ Connection verified - can access mailboxes" -ForegroundColor Green
+    }
+    
+} catch {
+    Write-Host "❌ Failed to connect: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "`nTroubleshooting tips:" -ForegroundColor Yellow
+    Write-Host "1. Check if a browser window opened behind this window" -ForegroundColor White
+    Write-Host "2. Try Alt+Tab to find the authentication window" -ForegroundColor White
+    Write-Host "3. If using MFA, complete the authentication in the browser" -ForegroundColor White
+    return
+}
+
+# Step 2: Verify DEP is available
+Write-Host "`nChecking DEP availability..." -ForegroundColor Yellow
+try {
+    $depCheck = Get-Command New-DataEncryptionPolicy -ErrorAction SilentlyContinue
+    if ($depCheck) {
+        Write-Host "✅ DEP cmdlets are available" -ForegroundColor Green
+    } else {
+        Write-Host "❌ DEP cmdlets not available - still waiting for Microsoft provisioning" -ForegroundColor Red
+        Disconnect-ExchangeOnline -Confirm:$false
+        return
+    }
+} catch {
+    Write-Host "❌ Cannot verify DEP availability" -ForegroundColor Red
+}
+
+# Step 3: Get group members
+Write-Host "`nGetting group members from Exchange..." -ForegroundColor Yellow
+
+try {
+    # Try as distribution group first
+    $members = Get-DistributionGroupMember -Identity $global:CMKParams.TargetGroupName -ErrorAction SilentlyContinue
+    
+    if (-not $members) {
+        Write-Host "Not a distribution group, trying manual member list..." -ForegroundColor Yellow
+        
+        # Manual member list as fallback
+        $members = @(
+            "fred.pearson@leonardocompany.ca"
+            # Add other group members here manually if needed
+        )
+        
+        Write-Host "Processing manual member list: $($members.Count) users" -ForegroundColor Yellow
+    } else {
+        Write-Host "Found $($members.Count) members in distribution group" -ForegroundColor Green
+    }
+} catch {
+    Write-Host "Error getting group members: $($_.Exception.Message)" -ForegroundColor Red
+    Disconnect-ExchangeOnline -Confirm:$false
+    return
+}
+
+# Step 4: Process members
+$results = @()
+$processedCount = 0
+
+foreach ($member in $members) {
+    $processedCount++
+    $email = if ($member.PrimarySmtpAddress) { $member.PrimarySmtpAddress } else { $member }
+    
+    Write-Progress -Activity "Processing Group Members" -Status "Processing $email" -PercentComplete (($processedCount / $members.Count) * 100)
+    Write-Host "`nProcessing: $email" -ForegroundColor Cyan
+    
+    try {
+        # Get mailbox
+        $mailbox = Get-Mailbox -Identity $email -ErrorAction Stop
+        
+        # Check current DEP
+        if ($mailbox.DataEncryptionPolicy -eq $global:ResourceNames.DEPName) {
+            Write-Host "  ⏭️ Already has DEP applied" -ForegroundColor Yellow
+            $results += [PSCustomObject]@{
+                User = $email
+                Status = "Skipped"
+                Message = "Already applied"
+                Timestamp = Get-Date
+            }
+        } else {
+            # Apply DEP
+            Set-Mailbox -Identity $email -DataEncryptionPolicy $global:ResourceNames.DEPName
+            Write-Host "  ✅ DEP applied successfully" -ForegroundColor Green
+            $results += [PSCustomObject]@{
+                User = $email
+                Status = "Success"
+                Message = "Applied"
+                Timestamp = Get-Date
+            }
+        }
+    } catch {
+        if ($_.Exception.Message -like "*object*not found*") {
+            Write-Host "  ⚠️ No mailbox found" -ForegroundColor Yellow
+            $results += [PSCustomObject]@{
+                User = $email
+                Status = "NoMailbox"
+                Message = "User has no mailbox"
+                Timestamp = Get-Date
+            }
+        } else {
+            Write-Host "  ❌ Failed: $($_.Exception.Message)" -ForegroundColor Red
+            $results += [PSCustomObject]@{
+                User = $email
+                Status = "Failed"
+                Message = $_.Exception.Message
+                Timestamp = Get-Date
+            }
+        }
+    }
+}
+
+Write-Progress -Activity "Processing Group Members" -Completed
+
+# Step 5: Summary
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Summary:" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+$results | Group-Object Status | ForEach-Object {
+    $statusColor = switch ($_.Name) {
+        "Success" { "Green" }
+        "Skipped" { "Yellow" }
+        "Failed" { "Red" }
+        "NoMailbox" { "Gray" }
+        default { "White" }
+    }
+    Write-Host "$($_.Name): $($_.Count)" -ForegroundColor $statusColor
+}
+
+# Save results
+if (-not (Test-Path $global:CMKParams.BackupPath)) {
+    New-Item -Path $global:CMKParams.BackupPath -ItemType Directory -Force | Out-Null
+}
+
+$reportPath = "$($global:CMKParams.BackupPath)\CMK-Group-Results-$(Get-Date -Format 'yyyyMMdd-HHmmss').csv"
+$results | Export-Csv -Path $reportPath -NoTypeInformation
+Write-Host "`nResults saved to: $reportPath" -ForegroundColor Green
+
+# Display failed users if any
+$failedUsers = $results | Where-Object { $_.Status -eq "Failed" }
+if ($failedUsers) {
+    Write-Host "`nFailed Users:" -ForegroundColor Red
+    $failedUsers | Format-Table User, Message -AutoSize
+}
+
+# Cleanup
+Write-Host "`nDisconnecting from Exchange Online..." -ForegroundColor Yellow
+Disconnect-ExchangeOnline -Confirm:$false
+
+Write-Host "`n✅ Process complete!" -ForegroundColor Green
+
+# Return results for further processing if needed
+return $results
+```
+
 ### Alternative: Apply Using Distribution Group or Mail-Enabled Security Group
 
 ```powershell
