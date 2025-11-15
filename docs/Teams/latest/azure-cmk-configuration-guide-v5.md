@@ -2649,7 +2649,7 @@ This is exactly why you need to make that support call - they have internal tool
     -TargetGroupName "CMK-Enabled-Users"
 ```
 
-4. **For unattended execution**, add `-SkipConfirmation`:
+4.**For unattended execution**, add `-SkipConfirmation`:
 
 ```powershell
 .\Deploy-CustomerKey.ps1 -TenantId "YOUR-TENANT-ID" `
