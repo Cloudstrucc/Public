@@ -436,11 +436,12 @@ Write-Host "`n✅ Group deployment complete!" -ForegroundColor Green
 
 **Manual Steps** (PowerShell cannot create templates yet):
 
-1. Navigate to: https://admin.teams.microsoft.com/meetings/templates
+1. Navigate to: <https://admin.teams.microsoft.com/meetings/templates>
 2. Click "+ Add" button
 3. Create the following templates:
 
 **Template 1: Leonardo - Secure Meeting**
+
 ```
 Name: Leonardo - Secure Meeting
 Description: For classified, NDA, or sensitive content for LCE M365 Security team
@@ -468,6 +469,7 @@ Settings:
 ```
 
 **Template 2: Leonardo - Regular Meeting**
+
 ```
 Name: Leonardo - Regular Meeting
 Description: For team syncs and external collaboration (LCE M365 Security)
@@ -683,6 +685,7 @@ Disconnect-MgGraph
 ```
 
 **Usage:**
+
 ```powershell
 # Test what would change
 .\Sync-TeamsPremium-Group.ps1 -WhatIf
@@ -999,6 +1002,7 @@ $report | Format-List
 ### A. Group Member Management
 
 **Add new member to group:**
+
 ```powershell
 Connect-MgGraph -Scopes "GroupMember.ReadWrite.All"
 
@@ -1015,6 +1019,7 @@ Write-Host "Note: Run sync script to apply Teams Premium policies" -ForegroundCo
 ```
 
 **Remove member from group:**
+
 ```powershell
 Remove-MgGroupMemberByRef -GroupId $group.Id -DirectoryObjectId $user.Id
 Write-Host "✓ Removed $newMemberEmail from group" -ForegroundColor Green
@@ -1042,7 +1047,7 @@ foreach ($member in $members) {
 
 ### C. Support Contacts
 
-* **Group Administrator**: fred.pearson@leonardocompany.ca
+* **Group Administrator**: <fred.pearson@leonardocompany.ca>
 * **Microsoft Premier Support**: 1-800-936-3100
 
 ### D. Quick Links
@@ -1399,6 +1404,7 @@ Body:
   "allowForwarding": true
 }
 ```
+
 Authentication: Same as Secure branch
 
 ### 3.3 Save Meeting ID
@@ -1410,7 +1416,7 @@ Value: @{outputs('HTTP_2')?['body']?['id']}
 ### 3.4 Log Compliance Data
 
 Action: Create item (SharePoint)
-Site Address: https://leonardocompany.sharepoint.com/sites/lce-security
+Site Address: <https://leonardocompany.sharepoint.com/sites/lce-security>
 List Name: Meeting Creation Log
 
 Fields:
@@ -1502,12 +1508,12 @@ Card:
 
 ### 4.2 Send Email Confirmation
 
-
 Action: Send an email (V2)
 To: @{triggerOutputs()?['headers']?['x-ms-user-name-encoded']}
 Subject: Meeting Created: [@{variables('varTemplateType')}] @{triggerBody()['text']}
 
 Body:
+
 ```html
 <html>
 <body style="font-family: Segoe UI, Arial, sans-serif;">
@@ -1564,8 +1570,7 @@ Body:
 
 ### 5.1 Register Application
 
-
-1. Go to: https://portal.azure.com
+1. Go to: <https://portal.azure.com>
 2. Navigate to: Azure Active Directory → App registrations
 3. Click "+ New registration"
 4. Name: "Leonardo Meeting Creator"
@@ -1573,9 +1578,7 @@ Body:
 6. Redirect URI: Leave blank
 7. Click "Register"
 
-
 ### 5.2 Configure API Permissions
-
 
 1. In your app, go to "API permissions"
 2. Click "+ Add a permission"
@@ -1589,9 +1592,7 @@ Body:
 6. Click "Add permissions"
 7. Click "Grant admin consent for Leonardo Company"
 
-
 ### 5.3 Create Client Secret
-
 
 1. Go to "Certificates & secrets"
 2. Click "+ New client secret"
@@ -1599,7 +1600,6 @@ Body:
 4. Expires: 24 months
 5. Click "Add"
 6. COPY THE VALUE immediately (you can't see it again)
-
 
 ### 5.4 Note App Details
 
@@ -1614,46 +1614,43 @@ Copy these for Power Automate:
 
 ### 6.1 Create List
 
-
-1. Navigate to: https://leonardocompany.sharepoint.com/sites/lce-security
+1. Navigate to: <https://leonardocompany.sharepoint.com/sites/lce-security>
 2. Click "New" → "List"
 3. Name: "Meeting Creation Log"
 4. Description: "Tracks all meetings created via Meeting Creator tool"
 5. Click "Create"
-
 
 ### 6.2 Add Columns
 
 Click "+ Add column" for each:
 
 1. Created By (Person)
-   - Already exists by default
+   * Already exists by default
 
 2. Template Used
-   - Type: Choice
-   - Choices: SECURE, REGULAR
-   - Default: (none)
-   - Required: Yes
+   * Type: Choice
+   * Choices: SECURE, REGULAR
+   * Default: (none)
+   * Required: Yes
 
 3. Meeting Date
-   - Type: Date and time
-   - Include time: Yes
-   - Required: Yes
+   * Type: Date and time
+   * Include time: Yes
+   * Required: Yes
 
 4. Attendees
-   - Type: Multiple lines of text
-   - Required: No
+   * Type: Multiple lines of text
+   * Required: No
 
 5. Meeting ID
-   - Type: Single line of text
-   - Required: No
+   * Type: Single line of text
+   * Required: No
 
 6. Created Date
-   - Type: Date and time
-   - Include time: Yes
-   - Default: Today's date
-   - Required: Yes
-```
+   * Type: Date and time
+   * Include time: Yes
+   * Default: Today's date
+   * Required: Yes
 
 ### 6.3 Create Views
 
@@ -1663,13 +1660,11 @@ Name: All Meetings
 Sort: Created Date (descending)
 Filter: None
 
-
 **View 2: Secure Meetings Only**
 
 Name: Secure Meetings
 Sort: Created Date (descending)
 Filter: Template Used equals SECURE
-
 
 **View 3: This Month**
 
@@ -1678,23 +1673,19 @@ Sort: Meeting Date (ascending)
 Filter: Created Date is greater than [Today] - 30
 Group by: Template Used
 
-
 ### 6.4 Set Permissions
-
 
 1. Click "Settings" (gear icon) → "List settings"
 2. Click "Permissions for this list"
 3. Break inheritance
 4. Add "LCE M365 Security" group with "Read" permissions
-5. Add fred.pearson@leonardocompany.ca with "Full Control"
-
+5. Add <fred.pearson@leonardocompany.ca> with "Full Control"
 
 ---
 
 ## Step 7: Deploy to Teams
 
 ### 7.1 Create Power Automate Tab in Teams
-
 
 1. Open Microsoft Teams
 2. Navigate to "LCE M365 Security" team
@@ -1706,13 +1697,11 @@ Group by: Template Used
 8. Tab name: "📅 Create Meeting"
 9. Click "Save"
 
-
 ### 7.2 Pin the Tab
 
 1. Right-click on the "📅 Create Meeting" tab
 2. Select "Pin"
 3. This keeps it always visible
-
 
 ### 7.3 Create Channel Announcement
 
@@ -1728,13 +1717,12 @@ WHY?
 ✅ Tracks all meetings for audit purposes
 
 HOW?
+
 1. Click the "📅 Create Meeting" tab above
 2. Click "Run flow"
 3. Fill in meeting details
 4. Select template (Secure or Regular)
 5. Submit - meeting added to your calendar!
-
-```
 
 ---
 
@@ -1823,21 +1811,15 @@ QUICK REFERENCE
 📖 User Guide: [SharePoint link]
 🎥 Video Tutorial: [Link]
 ❓ FAQ: [SharePoint link]
-📧 Support: fred.pearson@leonardocompany.ca
+📧 Support: <fred.pearson@leonardocompany.ca>
 
 ═══════════════════════════════════════════════════════════════════
 
 Thank you for your cooperation in maintaining our security standards.
 
-Fred Pearson
-Power Platform Tenant Administrator
-Leonardo Company - Centre of Excellence
-```
-
 ### 8.2 Create Quick Reference Card
 
 Save as PDF and distribute:
-
 
 ┌──────────────────────────────────────────────────────────────────┐
 │                                                                  │
@@ -1856,11 +1838,11 @@ HOW TO CREATE A MEETING
 
 3️⃣  Fill in details:
    Meeting Title: ___________________________________
-   
+
    Template: [Select one]
      🔒 Secure - Classified, NDA, sensitive
      📋 Regular - Team syncs, external collab
-   
+
    Date/Time: ___________________________________
    Duration: _________ (minutes)
    Attendees: ___________________________________
@@ -1907,7 +1889,7 @@ TIPS
 ══════════════════════════════════════════════════════════════════
 
 💡 Use semicolons to separate multiple attendees:
-   john@email.com;jane@email.com;bob@email.com
+   <john@email.com>;<jane@email.com>;<bob@email.com>
 
 💡 Duration is in minutes (60 = 1 hour)
 
@@ -1921,7 +1903,7 @@ TIPS
 SUPPORT
 ══════════════════════════════════════════════════════════════════
 
-📧 fred.pearson@leonardocompany.ca
+📧 <fred.pearson@leonardocompany.ca>
 
 ## Step 9: Compliance Monitoring
 
@@ -2011,10 +1993,10 @@ Write-Host "✓ Report sent successfully" -ForegroundColor Green
 
 Create a Power BI report connected to the SharePoint list:
 
-
 Data Source: SharePoint List "Meeting Creation Log"
 
 Visualizations:
+
 1. Card: Total Meetings This Month
 2. Donut Chart: Secure vs Regular breakdown
 3. Bar Chart: Meetings by User
@@ -2023,10 +2005,10 @@ Visualizations:
 6. Gauge: Compliance Rate (always 100%)
 
 Filters:
-- Date range selector
-- Template type filter
-- User filter
-```
+
+* Date range selector
+* Template type filter
+* User filter
 
 ---
 
@@ -2035,121 +2017,179 @@ Filters:
 ### Common Issues and Solutions
 
 **Issue 1: "Forbidden" error when creating meeting**
-```
+
 Cause: Graph API permissions not granted
 Solution:
+
 1. Azure Portal → App Registrations
 2. Select "Leonardo Meeting Creator"
 3. API permissions → Grant admin consent
 4. Wait 5 minutes for propagation
 5. Test flow again
-```
 
 **Issue 2: Attendees not added correctly**
-```
+
 Cause: Incorrect email format
 Solution:
+
 1. Ensure emails separated by semicolons
-2. No spaces: user1@email.com;user2@email.com
+2. No spaces: <user1@email.com>;<user2@email.com>
 3. Update flow to trim spaces:
    @{replace(replace(triggerBody()['text_2'], ';', ''), ' ', '')}
-```
 
 **Issue 3: Watermarks not appearing**
-```
+
 Cause: Watermarks set by policy, not Graph API
 Solution:
+
 1. Verify policy: Get-CsTeamsMeetingPolicy -Identity "Leonardo-Secure-Meeting-Group"
 2. Check AllowWatermarkForCameraVideo = $true
 3. Users need to sign out/in to Teams
 4. May take 24 hours to propagate
-```
 
 **Issue 4: Flow fails with timeout**
-```
+
 Cause: Graph API throttling
 Solution:
+
 1. Add "Delay" action (5 seconds) between HTTP calls
 2. Implement retry logic in flow
 3. Contact Microsoft if persistent
-```
 
 **Issue 5: Users can't see the flow**
-```
+
 Cause: Permissions not set
 Solution:
+
 1. In Power Automate, open flow
 2. Click "Share"
 3. Add "LCE M365 Security" group
 4. Grant "User" permission
 5. Save
-```
 
 ---
 
 ## Step 11: Maintenance Checklist
 
 ### Daily
-```
+
 □ Check for failed flow runs
 □ Review error logs
-```
 
 ### Weekly
-```
+
 □ Generate compliance report
 □ Review meeting creation metrics
 □ Check for user feedback
-```
 
 ### Monthly
-```
+
 □ Update user training materials if needed
 □ Review Graph API token expiration
 □ Test flow end-to-end
 □ Archive old compliance logs (>90 days)
-```
 
 ### Quarterly
-```
+
 □ User satisfaction survey
 □ Review and update templates
 □ Check for new Teams Premium features
 □ Executive presentation on adoption
-```
 
 ### Annually
-```
+
 □ Full security audit
 □ Renew API certificates
 □ Update documentation
 □ Refresh training materials
+
+---
+
+---
+
+## Step 12: Disable Outlook Teams Meeting Creation (Optional but Recommended)
+
+### Overview
+
+To ensure 100% template compliance, you can disable the ability to create Teams meetings from Outlook for the LCE M365 Security group. This forces users to use Teams Calendar, where templates are visible and easily selectable.
+
+**Why Disable Outlook Meeting Creation?**
+
+* ✅ Templates don't display properly in Outlook (shows "My templates" instead of custom names)
+* ✅ Users must manually configure security settings in Outlook
+* ✅ Higher risk of misconfiguration and non-compliance
+* ✅ Forcing Teams Calendar ensures templates are always used
+* ✅ Simpler user experience (one method only)
+
+### Recommended: Microsoft Intune Policy
+
+**Target: LCE M365 Security Group**
+
+#### Create Configuration Profile
+
+1. Navigate to: <https://endpoint.microsoft.com>
+2. Devices → Configuration profiles → + Create profile
+3. Platform: Windows 10 and later
+4. Profile type: Settings catalog
+5. Name: Disable Teams Meeting Add-in - LCE M365 Security
+6. Description: Disables Outlook Teams meeting creation for compliance
+
+Settings:
+  Search: "Teams Meeting"
+  Select: Microsoft Outlook 2016 → Miscellaneous → Disable Teams Meeting Add-in
+  Value: Enabled
+
+Assignments:
+  Included groups: LCE M365 Security
+  Excluded groups: (none, or IT Admins for exceptions)
+
+Click: Create
+
+#### Verify Deployment Script
+
+```powershell
+# Check Intune policy for LCE M365 Security group
+Connect-MgGraph -Scopes "DeviceManagementConfiguration.Read.All", "Group.Read.All"
+
+$groupName = "LCE M365 Security"
+$group = Get-MgGroup -Filter "displayName eq '$groupName'"
+$members = Get-MgGroupMember -GroupId $group.Id -All
+
+Write-Host "Group: $($group.DisplayName) - $($members.Count) members" -ForegroundColor Cyan
+
+$profile = Get-MgDeviceManagementConfigurationPolicy -Filter "displayName eq 'Disable Teams Meeting Add-in - LCE M365 Security'"
+
+if ($profile) {
+    Write-Host "✓ Policy deployed" -ForegroundColor Green
+} else {
+    Write-Host "✗ Policy not found" -ForegroundColor Red
+}
+
+Disconnect-MgGraph
 ```
 
 ---
 
-## Step 12: Success Metrics
+## Step 13: Success Metrics
 
 Track these KPIs monthly:
 
 ### Adoption Metrics
-```
+
 Target: 100% (enforced by flow)
 Measure: % of meetings via flow vs calendar
 Month 1: 60%
 Month 2: 85%
 Month 3: 100%
-```
 
 ### Compliance Metrics
-```
+
 Target: 100% template compliance
 Measure: % meetings with proper settings
 Result: Always 100% (automated)
-```
 
 ### User Satisfaction
-```
+
 Target: >4.0/5.0
 Measure: Quarterly survey
 Questions:
@@ -2157,16 +2197,14 @@ Questions:
 - Time to create meeting (1-5)
 - Clear template selection (1-5)
 - Would recommend (1-5)
-```
 
 ### Efficiency Metrics
-```
+
 Target: <2 minutes to create meeting
 Measure: Time from start to calendar entry
 Baseline: 5 minutes (manual method)
 Current: 1.5 minutes (flow method)
 Savings: 70% time reduction
-```
 
 ---
 
@@ -2184,7 +2222,7 @@ This Power Automate solution provides:
 **Ongoing Maintenance:** <2 hours/month
 **ROI:** Positive within first month
 
-For support or questions, contact: fred.pearson@leonardocompany.ca
+For support or questions, contact: <fred.pearson@leonardocompany.ca>
 
 ---
 
