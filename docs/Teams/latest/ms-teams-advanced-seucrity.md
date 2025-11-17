@@ -782,3 +782,501 @@ Write-Host "  4. Meeting Notes: Automatically generated and saved to chat" -Fore
 
 Disconnect-MicrosoftTeams
 ```
+
+
+```powershell
+# ========================================
+# Enable Teams Premium AI Features
+# Fred Pearson's account ONLY
+# ========================================
+
+Connect-MicrosoftTeams
+
+# Update meeting policy for AI features (Fred's policy)
+try {
+    Set-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test" `
+        -AllowCartCaptionsScheduling "EnabledUserOverride" `
+        -LiveInterpretationEnabledType "DisabledUserOverride" `
+        -AllowMeetingCoach $true
+    
+    Write-Host "✓ AI features enabled in meeting policy" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Error updating policy: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Continuing with verification..." -ForegroundColor Yellow
+}
+
+# Verify the policy settings
+Write-Host "`nVerifying policy configuration..." -ForegroundColor Cyan
+$policy = Get-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test"
+
+Write-Host "`nCurrent AI Feature Settings:" -ForegroundColor Yellow
+Write-Host "  AllowCartCaptionsScheduling: $($policy.AllowCartCaptionsScheduling)" -ForegroundColor Gray
+Write-Host "  LiveInterpretationEnabledType: $($policy.LiveInterpretationEnabledType)" -ForegroundColor Gray
+Write-Host "  AllowMeetingCoach: $($policy.AllowMeetingCoach)" -ForegroundColor Gray
+Write-Host "  AllowTranscription: $($policy.AllowTranscription)" -ForegroundColor Gray
+
+# Configure AI-powered features for Fred
+$aiSettings = @{
+    "Intelligent Meeting Recap" = "Automatic with Premium license"
+    "Speaker Coach" = "Enabled"
+    "Meeting Notes" = "Automatic with Premium license"
+    "CART Captions (Live Transcription)" = "User can enable"
+    "Live Interpretation" = "User can enable (when available)"
+}
+
+Write-Host "`nAI Features Status for Fred Pearson:" -ForegroundColor Cyan
+Write-Host "====================================" -ForegroundColor Cyan
+$aiSettings.GetEnumerator() | Sort-Object Name | ForEach-Object {
+    Write-Host "  ✓ $($_.Key): $($_.Value)" -ForegroundColor Green
+}
+
+Write-Host "`nImportant Notes:" -ForegroundColor Yellow
+Write-Host "  - Intelligent Recap and Meeting Notes are automatically enabled with Teams Premium" -ForegroundColor Gray
+Write-Host "  - These features appear in Teams within 24-48 hours of license activation" -ForegroundColor Gray
+Write-Host "  - CART captions can be enabled by users during meetings" -ForegroundColor Gray
+Write-Host "  - Transcription is enabled and available for all meetings" -ForegroundColor Gray
+
+Write-Host "`nHow to Use AI Features:" -ForegroundColor Cyan
+Write-Host "  1. Intelligent Recap: Automatically sent via email/chat after meetings" -ForegroundColor White
+Write-Host "  2. Meeting Coach: Click 'More' > 'Speaker Coach' during presentations" -ForegroundColor White
+Write-Host "  3. Live Captions: Click 'More' > 'Language and speech' > 'Turn on live captions'" -ForegroundColor White
+Write-Host "  4. Meeting Notes: Automatically generated and saved to chat" -ForegroundColor White
+
+Disconnect-MicrosoftTeams
+
+```
+
+# TESTING 
+# Teams Premium Feature Testing Guide
+## Fred Pearson - Leonardo Company
+
+---
+
+## Quick Test Checklist
+
+### 🔒 Security Features
+- [ ] E2E Encryption (1:1 calls)
+- [ ] Watermarks (meetings)
+- [ ] Sensitivity Labels
+- [ ] Protected Recordings
+
+### 🤖 AI Features
+- [ ] Intelligent Recap
+- [ ] Live Captions/Transcription
+- [ ] Speaker Coach
+- [ ] Meeting Notes
+
+### 🎯 Advanced Features
+- [ ] Virtual Appointments
+- [ ] Custom Backgrounds
+- [ ] Meeting Templates
+- [ ] Webinar Mode
+
+---
+
+## Detailed Testing Procedures
+
+### 1. E2E Encryption (End-to-End Encryption)
+
+**What it does:** Encrypts your 1:1 calls so only you and the other person can decrypt them.
+
+**How to test:**
+
+1. **Start a 1:1 call** with another Teams user
+   - Click on someone's name in Teams
+   - Click the video or audio call button
+
+2. **Enable E2E Encryption** during the call:
+   - Press `Ctrl + Shift + E` (keyboard shortcut)
+   - OR click the **three dots (...)** > **Security** > **Enable end-to-end encryption**
+
+3. **Verify it's working:**
+   - You'll see a padlock icon 🔒 on the call screen
+   - Both parties will see "End-to-end encrypted" message
+   - A security code will be displayed (both parties should verify it matches)
+
+**Limitations:**
+- Only works for 1:1 calls (not group calls)
+- Recording is disabled during E2E calls
+- Some features (transcription, background effects) may be limited
+
+**Expected result:** ✅ Padlock icon appears, security code displayed
+
+---
+
+### 2. Watermarks
+
+**What it does:** Adds your email address as a watermark to video and shared screens to prevent unauthorized recording.
+
+**How to test:**
+
+1. **Schedule a new meeting:**
+   - Go to Calendar in Teams
+   - Click **New Meeting**
+   - Add title, attendees, date/time
+
+2. **Enable watermarks:**
+   - In the meeting invite, click **Meeting options**
+   - Scroll to **Security**
+   - Toggle **Watermark** to **On**
+   - Choose:
+     - ✅ **Watermark videos** (watermarks on participant videos)
+     - ✅ **Watermark shared content** (watermarks on screen shares)
+
+3. **Join the meeting and verify:**
+   - Start the meeting
+   - Look for your email address watermarked on:
+     - Your video feed
+     - Other participants' videos
+     - Any shared screens
+
+**Expected result:** ✅ Your email (fred.pearson@leonardocompany.ca) appears as a subtle watermark
+
+---
+
+### 3. Intelligent Recap
+
+**What it does:** AI automatically generates meeting summaries with key points, action items, and who said what.
+
+**How to test:**
+
+1. **Schedule and hold a meeting:**
+   - Create a meeting with at least one other person
+   - Duration: At least 5-10 minutes for best results
+   - Make sure **Allow recording** is ON in meeting options
+
+2. **During the meeting:**
+   - Have a discussion with clear topics
+   - Mention action items: "Fred will follow up on the project timeline"
+   - Discuss decisions: "We decided to use Azure for hosting"
+   - Mention specific topics: "Let's talk about Q4 budget"
+
+3. **After the meeting:**
+   - Wait 10-30 minutes after the meeting ends
+   - Check your **Teams Chat** for the meeting
+   - Check your **Outlook email**
+   - Look for **"Meeting recap"** or **"Intelligent recap"**
+
+4. **What to look for in the recap:**
+   - **Overview/Summary** of the meeting
+   - **Key discussion points**
+   - **Action items** with assignees
+   - **Speakers identified** with timestamps
+   - **Topics discussed**
+   - **Chapters/Timeline** to jump to specific moments
+
+**Expected result:** ✅ AI-generated recap with summaries, action items, and speaker attribution
+
+---
+
+### 4. Live Captions & Transcription
+
+**What it does:** Real-time captions during meetings with speaker identification, plus full transcript after.
+
+**How to test:**
+
+1. **Join any meeting**
+
+2. **Enable live captions:**
+   - Click **three dots (...)** in meeting controls
+   - Click **Language and speech**
+   - Click **Turn on live captions**
+   - OR press: `Ctrl + Shift + C`
+
+3. **Watch for captions:**
+   - Captions appear at bottom of screen
+   - Speaker names are shown (with Teams Premium)
+   - Text appears in real-time as people speak
+
+4. **Change caption language (optional):**
+   - Click **three dots (...)**
+   - Click **Language and speech** > **Spoken language**
+   - Select a different language
+   - Captions will be translated in real-time
+
+5. **After the meeting:**
+   - Go to the meeting chat
+   - Look for **Transcript** file
+   - Open it to see full transcript with speaker names and timestamps
+
+**Expected result:** ✅ Live captions with speaker names, full transcript available post-meeting
+
+---
+
+### 5. Speaker Coach
+
+**What it does:** Provides real-time feedback on your presentation skills (pace, filler words, inclusivity).
+
+**How to test:**
+
+1. **Join a meeting where you'll present/speak**
+
+2. **Enable Speaker Coach:**
+   - Click **three dots (...)**
+   - Click **Speaker Coach**
+   - Click **Turn on**
+
+3. **Start speaking/presenting:**
+   - Present your screen or just talk
+   - Speak for at least 2-3 minutes
+
+4. **Watch for feedback during the meeting:**
+   - Real-time alerts if you're speaking too fast/slow
+   - Alerts for excessive filler words ("um", "uh", "like")
+   - Prompts to check for inclusive language
+
+5. **After the meeting:**
+   - Check your email for **Speaker Coach summary**
+   - Review:
+     - Speaking pace metrics
+     - Filler word count
+     - Time you spoke vs. listened
+     - Suggestions for improvement
+
+**Expected result:** ✅ Real-time coaching during call, detailed report afterward
+
+---
+
+### 6. Virtual Appointments
+
+**What it does:** Professional waiting rooms and scheduling for external client meetings.
+
+**How to test:**
+
+1. **Schedule a virtual appointment:**
+   - Go to **Calendar** in Teams
+   - Click **New Meeting**
+   - In meeting options, look for **Virtual Appointment** settings
+   - Enable virtual appointment features:
+     - ✅ SMS notifications (if configured)
+     - ✅ Waiting room
+     - ✅ Queue management
+
+2. **Configure appointment settings:**
+   - Set **Pre-buffer time**: 15 minutes (prep time before)
+   - Set **Post-buffer time**: 15 minutes (wrap-up after)
+   - Enable **Require registration** for external attendees
+
+3. **Test the waiting room:**
+   - Have someone join as a guest
+   - They should enter a branded waiting room
+   - You'll be notified when they arrive
+   - Admit them when ready
+
+4. **Features to test:**
+   - SMS notifications to attendees (if phone number provided)
+   - Queue management (if multiple people waiting)
+   - Custom lobby/waiting room branding
+
+**Expected result:** ✅ Professional waiting room experience for external guests
+
+---
+
+### 7. Sensitivity Labels
+
+**What it does:** Applies encryption and protection policies to meetings based on classification.
+
+**How to test:**
+
+1. **Schedule a new meeting**
+
+2. **Apply sensitivity label:**
+   - In meeting options, look for **Sensitivity label**
+   - Select from available labels:
+     - "Leonardo Confidential"
+     - "Leonardo Highly Confidential"
+     - (Or test labels you created)
+
+3. **Observe the protections:**
+   - Depending on label:
+     - Recording might be restricted
+     - Chat might be restricted
+     - Screen sharing might be controlled
+     - Participant entry might be controlled
+
+4. **Test label enforcement:**
+   - Try to record (might be blocked)
+   - Try to copy chat (might be blocked)
+   - Check watermark is auto-applied
+
+**Expected result:** ✅ Meeting follows security policies based on label
+
+---
+
+### 8. Protected Recordings
+
+**What it does:** All recordings are CMK-encrypted and stored securely in OneDrive/SharePoint.
+
+**How to test:**
+
+1. **Start a meeting and record it:**
+   - Join any meeting
+   - Click **three dots (...)**
+   - Click **Record and transcribe** > **Start recording**
+
+2. **After meeting ends:**
+   - Recording processes (can take 10-60 minutes)
+   - You'll get a notification when ready
+   - Recording saved to:
+     - **OneDrive** (for non-channel meetings)
+     - **SharePoint** (for channel meetings)
+
+3. **Verify CMK protection:**
+   - Open Azure Portal
+   - Go to your Key Vault monitoring dashboard
+   - Look for encryption operations with:
+     - Application: Microsoft Teams
+     - Operation: Encrypt
+     - Resource: Your recording
+
+4. **Check access controls:**
+   - Try sharing the recording link
+   - Verify only authorized users can access
+   - Check that external users see permission denial
+
+**Expected result:** ✅ Recording encrypted with your CMK, access controlled
+
+---
+
+### 9. Custom Backgrounds & Branding
+
+**What it does:** Professional branded backgrounds for meetings.
+
+**How to test:**
+
+1. **Before or during a meeting:**
+   - Click **three dots (...)**
+   - Click **Background effects**
+
+2. **Try Teams Premium backgrounds:**
+   - Look for **Premium** labeled backgrounds
+   - Upload custom Leonardo Company backgrounds
+   - Try different blur levels
+
+3. **Apply and test:**
+   - Select a background
+   - Preview it
+   - Apply to your video feed
+
+**Expected result:** ✅ High-quality branded backgrounds available
+
+---
+
+### 10. Meeting Templates
+
+**What it does:** Pre-configured meeting settings for different scenarios.
+
+**How to test:**
+
+1. **Create a meeting template:**
+   - Go to Teams Admin Center
+   - Navigate to **Meetings** > **Meeting templates**
+   - Create templates for:
+     - "Leonardo Classified Meeting"
+     - "Client External Meeting"
+     - "Internal Collaboration"
+
+2. **Use a template:**
+   - Schedule new meeting
+   - Click **Use a template**
+   - Select your template
+   - Verify settings are pre-applied:
+     - Watermarks
+     - Lobby settings
+     - Recording options
+     - Security settings
+
+**Expected result:** ✅ Quick meeting setup with pre-configured security
+
+---
+
+## Testing Schedule
+
+### Week 1: Security Features
+**Monday:**
+- ✅ Test E2E encryption with a colleague
+- ✅ Schedule watermarked meeting
+
+**Tuesday:**
+- ✅ Test watermarks in live meeting
+- ✅ Verify watermarks on video and screen share
+
+**Wednesday:**
+- ✅ Apply sensitivity labels to meetings
+- ✅ Test label enforcement
+
+**Thursday:**
+- ✅ Record a meeting and verify CMK encryption
+- ✅ Check Key Vault logs
+
+**Friday:**
+- ✅ Review security test results
+- ✅ Document any issues
+
+---
+
+### Week 2: AI Features
+**Monday:**
+- ✅ Hold a meeting to test Intelligent Recap
+- ✅ Discuss clear action items and decisions
+
+**Tuesday:**
+- ✅ Review Intelligent Recap results
+- ✅ Test live captions during meeting
+
+**Wednesday:**
+- ✅ Test Speaker Coach during presentation
+- ✅ Review coaching feedback
+
+**Thursday:**
+- ✅ Test live translation feature
+- ✅ Try different caption languages
+
+**Friday:**
+- ✅ Review AI test results
+- ✅ Test transcription quality
+
+---
+
+### Week 3: Advanced Features
+**Monday:**
+- ✅ Set up virtual appointment
+- ✅ Test waiting room experience
+
+**Tuesday:**
+- ✅ Test SMS notifications (if configured)
+- ✅ Test queue management
+
+**Wednesday:**
+- ✅ Create custom backgrounds
+- ✅ Test background quality
+
+**Thursday:**
+- ✅ Create meeting templates
+- ✅ Test template application
+
+**Friday:**
+- ✅ Conduct full end-to-end test
+- ✅ Document all findings
+
+---
+
+### Week 4: Integration & Reporting
+**Monday-Tuesday:**
+- ✅ Verify CMK integration with all features
+- ✅ Check Azure Monitor logs
+
+**Wednesday-Thursday:**
+- ✅ Generate compliance reports
+- ✅ Test all monitoring dashboards
+
+**Friday:**
+- ✅ Complete testing documentation
+- ✅ Prepare rollout recommendation
+
+---
+
+## Quick Testing Commands
+
+### Verify Your License
+```powershell
