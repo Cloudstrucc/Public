@@ -4026,3 +4026,17 @@ Register-SPODataEncryptionPolicy `
     -PrimaryKeyVaultUri "https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key" `
     -SecondaryKeyVaultUri "https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key"
 ```
+
+# ========================================
+# Enable Teams Premium AI Features
+# Fred Pearson's account ONLY
+# ========================================
+
+Connect-MicrosoftTeams
+
+# Update meeting policy for AI features (Fred's policy)
+try {
+    Set-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test" `
+        -AllowCartCaptionsScheduling "EnabledUserOverride" `
+        -LiveInterpretationEnabledType "DisabledUserOverride" `
+        -AllowMeetingCoach $true

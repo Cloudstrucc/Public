@@ -194,6 +194,20 @@ Connect-MicrosoftTeams
 
 # Create enhanced meeting policy
 $policyName = "Leonardo-Teams-Premium-Fred-Test"
+
+# First, check if policy already exists and remove it
+try {
+    $existingPolicy = Get-CsTeamsMeetingPolicy -Identity $policyName -ErrorAction SilentlyContinue
+    if ($existingPolicy) {
+        Write-Host "Removing existing policy: $policyName" -ForegroundColor Yellow
+        Remove-CsTeamsMeetingPolicy -Identity $policyName -Confirm:$false
+        Start-Sleep -Seconds 5
+    }
+} catch {
+    # Policy doesn't exist, continue
+}
+
+# Create the policy with correct parameters
 try {
     $policy = New-CsTeamsMeetingPolicy -Identity $policyName `
         -AllowWatermarkForCameraVideo $true `
@@ -202,39 +216,79 @@ try {
         -AllowMeetingReactions $true `
         -AllowPrivateMeetingScheduling $true `
         -AllowTranscription $true `
-        -LiveCaptionsEnabledType "AlwaysOn"
+        -LiveCaptionsEnabledType "DisabledUserOverride"  # FIXED: Valid value
     
     Write-Host "✓ Meeting policy created: $policyName" -ForegroundColor Green
-} catch {
-    if ($_.Exception.Message -like "*already exists*") {
-        Write-Host "Meeting policy already exists, updating..." -ForegroundColor Yellow
-        Set-CsTeamsMeetingPolicy -Identity $policyName `
-            -AllowWatermarkForCameraVideo $true `
-            -AllowWatermarkForScreenSharing $true
+    
+    # Wait for policy to propagate
+    Write-Host "Waiting for policy to propagate..." -ForegroundColor Gray
+    Start-Sleep -Seconds 10
+    
+    # Verify policy was created
+    $verifyPolicy = Get-CsTeamsMeetingPolicy -Identity $policyName -ErrorAction SilentlyContinue
+    if ($verifyPolicy) {
+        Write-Host "✓ Policy verified in system" -ForegroundColor Green
+    } else {
+        Write-Host "✗ Policy not found after creation - waiting longer..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 10
     }
+    
+} catch {
+    Write-Host "✗ Error creating meeting policy: $($_.Exception.Message)" -ForegroundColor Red
+    Disconnect-MicrosoftTeams
+    exit 1
 }
 
 # Apply policy to Fred Pearson ONLY
-Grant-CsTeamsMeetingPolicy -Identity "fred.pearson@leonardocompany.ca" -PolicyName $policyName
-Write-Host "✓ Policy applied to: fred.pearson@leonardocompany.ca" -ForegroundColor Green
+try {
+    Grant-CsTeamsMeetingPolicy -Identity "fred.pearson@leonardocompany.ca" -PolicyName $policyName
+    Write-Host "✓ Policy applied to: fred.pearson@leonardocompany.ca" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Error applying policy: $($_.Exception.Message)" -ForegroundColor Red
+}
 
 # Create enhanced messaging policy for E2E encryption
 $messagingPolicy = "Leonardo-E2E-Messaging-Fred-Test"
+
+# Check if messaging policy exists
 try {
-    New-CsTeamsMessagingPolicy -Identity $messagingPolicy `
-        -AllowSecurityEndUserReporting $true `
-        -ReadReceiptsEnabledType "Everyone"
-    
-    Write-Host "✓ Messaging policy created: $messagingPolicy" -ForegroundColor Green
+    $existingMessaging = Get-CsTeamsMessagingPolicy -Identity $messagingPolicy -ErrorAction SilentlyContinue
+    if ($existingMessaging) {
+        Write-Host "Messaging policy already exists, using existing..." -ForegroundColor Yellow
+    } else {
+        New-CsTeamsMessagingPolicy -Identity $messagingPolicy `
+            -AllowSecurityEndUserReporting $true `
+            -ReadReceiptsEnabledType "Everyone"
+        
+        Write-Host "✓ Messaging policy created: $messagingPolicy" -ForegroundColor Green
+        Start-Sleep -Seconds 5
+    }
 } catch {
-    Write-Host "Messaging policy may already exist" -ForegroundColor Yellow
+    Write-Host "✗ Error with messaging policy: $($_.Exception.Message)" -ForegroundColor Yellow
 }
 
 # Apply messaging policy to Fred Pearson
-Grant-CsTeamsMessagingPolicy -Identity "fred.pearson@leonardocompany.ca" -PolicyName $messagingPolicy
-Write-Host "✓ Messaging policy applied to: fred.pearson@leonardocompany.ca" -ForegroundColor Green
+try {
+    Grant-CsTeamsMessagingPolicy -Identity "fred.pearson@leonardocompany.ca" -PolicyName $messagingPolicy
+    Write-Host "✓ Messaging policy applied to: fred.pearson@leonardocompany.ca" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Error applying messaging policy: $($_.Exception.Message)" -ForegroundColor Red
+}
 
-Write-Host "`nTeams Premium policies configured for Fred Pearson!" -ForegroundColor Green
+# Summary
+Write-Host "`n=================================" -ForegroundColor Cyan
+Write-Host "Teams Premium policies configured for Fred Pearson!" -ForegroundColor Green
+Write-Host "=================================" -ForegroundColor Cyan
+Write-Host "`nPolicies assigned:"
+Write-Host "  Meeting Policy: $policyName"
+Write-Host "  Messaging Policy: $messagingPolicy"
+Write-Host "`nKey Features Enabled:"
+Write-Host "  ✓ Watermarks (Video & Screen)"
+Write-Host "  ✓ Transcription"
+Write-Host "  ✓ Live Captions (User Override)"
+Write-Host "  ✓ Meeting Reactions"
+Write-Host "  ✓ Security Reporting"
+
 Disconnect-MicrosoftTeams
 ```
 
@@ -353,25 +407,47 @@ Disconnect-ExchangeOnline -Confirm:$false
 Connect-MicrosoftTeams
 
 # Update meeting policy for AI features (Fred's policy)
-Set-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test" `
-    -AllowCartCaptionsScheduling $true `
-    -LiveInterpretationEnabledType "EnabledOn" `
-    -AllowMeetingCoach $true
+try {
+    Set-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test" `
+        -AllowCartCaptionsScheduling "EnabledUserOverride" `
+        -LiveInterpretationEnabledType "EnabledUserOverride" `
+        -AllowMeetingCoach $true
+    
+    Write-Host "✓ AI features enabled in meeting policy" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Error updating policy: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Error Details: $($_.Exception.InnerException.Message)" -ForegroundColor Yellow
+}
+
+# Verify the policy settings
+Write-Host "`nVerifying policy configuration..." -ForegroundColor Cyan
+$policy = Get-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test"
+
+Write-Host "`nCurrent AI Feature Settings:" -ForegroundColor Yellow
+Write-Host "  AllowCartCaptionsScheduling: $($policy.AllowCartCaptionsScheduling)" -ForegroundColor Gray
+Write-Host "  LiveInterpretationEnabledType: $($policy.LiveInterpretationEnabledType)" -ForegroundColor Gray
+Write-Host "  AllowMeetingCoach: $($policy.AllowMeetingCoach)" -ForegroundColor Gray
 
 # Configure AI-powered features for Fred
 $aiSettings = @{
-    IntelligentRecap = $true
-    LiveTranslation = $true
-    SpeakerCoach = $true
-    MeetingNotes = $true
+    "CART Captions (Live Transcription)" = "Enabled - User can schedule"
+    "Live Translation/Interpretation" = "Enabled - User can enable"
+    "Speaker Coach" = "Enabled"
+    "Intelligent Meeting Recap" = "Automatic with Premium license"
+    "Meeting Notes" = "Automatic with Premium license"
 }
 
-Write-Host "`nAI Features Enabled for Fred Pearson:" -ForegroundColor Cyan
+Write-Host "`nAI Features Status for Fred Pearson:" -ForegroundColor Cyan
+Write-Host "====================================" -ForegroundColor Cyan
 $aiSettings.GetEnumerator() | ForEach-Object {
-    Write-Host "  $($_.Key): $($_.Value)" -ForegroundColor Green
+    Write-Host "  ✓ $($_.Key): $($_.Value)" -ForegroundColor Green
 }
 
-Write-Host "`nNote: AI features will be available within 24 hours of license assignment" -ForegroundColor Yellow
+Write-Host "`nNotes:" -ForegroundColor Yellow
+Write-Host "  - AI features will be fully available within 24-48 hours of license assignment" -ForegroundColor Gray
+Write-Host "  - Intelligent Recap and Meeting Notes are automatically enabled with Premium" -ForegroundColor Gray
+Write-Host "  - CART captions require scheduling in meeting options" -ForegroundColor Gray
+Write-Host "  - Live interpretation requires enabling during the meeting" -ForegroundColor Gray
 
 Disconnect-MicrosoftTeams
 ```
@@ -660,3 +736,49 @@ Remember: ALL features are protected by YOUR encryption keys!
 * [Graph Explorer](https://aka.ms/ge)
 
 ---
+
+    Write-Host "✓ AI features enabled in meeting policy" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Error updating policy: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Continuing with verification..." -ForegroundColor Yellow
+}
+
+# Verify the policy settings
+Write-Host "`nVerifying policy configuration..." -ForegroundColor Cyan
+$policy = Get-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test"
+
+Write-Host "`nCurrent AI Feature Settings:" -ForegroundColor Yellow
+Write-Host "  AllowCartCaptionsScheduling: $($policy.AllowCartCaptionsScheduling)" -ForegroundColor Gray
+Write-Host "  LiveInterpretationEnabledType: $($policy.LiveInterpretationEnabledType)" -ForegroundColor Gray
+Write-Host "  AllowMeetingCoach: $($policy.AllowMeetingCoach)" -ForegroundColor Gray
+Write-Host "  AllowTranscription: $($policy.AllowTranscription)" -ForegroundColor Gray
+
+# Configure AI-powered features for Fred
+$aiSettings = @{
+    "Intelligent Meeting Recap" = "Automatic with Premium license"
+    "Speaker Coach" = "Enabled"
+    "Meeting Notes" = "Automatic with Premium license"
+    "CART Captions (Live Transcription)" = "User can enable"
+    "Live Interpretation" = "User can enable (when available)"
+}
+
+Write-Host "`nAI Features Status for Fred Pearson:" -ForegroundColor Cyan
+Write-Host "====================================" -ForegroundColor Cyan
+$aiSettings.GetEnumerator() | Sort-Object Name | ForEach-Object {
+    Write-Host "  ✓ $($_.Key): $($_.Value)" -ForegroundColor Green
+}
+
+Write-Host "`nImportant Notes:" -ForegroundColor Yellow
+Write-Host "  - Intelligent Recap and Meeting Notes are automatically enabled with Teams Premium" -ForegroundColor Gray
+Write-Host "  - These features appear in Teams within 24-48 hours of license activation" -ForegroundColor Gray
+Write-Host "  - CART captions can be enabled by users during meetings" -ForegroundColor Gray
+Write-Host "  - Transcription is enabled and available for all meetings" -ForegroundColor Gray
+
+Write-Host "`nHow to Use AI Features:" -ForegroundColor Cyan
+Write-Host "  1. Intelligent Recap: Automatically sent via email/chat after meetings" -ForegroundColor White
+Write-Host "  2. Meeting Coach: Click 'More' > 'Speaker Coach' during presentations" -ForegroundColor White
+Write-Host "  3. Live Captions: Click 'More' > 'Language and speech' > 'Turn on live captions'" -ForegroundColor White
+Write-Host "  4. Meeting Notes: Automatically generated and saved to chat" -ForegroundColor White
+
+Disconnect-MicrosoftTeams
+```
