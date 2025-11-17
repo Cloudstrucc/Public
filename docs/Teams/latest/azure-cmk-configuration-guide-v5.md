@@ -3464,3 +3464,437 @@ Write-Host "`n📝 Note: Your keys have different names:" -ForegroundColor Yello
 Write-Host "   Primary: m365-cmk-key" -ForegroundColor Gray
 Write-Host "   Secondary: m365-customer-key-secondary" -ForegroundColor Gray
 ```
+
+### Configuration of SPO key vault
+
+#### Manual Steps
+I'll update your build book to include the manual SharePoint/OneDrive CMK setup process you've used. Here's the updated section:
+
+## SharePoint/OneDrive Customer Managed Key (CMK) Configuration
+
+### Overview
+SharePoint and OneDrive require separate key vaults from Exchange/Teams but use the same tenant-wide Customer Key infrastructure. This configuration is independent and can be implemented before, during, or after Exchange/Teams CMK deployment.
+
+### Prerequisites
+- SharePoint admin access
+- Two separate Azure subscriptions (can be the same ones used for Exchange CMK)
+- Azure Key Vault creation permissions
+- Global Administrator or SharePoint Administrator role
+
+### Architecture
+```
+SharePoint/OneDrive CMK Architecture:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+├── Primary Key Vault (Canada Central)
+│   ├── Vault: kv-cmk-spo-pri-1117
+│   ├── Key: spo-cmk-key
+│   └── Subscription: 6f114bd7-c8d3-4843-b4f8-e30a644bc412
+│
+├── Secondary Key Vault (Canada East)
+│   ├── Vault: kv-cmk-spo-sec-1117
+│   ├── Key: spo-cmk-key
+│   └── Subscription: 6fe93f46-fb3b-410b-8d22-540b06cbbfbc
+│
+└── Service Principals with Access:
+    ├── SharePoint Online: f3b83251-9cf1-4359-9f65-6f9e7e6fd37d
+    └── OneDrive: a5fd58ca-ce08-4acb-9c23-5c138e72b8b1
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### Step-by-Step Manual Configuration
+
+#### Step 1: Create Key Vaults via Azure Portal
+
+1. **Navigate to Azure Portal** (https://portal.azure.com)
+
+2. **Create Primary Key Vault:**
+   - Click **+ Create a resource** → **Key Vault**
+   - **Subscription**: 6f114bd7-c8d3-4843-b4f8-e30a644bc412
+   - **Resource Group**: rg-cmk-primary-multiworkload
+   - **Key vault name**: kv-cmk-spo-pri-1117
+   - **Region**: Canada Central
+   - **Pricing tier**: Premium
+   - **Days to retain deleted vaults**: 90
+   - **Purge protection**: Enabled
+   - Click **Review + Create** → **Create**
+
+3. **Create Secondary Key Vault:**
+   - Repeat the process with:
+   - **Subscription**: 6fe93f46-fb3b-410b-8d22-540b06cbbfbc
+   - **Resource Group**: rg-cmk-secondary-multiworkload
+   - **Key vault name**: kv-cmk-spo-sec-1117
+   - **Region**: Canada East
+   - All other settings remain the same
+
+#### Step 2: Create Encryption Keys
+
+1. **In Primary Key Vault (kv-cmk-spo-pri-1117):**
+   - Navigate to **Keys** → **Generate/Import**
+   - **Options**: Generate
+   - **Name**: spo-cmk-key
+   - **Key type**: RSA
+   - **RSA key size**: 2048
+   - **Set activation date**: (current date)
+   - **Set expiration date**: (optional - 2 years recommended)
+   - Click **Create**
+
+2. **In Secondary Key Vault (kv-cmk-spo-sec-1117):**
+   - Repeat the same process with identical settings
+   - **Name**: spo-cmk-key (same name as primary)
+
+#### Step 3: Configure Access Policies
+
+**Note**: Since your Key Vaults use RBAC, configure via Access Control (IAM) instead of Access Policies.
+
+1. **For Primary Key Vault:**
+   - Go to kv-cmk-spo-pri-1117
+   - Click **Access control (IAM)**
+   - Click **+ Add** → **Add role assignment**
+   - Select **Key Vault Crypto User** role
+   - Click **Next**
+   - Select **Service Principal**
+   - Search and add these service principals:
+     - `f3b83251-9cf1-4359-9f65-6f9e7e6fd37d` (SharePoint)
+     - `a5fd58ca-ce08-4acb-9c23-5c138e72b8b1` (OneDrive)
+   - Click **Review + assign**
+
+2. **For Secondary Key Vault:**
+   - Repeat the same process for kv-cmk-spo-sec-1117
+
+#### Step 4: Verify Configuration
+
+1. **Record Key URIs:**
+
+   ```powershell
+   Primary Key URI: https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key
+   Secondary Key URI: https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key
+   ```
+
+2. **Verify Access:**
+   - In each Key Vault, go to **Keys** → **spo-cmk-key**
+   - Verify the key is **Enabled**
+   - Check **Access control (IAM)** → **Role assignments**
+   - Confirm both service principals have **Key Vault Crypto User** role
+
+#### Step 5: Register with SharePoint Online
+
+1. **Connect to SharePoint Admin PowerShell:**
+
+   ```powershell
+   Connect-SPOService -Url https://ttiecm-admin.sharepoint.com
+   ```
+
+2. **Register the Data Encryption Policy:**
+
+   ```powershell
+   Register-SPODataEncryptionPolicy `
+       -PrimaryKeyVaultUri "https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key" `
+       -SecondaryKeyVaultUri "https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key"
+   ```
+
+3. **Verify Registration:**
+
+   ```powershell
+   Get-SPODataEncryptionPolicy
+   ```
+
+#### Post-Configuration Tasks
+
+#### Monitoring Re-encryption Progress
+
+1. **Check SharePoint Admin Center:**
+   - Navigate to https://ttiecm-admin.sharepoint.com
+   - Go to **Settings** → **Organization settings**
+   - Look for encryption status indicators
+
+2. **Monitor Key Vault Activity:**
+
+   ```kql
+   // Run in Log Analytics
+   AzureDiagnostics
+   | where ResourceProvider == "MICROSOFT.KEYVAULT"
+   | where Resource contains "spo"
+   | where OperationName in ("WrapKey", "UnwrapKey")
+   | summarize count() by bin(TimeGenerated, 1h), OperationName
+   | render timechart
+   ```
+
+3. **Expected Timeline:**
+   - Registration: Immediate
+   - Re-encryption start: Within 24 hours
+   - Full re-encryption: 24-72 hours (depends on data volume)
+
+#### Common Issues
+
+1. **Service Principals Not Found:**
+   - These are Microsoft-managed service principals
+   - They should exist in your tenant automatically
+   - If not found, contact Microsoft Support
+
+2. **Registration Fails:**
+   - Verify both Key Vaults are accessible
+   - Confirm proper RBAC permissions
+   - Check that keys have WrapKey/UnwrapKey operations enabled
+
+3. **No Re-encryption Activity:**
+   - Normal - can take up to 24 hours to start
+   - Check Key Vault logs for any failed operations
+   - Verify SPO service has access to both keys
+
+#### Important Notes
+
+1. **Independence from Exchange CMK:**
+   - SharePoint CMK is completely separate from Exchange/Teams CMK
+   - Can be configured in any order
+   - Uses different Key Vaults and keys
+   - Re-encryption processes run independently
+
+2. **Scope of Protection:**
+   - All SharePoint sites
+   - All OneDrive for Business accounts
+   - Teams files (stored in SharePoint)
+   - Lists, libraries, and metadata
+
+3. **User Impact:**
+   - No service interruption
+   - No user action required
+   - Transparent re-encryption process
+   - Performance remains unaffected
+
+### Verification Commands
+
+```powershell
+# Verify SPO CMK Status
+Connect-SPOService -Url https://ttiecm-admin.sharepoint.com
+$spoStatus = Get-SPODataEncryptionPolicy
+Write-Host "SharePoint CMK Status:" -ForegroundColor Cyan
+Write-Host "Enabled: $($spoStatus.IsEnabled)" -ForegroundColor $(if($spoStatus.IsEnabled){"Green"}else{"Red"})
+Write-Host "Primary Key: $($spoStatus.PrimaryKeyVaultUri)" -ForegroundColor Gray
+Write-Host "Secondary Key: $($spoStatus.SecondaryKeyVaultUri)" -ForegroundColor Gray
+Disconnect-SPOService
+```
+
+### Rollback Procedure
+
+**Warning**: There is no rollback for SharePoint CMK once re-encryption begins. Ensure proper testing and validation before proceeding.
+
+### Support Information
+
+For SharePoint/OneDrive CMK issues:
+- Microsoft Support: 1-800-936-4900
+- Required information:
+  - Tenant ID: 80b1ce91-e920-49d4-a52e-4ab189c64592
+  - Primary Key Vault: kv-cmk-spo-pri-1117
+  - Secondary Key Vault: kv-cmk-spo-sec-1117
+  - Implementation Date: [Your date]
+
+---
+
+This completes the SharePoint/OneDrive CMK configuration. Combined with your Exchange/Teams CMK, you now have comprehensive Customer Key coverage across all Microsoft 365 services.
+
+```powershell
+# ========================================
+# SPO CMK Setup - Compatible Version
+# ========================================
+
+Write-Host "SPO CMK Setup - Starting..." -ForegroundColor Cyan
+
+# Check connection
+$context = Get-AzContext
+if (-not $context) {
+    Connect-AzAccount
+}
+
+# Generate Key Vault names
+$timestamp = Get-Date -Format "MMdd"
+$primaryKVName = "kv-cmk-spo-pri-$timestamp"
+$secondaryKVName = "kv-cmk-spo-sec-$timestamp"
+
+Write-Host "`nKey Vault Names:" -ForegroundColor Yellow
+Write-Host "Primary: $primaryKVName" -ForegroundColor Gray
+Write-Host "Secondary: $secondaryKVName" -ForegroundColor Gray
+
+# Create Primary Key Vault (updated syntax)
+Write-Host "`nCreating Primary Key Vault..." -ForegroundColor Yellow
+try {
+    $primaryKV = New-AzKeyVault -Name $primaryKVName `
+        -ResourceGroupName "rg-cmk-primary-multiworkload" `
+        -Location "Canada Central" `
+        -Sku "Premium" `
+        -EnablePurgeProtection `
+        -SoftDeleteRetentionInDays 90
+    
+    Write-Host "✅ Primary Key Vault created" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Error: $_" -ForegroundColor Red
+    return
+}
+
+# Create Secondary Key Vault
+Write-Host "Creating Secondary Key Vault..." -ForegroundColor Yellow
+try {
+    # First, let's set the context to the secondary subscription
+    Set-AzContext -SubscriptionId "6fe93f46-fb3b-410b-8d22-540b06cbbfbc" -ErrorAction SilentlyContinue
+    
+    $secondaryKV = New-AzKeyVault -Name $secondaryKVName `
+        -ResourceGroupName "rg-cmk-secondary-multiworkload" `
+        -Location "Canada East" `
+        -Sku "Premium" `
+        -EnablePurgeProtection `
+        -SoftDeleteRetentionInDays 90
+    
+    Write-Host "✅ Secondary Key Vault created" -ForegroundColor Green
+    
+    # Switch back to primary subscription
+    Set-AzContext -SubscriptionId "6f114bd7-c8d3-4843-b4f8-e30a644bc412" -ErrorAction SilentlyContinue
+} catch {
+    Write-Host "❌ Error: $_" -ForegroundColor Red
+    return
+}
+
+# Create Keys
+Write-Host "`nCreating keys..." -ForegroundColor Yellow
+
+# Primary key
+$primaryKey = Add-AzKeyVaultKey -VaultName $primaryKVName `
+    -Name "spo-cmk-key" `
+    -Destination "Software"
+
+Write-Host "✅ Primary key created: $($primaryKey.Name)" -ForegroundColor Green
+
+# Secondary key (need to switch context again)
+Set-AzContext -SubscriptionId "6fe93f46-fb3b-410b-8d22-540b06cbbfbc" -ErrorAction SilentlyContinue
+$secondaryKey = Add-AzKeyVaultKey -VaultName $secondaryKVName `
+    -Name "spo-cmk-key" `
+    -Destination "Software"
+
+Write-Host "✅ Secondary key created: $($secondaryKey.Name)" -ForegroundColor Green
+
+# Set permissions for SharePoint
+Write-Host "`nSetting permissions..." -ForegroundColor Yellow
+
+$spoServicePrincipals = @{
+    "SharePoint" = "f3b83251-9cf1-4359-9f65-6f9e7e6fd37d"
+    "OneDrive" = "a5fd58ca-ce08-4acb-9c23-5c138e72b8b1"
+}
+
+# Primary vault permissions
+Set-AzContext -SubscriptionId "6f114bd7-c8d3-4843-b4f8-e30a644bc412" -ErrorAction SilentlyContinue
+foreach ($sp in $spoServicePrincipals.GetEnumerator()) {
+    Set-AzKeyVaultAccessPolicy -VaultName $primaryKVName `
+        -ServicePrincipalName $sp.Value `
+        -PermissionsToKeys Get,WrapKey,UnwrapKey
+    Write-Host "  ✓ Granted access to $($sp.Key) on primary vault" -ForegroundColor Gray
+}
+
+# Secondary vault permissions
+Set-AzContext -SubscriptionId "6fe93f46-fb3b-410b-8d22-540b06cbbfbc" -ErrorAction SilentlyContinue
+foreach ($sp in $spoServicePrincipals.GetEnumerator()) {
+    Set-AzKeyVaultAccessPolicy -VaultName $secondaryKVName `
+        -ServicePrincipalName $sp.Value `
+        -PermissionsToKeys Get,WrapKey,UnwrapKey
+    Write-Host "  ✓ Granted access to $($sp.Key) on secondary vault" -ForegroundColor Gray
+}
+
+# Save configuration
+$backupPath = "$HOME/keybackups/spo"
+New-Item -ItemType Directory -Path $backupPath -Force | Out-Null
+
+# Get the full key URIs
+$primaryKeyUri = "https://$primaryKVName.vault.azure.net/keys/spo-cmk-key"
+$secondaryKeyUri = "https://$secondaryKVName.vault.azure.net/keys/spo-cmk-key"
+
+$configSummary = @"
+SharePoint/OneDrive CMK Configuration
+=====================================
+Created: $(Get-Date)
+
+PRIMARY KEY VAULT:
+Name: $primaryKVName
+Resource Group: rg-cmk-primary-multiworkload
+Subscription: 6f114bd7-c8d3-4843-b4f8-e30a644bc412
+Key URI: $primaryKeyUri
+
+SECONDARY KEY VAULT:
+Name: $secondaryKVName
+Resource Group: rg-cmk-secondary-multiworkload
+Subscription: 6fe93f46-fb3b-410b-8d22-540b06cbbfbc
+Key URI: $secondaryKeyUri
+
+NEXT STEPS:
+1. Register with SharePoint Online
+2. Monitor re-encryption progress
+
+To register these keys:
+Connect-SPOService -Url https://ttiecm-admin.sharepoint.com
+Register-SPODataEncryptionPolicy -PrimaryKeyVaultUri "$primaryKeyUri" -SecondaryKeyVaultUri "$secondaryKeyUri"
+"@
+
+$configSummary | Out-File "$backupPath/spo-cmk-config.txt"
+
+# Display results
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host "SPO CMK Infrastructure Created!" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "`nPrimary Key URI:" -ForegroundColor Cyan
+Write-Host $primaryKeyUri -ForegroundColor White
+Write-Host "`nSecondary Key URI:" -ForegroundColor Cyan
+Write-Host $secondaryKeyUri -ForegroundColor White
+Write-Host "`n📁 Configuration saved to: $backupPath" -ForegroundColor Yellow
+
+# Update global variables if they exist
+if ($global:KeyVaultNames) {
+    $global:KeyVaultNames.SPOPrimary = $primaryKVName
+    $global:KeyVaultNames.SPOSecondary = $secondaryKVName
+    $global:KeyURIs.SPOPrimary = $primaryKeyUri
+    $global:KeyURIs.SPOSecondary = $secondaryKeyUri
+}
+
+Write-Host "`n✅ Ready to register with SharePoint when needed!" -ForegroundColor Green
+```
+
+### Next once ready to activate CMK for SPO run this
+
+```powershell
+# ========================================
+# Activate SharePoint CMK (Run separately)
+# ========================================
+
+# Load your SPO configuration
+$spoConfigPath = "$HOME/keybackups/spo/spo-cmk-config.json"
+$spoConfig = Get-Content $spoConfigPath | ConvertFrom-Json
+
+# Connect to SharePoint
+$adminUrl = "https://ttiecm-admin.sharepoint.com"
+Connect-SPOService -Url $adminUrl
+
+# Register the CMK policy
+Register-SPODataEncryptionPolicy `
+    -PrimaryKeyVaultUri $spoConfig.PrimaryKeyVault.KeyId `
+    -SecondaryKeyVaultUri $spoConfig.SecondaryKeyVault.KeyId
+
+Write-Host "✅ SharePoint CMK activated!" -ForegroundColor Green
+Write-Host "Re-encryption of SharePoint/OneDrive will begin within 24 hours" -ForegroundColor Yellow
+```
+
+#### SPO CMK Register
+
+```powershell
+# First, connect to SharePoint (try this simplified approach)
+$adminUrl = "https://ttiecm-admin.sharepoint.com"
+Connect-SPOService -Url $adminUrl
+
+# If that still gives 401, try:
+# Connect-SPOService -Url $adminUrl -Credential (Get-Credential)
+```
+
+#### Once connected, Register CMK
+
+```powershell
+# Register your SharePoint CMK policy
+Register-SPODataEncryptionPolicy `
+    -PrimaryKeyVaultUri "https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key" `
+    -SecondaryKeyVaultUri "https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key"
+
+Write-Host "✅ SharePoint CMK policy registered!" -ForegroundColor Green
+```
