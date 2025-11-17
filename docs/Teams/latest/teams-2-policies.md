@@ -1054,11 +1054,4 @@ foreach ($member in $members) {
 * [Azure Portal - CMK Monitoring](https://portal.azure.com)
 * [Graph Explorer](https://aka.ms/ge)
 * [LCE M365 Security Group SharePoint](https://leonardocompany.sharepoint.com/sites/lce-security)
-
-### E. Change Log
-
-* **v3.0** (November 2025): Updated for LCE M365 Security group deployment
-* **v2.0** (November 2025): Updated with Microsoft Graph PowerShell commands
-* **v1.0** (November 2025): Initial single-user build book
-
 ---
