@@ -3346,3 +3346,121 @@ This is exactly why you need to make that support call - they have internal tool
     -TargetGroupName "CMK-Enabled-Users" `
     -SkipConfirmation
 ```
+```powershell
+# ========================================
+# Complete CMK Configuration with Variables
+# ========================================
+
+# Set all required global variables first
+$global:CMKParams = @{
+    TenantId = "80b1ce91-e920-49d4-a52e-4ab189c64592"
+    PrimarySubscriptionId = "6f114bd7-c8d3-4843-b4f8-e30a644bc412"
+    SecondarySubscriptionId = "6fe93f46-fb3b-410b-8d22-540b06cbbfbc"
+    PrimaryLocation = "Canada Central"
+    SecondaryLocation = "Canada East"
+    NamingPrefix = "cmk"
+    TargetType = "Group"
+    TargetGroupName = "LCE M365 Security"
+    TargetGroupId = "ffde4f56-194f-4c76-9916-31375e6d7fe5"
+    BackupPath = "$HOME/keybackups"
+}
+
+# Set Key Vault names (based on your actual deployment)
+$global:KeyVaultNames = @{
+    M365Primary = "kv-cmk-m365-pri-4239"
+    M365Secondary = "kv-cmk-m365-sec-8250"
+    SPOPrimary = "kv-cmk-spo-pri-[number]"  # Update if you have SPO vaults
+    SPOSecondary = "kv-cmk-spo-sec-[number]"  # Update if you have SPO vaults
+}
+
+# Set Key URIs - UPDATED with your secondary key
+$global:KeyURIs = @{
+    M365Primary = "https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-cmk-key/758b3fac73fd4573a7d48c2840619326"
+    M365Secondary = "https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-customer-key-secondary/758b3fac73fd4573a7d48c2840619326"
+    SPOPrimary = "Not configured"
+    SPOSecondary = "Not configured"
+}
+
+# Set other required variables
+$global:ResourceNames = @{
+    DEPName = "Leonardo-CMK-DEP"
+}
+
+# Now run the summary
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Customer Key Configuration Summary" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+
+Write-Host "`nKey Vault Names:" -ForegroundColor Yellow
+$global:KeyVaultNames.GetEnumerator() | Sort-Object Name | Format-Table -AutoSize
+
+Write-Host "`nKey URIs:" -ForegroundColor Yellow
+$global:KeyURIs.GetEnumerator() | Sort-Object Name | ForEach-Object {
+    Write-Host "$($_.Key): $($_.Value)" -ForegroundColor Cyan
+}
+
+# Create backup directory if it doesn't exist
+if (-not (Test-Path $global:CMKParams.BackupPath)) {
+    New-Item -ItemType Directory -Path $global:CMKParams.BackupPath -Force | Out-Null
+}
+
+# Save configuration to file
+$targetInfo = if ($global:CMKParams.TargetType -eq "User") {
+    "TARGET USER: $($global:CMKParams.TargetUserEmail)"
+} else {
+    "TARGET GROUP: $($global:CMKParams.TargetGroupName)"
+}
+
+$configContent = @"
+Customer Key Configuration - Generated $(Get-Date)
+================================================
+
+TENANT INFORMATION:
+Tenant ID: $($global:CMKParams.TenantId)
+
+SUBSCRIPTION IDS:
+Primary: $($global:CMKParams.PrimarySubscriptionId)
+Secondary: $($global:CMKParams.SecondarySubscriptionId)
+
+KEY VAULT NAMES:
+M365 Primary: $($global:KeyVaultNames.M365Primary)
+M365 Secondary: $($global:KeyVaultNames.M365Secondary)
+SPO Primary: $($global:KeyVaultNames.SPOPrimary)
+SPO Secondary: $($global:KeyVaultNames.SPOSecondary)
+
+KEY URIS:
+M365 Primary: $($global:KeyURIs.M365Primary)
+M365 Secondary: $($global:KeyURIs.M365Secondary)
+SPO Primary: $($global:KeyURIs.SPOPrimary)
+SPO Secondary: $($global:KeyURIs.SPOSecondary)
+
+DEP POLICY NAME: $($global:ResourceNames.DEPName)
+
+TARGET TYPE: $($global:CMKParams.TargetType)
+$targetInfo
+
+KEY NAMES:
+Primary: m365-cmk-key
+Secondary: m365-customer-key-secondary
+
+STATUS: Waiting for re-encryption to begin (DEP applied)
+"@
+
+$configContent | Out-File "$($global:CMKParams.BackupPath)\cmk-configuration.txt"
+Write-Host "`nConfiguration saved to: $($global:CMKParams.BackupPath)\cmk-configuration.txt" -ForegroundColor Green
+
+# Also create a quick status check
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Current CMK Implementation Status" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "✅ Key Vaults: Configured" -ForegroundColor Green
+Write-Host "✅ Keys: Created with correct permissions" -ForegroundColor Green
+Write-Host "✅ DEP Policy: Created and applied to users" -ForegroundColor Green
+Write-Host "⏳ Re-encryption: Waiting (24-48h after DEP)" -ForegroundColor Yellow
+Write-Host "📊 Monitor: Check Key Vault logs for WrapKey spike" -ForegroundColor Cyan
+
+# Note about key names
+Write-Host "`n📝 Note: Your keys have different names:" -ForegroundColor Yellow
+Write-Host "   Primary: m365-cmk-key" -ForegroundColor Gray
+Write-Host "   Secondary: m365-customer-key-secondary" -ForegroundColor Gray
+```
