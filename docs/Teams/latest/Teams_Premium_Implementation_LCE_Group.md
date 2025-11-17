@@ -1120,36 +1120,33 @@ This solution creates a custom "Create Meeting" button in Teams that forces user
 
 ### 1.1 Navigate to Power Automate
 
-```
 1. Go to: https://make.powerautomate.com
 2. Sign in as: fred.pearson@leonardocompany.ca
 3. Select correct environment (usually default)
-```
 
 ### 1.2 Create New Instant Flow
 
-```
 1. Click "Create" in left navigation
 2. Select "Instant cloud flow"
 3. Name: "Leonardo Meeting Creator - LCE Security"
 4. Trigger: "Manually trigger a flow"
 5. Click "Create"
-```
+
 
 ### 1.3 Configure Trigger Inputs
 
 In the trigger "Manually trigger a flow", add these inputs:
 
 **Input 1: Meeting Title**
-```
+
 Type: Text
 Title: Meeting Title
 Description: Enter the title of your meeting
 Is Required: Yes
-```
+
 
 **Input 2: Meeting Type**
-```
+
 Type: Choice (dropdown)
 Title: Meeting Type
 Description: Select the appropriate security template
@@ -1157,79 +1154,78 @@ Options:
   - 🔒 Secure - For classified, NDA, sensitive content
   - 📋 Regular - For team syncs, external collaboration
 Is Required: Yes
-```
+
 
 **Input 3: Start Date/Time**
-```
+
 Type: Date
 Title: Start Date/Time
 Description: When does the meeting start?
 Is Required: Yes
-```
+
 
 **Input 4: Duration**
-```
+
 Type: Text
 Title: Duration (minutes)
 Description: Meeting length in minutes (default: 60)
 Is Required: No
-```
+
 
 **Input 5: Attendees**
-```
+
 Type: Text
 Title: Attendees
 Description: Enter email addresses separated by semicolons
 Example: john.doe@example.com;jane.smith@example.com
 Is Required: Yes
-```
+
 
 **Input 6: Description**
-```
+
 Type: Text
 Title: Meeting Description
 Description: Optional meeting agenda or description
 Is Required: No
-```
+
 
 ### 1.4 Initialize Variables
 
 Click "+ New step" and add these "Initialize variable" actions:
 
 **Variable 1: Meeting Settings**
-```
+
 Action: Initialize variable
 Name: varMeetingSettings
 Type: Object
 Value: (leave blank)
-```
+
 
 **Variable 2: Template Type**
-```
+
 Action: Initialize variable
 Name: varTemplateType
 Type: String
 Value: (leave blank)
-```
+
 
 **Variable 3: Meeting ID**
-```
+
 Action: Initialize variable
 Name: varMeetingId
 Type: String
 Value: (leave blank)
-```
+
 
 ### 1.5 Add Condition Branch
 
 Click "+ New step" → Search for "Condition"
 
-```
+
 Condition Name: Check Meeting Type
 
 Condition:
   Meeting Type | equals | 🔒 Secure - For classified, NDA, sensitive content
-```
 
 ---
 
@@ -1239,15 +1235,15 @@ In the "If yes" branch:
 
 ### 2.1 Set Template Type
 
-```
+
 Action: Set variable
 Variable: varTemplateType
 Value: SECURE
-```
+
 
 ### 2.2 Create Secure Meeting via Graph API
 
-```
+
 Action: HTTP
 Method: POST
 URI: https://graph.microsoft.com/v1.0/me/calendar/events
@@ -1296,21 +1292,20 @@ Authentication:
   Client ID: [Your App Registration ID]
   Credential Type: Secret
   Secret: [Your App Registration Secret]
-```
+
 
 **Note:** You'll need to create an Azure AD App Registration first (see Step 3.1)
 
 ### 2.3 Save Meeting ID
 
-```
+
 Action: Set variable
 Variable: varMeetingId
 Value: @{outputs('HTTP')?['body']?['id']}
-```
+
 
 ### 2.4 Apply Watermark Settings
 
-```
 Action: HTTP
 Method: PATCH
 URI: https://graph.microsoft.com/v1.0/me/calendar/events/@{variables('varMeetingId')}
@@ -1327,13 +1322,11 @@ Body:
 }
 
 Authentication: Same as above
-```
 
 **Note:** Watermark settings are applied via meeting policy, not Graph API directly
 
 ### 2.5 Log Compliance Data
 
-```
 Action: Create item (SharePoint)
 Site Address: https://leonardocompany.sharepoint.com/sites/lce-security
 List Name: Meeting Creation Log
@@ -1346,7 +1339,6 @@ Fields:
   Attendees: @{triggerBody()['text_2']}
   CreatedDate: @{utcNow()}
   MeetingID: @{variables('varMeetingId')}
-```
 
 ---
 
@@ -1356,15 +1348,14 @@ In the "If no" branch:
 
 ### 3.1 Set Template Type
 
-```
 Action: Set variable
 Variable: varTemplateType
 Value: REGULAR
-```
+
 
 ### 3.2 Create Regular Meeting
 
-```
+```JSON
 Action: HTTP
 Method: POST
 URI: https://graph.microsoft.com/v1.0/me/calendar/events
@@ -1407,21 +1398,17 @@ Body:
   "allowNewTimeProposals": true,
   "allowForwarding": true
 }
-
-Authentication: Same as Secure branch
 ```
+Authentication: Same as Secure branch
 
 ### 3.3 Save Meeting ID
 
-```
 Action: Set variable
 Variable: varMeetingId
 Value: @{outputs('HTTP_2')?['body']?['id']}
-```
 
 ### 3.4 Log Compliance Data
 
-```
 Action: Create item (SharePoint)
 Site Address: https://leonardocompany.sharepoint.com/sites/lce-security
 List Name: Meeting Creation Log
@@ -1434,7 +1421,6 @@ Fields:
   Attendees: @{triggerBody()['text_2']}
   CreatedDate: @{utcNow()}
   MeetingID: @{variables('varMeetingId')}
-```
 
 ---
 
@@ -1444,7 +1430,7 @@ After the condition (applies to both branches):
 
 ### 4.1 Send Success Notification
 
-```
+```json
 Action: Post adaptive card in a chat or channel
 Post as: Flow bot
 Post in: Chat with Flow bot
@@ -1516,12 +1502,13 @@ Card:
 
 ### 4.2 Send Email Confirmation
 
-```
+
 Action: Send an email (V2)
 To: @{triggerOutputs()?['headers']?['x-ms-user-name-encoded']}
 Subject: Meeting Created: [@{variables('varTemplateType')}] @{triggerBody()['text']}
 
 Body:
+```html
 <html>
 <body style="font-family: Segoe UI, Arial, sans-serif;">
   <h2 style="color: #0078d4;">Meeting Created Successfully</h2>
@@ -1577,7 +1564,7 @@ Body:
 
 ### 5.1 Register Application
 
-```
+
 1. Go to: https://portal.azure.com
 2. Navigate to: Azure Active Directory → App registrations
 3. Click "+ New registration"
@@ -1585,11 +1572,11 @@ Body:
 5. Supported account types: "Accounts in this organizational directory only"
 6. Redirect URI: Leave blank
 7. Click "Register"
-```
+
 
 ### 5.2 Configure API Permissions
 
-```
+
 1. In your app, go to "API permissions"
 2. Click "+ Add a permission"
 3. Select "Microsoft Graph"
@@ -1601,27 +1588,25 @@ Body:
    ✅ User.ReadBasic.All
 6. Click "Add permissions"
 7. Click "Grant admin consent for Leonardo Company"
-```
+
 
 ### 5.3 Create Client Secret
 
-```
+
 1. Go to "Certificates & secrets"
 2. Click "+ New client secret"
 3. Description: "Meeting Creator Flow"
 4. Expires: 24 months
 5. Click "Add"
 6. COPY THE VALUE immediately (you can't see it again)
-```
+
 
 ### 5.4 Note App Details
 
-```
 Copy these for Power Automate:
 ✅ Application (client) ID: [GUID]
 ✅ Directory (tenant) ID: ttiecm.onmicrosoft.com (or GUID)
 ✅ Client secret value: [SECRET - save securely]
-```
 
 ---
 
@@ -1629,17 +1614,16 @@ Copy these for Power Automate:
 
 ### 6.1 Create List
 
-```
+
 1. Navigate to: https://leonardocompany.sharepoint.com/sites/lce-security
 2. Click "New" → "List"
 3. Name: "Meeting Creation Log"
 4. Description: "Tracks all meetings created via Meeting Creator tool"
 5. Click "Create"
-```
+
 
 ### 6.2 Add Columns
 
-```
 Click "+ Add column" for each:
 
 1. Created By (Person)
@@ -1674,36 +1658,36 @@ Click "+ Add column" for each:
 ### 6.3 Create Views
 
 **View 1: All Meetings**
-```
+
 Name: All Meetings
 Sort: Created Date (descending)
 Filter: None
-```
+
 
 **View 2: Secure Meetings Only**
-```
+
 Name: Secure Meetings
 Sort: Created Date (descending)
 Filter: Template Used equals SECURE
-```
+
 
 **View 3: This Month**
-```
+
 Name: This Month
 Sort: Meeting Date (ascending)
 Filter: Created Date is greater than [Today] - 30
 Group by: Template Used
-```
+
 
 ### 6.4 Set Permissions
 
-```
+
 1. Click "Settings" (gear icon) → "List settings"
 2. Click "Permissions for this list"
 3. Break inheritance
 4. Add "LCE M365 Security" group with "Read" permissions
 5. Add fred.pearson@leonardocompany.ca with "Full Control"
-```
+
 
 ---
 
@@ -1711,7 +1695,7 @@ Group by: Template Used
 
 ### 7.1 Create Power Automate Tab in Teams
 
-```
+
 1. Open Microsoft Teams
 2. Navigate to "LCE M365 Security" team
 3. Go to "General" channel
@@ -1721,21 +1705,19 @@ Group by: Template Used
 7. Select your flow: "Leonardo Meeting Creator - LCE Security"
 8. Tab name: "📅 Create Meeting"
 9. Click "Save"
-```
+
 
 ### 7.2 Pin the Tab
 
-```
 1. Right-click on the "📅 Create Meeting" tab
 2. Select "Pin"
 3. This keeps it always visible
-```
+
 
 ### 7.3 Create Channel Announcement
 
 Post this message in the General channel:
 
-```
 📌 IMPORTANT: New Meeting Creation Process
 
 Starting [DATE], please use the "📅 Create Meeting" tab to create all meetings.
@@ -1752,9 +1734,6 @@ HOW?
 4. Select template (Secure or Regular)
 5. Submit - meeting added to your calendar!
 
-Questions? Contact @Fred Pearson
-
-[Pin this message]
 ```
 
 ---
@@ -1763,7 +1742,6 @@ Questions? Contact @Fred Pearson
 
 ### 8.1 Email Announcement
 
-```
 Subject: IMPORTANT: New Meeting Creation Process - LCE M365 Security
 
 Hello Team,
@@ -1860,7 +1838,7 @@ Leonardo Company - Centre of Excellence
 
 Save as PDF and distribute:
 
-```
+
 ┌──────────────────────────────────────────────────────────────────┐
 │                                                                  │
 │  MEETING CREATOR QUICK REFERENCE CARD                            │
@@ -1944,13 +1922,6 @@ SUPPORT
 ══════════════════════════════════════════════════════════════════
 
 📧 fred.pearson@leonardocompany.ca
-📖 User Guide: [QR Code]
-🎥 Video: [QR Code]
-
-Keep this card handy!
-```
-
----
 
 ## Step 9: Compliance Monitoring
 
@@ -2040,7 +2011,7 @@ Write-Host "✓ Report sent successfully" -ForegroundColor Green
 
 Create a Power BI report connected to the SharePoint list:
 
-```
+
 Data Source: SharePoint List "Meeting Creation Log"
 
 Visualizations:
