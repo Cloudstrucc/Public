@@ -3898,3 +3898,131 @@ Register-SPODataEncryptionPolicy `
 
 Write-Host "✅ SharePoint CMK policy registered!" -ForegroundColor Green
 ```
+
+# SharePoint/OneDrive CMK Readiness
+
+## Infrastructure Details
+
+### Primary Key Vault (Canada Central)
+| Property | Value |
+|----------|--------|
+| **Name** | kv-cmk-spo-pri-1117 |
+| **Resource Group** | rg-cmk-primary-multiworkload |
+| **Subscription** | 6f114bd7-c8d3-4843-b4f8-e30a644bc412 |
+| **Key Name** | spo-cmk-key |
+| **Key Type** | RSA 2048 |
+| **Key URI** | `https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key` |
+| **Status** | ✅ Ready |
+
+### Secondary Key Vault (Canada East)
+| Property | Value |
+|----------|--------|
+| **Name** | kv-cmk-spo-sec-1117 |
+| **Resource Group** | rg-cmk-secondary-multiworkload |
+| **Subscription** | 6fe93f46-fb3b-410b-8d22-540b06cbbfbc |
+| **Key Name** | spo-cmk-key |
+| **Key Type** | RSA 2048 |
+| **Key URI** | `https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key` |
+| **Status** | ✅ Ready |
+
+### Service Principal Access
+The following Microsoft service principals have been granted Key Vault Crypto User role:
+- **SharePoint**: `f3b83251-9cf1-4359-9f65-6f9e7e6fd37d`
+- **OneDrive**: `a5fd58ca-ce08-4acb-9c23-5c138e72b8b1`
+
+## Activation Steps (When SPO is Enabled)
+
+### 1. Verify SharePoint Access
+```powershell
+# Test access to SharePoint
+Start-Process https://ttiecm.sharepoint.com
+```
+
+### 2. Connect to SharePoint Admin
+```powershell
+Connect-SPOService -Url https://ttiecm-admin.sharepoint.com
+```
+
+### 3. Register CMK Policy
+```powershell
+Register-SPODataEncryptionPolicy `
+    -PrimaryKeyVaultUri "https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key" `
+    -SecondaryKeyVaultUri "https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key"
+```
+
+### 4. Verify Registration
+```powershell
+Get-SPODataEncryptionPolicy
+```
+
+## Pre-Activation Checklist
+- [x] Azure Key Vaults created in Canadian regions
+- [x] Encryption keys generated with proper settings
+- [x] RBAC permissions configured
+- [x] Service principals have access
+- [x] PowerShell cmdlets available (Register-SPODataEncryptionPolicy)
+- [ ] SharePoint Online service enabled for tenant
+- [ ] SharePoint Administrator access verified
+- [ ] MRP (Mandatory Retention Period) enabled by Microsoft Support (if required)
+
+## Monitoring Post-Activation
+Once activated, monitor re-encryption progress:
+- Azure Key Vault logs for WrapKey/UnwrapKey operations
+- SharePoint admin center for encryption status
+- Expected timeline: 24-72 hours for full re-encryption
+
+## Architecture Diagram
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   SharePoint/OneDrive CMK                    │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────────────┐       ┌─────────────────────┐    │
+│  │   Primary Region    │       │  Secondary Region   │    │
+│  │  (Canada Central)   │       │   (Canada East)     │    │
+│  ├─────────────────────┤       ├─────────────────────┤    │
+│  │ kv-cmk-spo-pri-1117 │       │ kv-cmk-spo-sec-1117 │    │
+│  │    └── spo-cmk-key  │       │    └── spo-cmk-key  │    │
+│  └──────────┬──────────┘       └──────────┬──────────┘    │
+│             │                              │                │
+│             └──────────────┬───────────────┘                │
+│                           │                                 │
+│                    ┌──────▼──────┐                         │
+│                    │  SharePoint  │                        │
+│                    │   Service    │                        │
+│                    └──────────────┘                        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Related Documentation
+- **Exchange/Teams CMK**: Implemented and active
+- **Primary contact**: fred.pearson@leonardocompany.ca
+- **Backup location**: `$HOME\keybackups\`
+
+## Notes
+- SPO CMK is independent of Exchange/Teams CMK
+- No impact on Exchange/Teams encryption
+- Can be activated at any time after SPO is enabled
+- All infrastructure costs continue regardless of activation status
+
+## Support Information
+- **Microsoft Support**: 1-800-936-4900
+- **Reference**: Tenant ID `80b1ce91-e920-49d4-a52e-4ab189c64592`
+
+---
+
+## Quick Reference Card
+
+### SHAREPOINT CMK QUICK REFERENCE
+**Status**: Infrastructure Ready, Service Disabled
+
+**Key Vaults:**
+- Primary: `kv-cmk-spo-pri-1117`
+- Secondary: `kv-cmk-spo-sec-1117`
+
+**When SPO is enabled, run:**
+```powershell
+Register-SPODataEncryptionPolicy `
+    -PrimaryKeyVaultUri "https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key" `
+    -SecondaryKeyVaultUri "https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key"
+```
