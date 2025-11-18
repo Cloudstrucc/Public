@@ -335,7 +335,7 @@ Write-Host "╚═════════════════════�
 
 # Get group and members
 $groupName = "LCE M365 Security"
-$regularPolicyName = "Leonardo-Regular-Meeting-Group"
+$regularPolicyName = "Leonardo-Secure-Meeting-Group"
 
 $group = Get-MgGroup -Filter "displayName eq '$groupName'"
 if (!$group) {
