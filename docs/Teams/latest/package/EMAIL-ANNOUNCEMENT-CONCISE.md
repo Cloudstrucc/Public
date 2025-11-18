@@ -2,15 +2,25 @@ Subject: IMPORTANT: New Security Controls for Teams Meetings - Effective [DATE]
 
 Dear Team,
 
-Starting **[DATE]**, all Microsoft Teams meetings will require a **Sensitivity Label** to ensure proper security controls. This is a mandatory security enhancement for our defense contractor operations.
+**This email announces upcoming changes to Microsoft Teams meetings that will be rolled out in the coming days.** Starting **[DATE]**, all Teams meetings will require a **Sensitivity Label** to ensure proper security controls. This is a mandatory security enhancement for our defense contractor operations.
+
+**Timeline:**
+- **[DATE]:** Security labels become available in Teams
+- **[DATE]:** All users should see the new sensitivity options
+- **[DATE]:** Mandatory compliance begins
 
 ═══════════════════════════════════════════════════════════════════════════════
 
-## THE TWO LABELS
+## TEAMS ROLLOUT & SECURITY PROCEDURES
 
-When creating a Teams meeting, choose between:
+**Default Behavior:**
+When you create a Teams meeting, **"Protected B - Secure Meeting" is automatically selected** as the default label. This ensures all meetings are secure by default.
 
-**🔴 PROTECTED B - SECURE MEETING** (Default)
+To use a different label: Click the **Sensitivity dropdown** and select "General - Regular Meeting"
+
+**The Two Security Levels:**
+
+**🔴 PROTECTED B - SECURE MEETING** (Default - Auto-Selected)
 For: Classified info, contracts, technical data, NDA topics, customer confidential data
 
 Security features (ENFORCED):
@@ -23,7 +33,7 @@ Security features (ENFORCED):
 • Only organizer can present
 • End-to-end encryption
 
-**🟢 GENERAL - REGULAR MEETING**
+**🟢 GENERAL - REGULAR MEETING** (Select from dropdown)
 For: Team syncs, social calls, training (non-sensitive), routine admin
 
 Security features (FLEXIBLE):
@@ -82,8 +92,9 @@ Security features (FLEXIBLE):
 ## WHAT YOU'LL SEE
 
 **Creating meetings:**
-- Default label: **"Protected B - Secure Meeting"** (already selected)
-- For casual meetings: Change to "General - Regular Meeting"
+- **Protected B - Secure Meeting is automatically selected by default**
+- For casual meetings: Click the **Sensitivity dropdown** and change to "General - Regular Meeting"
+- Complete meeting details and send
 
 **In Protected B meetings:**
 • Watermarks visible on all video/screens (your name + timestamp)
@@ -118,7 +129,9 @@ Security features (FLEXIBLE):
 ## QUICK FAQ
 
 **Q: What if I forget to select a label?**
-A: Protected B is the default. For casual meetings, actively change to General.
+A: Don't worry! Protected B is automatically selected by default for every new meeting. 
+   You're secure by default. Only change it to General (via the dropdown) if the 
+   meeting content is truly non-sensitive.
 
 **Q: Can external partners join Protected B meetings?**
 A: Yes, but with limited functionality. They can participate and view content but 
