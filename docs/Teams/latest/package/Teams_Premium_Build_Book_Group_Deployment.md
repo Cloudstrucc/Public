@@ -8,7 +8,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Version** | 6.0 - Mail-Enabled Security Group Deployment |
+| **Version** | 7.0 - CMK Encryption Integration |
 | **Last Updated** | November 20, 2025 |
 | **Owner** | Fred Pearson & George Zarif |
 | **Email** | fred.pearson@leonardocompany.ca |
@@ -25,10 +25,11 @@
 4. [Phase 2: Sensitivity Label Creation](#4-phase-2-sensitivity-label-creation)
 5. [Phase 3: Label Policy Configuration](#5-phase-3-label-policy-configuration)
 6. [Phase 4: Meeting Policy Creation](#6-phase-4-meeting-policy-creation)
-7. [Phase 5: Automated Group Policy Assignment](#7-phase-5-automated-group-policy-assignment)
-8. [Phase 6: Testing & Verification](#8-phase-6-testing--verification)
-9. [Ongoing Management](#9-ongoing-management)
-10. [Troubleshooting](#10-troubleshooting)
+7. [Phase 5: CMK Configuration & Encryption](#7-phase-5-cmk-configuration--encryption)
+8. [Phase 6: Automated Group Policy Assignment](#8-phase-6-automated-group-policy-assignment)
+9. [Phase 7: Testing & Verification](#9-phase-7-testing--verification)
+10. [Ongoing Management](#10-ongoing-management)
+11. [Troubleshooting](#11-troubleshooting)
 
 ---
 
@@ -36,23 +37,26 @@
 
 ### 1.1 Purpose
 
-This build book provides step-by-step instructions for deploying Microsoft Teams Premium with **Teams-only sensitivity labels** to the **LCE M365 Security** mail-enabled security group at Leonardo Company.
+This build book provides step-by-step instructions for deploying Microsoft Teams Premium with **Customer Managed Keys (CMK)** and **Teams-only sensitivity labels** to the **LCE M365 Security** mail-enabled security group at Leonardo Company.
 
 ### 1.2 Deployment Strategy
+
 ```mermaid
 flowchart LR
     A[Create Mail-Enabled Group] --> B[Create Labels]
     B --> C[Configure Policy]
     C --> D[Create Meeting Policies]
-    D --> E[Run Assignment Script]
-    E --> F{Tests Pass?}
-    F -->|Yes| G[Production Use]
-    F -->|No| H[Fix Issues]
-    H --> F
+    D --> E[Configure CMK Encryption]
+    E --> F[Run Assignment Script]
+    F --> G{Tests Pass?}
+    G -->|Yes| H[Production Use]
+    G -->|No| I[Fix Issues]
+    I --> G
     
     style A fill:#0078d4,color:#fff
-    style G fill:#107c10,color:#fff
-    style F fill:#ffd93d,color:#000
+    style E fill:#A4262C,color:#fff
+    style H fill:#107c10,color:#fff
+    style G fill:#ffd93d,color:#000
 ```
 
 ### 1.3 Key Features
@@ -64,10 +68,18 @@ flowchart LR
 - ✅ Easy to manage - add members once, policies apply automatically
 
 **Sensitivity Labels (Teams Meetings ONLY):**
-- ✅ Protected B - Secure Meeting (watermarks, restricted lobby)
-- ✅ General - Regular Meeting (open collaboration)
+- ✅ Protected B - Secure Meeting (watermarks, restricted lobby, CMK encryption)
+- ✅ General - Regular Meeting (open collaboration, CMK encryption)
 - ✅ Labels appear ONLY in Teams meeting creation
 - ✅ Labels do NOT appear in Outlook, Word, Excel, or PowerPoint
+
+**Customer Managed Keys (CMK):**
+- ✅ Meeting recordings encrypted with YOUR key
+- ✅ Meeting transcripts encrypted with YOUR key
+- ✅ Meeting chat encrypted with YOUR key
+- ✅ Shared files encrypted with YOUR key
+- ✅ YOU control encryption keys in Azure Key Vault
+- ✅ You can revoke access at any time
 
 **For Secure Meetings:**
 - ✅ Watermarks on camera and screen sharing
@@ -75,12 +87,14 @@ flowchart LR
 - ✅ Phone dial-in users must wait in lobby
 - ✅ Only organizer can control presenters
 - ✅ External users cannot request control
+- ✅ CMK encryption applied automatically
 
 **For Regular Meetings:**
 - ✅ Open lobby (organization + guests)
 - ✅ Phone dial-in users can bypass lobby
 - ✅ Everyone can be a presenter
 - ✅ External users can request control
+- ✅ CMK encryption applied automatically
 
 ---
 
@@ -100,8 +114,22 @@ flowchart LR
 - ✅ Teams Administrator
 - ✅ Compliance Administrator
 - ✅ Exchange Administrator
+- ✅ Azure Key Vault Administrator (for CMK setup)
 
-### 2.3 Required PowerShell Modules
+### 2.3 Azure Key Vault Prerequisites (for CMK)
+
+**Before Phase 5, you must have:**
+- ✅ Azure subscription
+- ✅ Azure Key Vault created
+- ✅ CMK generated in Key Vault
+- ✅ Permissions granted to Microsoft 365 service principals
+- ✅ M365 Data-at-Rest Encryption Policy created
+- ⏱️ CMK provisioning completed (can take 24-72 hours)
+
+**Reference:** https://docs.microsoft.com/en-us/purview/customer-key-overview
+
+### 2.4 Required PowerShell Modules
+
 ```powershell
 # Install required modules
 Install-Module Microsoft.Graph -Force -Scope CurrentUser
@@ -136,6 +164,7 @@ Install-Module PnP.PowerShell -Force -Scope CurrentUser
 7. Click **Create**
 
 **Via PowerShell:**
+
 ```powershell
 # Connect to Exchange Online
 Connect-ExchangeOnline
@@ -175,6 +204,7 @@ Send a test email to `lcem365security@leonardocompany.ca` to verify all members 
 ### 4.1 Create Sensitivity Labels
 
 **Script:** `01-Create-Sensitivity-Labels.ps1`
+
 ```powershell
 <#
 .SYNOPSIS
@@ -283,6 +313,7 @@ Write-Host "`n✅ Phase 2 Complete - Labels Created`n" -ForegroundColor Green
 ### 5.1 Configure Label Policy (Teams Only)
 
 **Script:** `02-Configure-Label-Policy-TeamsOnly.ps1`
+
 ```powershell
 <#
 .SYNOPSIS
@@ -407,6 +438,7 @@ Write-Host "`n✅ Phase 3 Complete - Policy Configured for Teams Only`n" -Foregr
 ### 6.1 Create Meeting Policies
 
 **Script:** `03-Create-Meeting-Policies.ps1`
+
 ```powershell
 <#
 .SYNOPSIS
@@ -519,11 +551,574 @@ Write-Host "`n✅ Phase 4 Complete - Meeting Policies Created`n" -ForegroundColo
 
 ---
 
-## 7. Phase 5: Automated Group Policy Assignment
+## 7. Phase 5: CMK Configuration & Encryption
 
-### 7.1 Assign Policies to Group Members
+### 7.1 Overview
 
-**Script:** `04-Assign-Group-Policies.ps1`
+Customer Managed Keys (CMK) ensures that your Teams meeting content is encrypted using keys that YOU control in Azure Key Vault, not Microsoft-managed keys. This phase links your sensitivity labels to CMK encryption.
+
+**What gets encrypted with CMK:**
+- ✅ Teams meeting recordings
+- ✅ Teams meeting transcripts
+- ✅ Teams meeting chat messages
+- ✅ Shared files during meetings
+- ✅ Meeting metadata
+
+**Prerequisites:**
+- Azure Key Vault provisioned with CMK
+- CMK policy created and active
+- Key Vault permissions granted to Microsoft 365 service principals
+- Sensitivity labels created (Phase 2)
+
+---
+
+### 7.2 Check Current CMK Status
+
+**Script:** `04-Check-CMK-Status.ps1`
+
+```powershell
+<#
+.SYNOPSIS
+    Check CMK and label encryption status
+.DESCRIPTION
+    Verifies CMK policy is active and checks if labels have encryption enabled
+.AUTHOR
+    Fred Pearson & George Zarif
+.DATE
+    November 20, 2025
+#>
+
+Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║  PHASE 5A: CHECK CMK STATUS                                     ║" -ForegroundColor Cyan
+Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+
+# Connect
+Write-Host "`n[Connecting to Security & Compliance Center...]" -ForegroundColor Yellow
+Connect-IPPSSession
+
+# ============================================================
+# CHECK CMK POLICY
+# ============================================================
+
+Write-Host "`n[1/3] Checking CMK policy status..." -ForegroundColor Cyan
+
+try {
+    $cmkPolicy = Get-M365DataAtRestEncryptionPolicy -ErrorAction Stop
+    
+    if ($cmkPolicy) {
+        Write-Host "  ✓ CMK Policy Found: $($cmkPolicy.Name)" -ForegroundColor Green
+        Write-Host "    Status: $($cmkPolicy.Status)" -ForegroundColor $(if($cmkPolicy.Status -eq "Active"){"Green"}else{"Yellow"})
+        Write-Host "    Workload: $($cmkPolicy.Workload)" -ForegroundColor White
+        
+        if ($cmkPolicy.AzureKeyVaultUri) {
+            Write-Host "    Key Vault: $($cmkPolicy.AzureKeyVaultUri)" -ForegroundColor White
+        }
+        
+        $hasCMK = $true
+    } else {
+        Write-Host "  ⚠️  No CMK policy found" -ForegroundColor Yellow
+        $hasCMK = $false
+    }
+    
+} catch {
+    Write-Host "  ⚠️  CMK policy not configured" -ForegroundColor Yellow
+    Write-Host "    Error: $($_.Exception.Message)" -ForegroundColor Gray
+    $hasCMK = $false
+}
+
+# ============================================================
+# CHECK LABELS
+# ============================================================
+
+Write-Host "`n[2/3] Checking sensitivity labels..." -ForegroundColor Cyan
+
+$allLabels = Get-Label
+$protectedB = $allLabels | Where-Object {$_.DisplayName -eq "Protected B - Secure Meeting"}
+$general = $allLabels | Where-Object {$_.DisplayName -eq "General - Regular Meeting"}
+
+if (-not $protectedB -or -not $general) {
+    Write-Host "  ✗ Labels not found! Run Phase 2 first." -ForegroundColor Red
+    Disconnect-ExchangeOnline -Confirm:$false
+    exit 1
+}
+
+Write-Host "  ✓ Found labels" -ForegroundColor Green
+
+# ============================================================
+# CHECK LABEL ENCRYPTION
+# ============================================================
+
+Write-Host "`n[3/3] Checking label encryption configuration..." -ForegroundColor Cyan
+
+$labelStatus = @()
+
+# Check Protected B
+$protectedBEncrypted = $protectedB.EncryptionEnabled
+Write-Host "`nProtected B - Secure Meeting:" -ForegroundColor Yellow
+Write-Host "  GUID: $($protectedB.Guid)" -ForegroundColor Gray
+Write-Host "  Encryption Enabled: $protectedBEncrypted" -ForegroundColor $(if($protectedBEncrypted){"Green"}else{"Red"})
+
+if ($protectedBEncrypted) {
+    Write-Host "  Protection Type: $($protectedB.EncryptionProtectionType)" -ForegroundColor White
+    Write-Host "  ✅ CMK will be applied to meetings" -ForegroundColor Green
+} else {
+    Write-Host "  ⚠️  Encryption NOT enabled - CMK will NOT be applied" -ForegroundColor Yellow
+}
+
+$labelStatus += [PSCustomObject]@{
+    Label = "Protected B - Secure Meeting"
+    GUID = $protectedB.Guid
+    EncryptionEnabled = $protectedBEncrypted
+    Status = if($protectedBEncrypted){"Configured"}else{"Not Configured"}
+}
+
+# Check General
+$generalEncrypted = $general.EncryptionEnabled
+Write-Host "`nGeneral - Regular Meeting:" -ForegroundColor Yellow
+Write-Host "  GUID: $($general.Guid)" -ForegroundColor Gray
+Write-Host "  Encryption Enabled: $generalEncrypted" -ForegroundColor $(if($generalEncrypted){"Green"}else{"Red"})
+
+if ($generalEncrypted) {
+    Write-Host "  Protection Type: $($general.EncryptionProtectionType)" -ForegroundColor White
+    Write-Host "  ✅ CMK will be applied to meetings" -ForegroundColor Green
+} else {
+    Write-Host "  ⚠️  Encryption NOT enabled - CMK will NOT be applied" -ForegroundColor Yellow
+}
+
+$labelStatus += [PSCustomObject]@{
+    Label = "General - Regular Meeting"
+    GUID = $general.Guid
+    EncryptionEnabled = $generalEncrypted
+    Status = if($generalEncrypted){"Configured"}else{"Not Configured"}
+}
+
+# ============================================================
+# SUMMARY & RECOMMENDATIONS
+# ============================================================
+
+Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║  CMK STATUS SUMMARY                                             ║" -ForegroundColor Cyan
+Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+
+Write-Host "`nCMK Policy:" -ForegroundColor Cyan
+if ($hasCMK) {
+    Write-Host "  ✅ CMK policy is configured and active" -ForegroundColor Green
+} else {
+    Write-Host "  ❌ CMK policy NOT found or not active" -ForegroundColor Red
+    Write-Host "     You must provision CMK in Azure Key Vault first" -ForegroundColor Yellow
+    Write-Host "     See: https://docs.microsoft.com/en-us/purview/customer-key-overview" -ForegroundColor Yellow
+}
+
+Write-Host "`nLabel Encryption:" -ForegroundColor Cyan
+$encryptedCount = ($labelStatus | Where-Object {$_.EncryptionEnabled -eq $true}).Count
+$totalCount = $labelStatus.Count
+
+Write-Host "  Configured: $encryptedCount / $totalCount" -ForegroundColor $(if($encryptedCount -eq $totalCount){"Green"}else{"Yellow"})
+
+foreach ($status in $labelStatus) {
+    $icon = if($status.EncryptionEnabled){"✅"}else{"❌"}
+    $color = if($status.EncryptionEnabled){"Green"}else{"Red"}
+    Write-Host "    $icon $($status.Label): $($status.Status)" -ForegroundColor $color
+}
+
+# ============================================================
+# NEXT STEPS
+# ============================================================
+
+Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Yellow
+Write-Host "║  NEXT STEPS                                                     ║" -ForegroundColor Yellow
+Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Yellow
+
+if (-not $hasCMK) {
+    Write-Host "`n⚠️  CMK NOT CONFIGURED" -ForegroundColor Red
+    Write-Host "`nYou must complete these steps FIRST:" -ForegroundColor Yellow
+    Write-Host "  1. Create Azure Key Vault" -ForegroundColor White
+    Write-Host "  2. Generate CMK in Key Vault" -ForegroundColor White
+    Write-Host "  3. Grant permissions to Microsoft 365 service principals" -ForegroundColor White
+    Write-Host "  4. Create and assign M365 Data-at-Rest Encryption Policy" -ForegroundColor White
+    Write-Host "  5. Wait for CMK provisioning (can take 24-72 hours)" -ForegroundColor White
+    Write-Host "`nThen run this script again to verify." -ForegroundColor White
+} elseif ($encryptedCount -lt $totalCount) {
+    Write-Host "`n⚠️  LABELS NEED ENCRYPTION CONFIGURATION" -ForegroundColor Yellow
+    Write-Host "`nRun the next script to enable encryption:" -ForegroundColor White
+    Write-Host "  .\05-Configure-Label-Encryption.ps1" -ForegroundColor Cyan
+} else {
+    Write-Host "`n✅ ALL CONFIGURED!" -ForegroundColor Green
+    Write-Host "`nYour labels are configured to use CMK." -ForegroundColor White
+    Write-Host "Meetings created with these labels will be encrypted with YOUR key." -ForegroundColor White
+}
+
+# Export report
+$exportPath = "C:\LeonardoReports"
+New-Item -Path $exportPath -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
+
+$reportFile = "$exportPath\CMK-Status-$(Get-Date -Format 'yyyy-MM-dd-HHmm').csv"
+$labelStatus | Export-Csv $reportFile -NoTypeInformation
+
+Write-Host "`n📄 Report saved: $reportFile" -ForegroundColor Gray
+
+Disconnect-ExchangeOnline -Confirm:$false
+
+Write-Host "`n✅ Phase 5a Complete - CMK Status Check`n" -ForegroundColor Green
+```
+
+---
+
+### 7.3 Configure Label Encryption with CMK
+
+**Script:** `05-Configure-Label-Encryption.ps1`
+
+**⚠️ IMPORTANT:** Only run this script if:
+1. CMK policy is active (verified in Phase 5a)
+2. Labels do NOT have encryption enabled yet
+
+```powershell
+<#
+.SYNOPSIS
+    Configure CMK encryption for Teams sensitivity labels
+.DESCRIPTION
+    Links sensitivity labels to Customer Managed Key encryption policy.
+    Only run this if:
+    1. CMK policy is active
+    2. Labels do NOT have encryption enabled yet
+.AUTHOR
+    Fred Pearson & George Zarif
+.DATE
+    November 20, 2025
+#>
+
+Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║  PHASE 5B: CONFIGURE LABEL ENCRYPTION WITH CMK                  ║" -ForegroundColor Cyan
+Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+
+# Connect
+Write-Host "`n[Connecting to Security & Compliance Center...]" -ForegroundColor Yellow
+Connect-IPPSSession
+
+# ============================================================
+# PRE-FLIGHT CHECKS
+# ============================================================
+
+Write-Host "`n[1/5] Running pre-flight checks..." -ForegroundColor Cyan
+
+# Check CMK policy
+Write-Host "  • Checking CMK policy..." -NoNewline
+$cmkPolicy = Get-M365DataAtRestEncryptionPolicy -ErrorAction SilentlyContinue
+
+if (-not $cmkPolicy) {
+    Write-Host " ✗" -ForegroundColor Red
+    Write-Host "`n❌ CANNOT CONTINUE: No CMK policy found!" -ForegroundColor Red
+    Write-Host "`nYou must provision CMK in Azure Key Vault first:" -ForegroundColor Yellow
+    Write-Host "  1. Create Azure Key Vault" -ForegroundColor White
+    Write-Host "  2. Generate CMK" -ForegroundColor White
+    Write-Host "  3. Grant Microsoft 365 permissions" -ForegroundColor White
+    Write-Host "  4. Create M365DataAtRestEncryptionPolicy" -ForegroundColor White
+    Write-Host "`nSee: https://docs.microsoft.com/en-us/purview/customer-key-overview" -ForegroundColor Cyan
+    Disconnect-ExchangeOnline -Confirm:$false
+    exit 1
+}
+
+if ($cmkPolicy.Status -ne "Active") {
+    Write-Host " ⚠️" -ForegroundColor Yellow
+    Write-Host "`n⚠️  WARNING: CMK policy status is '$($cmkPolicy.Status)' not 'Active'" -ForegroundColor Yellow
+    Write-Host "   CMK may still be provisioning (can take 24-72 hours)" -ForegroundColor Yellow
+    
+    $continue = Read-Host "`nContinue anyway? (y/n)"
+    if ($continue -ne "y") {
+        Write-Host "`nExiting. Run this script when CMK status is 'Active'." -ForegroundColor Yellow
+        Disconnect-ExchangeOnline -Confirm:$false
+        exit 0
+    }
+}
+
+Write-Host " ✓" -ForegroundColor Green
+Write-Host "    Policy: $($cmkPolicy.Name)" -ForegroundColor Gray
+Write-Host "    Status: $($cmkPolicy.Status)" -ForegroundColor Gray
+
+# Check labels exist
+Write-Host "  • Checking labels..." -NoNewline
+$allLabels = Get-Label
+$protectedB = $allLabels | Where-Object {$_.DisplayName -eq "Protected B - Secure Meeting"}
+$general = $allLabels | Where-Object {$_.DisplayName -eq "General - Regular Meeting"}
+
+if (-not $protectedB -or -not $general) {
+    Write-Host " ✗" -ForegroundColor Red
+    Write-Host "`n❌ CANNOT CONTINUE: Labels not found!" -ForegroundColor Red
+    Write-Host "   Run Phase 2 first to create labels." -ForegroundColor Yellow
+    Disconnect-ExchangeOnline -Confirm:$false
+    exit 1
+}
+
+Write-Host " ✓" -ForegroundColor Green
+
+# Check if encryption already enabled
+Write-Host "  • Checking current encryption status..." -NoNewline
+
+if ($protectedB.EncryptionEnabled -and $general.EncryptionEnabled) {
+    Write-Host " ⚠️" -ForegroundColor Yellow
+    Write-Host "`n⚠️  WARNING: Encryption is already enabled on both labels!" -ForegroundColor Yellow
+    Write-Host "`nCurrent configuration:" -ForegroundColor Cyan
+    Write-Host "  Protected B - Encryption: $($protectedB.EncryptionEnabled)" -ForegroundColor White
+    Write-Host "  General - Encryption: $($general.EncryptionEnabled)" -ForegroundColor White
+    
+    $continue = Read-Host "`nRe-configure encryption anyway? This will overwrite existing settings. (y/n)"
+    if ($continue -ne "y") {
+        Write-Host "`nExiting without changes." -ForegroundColor Yellow
+        Disconnect-ExchangeOnline -Confirm:$false
+        exit 0
+    }
+}
+
+Write-Host " ✓" -ForegroundColor Green
+
+# ============================================================
+# CONFIGURE ENCRYPTION - PROTECTED B
+# ============================================================
+
+Write-Host "`n[2/5] Configuring encryption for Protected B label..." -ForegroundColor Cyan
+
+try {
+    # Configure encryption with restrictive permissions
+    Set-Label -Identity $protectedB.Guid `
+        -EncryptionEnabled $true `
+        -EncryptionProtectionType "Template" `
+        -EncryptionRightsDefinitions "lcem365security@leonardocompany.ca:VIEW,VIEWRIGHTSDATA,DOCEDIT,EDIT,PRINT,EXTRACT,REPLY,REPLYALL,FORWARD,OBJMODEL" `
+        -EncryptionContentExpiredOnDateInDaysOrNever "Never"
+    
+    Write-Host "  ✓ Encryption enabled" -ForegroundColor Green
+    Write-Host "    Protection: Template-based (CMK)" -ForegroundColor Gray
+    Write-Host "    Access: LCE M365 Security group" -ForegroundColor Gray
+    
+} catch {
+    Write-Host "  ✗ Failed: $($_.Exception.Message)" -ForegroundColor Red
+    Disconnect-ExchangeOnline -Confirm:$false
+    exit 1
+}
+
+# ============================================================
+# CONFIGURE ENCRYPTION - GENERAL
+# ============================================================
+
+Write-Host "`n[3/5] Configuring encryption for General label..." -ForegroundColor Cyan
+
+try {
+    # Configure encryption with broader permissions
+    Set-Label -Identity $general.Guid `
+        -EncryptionEnabled $true `
+        -EncryptionProtectionType "Template" `
+        -EncryptionRightsDefinitions "AuthenticatedUsers:VIEW,VIEWRIGHTSDATA,DOCEDIT,EDIT,PRINT,EXTRACT,REPLY,REPLYALL,FORWARD,OBJMODEL" `
+        -EncryptionContentExpiredOnDateInDaysOrNever "Never"
+    
+    Write-Host "  ✓ Encryption enabled" -ForegroundColor Green
+    Write-Host "    Protection: Template-based (CMK)" -ForegroundColor Gray
+    Write-Host "    Access: All authenticated users" -ForegroundColor Gray
+    
+} catch {
+    Write-Host "  ✗ Failed: $($_.Exception.Message)" -ForegroundColor Red
+    Disconnect-ExchangeOnline -Confirm:$false
+    exit 1
+}
+
+# ============================================================
+# VERIFICATION
+# ============================================================
+
+Write-Host "`n[4/5] Verifying encryption configuration..." -ForegroundColor Cyan
+
+Start-Sleep -Seconds 3
+
+$verifyProtectedB = Get-Label -Identity $protectedB.Guid
+$verifyGeneral = Get-Label -Identity $general.Guid
+
+$results = @()
+
+# Verify Protected B
+Write-Host "`nProtected B - Secure Meeting:" -ForegroundColor Yellow
+Write-Host "  Encryption Enabled: $($verifyProtectedB.EncryptionEnabled)" -ForegroundColor $(if($verifyProtectedB.EncryptionEnabled){"Green"}else{"Red"})
+Write-Host "  Protection Type: $($verifyProtectedB.EncryptionProtectionType)" -ForegroundColor White
+Write-Host "  CMK Applied: $(if($verifyProtectedB.EncryptionEnabled){'YES'}else{'NO'})" -ForegroundColor $(if($verifyProtectedB.EncryptionEnabled){"Green"}else{"Red"})
+
+$results += [PSCustomObject]@{
+    Label = "Protected B - Secure Meeting"
+    GUID = $verifyProtectedB.Guid
+    EncryptionEnabled = $verifyProtectedB.EncryptionEnabled
+    ProtectionType = $verifyProtectedB.EncryptionProtectionType
+    CMKApplied = $verifyProtectedB.EncryptionEnabled
+    Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+}
+
+# Verify General
+Write-Host "`nGeneral - Regular Meeting:" -ForegroundColor Yellow
+Write-Host "  Encryption Enabled: $($verifyGeneral.EncryptionEnabled)" -ForegroundColor $(if($verifyGeneral.EncryptionEnabled){"Green"}else{"Red"})
+Write-Host "  Protection Type: $($verifyGeneral.EncryptionProtectionType)" -ForegroundColor White
+Write-Host "  CMK Applied: $(if($verifyGeneral.EncryptionEnabled){'YES'}else{'NO'})" -ForegroundColor $(if($verifyGeneral.EncryptionEnabled){"Green"}else{"Red"})
+
+$results += [PSCustomObject]@{
+    Label = "General - Regular Meeting"
+    GUID = $verifyGeneral.Guid
+    EncryptionEnabled = $verifyGeneral.EncryptionEnabled
+    ProtectionType = $verifyGeneral.EncryptionProtectionType
+    CMKApplied = $verifyGeneral.EncryptionEnabled
+    Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+}
+
+# ============================================================
+# GENERATE REPORT
+# ============================================================
+
+Write-Host "`n[5/5] Generating configuration report..." -ForegroundColor Cyan
+
+$exportPath = "C:\LeonardoReports"
+New-Item -Path $exportPath -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
+
+$reportFile = "$exportPath\CMK-Encryption-Config-$(Get-Date -Format 'yyyy-MM-dd-HHmm').txt"
+
+$report = @"
+╔══════════════════════════════════════════════════════════════════╗
+║  CMK ENCRYPTION CONFIGURATION REPORT                            ║
+╚══════════════════════════════════════════════════════════════════╝
+
+Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CMK POLICY INFORMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Policy Name: $($cmkPolicy.Name)
+Status: $($cmkPolicy.Status)
+Workload: $($cmkPolicy.Workload)
+Key Vault: $($cmkPolicy.AzureKeyVaultUri)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LABEL ENCRYPTION CONFIGURATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Protected B - Secure Meeting
+  GUID: $($verifyProtectedB.Guid)
+  Encryption Enabled: $($verifyProtectedB.EncryptionEnabled)
+  Protection Type: $($verifyProtectedB.EncryptionProtectionType)
+  CMK Applied: $(if($verifyProtectedB.EncryptionEnabled){'YES - Meetings will use YOUR encryption key'}else{'NO'})
+  Access Rights: LCE M365 Security group members
+
+General - Regular Meeting
+  GUID: $($verifyGeneral.Guid)
+  Encryption Enabled: $($verifyGeneral.EncryptionEnabled)
+  Protection Type: $($verifyGeneral.EncryptionProtectionType)
+  CMK Applied: $(if($verifyGeneral.EncryptionEnabled){'YES - Meetings will use YOUR encryption key'}else{'NO'})
+  Access Rights: All authenticated users
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WHAT THIS MEANS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ When users create Teams meetings with these labels:
+   • Meeting recordings are encrypted with YOUR CMK
+   • Meeting transcripts are encrypted with YOUR CMK
+   • Meeting chat is encrypted with YOUR CMK
+   • Shared files are encrypted with YOUR CMK
+
+✅ Encryption keys are managed in YOUR Azure Key Vault:
+   • You control key access
+   • You control key rotation
+   • You can revoke access at any time
+
+✅ Microsoft CANNOT access meeting content without your key
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NEXT STEPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Proceed to Phase 6: Automated Group Policy Assignment
+2. Run the assignment script to apply policies to group members
+3. Test encryption in Phase 7
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+END OF REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"@
+
+$report | Out-File $reportFile -Encoding UTF8
+$results | Export-Csv "$exportPath\CMK-Encryption-Config-$(Get-Date -Format 'yyyy-MM-dd-HHmm').csv" -NoTypeInformation
+
+Write-Host "  ✓ Report saved: $reportFile" -ForegroundColor Green
+
+# ============================================================
+# SUMMARY
+# ============================================================
+
+Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
+Write-Host "║  CONFIGURATION COMPLETE                                         ║" -ForegroundColor Green
+Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Green
+
+$bothConfigured = $verifyProtectedB.EncryptionEnabled -and $verifyGeneral.EncryptionEnabled
+
+if ($bothConfigured) {
+    Write-Host "`n✅ SUCCESS! Both labels are now configured with CMK encryption" -ForegroundColor Green
+    Write-Host "`nWhat happens now:" -ForegroundColor Cyan
+    Write-Host "  • Users create meetings with your sensitivity labels" -ForegroundColor White
+    Write-Host "  • Teams automatically encrypts content with YOUR key" -ForegroundColor White
+    Write-Host "  • Meeting recordings/transcripts use YOUR Azure Key Vault" -ForegroundColor White
+    Write-Host "  • You maintain full control over encryption keys" -ForegroundColor White
+} else {
+    Write-Host "`n⚠️  WARNING: Not all labels configured successfully" -ForegroundColor Yellow
+    Write-Host "   Review errors above and retry" -ForegroundColor Yellow
+}
+
+Disconnect-ExchangeOnline -Confirm:$false
+
+Write-Host "`n✅ Phase 5b Complete - Label Encryption Configured`n" -ForegroundColor Green
+```
+
+---
+
+### 7.4 Important Notes
+
+**About Encryption Configuration:**
+
+1. **One-time setup**: You only run `05-Configure-Label-Encryption.ps1` once when first setting up CMK
+2. **CMK must be active first**: Don't run encryption configuration until CMK policy status is "Active"
+3. **Cannot be easily reversed**: Once encryption is enabled on labels, it's difficult to remove
+4. **Applies automatically**: Once configured, all meetings with these labels use CMK
+
+**Encryption Rights Explained:**
+
+- **Protected B**: Only `lcem365security@leonardocompany.ca` members can access encrypted content
+- **General**: All authenticated users in your organization can access encrypted content
+- **Both**: Use YOUR Azure Key Vault key for encryption (not Microsoft's)
+
+---
+
+### 7.5 Quick Reference
+
+**Check if encryption is enabled:**
+```powershell
+Connect-IPPSSession
+Get-Label | Where {$_.DisplayName -like "*Meeting"} | Select DisplayName, EncryptionEnabled
+Disconnect-ExchangeOnline -Confirm:$false
+```
+
+**Check CMK policy status:**
+```powershell
+Connect-IPPSSession
+Get-M365DataAtRestEncryptionPolicy | Select Name, Status, Workload
+Disconnect-ExchangeOnline -Confirm:$false
+```
+
+**View label encryption details:**
+```powershell
+Connect-IPPSSession
+$label = Get-Label | Where {$_.DisplayName -eq "Protected B - Secure Meeting"}
+$label | Select DisplayName, EncryptionEnabled, EncryptionProtectionType
+Disconnect-ExchangeOnline -Confirm:$false
+```
+
+---
+
+## 8. Phase 6: Automated Group Policy Assignment
+
+### 8.1 Assign Policies to Group Members
+
+**Script:** `06-Assign-Group-Policies.ps1`
 
 **Purpose:** Run this script whenever you add new members to the group. It automatically:
 - Gets all current members from the mail-enabled security group
@@ -532,9 +1127,9 @@ Write-Host "`n✅ Phase 4 Complete - Meeting Policies Created`n" -ForegroundColo
 - Verifies licenses
 - Generates detailed reports
 
-[Use the complete script I provided earlier in the conversation]
+[Use the complete `04-Assign-Group-Policies.ps1` script provided earlier - just rename it to `06-Assign-Group-Policies.ps1`]
 
-**Save as:** `04-Assign-Group-Policies.ps1`
+**Save as:** `06-Assign-Group-Policies.ps1`
 
 **Run whenever:**
 - New members are added to `lcem365security@leonardocompany.ca`
@@ -543,9 +1138,9 @@ Write-Host "`n✅ Phase 4 Complete - Meeting Policies Created`n" -ForegroundColo
 
 ---
 
-## 8. Phase 6: Testing & Verification
+## 9. Phase 7: Testing & Verification
 
-### 8.1 Test Checklist
+### 9.1 Test Checklist
 
 **Test 1: Email Distribution**
 1. Send email to `lcem365security@leonardocompany.ca`
@@ -570,11 +1165,18 @@ Write-Host "`n✅ Phase 4 Complete - Meeting Policies Created`n" -ForegroundColo
 4. ✅ PASS: See email watermark on video and screen share
 5. ❌ FAIL: No watermarks → Check meeting policy assignment
 
+**Test 5: CMK Encryption**
+1. Create and record a Teams meeting with "Protected B" label
+2. Check recording in Stream/SharePoint
+3. Look for encryption indicators in properties
+4. ✅ PASS: Recording shows "Customer Managed Key" encryption
+5. ❌ FAIL: Standard encryption only → Re-run Phase 5
+
 ---
 
-## 9. Ongoing Management
+## 10. Ongoing Management
 
-### 9.1 Adding New Members
+### 10.1 Adding New Members
 
 **Process:**
 1. Add member to mail-enabled security group:
@@ -584,12 +1186,12 @@ Write-Host "`n✅ Phase 4 Complete - Meeting Policies Created`n" -ForegroundColo
 
 2. Run assignment script:
 ```powershell
-   .\04-Assign-Group-Policies.ps1
+   .\06-Assign-Group-Policies.ps1
 ```
 
 3. Review generated report in `C:\LeonardoReports`
 
-### 9.2 Switching User Between Policies
+### 10.2 Switching User Between Policies
 
 **To Regular Policy (no watermarks):**
 ```powershell
@@ -605,15 +1207,16 @@ Grant-CsTeamsMeetingPolicy -Identity "user@leonardocompany.ca" -PolicyName "Leon
 Disconnect-MicrosoftTeams
 ```
 
-### 9.3 Automated Monitoring
+### 10.3 Automated Monitoring
 
 Use the group email for automated reports:
+
 ```powershell
 # Example: Daily CMK compliance report
 Send-MailMessage `
     -To "lcem365security@leonardocompany.ca" `
     -From "monitoring@leonardocompany.ca" `
-    -Subject "Daily Teams Premium Compliance - $(Get-Date -Format 'yyyy-MM-dd')" `
+    -Subject "Daily Teams Premium CMK Compliance - $(Get-Date -Format 'yyyy-MM-dd')" `
     -Body $reportHtml `
     -BodyAsHtml `
     -SmtpServer "smtp.office365.com" `
@@ -621,11 +1224,25 @@ Send-MailMessage `
     -UseSsl
 ```
 
+### 10.4 CMK Key Rotation
+
+**When to rotate CMK:**
+- Annually (recommended)
+- When a team member leaves
+- Security incident
+- Compliance requirement
+
+**How to rotate:**
+1. Generate new key in Azure Key Vault
+2. Update M365DataAtRestEncryptionPolicy
+3. Allow 24-48 hours for propagation
+4. Verify with Phase 5a check script
+
 ---
 
-## 10. Troubleshooting
+## 11. Troubleshooting
 
-### 10.1 Labels Not Appearing in Teams
+### 11.1 Labels Not Appearing in Teams
 
 **Symptoms:** Labels don't show up in Teams meeting creation
 
@@ -636,7 +1253,7 @@ Send-MailMessage `
 4. Verify user has Teams Premium license
 5. Check policy has NO Exchange/SharePoint/OneDrive locations
 
-### 10.2 Labels Appearing in Outlook
+### 11.2 Labels Appearing in Outlook
 
 **Symptoms:** Labels show up in Outlook sensitivity menu
 
@@ -650,7 +1267,7 @@ foreach ($location in $policy.ExchangeLocation) {
 Disconnect-ExchangeOnline -Confirm:$false
 ```
 
-### 10.3 Watermarks Not Working
+### 11.3 Watermarks Not Working
 
 **Symptoms:** Watermarks don't appear in meetings
 
@@ -668,12 +1285,30 @@ Disconnect-ExchangeOnline -Confirm:$false
 
 3. Re-assign policy if needed
 
-### 10.4 Group Member Not Receiving Policies
+### 11.4 CMK Not Applied to Meetings
+
+**Symptoms:** Meetings show standard encryption instead of CMK
+
+**Check:**
+1. Verify CMK policy status:
+```powershell
+   Connect-IPPSSession
+   Get-M365DataAtRestEncryptionPolicy | Select Status
+```
+
+2. Verify label encryption enabled:
+```powershell
+   Get-Label | Where {$_.DisplayName -like "*Meeting"} | Select DisplayName, EncryptionEnabled
+```
+
+3. Re-run Phase 5b if encryption not enabled
+
+### 11.5 Group Member Not Receiving Policies
 
 **Solution:**
 Re-run the assignment script:
 ```powershell
-.\04-Assign-Group-Policies.ps1
+.\06-Assign-Group-Policies.ps1
 ```
 
 Review the generated report for specific errors.
@@ -711,6 +1346,14 @@ Get-MgUserLicenseDetail -UserId $user.Id | Where {$_.SkuPartNumber -eq "Microsof
 Disconnect-MgGraph
 ```
 
+### Check CMK Status
+```powershell
+Connect-IPPSSession
+Get-M365DataAtRestEncryptionPolicy | Select Name, Status, AzureKeyVaultUri
+Get-Label | Where {$_.DisplayName -like "*Meeting"} | Select DisplayName, EncryptionEnabled
+Disconnect-ExchangeOnline -Confirm:$false
+```
+
 ---
 
 ## Appendix B: File Locations
@@ -719,9 +1362,13 @@ Disconnect-MgGraph
 - `01-Create-Sensitivity-Labels.ps1`
 - `02-Configure-Label-Policy-TeamsOnly.ps1`
 - `03-Create-Meeting-Policies.ps1`
-- `04-Assign-Group-Policies.ps1`
+- `04-Check-CMK-Status.ps1`
+- `05-Configure-Label-Encryption.ps1`
+- `06-Assign-Group-Policies.ps1`
 
 **Reports:**
+- `C:\LeonardoReports\CMK-Status-[timestamp].csv`
+- `C:\LeonardoReports\CMK-Encryption-Config-[timestamp].txt`
 - `C:\LeonardoReports\LCE-M365-Security-Policy-Assignment-[timestamp].txt`
 - `C:\LeonardoReports\LCE-LabelPolicy-[timestamp].csv`
 - `C:\LeonardoReports\LCE-MeetingPolicy-[timestamp].csv`
@@ -729,9 +1376,37 @@ Disconnect-MgGraph
 
 ---
 
+## Appendix C: CMK Architecture
+
+```mermaid
+flowchart TB
+    A[User creates Teams meeting] --> B{Selects sensitivity label?}
+    B -->|Protected B| C[Label has encryption enabled]
+    B -->|General| D[Label has encryption enabled]
+    B -->|No label| E[Standard Microsoft encryption]
+    
+    C --> F[Check M365DataAtRestEncryptionPolicy]
+    D --> F
+    
+    F --> G[Get key from Azure Key Vault]
+    G --> H[Encrypt meeting content with YOUR CMK]
+    
+    E --> I[Encrypt with Microsoft-managed key]
+    
+    H --> J[Store encrypted recordings/transcripts/chat]
+    I --> K[Store encrypted content - MS controlled]
+    
+    style F fill:#A4262C,color:#fff
+    style G fill:#0078d4,color:#fff
+    style H fill:#107c10,color:#fff
+    style J fill:#107c10,color:#fff
+```
+
+---
+
 **END OF BUILD BOOK**
 
-*Version: 6.0 - Mail-Enabled Security Group Deployment*  
+*Version: 7.0 - CMK Encryption Integration*  
 *Last Updated: November 20, 2025*  
 *Next Review: February 2026*
 
@@ -742,4 +1417,5 @@ Disconnect-MgGraph
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
 | 5.0 | Nov 20, 2025 | Teams-only label configuration | Fred Pearson & George Zarif |
-| 6.0 | Nov 20, 2025 | Mail-enabled security group approach, automated assignment script, streamlined phases | Fred Pearson & George Zarif |
+| 6.0 | Nov 20, 2025 | Mail-enabled security group approach, automated assignment script | Fred Pearson & George Zarif |
+| 7.0 | Nov 20, 2025 | Integrated CMK configuration and encryption, added Phase 5, renumbered subsequent phases | Fred Pearson & George Zarif |
