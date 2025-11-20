@@ -1,6 +1,6 @@
 # Teams Premium Build Book
 ## Group-Based Deployment for LCE M365 Security
-### Leonardo Company
+### Leonardo Company    
 
 ---
 
