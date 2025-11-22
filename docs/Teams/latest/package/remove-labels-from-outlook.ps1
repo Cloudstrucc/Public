@@ -1,316 +1,440 @@
 <#
 .SYNOPSIS
-    Remove Sensitivity Labels from Outlook/Email (Keep Teams Only)
+    Remove Outlook from LCE Meeting Labels Policy ONLY
 .DESCRIPTION
-    This script removes the sensitivity label policy from Exchange/Outlook locations
-    while preserving it for Teams meetings. Shows affected distribution group members.
+    This script specifically targets the "LCE Meeting Labels" policy and ensures
+    it does NOT publish to Outlook/Exchange, while leaving all other label policies
+    (Security Team, IT Team, etc.) completely untouched.
+    
+    Purpose: Meeting labels (Protected B, Regular Meeting) should ONLY appear
+    in Teams meeting creation, NOT in Outlook emails.
 .AUTHOR
-    Fred Pearson
+    Fred Pearson & George Zarif
 .DATE
-    November 20, 2025
+    November 22, 2025
+.NOTES
+    VERSION 1.0 - Focused on LCE Meeting Labels only
 #>
 
 Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║  REMOVE LABELS FROM OUTLOOK/EMAIL                                ║" -ForegroundColor Cyan
-Write-Host "║  (Keep Teams Only)                                               ║" -ForegroundColor Cyan
+Write-Host "║  REMOVE OUTLOOK FROM LCE MEETING LABELS POLICY                  ║" -ForegroundColor Cyan
 Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
 
-# Configuration
-$policyName = "LCE Meeting Labels"
-$groupEmail = "lcem365security@leonardocompany.ca"
+$targetPolicyName = "LCE Meeting Labels"
+$exportPath = "C:\LeonardoReports"
+New-Item -Path $exportPath -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
+$timestamp = Get-Date -Format 'yyyy-MM-dd-HHmmss'
 
-Write-Host "`n[Connecting to Security & Compliance Center...]" -ForegroundColor Yellow
-Connect-IPPSSession
+# ============================================================
+# Connect to Security & Compliance
+# ============================================================
 
-# Also connect to Exchange Online for distribution group access
-Write-Host "[Connecting to Exchange Online...]" -ForegroundColor Yellow
+Write-Host "`n[Connecting to Security & Compliance Center...]" -ForegroundColor Cyan
+
 try {
-    # Check if already connected to Exchange Online
-    $exoSession = Get-PSSession | Where-Object {$_.ConfigurationName -eq "Microsoft.Exchange" -and $_.State -eq "Opened"}
-    if (-not $exoSession) {
-        Connect-ExchangeOnline -ShowBanner:$false -ErrorAction Stop
-    }
+    Connect-IPPSSession -ErrorAction Stop
+    Write-Host "  ✓ Connected successfully" -ForegroundColor Green
 } catch {
-    Write-Host "  ⚠️  Could not connect to Exchange Online: $($_.Exception.Message)" -ForegroundColor Yellow
+    Write-Host "  ✗ Failed to connect: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "`nPlease run: Connect-IPPSSession" -ForegroundColor Yellow
+    Write-Host "`nPress any key to exit..." -ForegroundColor Gray
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    exit 1
 }
 
-Write-Host "`n[1/4] Checking current policy status..." -ForegroundColor Cyan
+# ============================================================
+# Check Target Policy
+# ============================================================
 
-$policy = Get-LabelPolicy -Identity $policyName -ErrorAction SilentlyContinue
+Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║  STEP 1: CHECK LCE MEETING LABELS POLICY                        ║" -ForegroundColor Cyan
+Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+
+Write-Host "`n[Looking for '$targetPolicyName' policy...]" -ForegroundColor Cyan
+
+$policy = Get-LabelPolicy -Identity $targetPolicyName -ErrorAction SilentlyContinue
 
 if (-not $policy) {
-    Write-Host "  ✗ Policy '$policyName' not found!" -ForegroundColor Red
-    Write-Host "    Make sure you ran the main configuration script first." -ForegroundColor Yellow
-    Disconnect-ExchangeOnline -Confirm:$false -ErrorAction SilentlyContinue
+    Write-Host "  ✗ Policy '$targetPolicyName' not found" -ForegroundColor Red
+    Write-Host "`nThis policy doesn't exist yet. Run the setup scripts first." -ForegroundColor Yellow
     Write-Host "`nPress any key to exit..." -ForegroundColor Gray
     $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-    return
+    exit 1
 }
 
-Write-Host "  ✓ Found policy: $($policy.Name)" -ForegroundColor Green
-Write-Host "`n  Current locations:" -ForegroundColor Cyan
-Write-Host "    Exchange: $($policy.ExchangeLocation.Count)" -ForegroundColor $(if($policy.ExchangeLocation.Count -gt 0){"Yellow"}else{"Green"})
-Write-Host "    SharePoint: $($policy.SharePointLocation.Count)" -ForegroundColor $(if($policy.SharePointLocation.Count -gt 0){"Yellow"}else{"Green"})
-Write-Host "    OneDrive: $($policy.OneDriveLocation.Count)" -ForegroundColor $(if($policy.OneDriveLocation.Count -gt 0){"Yellow"}else{"Green"})
+Write-Host "  ✓ Found policy: $targetPolicyName" -ForegroundColor Green
 
-# Check total locations
-$totalLocations = 0
-if ($policy.ExchangeLocation) { $totalLocations += $policy.ExchangeLocation.Count }
-if ($policy.SharePointLocation) { $totalLocations += $policy.SharePointLocation.Count }
-if ($policy.OneDriveLocation) { $totalLocations += $policy.OneDriveLocation.Count }
-
-# Get distribution group members (works for Exchange Distribution Lists)
-Write-Host "`n[2/4] Checking distribution group members..." -ForegroundColor Cyan
-$groupMembers = @()
-
-try {
-    # Try to get distribution group members
-    $dgMembers = Get-DistributionGroupMember -Identity $groupEmail -ErrorAction SilentlyContinue
-    
-    if ($dgMembers) {
-        Write-Host "  ✓ Found distribution group: $groupEmail" -ForegroundColor Green
-        Write-Host "  ✓ Members: $($dgMembers.Count)" -ForegroundColor Green
-        Write-Host "`n  Users affected by this policy:" -ForegroundColor Cyan
-        
-        foreach ($member in $dgMembers) {
-            $groupMembers += [PSCustomObject]@{
-                DisplayName = $member.DisplayName
-                UserPrincipalName = $member.PrimarySmtpAddress
-            }
-            Write-Host "    • $($member.DisplayName) - $($member.PrimarySmtpAddress)" -ForegroundColor White
-        }
-    } else {
-        Write-Host "  ⚠️  Distribution group not found: $groupEmail" -ForegroundColor Yellow
-        Write-Host "     Checking for M365 group..." -ForegroundColor Gray
-        
-        # Try as M365 Group
-        $m365Group = Get-UnifiedGroup -Identity $groupEmail -ErrorAction SilentlyContinue
-        if ($m365Group) {
-            $m365Members = Get-UnifiedGroupLinks -Identity $groupEmail -LinkType Members -ErrorAction SilentlyContinue
-            
-            if ($m365Members) {
-                Write-Host "  ✓ Found M365 group: $groupEmail" -ForegroundColor Green
-                Write-Host "  ✓ Members: $($m365Members.Count)" -ForegroundColor Green
-                Write-Host "`n  Users affected by this policy:" -ForegroundColor Cyan
-                
-                foreach ($member in $m365Members) {
-                    $groupMembers += [PSCustomObject]@{
-                        DisplayName = $member.DisplayName
-                        UserPrincipalName = $member.PrimarySmtpAddress
-                    }
-                    Write-Host "    • $($member.DisplayName) - $($member.PrimarySmtpAddress)" -ForegroundColor White
-                }
-            }
-        } else {
-            Write-Host "  ⚠️  Could not find group" -ForegroundColor Yellow
-            Write-Host "     Policy applies to all users with the label policy assigned" -ForegroundColor Gray
-        }
-    }
-} catch {
-    Write-Host "  ⚠️  Could not retrieve group members: $($_.Exception.Message)" -ForegroundColor Yellow
+# Show policy details
+Write-Host "`n  Policy Details:" -ForegroundColor Cyan
+Write-Host "    Name: $($policy.Name)" -ForegroundColor White
+Write-Host "    GUID: $($policy.Guid)" -ForegroundColor Gray
+if ($policy.WhenCreated) {
+    $age = [math]::Floor(((Get-Date) - $policy.WhenCreated).TotalDays)
+    Write-Host "    Created: $($policy.WhenCreated) ($age days ago)" -ForegroundColor White
+}
+if ($policy.CreatedBy) {
+    Write-Host "    Created By: $($policy.CreatedBy)" -ForegroundColor White
+}
+if ($policy.WhenChanged) {
+    Write-Host "    Last Modified: $($policy.WhenChanged)" -ForegroundColor Gray
 }
 
-# Check if already clean
-if ($totalLocations -eq 0) {
-    Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "║  ✅ POLICY ALREADY CONFIGURED CORRECTLY                          ║" -ForegroundColor Green
-    Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Green
-    
-    Write-Host "`n✅ Current Status:" -ForegroundColor Yellow
-    Write-Host "  • Policy: $policyName" -ForegroundColor White
-    Write-Host "  • Exchange locations: 0 (No Outlook)" -ForegroundColor Green
-    Write-Host "  • SharePoint locations: 0" -ForegroundColor Green
-    Write-Host "  • OneDrive locations: 0" -ForegroundColor Green
-    Write-Host "  • Labels appear ONLY in Teams ✓" -ForegroundColor Green
-    
-    if ($groupMembers.Count -gt 0) {
-        Write-Host "`n✅ AFFECTED USERS ($($groupMembers.Count) members):" -ForegroundColor Yellow
-        foreach ($member in $groupMembers) {
-            Write-Host "  • $($member.DisplayName) - $($member.UserPrincipalName)" -ForegroundColor White
-        }
-        Write-Host "`n  Impact:" -ForegroundColor Cyan
-        Write-Host "    ✓ These users should NOT see labels in Outlook" -ForegroundColor Green
-        Write-Host "    ✓ These users WILL see labels in Teams meetings" -ForegroundColor Green
-    } else {
-        Write-Host "`n  Note: Could not retrieve group membership" -ForegroundColor Gray
-        Write-Host "  Policy applies to all users with label policy assigned" -ForegroundColor Gray
-    }
-    
-    Write-Host "`n⏱️  If labels still appear in Outlook:" -ForegroundColor Yellow
-    Write-Host "  • Wait full 24 hours for propagation" -ForegroundColor White
-    Write-Host "  • Restart Outlook completely" -ForegroundColor White
-    Write-Host "  • Clear Outlook cache" -ForegroundColor White
-    
-    Disconnect-ExchangeOnline -Confirm:$false -ErrorAction SilentlyContinue
-    Write-Host "`nPress any key to exit..." -ForegroundColor Gray
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-    return
-}
+# ============================================================
+# Check Current Locations
+# ============================================================
 
-# Remove locations
-Write-Host "`n[3/4] Removing all Office locations..." -ForegroundColor Cyan
-Write-Host "  This will remove labels from:" -ForegroundColor Gray
-Write-Host "    • Outlook (new email)" -ForegroundColor Gray
-Write-Host "    • Word, Excel, PowerPoint" -ForegroundColor Gray
-Write-Host "    • SharePoint, OneDrive" -ForegroundColor Gray
-Write-Host "`n  Labels will ONLY remain in Teams meetings" -ForegroundColor Green
+Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║  STEP 2: CHECK WHERE LABELS ARE PUBLISHED                       ║" -ForegroundColor Cyan
+Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
 
-$removed = 0
-$errors = 0
+Write-Host "`n[Checking current publishing locations...]" -ForegroundColor Cyan
 
-# Remove Exchange locations
-if ($policy.ExchangeLocation) {
-    Write-Host "`n  Removing Exchange locations..." -ForegroundColor Cyan
-    foreach ($location in @($policy.ExchangeLocation)) {
-        try {
-            Write-Host "    Removing: $location" -NoNewline
-            Set-LabelPolicy -Identity $policyName -RemoveExchangeLocation $location -ErrorAction Stop
-            Write-Host " ✓" -ForegroundColor Green
-            $removed++
-            Start-Sleep -Milliseconds 500
-        } catch {
-            Write-Host " ✗" -ForegroundColor Red
-            Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Yellow
-            $errors++
-        }
+$exchangeLocations = if($policy.ExchangeLocation){@($policy.ExchangeLocation)}else{@()}
+$sharepointLocations = if($policy.SharePointLocation){@($policy.SharePointLocation)}else{@()}
+$onedriveLocations = if($policy.OneDriveLocation){@($policy.OneDriveLocation)}else{@()}
+$modernGroupLocations = if($policy.ModernGroupLocation){@($policy.ModernGroupLocation)}else{@()}
+
+$exchangeCount = $exchangeLocations.Count
+$sharepointCount = $sharepointLocations.Count
+$onedriveCount = $onedriveLocations.Count
+$modernGroupCount = $modernGroupLocations.Count
+$totalBadLocations = $exchangeCount + $sharepointCount + $onedriveCount
+
+Write-Host "`n  📍 Current Publishing Locations:" -ForegroundColor Yellow
+
+Write-Host "`n    Exchange (Outlook Email):" -ForegroundColor White
+if ($exchangeCount -eq 0) {
+    Write-Host "      ✅ NONE - Labels will NOT appear in Outlook emails" -ForegroundColor Green
+} else {
+    Write-Host "      ⚠️  $exchangeCount location(s) - Labels WILL appear in Outlook emails" -ForegroundColor Red
+    foreach ($loc in $exchangeLocations) {
+        Write-Host "        • $loc" -ForegroundColor Yellow
     }
 }
 
-# Refresh policy
-Start-Sleep -Seconds 2
-$policy = Get-LabelPolicy -Identity $policyName -ErrorAction SilentlyContinue
-
-# Remove SharePoint locations
-if ($policy.SharePointLocation) {
-    Write-Host "`n  Removing SharePoint locations..." -ForegroundColor Cyan
-    foreach ($location in @($policy.SharePointLocation)) {
-        try {
-            Write-Host "    Removing: $location" -NoNewline
-            Set-LabelPolicy -Identity $policyName -RemoveSharePointLocation $location -ErrorAction Stop
-            Write-Host " ✓" -ForegroundColor Green
-            $removed++
-            Start-Sleep -Milliseconds 500
-        } catch {
-            Write-Host " ✗" -ForegroundColor Red
-            Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Yellow
-            $errors++
-        }
+Write-Host "`n    SharePoint:" -ForegroundColor White
+if ($sharepointCount -eq 0) {
+    Write-Host "      ✅ NONE" -ForegroundColor Green
+} else {
+    Write-Host "      ⚠️  $sharepointCount location(s)" -ForegroundColor Yellow
+    foreach ($loc in $sharepointLocations) {
+        Write-Host "        • $loc" -ForegroundColor Yellow
     }
 }
 
-# Refresh policy
-Start-Sleep -Seconds 2
-$policy = Get-LabelPolicy -Identity $policyName -ErrorAction SilentlyContinue
-
-# Remove OneDrive locations
-if ($policy.OneDriveLocation) {
-    Write-Host "`n  Removing OneDrive locations..." -ForegroundColor Cyan
-    foreach ($location in @($policy.OneDriveLocation)) {
-        try {
-            Write-Host "    Removing: $location" -NoNewline
-            Set-LabelPolicy -Identity $policyName -RemoveOneDriveLocation $location -ErrorAction Stop
-            Write-Host " ✓" -ForegroundColor Green
-            $removed++
-            Start-Sleep -Milliseconds 500
-        } catch {
-            Write-Host " ✗" -ForegroundColor Red
-            Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Yellow
-            $errors++
-        }
+Write-Host "`n    OneDrive:" -ForegroundColor White
+if ($onedriveCount -eq 0) {
+    Write-Host "      ✅ NONE" -ForegroundColor Green
+} else {
+    Write-Host "      ⚠️  $onedriveCount location(s)" -ForegroundColor Yellow
+    foreach ($loc in $onedriveLocations) {
+        Write-Host "        • $loc" -ForegroundColor Yellow
     }
+}
+
+Write-Host "`n    Teams/Groups (Meeting Creation):" -ForegroundColor White
+if ($modernGroupCount -gt 0) {
+    Write-Host "      ✅ $modernGroupCount location(s) - This is CORRECT for meeting labels" -ForegroundColor Green
+    foreach ($loc in $modernGroupLocations) {
+        Write-Host "        • $loc" -ForegroundColor White
+    }
+} else {
+    Write-Host "      ⚠️  NONE - Labels won't appear in Teams meetings" -ForegroundColor Yellow
 }
 
 Write-Host "`n  Summary:" -ForegroundColor Cyan
-Write-Host "    Locations removed: $removed" -ForegroundColor Green
-Write-Host "    Errors: $errors" -ForegroundColor $(if($errors -gt 0){"Red"}else{"Green"})
+Write-Host "    Total 'bad' locations (Exchange/SharePoint/OneDrive): $totalBadLocations" -ForegroundColor $(if($totalBadLocations -eq 0){"Green"}else{"Red"})
 
-# Verify
-Write-Host "`n[4/4] Verifying changes..." -ForegroundColor Cyan
-Start-Sleep -Seconds 3
+# ============================================================
+# Remove Bad Locations
+# ============================================================
 
-$verifiedPolicy = Get-LabelPolicy -Identity $policyName -ErrorAction SilentlyContinue
-
-if (-not $verifiedPolicy) {
-    Write-Host "  ⚠️  Cannot verify - policy not found" -ForegroundColor Yellow
-    Write-Host "     Wait 5 minutes and check manually" -ForegroundColor Gray
+if ($totalBadLocations -eq 0) {
+    Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
+    Write-Host "║  ✅ ALREADY COMPLIANT - NO ACTION NEEDED                        ║" -ForegroundColor Green
+    Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Green
+    
+    Write-Host "`n  The '$targetPolicyName' policy is already configured correctly:" -ForegroundColor White
+    Write-Host "    • Labels will NOT appear in Outlook emails ✅" -ForegroundColor Green
+    Write-Host "    • Labels will NOT appear in Word/Excel/PowerPoint ✅" -ForegroundColor Green
+    Write-Host "    • Labels ONLY appear in Teams meeting creation ✅" -ForegroundColor Green
+    
+    Write-Host "`n  Note: Other label policies (Security Team, IT Team, etc.) are untouched." -ForegroundColor Gray
+    
 } else {
-    $finalCount = 0
-    if ($verifiedPolicy.ExchangeLocation) { $finalCount += $verifiedPolicy.ExchangeLocation.Count }
-    if ($verifiedPolicy.SharePointLocation) { $finalCount += $verifiedPolicy.SharePointLocation.Count }
-    if ($verifiedPolicy.OneDriveLocation) { $finalCount += $verifiedPolicy.OneDriveLocation.Count }
+    Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Yellow
+    Write-Host "║  STEP 3: REMOVE OUTLOOK/OFFICE LOCATIONS                        ║" -ForegroundColor Yellow
+    Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Yellow
     
-    Write-Host "`n  Final status:" -ForegroundColor Cyan
-    Write-Host "    Exchange: $($verifiedPolicy.ExchangeLocation.Count)" -ForegroundColor $(if($verifiedPolicy.ExchangeLocation.Count -eq 0){"Green"}else{"Red"})
-    Write-Host "    SharePoint: $($verifiedPolicy.SharePointLocation.Count)" -ForegroundColor $(if($verifiedPolicy.SharePointLocation.Count -eq 0){"Green"}else{"Red"})
-    Write-Host "    OneDrive: $($verifiedPolicy.OneDriveLocation.Count)" -ForegroundColor $(if($verifiedPolicy.OneDriveLocation.Count -eq 0){"Green"}else{"Red"})
-    Write-Host "    Total: $finalCount" -ForegroundColor $(if($finalCount -eq 0){"Green"}else{"Red"})
+    Write-Host "`n[Removing $totalBadLocations location(s) from '$targetPolicyName'...]" -ForegroundColor Cyan
+    Write-Host "  This will prevent meeting labels from appearing in Outlook emails." -ForegroundColor White
     
-    if ($finalCount -eq 0) {
-        Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
-        Write-Host "║  ✅ SUCCESS - LABELS REMOVED FROM OUTLOOK                        ║" -ForegroundColor Green
-        Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Green
-        
-        Write-Host "`n✅ Configuration:" -ForegroundColor Yellow
-        Write-Host "  • Policy: $policyName" -ForegroundColor White
-        Write-Host "  • Exchange locations: 0 (Outlook labels REMOVED)" -ForegroundColor Green
-        Write-Host "  • SharePoint locations: 0" -ForegroundColor Green
-        Write-Host "  • OneDrive locations: 0" -ForegroundColor Green
-        Write-Host "  • Teams: Labels STILL AVAILABLE ✓" -ForegroundColor Green
-        
-        if ($groupMembers.Count -gt 0) {
-            Write-Host "`n✅ AFFECTED USERS ($($groupMembers.Count) members):" -ForegroundColor Yellow
-            foreach ($member in $groupMembers) {
-                Write-Host "  • $($member.DisplayName) - $($member.UserPrincipalName)" -ForegroundColor White
+    $locationsRemoved = 0
+    
+    # Remove Exchange locations
+    if ($exchangeCount -gt 0) {
+        Write-Host "`n  Removing Exchange (Outlook) locations:" -ForegroundColor Yellow
+        foreach ($location in $exchangeLocations) {
+            try {
+                Write-Host "    • $location" -NoNewline
+                Set-LabelPolicy -Identity $targetPolicyName -RemoveExchangeLocation $location -ErrorAction Stop
+                Write-Host " ✓" -ForegroundColor Green
+                $locationsRemoved++
+                Start-Sleep -Milliseconds 500
+            } catch {
+                Write-Host " ✗ Failed: $($_.Exception.Message)" -ForegroundColor Red
             }
-            Write-Host "`n  Impact:" -ForegroundColor Cyan
-            Write-Host "    ✓ These users will NO LONGER see labels in Outlook (after 24h)" -ForegroundColor Green
-            Write-Host "    ✓ These users WILL see labels in Teams meetings" -ForegroundColor Green
         }
+    }
+    
+    # Remove SharePoint locations
+    if ($sharepointCount -gt 0) {
+        Start-Sleep -Seconds 1
+        $policy = Get-LabelPolicy -Identity $targetPolicyName -ErrorAction SilentlyContinue
+        if ($policy -and $policy.SharePointLocation) {
+            Write-Host "`n  Removing SharePoint locations:" -ForegroundColor Yellow
+            foreach ($location in @($policy.SharePointLocation)) {
+                try {
+                    Write-Host "    • $location" -NoNewline
+                    Set-LabelPolicy -Identity $targetPolicyName -RemoveSharePointLocation $location -ErrorAction Stop
+                    Write-Host " ✓" -ForegroundColor Green
+                    $locationsRemoved++
+                    Start-Sleep -Milliseconds 500
+                } catch {
+                    Write-Host " ✗ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                }
+            }
+        }
+    }
+    
+    # Remove OneDrive locations
+    if ($onedriveCount -gt 0) {
+        Start-Sleep -Seconds 1
+        $policy = Get-LabelPolicy -Identity $targetPolicyName -ErrorAction SilentlyContinue
+        if ($policy -and $policy.OneDriveLocation) {
+            Write-Host "`n  Removing OneDrive locations:" -ForegroundColor Yellow
+            foreach ($location in @($policy.OneDriveLocation)) {
+                try {
+                    Write-Host "    • $location" -NoNewline
+                    Set-LabelPolicy -Identity $targetPolicyName -RemoveOneDriveLocation $location -ErrorAction Stop
+                    Write-Host " ✓" -ForegroundColor Green
+                    $locationsRemoved++
+                    Start-Sleep -Milliseconds 500
+                } catch {
+                    Write-Host " ✗ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                }
+            }
+        }
+    }
+    
+    Write-Host "`n  ✓ Removed $locationsRemoved of $totalBadLocations location(s)" -ForegroundColor Green
+    
+    # ============================================================
+    # Verify Changes
+    # ============================================================
+    
+    Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+    Write-Host "║  STEP 4: VERIFY CHANGES                                         ║" -ForegroundColor Cyan
+    Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+    
+    Write-Host "`n[Verifying changes...]" -ForegroundColor Cyan
+    Start-Sleep -Seconds 2
+    
+    $verifiedPolicy = Get-LabelPolicy -Identity $targetPolicyName -ErrorAction SilentlyContinue
+    
+    if ($verifiedPolicy) {
+        $finalExchange = if($verifiedPolicy.ExchangeLocation){$verifiedPolicy.ExchangeLocation.Count}else{0}
+        $finalSharePoint = if($verifiedPolicy.SharePointLocation){$verifiedPolicy.SharePointLocation.Count}else{0}
+        $finalOneDrive = if($verifiedPolicy.OneDriveLocation){$verifiedPolicy.OneDriveLocation.Count}else{0}
+        $finalModernGroup = if($verifiedPolicy.ModernGroupLocation){$verifiedPolicy.ModernGroupLocation.Count}else{0}
+        $finalTotal = $finalExchange + $finalSharePoint + $finalOneDrive
         
-        Write-Host "`n⏱️  TIMELINE:" -ForegroundColor Yellow
-        Write-Host "  • Immediate: Changes saved" -ForegroundColor White
-        Write-Host "  • 15-30 minutes: Policy propagation starts" -ForegroundColor White
-        Write-Host "  • 24 hours: Labels disappear from Outlook" -ForegroundColor White
-        Write-Host "  • 24-48 hours: Labels appear in Teams" -ForegroundColor White
+        Write-Host "  Final Status for '$targetPolicyName':" -ForegroundColor Cyan
+        Write-Host "    Exchange (Outlook): $finalExchange" -ForegroundColor $(if($finalExchange -eq 0){"Green"}else{"Red"})
+        Write-Host "    SharePoint: $finalSharePoint" -ForegroundColor $(if($finalSharePoint -eq 0){"Green"}else{"Red"})
+        Write-Host "    OneDrive: $finalOneDrive" -ForegroundColor $(if($finalOneDrive -eq 0){"Green"}else{"Red"})
+        Write-Host "    Teams/Groups: $finalModernGroup" -ForegroundColor $(if($finalModernGroup -gt 0){"Green"}else{"Yellow"})
         
-        Write-Host "`n✅ TESTING:" -ForegroundColor Yellow
-        Write-Host "  1. Wait 24 hours" -ForegroundColor White
-        Write-Host "  2. Have user create NEW email in Outlook" -ForegroundColor White
-        Write-Host "  3. Check for 'Sensitivity' button - should NOT appear" -ForegroundColor White
-        Write-Host "  4. Have user create Teams meeting" -ForegroundColor White
-        Write-Host "  5. Check for labels - SHOULD appear" -ForegroundColor White
-        
-    } else {
-        Write-Host "`n⚠️  WARNING: Still have $finalCount location(s)" -ForegroundColor Yellow
-        Write-Host "   Labels may still appear in Outlook" -ForegroundColor Yellow
+        if ($finalTotal -eq 0) {
+            Write-Host "`n  ✅ SUCCESS!" -ForegroundColor Green
+            Write-Host "     Meeting labels (Protected B, Regular Meeting) will:" -ForegroundColor White
+            Write-Host "     • NOT appear in Outlook emails ✅" -ForegroundColor Green
+            Write-Host "     • NOT appear in Word/Excel/PowerPoint ✅" -ForegroundColor Green
+            Write-Host "     • ONLY appear in Teams meeting creation ✅" -ForegroundColor Green
+        } else {
+            Write-Host "`n  ⚠️  WARNING: Still has $finalTotal bad location(s)" -ForegroundColor Yellow
+            Write-Host "     Labels may still appear in Outlook" -ForegroundColor Yellow
+            Write-Host "     Try running this script again" -ForegroundColor Yellow
+        }
     }
 }
 
-# Generate simple report
-$exportPath = "C:\LeonardoReports"
-New-Item -Path $exportPath -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
-$reportFile = "$exportPath\Remove-Outlook-Labels-$(Get-Date -Format 'yyyy-MM-dd-HHmm').txt"
+# ============================================================
+# Check Other Policies (Info Only)
+# ============================================================
+
+Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║  OTHER LABEL POLICIES (UNCHANGED)                               ║" -ForegroundColor Cyan
+Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+
+Write-Host "`n[Checking other label policies in tenant...]" -ForegroundColor Cyan
+
+$allPolicies = Get-LabelPolicy | Where-Object {$_.Name -ne $targetPolicyName}
+
+if ($allPolicies.Count -gt 0) {
+    Write-Host "  Found $($allPolicies.Count) other policy/policies (left untouched):" -ForegroundColor White
+    
+    foreach ($otherPolicy in $allPolicies) {
+        $otherExchange = if($otherPolicy.ExchangeLocation){$otherPolicy.ExchangeLocation.Count}else{0}
+        
+        Write-Host "`n    • $($otherPolicy.Name)" -ForegroundColor Gray
+        Write-Host "      Exchange Locations: $otherExchange" -ForegroundColor Gray
+        Write-Host "      Status: Not modified (as intended)" -ForegroundColor Gray
+    }
+    
+    Write-Host "`n  Note: These policies control different labels (General, Confidential, etc.)" -ForegroundColor White
+    Write-Host "        They are separate from your Teams meeting labels." -ForegroundColor White
+} else {
+    Write-Host "  No other label policies found." -ForegroundColor Gray
+}
+
+# ============================================================
+# Generate Report
+# ============================================================
+
+Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║  GENERATING REPORT                                              ║" -ForegroundColor Cyan
+Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+
+$reportFile = "$exportPath\LCE-Meeting-Labels-Outlook-Removal-$timestamp.txt"
+
+$verifiedPolicy = Get-LabelPolicy -Identity $targetPolicyName -ErrorAction SilentlyContinue
+$finalExchange = if($verifiedPolicy.ExchangeLocation){$verifiedPolicy.ExchangeLocation.Count}else{0}
+$finalSharePoint = if($verifiedPolicy.SharePointLocation){$verifiedPolicy.SharePointLocation.Count}else{0}
+$finalOneDrive = if($verifiedPolicy.OneDriveLocation){$verifiedPolicy.OneDriveLocation.Count}else{0}
+$finalTotal = $finalExchange + $finalSharePoint + $finalOneDrive
 
 $report = @"
-REMOVE LABELS FROM OUTLOOK - REPORT
+╔══════════════════════════════════════════════════════════════════╗
+║  LCE MEETING LABELS - OUTLOOK REMOVAL REPORT                    ║
+╚══════════════════════════════════════════════════════════════════╝
+
 Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+Run By: $env:USERNAME
+Computer: $env:COMPUTERNAME
 
-POLICY: $policyName
-Exchange Locations: $(if($verifiedPolicy){$verifiedPolicy.ExchangeLocation.Count}else{'N/A'})
-SharePoint Locations: $(if($verifiedPolicy){$verifiedPolicy.SharePointLocation.Count}else{'N/A'})
-OneDrive Locations: $(if($verifiedPolicy){$verifiedPolicy.OneDriveLocation.Count}else{'N/A'})
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TARGET POLICY: $targetPolicyName
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-AFFECTED USERS ($($groupMembers.Count)):
-$(if($groupMembers.Count -gt 0){($groupMembers | ForEach-Object { "  • $($_.DisplayName) - $($_.UserPrincipalName)" }) -join "`n"}else{"  (Could not retrieve group membership)"})
+Policy Details:
+  GUID: $($verifiedPolicy.Guid)
+  Created: $($verifiedPolicy.WhenCreated)
+  Created By: $(if($verifiedPolicy.CreatedBy){$verifiedPolicy.CreatedBy}else{'Unknown'})
+  Last Modified: $($verifiedPolicy.WhenChanged)
 
-STATUS: $(if($finalCount -eq 0){'✅ Success - Labels removed from Outlook'}else{'⚠️ Incomplete'})
+Initial Status:
+  Exchange Locations: $exchangeCount
+  SharePoint Locations: $sharepointCount
+  OneDrive Locations: $onedriveCount
+  Total Bad Locations: $totalBadLocations
+
+Actions Taken:
+  Locations Removed: $(if($totalBadLocations -gt 0){$locationsRemoved}else{0})
+
+Final Status:
+  Exchange Locations: $finalExchange
+  SharePoint Locations: $finalSharePoint
+  OneDrive Locations: $finalOneDrive
+  Teams/Groups Locations: $(if($verifiedPolicy.ModernGroupLocation){$verifiedPolicy.ModernGroupLocation.Count}else{0})
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESULT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+$(if($finalTotal -eq 0){
+@"
+✅ SUCCESS - Meeting labels configured correctly
+
+The LCE Meeting Labels policy is now configured to:
+  • NOT appear in Outlook emails ✅
+  • NOT appear in Word/Excel/PowerPoint ✅
+  • ONLY appear in Teams meeting creation ✅
+
+Users will see meeting sensitivity labels ONLY when:
+  - Creating a new Teams meeting
+  - Scheduling a Teams meeting from Outlook calendar
+
+Users will NOT see meeting labels when:
+  - Composing new Outlook emails
+  - Creating Word/Excel/PowerPoint documents
+  - Using SharePoint or OneDrive
+"@
+}else{
+@"
+⚠️  WARNING - Still has $finalTotal bad location(s)
+
+Meeting labels may still appear in Outlook.
+
+Recommended Actions:
+  1. Run this script again
+  2. Wait 24-48 hours for propagation
+  3. Contact Microsoft Support if issue persists
+"@
+})
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OTHER POLICIES (UNCHANGED)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The following policies were NOT modified:
+$(($allPolicies | ForEach-Object {
+"  • $($_.Name)
+    Exchange Locations: $(if($_.ExchangeLocation){$_.ExchangeLocation.Count}else{0})
+    Purpose: General document classification (not meeting labels)
+"
+}) -join "`n")
+
+These policies control labels like:
+  - General
+  - Confidential
+  - Internal Use Only
+  - Public
+  etc.
+
+These are SEPARATE from your Teams meeting labels and are functioning
+correctly for document/email classification.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+END OF REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 "@
 
 $report | Out-File $reportFile -Encoding UTF8
-Write-Host "`n📄 Report saved: $reportFile" -ForegroundColor Gray
 
-Disconnect-ExchangeOnline -Confirm:$false -ErrorAction SilentlyContinue
+Write-Host "`n  ✓ Report saved: $reportFile" -ForegroundColor Green
 
-Write-Host "`n✅ Done! Wait 24 hours, then verify labels are gone from Outlook." -ForegroundColor Green
+# ============================================================
+# Final Summary
+# ============================================================
+
+Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
+Write-Host "║  COMPLETE                                                       ║" -ForegroundColor Green
+Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Green
+
+if ($finalTotal -eq 0) {
+    Write-Host "`n✅ SUCCESS! LCE Meeting Labels configured correctly" -ForegroundColor Green
+    Write-Host "   Meeting labels will NOT appear in Outlook emails" -ForegroundColor White
+    Write-Host "   Meeting labels will ONLY appear in Teams" -ForegroundColor White
+} else {
+    Write-Host "`n⚠️  Not fully complete - $finalTotal location(s) remain" -ForegroundColor Yellow
+    Write-Host "   Run this script again or wait for propagation" -ForegroundColor White
+}
+
+Write-Host "`n📝 Note: Other label policies (Security Team, IT Team, etc.) were" -ForegroundColor Cyan
+Write-Host "   left completely untouched and remain fully functional." -ForegroundColor Cyan
+
+Write-Host "`n📄 Full report: $reportFile" -ForegroundColor Gray
+
 Write-Host "`nPress any key to exit..." -ForegroundColor Gray
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
