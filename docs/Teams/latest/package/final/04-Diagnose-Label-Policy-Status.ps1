@@ -21,7 +21,7 @@
     VERSION 9.0
     Diagnostic tool - does not modify anything
 #>
-
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
 Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
 Write-Host "║  LABEL POLICY DIAGNOSTIC TOOL                                   ║" -ForegroundColor Cyan
 Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
