@@ -1,0 +1,1016 @@
+# environment-promote-pipeline.yml
+# This pipeline promotes solutions between environments with manual approval gate
+# Can be used for: Staging to QA, QA to Production, or any other environment promotion
+
+trigger: none  # Manual trigger only
+
+pr: none  # Disable PR triggers
+
+parameters:
+  - name: solutionName
+    type: string
+    displayName: 'Solution Name (logical name) to Deploy'
+  - name: sourceBranch
+    type: string
+    displayName: 'Source Branch Name'
+  - name: targetBranch
+    type: string
+    displayName: 'Target Branch Name'
+  - name: targetVariableGroupName
+    type: string
+    displayName: 'Target Variable Group Name (must contain funcTargetEnv, clientId, clientSecret, tenantId)'
+  - name: targetEnvironmentName
+    type: string
+    displayName: 'Target Environment Display Name (e.g., QA, Production, UAT)'
+    default: 'Target'
+  - name: autoMergePR
+    type: boolean
+    displayName: 'Auto-complete PR after creation'
+    default: false
+
+variables:
+  - group: ${{ parameters.targetVariableGroupName }}
+  - name: targetEnv
+    value: '$(funcTargetEnv)'
+
+pool:
+  vmImage: 'windows-2022'
+
+stages:
+  - stage: ValidateInputs
+    displayName: 'Validate Inputs'
+    jobs:
+      - job: Validation
+        displayName: 'Validate Parameters'
+        steps:
+          - powershell: |
+              $solutionName = "${{ parameters.solutionName }}"
+              $sourceBranch = "${{ parameters.sourceBranch }}"
+              $targetBranch = "${{ parameters.targetBranch }}"
+              $targetEnvName = "${{ parameters.targetEnvironmentName }}"
+              
+              Write-Host "========================================================================"
+              Write-Host "                    ENVIRONMENT PROMOTION VALIDATION                   "
+              Write-Host "========================================================================"
+              
+              if ([string]::IsNullOrWhiteSpace($solutionName)) {
+                  Write-Error "Solution name cannot be empty"
+                  exit 1
+              }
+              Write-Host "  Solution: $solutionName"
+              
+              if ([string]::IsNullOrWhiteSpace($sourceBranch)) {
+                  Write-Error "Source branch cannot be empty"
+                  exit 1
+              }
+              Write-Host "  Source Branch: $sourceBranch"
+              
+              if ([string]::IsNullOrWhiteSpace($targetBranch)) {
+                  Write-Error "Target branch cannot be empty"
+                  exit 1
+              }
+              Write-Host "  Target Branch: $targetBranch"
+              
+              if ($sourceBranch -eq $targetBranch) {
+                  Write-Error "Source and target branches cannot be the same"
+                  exit 1
+              }
+              
+              Write-Host "  Target Environment: $targetEnvName"
+              Write-Host "  Target Variable Group: ${{ parameters.targetVariableGroupName }}"
+              Write-Host "========================================================================"
+              Write-Host ""
+              Write-Host "All validations passed"
+            displayName: 'Validate Inputs'
+
+  - stage: VerifyStagingSolution
+    displayName: 'Verify Staging Solution'
+    dependsOn: ValidateInputs
+    jobs:
+      - job: CheckSolution
+        displayName: 'Verify Solution in Staging Branch'
+        steps:
+          - checkout: self
+            persistCredentials: true
+
+          - powershell: |
+              $sourceBranch = "${{ parameters.sourceBranch }}"
+              $solutionName = "${{ parameters.solutionName }}"
+              
+              Write-Host "Verifying solution exists in staging branch..."
+              Write-Host ""
+              
+              git config --global user.email "azure-pipeline@yourorg.com"
+              git config --global user.name "Azure Pipeline"
+              
+              git fetch origin
+              git checkout $sourceBranch
+              git pull origin $sourceBranch
+              
+              Write-Host "Current branch: $(git branch --show-current)"
+              Write-Host ""
+              
+              # Check for solution files
+              $managedSolutionPath = ".\solutions\${solutionName}_managed.zip"
+              $unmanagedSolutionPath = ".\solutions\${solutionName}.zip"
+              
+              $foundManaged = Test-Path $managedSolutionPath
+              $foundUnmanaged = Test-Path $unmanagedSolutionPath
+              
+              Write-Host "Solution File Status:"
+              Write-Host "  Managed Solution: $(if ($foundManaged) { 'Found' } else { 'Not Found' }) - $managedSolutionPath"
+              Write-Host "  Unmanaged Solution: $(if ($foundUnmanaged) { 'Found' } else { 'Not Found' }) - $unmanagedSolutionPath"
+              Write-Host ""
+              
+              if (-not $foundManaged) {
+                  Write-Host "Managed solution file is required but not found!"
+                  Write-Host ""
+                  Write-Host "Available files in solutions directory:"
+                  if (Test-Path ".\solutions") {
+                      Get-ChildItem -Path ".\solutions" -Filter "*.zip" | ForEach-Object {
+                          Write-Host "  - $($_.Name)"
+                      }
+                  } else {
+                      Write-Host "  (solutions directory does not exist)"
+                  }
+                  Write-Error "Cannot proceed without managed solution file"
+                  exit 1
+              }
+              
+              # Get file information
+              $managedFile = Get-Item $managedSolutionPath
+              Write-Host "Managed Solution Details:"
+              Write-Host "  Size: $([math]::Round($managedFile.Length / 1MB, 2)) MB"
+              Write-Host "  Last Modified: $($managedFile.LastWriteTime)"
+              Write-Host ""
+              
+              # Check recent commits
+              Write-Host "Recent commits on $sourceBranch branch:"
+              git log --oneline -5
+              Write-Host ""
+              
+              Write-Host "Solution verification complete - ready for promotion"
+            displayName: 'Verify Solution Files'
+
+  - stage: ManualApprovalGate
+    displayName: 'Manual Approval Required'
+    dependsOn: VerifyStagingSolution
+    jobs:
+      - job: WaitForApproval
+        displayName: 'Waiting for Manual Approval'
+        pool: server
+        timeoutInMinutes: 4320
+        steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 4320
+            inputs:
+              notifyUsers: ''
+              instructions: |
+                SOURCE ENVIRONMENT TESTING APPROVAL REQUIRED
+                ===============================================================
+                
+                Solution: ${{ parameters.solutionName }}
+                Source Branch: ${{ parameters.sourceBranch }}
+                Target Branch: ${{ parameters.targetBranch }}
+                Target Environment: ${{ parameters.targetEnvironmentName }}
+                
+                BEFORE APPROVING:
+                ---------------------------------------------------------------
+                1. Test the solution thoroughly in SOURCE environment
+                2. Verify all components are working as expected
+                3. Confirm all business requirements are met
+                4. Review solution checker results
+                5. Validate any dependent solutions are already in target
+                6. Ensure target environment is ready for deployment
+                
+                TEST CHECKLIST:
+                ---------------------------------------------------------------
+                - All forms load correctly
+                - Business processes execute properly
+                - Custom plugins/workflows function as expected
+                - Security roles are properly configured
+                - No console errors or warnings
+                - Data validation rules work correctly
+                - Integration points are functioning
+                
+                IF YOU NEED TO RE-RUN SOURCE DEPLOYMENT:
+                ---------------------------------------------------------------
+                - Click REJECT to cancel this promotion
+                - Re-run the source environment deployment pipeline
+                - Start a new promotion pipeline when ready
+                
+                IF SOURCE ENVIRONMENT TESTS PASSED:
+                ---------------------------------------------------------------
+                - Click RESUME to create the PR to target branch
+                - The PR will be created automatically
+                - Review and approve the PR to deploy to target environment
+                
+                ===============================================================
+                
+                This approval will timeout in 3 days if no action is taken.
+              onTimeout: 'reject'
+
+  - stage: Setup
+    displayName: 'Setup Tools'
+    dependsOn: ManualApprovalGate
+    jobs:
+      - job: PrepareTools
+        displayName: 'Install PAC CLI'
+        steps:
+          - powershell: |
+              Write-Host "Configuring environment..."
+              Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+              
+              # Configure working directory
+              $toolsPath = "$(Build.ArtifactStagingDirectory)\tools"
+              New-Item -ItemType Directory -Force -Path $toolsPath | Out-Null
+              Set-Location $toolsPath
+              
+              # Download NuGet
+              Write-Host "Downloading NuGet..."
+              $sourceNugetExe = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
+              $targetNugetExe = ".\nuget.exe"
+              Invoke-WebRequest $sourceNugetExe -OutFile $targetNugetExe
+              
+              # Install PowerApps CLI via NuGet
+              Write-Host "Installing PowerApps CLI..."
+              .\nuget.exe install Microsoft.PowerApps.CLI -Version '1.30.6' -O .
+              
+              # Find PAC CLI recursively
+              $pacPath = Get-ChildItem -Path . -Recurse -Filter "pac.exe" | Select-Object -First 1 -ExpandProperty FullName
+              if (-not $pacPath) {
+                  Write-Error "Failed to find pac.exe"
+                  exit 1
+              }
+              
+              $pacDirectory = Split-Path $pacPath -Parent
+              Write-Host "PAC CLI found at: $pacPath"
+              
+              # Create a new directory for the PAC tool
+              $pacToolDir = "$(Build.ArtifactStagingDirectory)\tools\pacTool"
+              New-Item -ItemType Directory -Force -Path $pacToolDir | Out-Null
+              
+              # Copy PAC files to the new directory
+              Copy-Item -Path "$pacDirectory\*" -Destination $pacToolDir -Recurse
+              
+              # Verify PAC CLI
+              Set-Location $pacToolDir
+              .\pac.exe help
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "PAC CLI verification failed"
+                  exit 1
+              }
+              
+              Write-Host "##vso[task.setvariable variable=PacToolPath;isOutput=true]$pacToolDir"
+            displayName: 'Install PAC CLI via NuGet'
+            name: PackageDownload
+
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/tools/pacTool'
+              artifact: 'pac-cli'
+              publishLocation: 'pipeline'
+            displayName: 'Publish PAC CLI'
+
+  - stage: CreatePromotionPR
+    displayName: 'Create QA Promotion PR'
+    dependsOn: Setup
+    jobs:
+      - job: CreatePR
+        displayName: 'Create Pull Request to QA'
+        steps:
+          - checkout: self
+            persistCredentials: true
+
+          - powershell: |
+              $sourceBranch = "${{ parameters.sourceBranch }}"
+              $targetBranch = "${{ parameters.targetBranch }}"
+              $solutionName = "${{ parameters.solutionName }}"
+              
+              Write-Host "========================================================================"
+              Write-Host "                    CREATING PROMOTION BRANCH                          "
+              Write-Host "========================================================================"
+              Write-Host ""
+              
+              Write-Host "Configuring Git..."
+              git config --global user.email "azure-pipeline@yourorg.com"
+              git config --global user.name "Azure Pipeline"
+              
+              # Fetch all branches
+              Write-Host "Fetching branches..."
+              git fetch origin
+              
+              # Checkout source branch to get the solution files
+              Write-Host "Checking out source branch: $sourceBranch"
+              git checkout $sourceBranch
+              git pull origin $sourceBranch
+              
+              # Verify solution files exist
+              $managedSolutionPath = ".\solutions\${solutionName}_managed.zip"
+              if (-not (Test-Path $managedSolutionPath)) {
+                  Write-Error "Managed solution file not found at: $managedSolutionPath"
+                  Write-Host "Available files in solutions directory:"
+                  if (Test-Path ".\solutions") {
+                      Get-ChildItem -Path ".\solutions" | Select-Object Name
+                  }
+                  exit 1
+              }
+              
+              Write-Host "Found solution file: $managedSolutionPath"
+              Write-Host ""
+              
+              # Create feature branch from target branch
+              $promotionBranchName = "promote/$solutionName-to-$targetBranch-$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+              Write-Host "Creating promotion branch: $promotionBranchName"
+              
+              git checkout $targetBranch
+              git pull origin $targetBranch
+              git checkout -b $promotionBranchName
+              
+              # Merge changes from source branch
+              Write-Host "Merging changes from $sourceBranch..."
+              git merge "origin/$sourceBranch" --no-ff -m "Promote solution $solutionName from $sourceBranch to $targetBranch"
+              
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Merge failed. There may be conflicts that need manual resolution."
+                  exit 1
+              }
+              
+              Write-Host "Merge completed successfully"
+              Write-Host ""
+              
+              # Push the promotion branch
+              Write-Host "Pushing promotion branch..."
+              git push origin $promotionBranchName
+              
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Failed to push promotion branch"
+                  exit 1
+              }
+              
+              Write-Host "Promotion branch pushed successfully"
+              Write-Host "##vso[task.setvariable variable=PromotionBranchName;isOutput=true]$promotionBranchName"
+            displayName: 'Create Promotion Branch'
+            name: CreateBranch
+
+          - powershell: |
+              $promotionBranchName = "$(CreateBranch.PromotionBranchName)"
+              $solutionName = "${{ parameters.solutionName }}"
+              $sourceBranch = "${{ parameters.sourceBranch }}"
+              $targetBranch = "${{ parameters.targetBranch }}"
+              $autoMerge = [System.Convert]::ToBoolean("${{ parameters.autoMergePR }}")
+              $targetEnvUrl = "$env:targetEnv"
+              $targetEnvName = "${{ parameters.targetEnvironmentName }}"
+              
+              Write-Host "========================================================================"
+              Write-Host "                    CREATING PULL REQUEST                              "
+              Write-Host "========================================================================"
+              Write-Host ""
+              
+              # Build description using string concatenation to avoid YAML parsing issues
+              $nl = [Environment]::NewLine
+              $description = "## Solution Promotion: $sourceBranch to $targetBranch ($targetEnvName)" + $nl + $nl
+              $description += "**Solution:** ``$solutionName``" + $nl
+              $description += "**Source Branch:** $sourceBranch" + $nl
+              $description += "**Target Branch:** $targetBranch" + $nl
+              $description += "**Target Environment:** $targetEnvName" + $nl
+              $description += "**Target Variable Group:** ${{ parameters.targetVariableGroupName }}" + $nl + $nl
+              $description += "---" + $nl + $nl
+              $description += "### Pre-Deployment Validation Completed" + $nl + $nl
+              $description += "This PR was created after:" + $nl
+              $description += "- Successful deployment to **$sourceBranch** environment" + $nl
+              $description += "- Manual approval after source environment testing" + $nl
+              $description += "- Solution file verification in $sourceBranch branch" + $nl + $nl
+              $description += "---" + $nl + $nl
+              $description += "### What's Included" + $nl + $nl
+              $description += "- Managed solution package (ready for $targetEnvName deployment)" + $nl
+              $description += "- Unmanaged solution package (for reference)" + $nl
+              $description += "- Unpacked solution source (for detailed review)" + $nl
+              $description += "- Solution checker results from $sourceBranch deployment" + $nl + $nl
+              $description += "---" + $nl + $nl
+              $description += "### Automated Actions" + $nl + $nl
+              $description += "Upon approval and completion of this PR, the pipeline will:" + $nl
+              $description += "1. Authenticate to $targetEnvName environment" + $nl
+              $description += "2. Create backup of existing solution (if exists)" + $nl
+              $description += "3. Deploy solution to $targetEnvName environment: ``$targetEnvUrl``" + $nl
+              $description += "4. Verify deployment success" + $nl + $nl
+              $description += "---" + $nl + $nl
+              $description += "### Review Checklist" + $nl + $nl
+              $description += "Before approving this PR, please verify:" + $nl + $nl
+              $description += "- [ ] Review solution changes in the unpacked source" + $nl
+              $description += "- [ ] Check solution checker results for any issues" + $nl
+              $description += "- [ ] Confirm all source environment tests passed successfully" + $nl
+              $description += "- [ ] Verify dependent solutions are already in $targetEnvName" + $nl
+              $description += "- [ ] Validate $targetEnvName environment is ready for deployment" + $nl
+              $description += "- [ ] Confirm target environment URL: ``$targetEnvUrl``" + $nl
+              $description += "- [ ] Review backup strategy is acceptable" + $nl + $nl
+              $description += "---" + $nl + $nl
+              $description += "### Deployment Target" + $nl + $nl
+              $description += "**Environment:** $targetEnvName" + $nl
+              $description += "**Environment URL:** ``$targetEnvUrl``" + $nl
+              $description += "**Variable Group:** ``${{ parameters.targetVariableGroupName }}``" + $nl + $nl
+              $description += "---" + $nl + $nl
+              $description += "### Notes" + $nl + $nl
+              $description += "- This PR was automatically created after manual source environment approval" + $nl
+              $description += "- A backup will be created before deployment" + $nl
+              $description += "- Solution will be imported as **managed**" + $nl
+              $description += "- Any unmanaged version in $targetEnvName will be removed first" + $nl + $nl
+              $description += "---" + $nl + $nl
+              $description += "**Ready for $targetEnvName deployment after your approval!**"
+              
+              $prBody = @{
+                  title = "Promote to $targetEnvName`: $solutionName ($sourceBranch to $targetBranch)"
+                  sourceRefName = "refs/heads/$promotionBranchName"
+                  targetRefName = "refs/heads/$targetBranch"
+                  description = $description
+              }
+              
+              # Add auto-complete settings if enabled
+              if ($autoMerge) {
+                  $prBody.completionOptions = @{
+                      deleteSourceBranch = $true
+                      mergeCommitMessage = "Automated promotion of solution $solutionName to $targetBranch"
+                  }
+              }
+              
+              $body = $prBody | ConvertTo-Json -Depth 10
+
+              $url = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=7.0"
+              $headers = @{
+                  'Content-Type' = 'application/json'
+                  'Authorization' = "Bearer $(System.AccessToken)"
+              }
+
+              try {
+                  Write-Host "Creating pull request..."
+                  $prResponse = Invoke-RestMethod -Uri $url -Method Post -Body $body -Headers $headers
+                  $prId = $prResponse.pullRequestId
+                  
+                  Write-Host ""
+                  Write-Host "========================================================================"
+                  Write-Host "                    PULL REQUEST CREATED SUCCESSFULLY                  "
+                  Write-Host "========================================================================"
+                  Write-Host "  PR ID: $prId"
+                  Write-Host "  PR URL: $($prResponse.url)"
+                  Write-Host "========================================================================"
+                  Write-Host ""
+                  Write-Host "Next Steps:"
+                  Write-Host "  1. Review the PR at: $($prResponse.url)"
+                  Write-Host "  2. Approve the PR to trigger QA deployment"
+                  Write-Host "  3. Monitor the QA deployment pipeline"
+                  Write-Host ""
+                  
+                  # Set auto-complete if enabled
+                  if ($autoMerge) {
+                      Write-Host "Setting auto-complete..."
+                      
+                      $autoCompleteBody = @{
+                          autoCompleteSetBy = @{
+                              id = $prResponse.createdBy.id
+                          }
+                          completionOptions = @{
+                              deleteSourceBranch = $true
+                              mergeCommitMessage = "Automated promotion of solution $solutionName to $targetBranch"
+                          }
+                      } | ConvertTo-Json -Depth 10
+                      
+                      $updateUrl = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullrequests/$prId" + "?api-version=7.0"
+                      
+                      try {
+                          Invoke-RestMethod -Uri $updateUrl -Method Patch -Body $autoCompleteBody -Headers $headers | Out-Null
+                          Write-Host "Auto-complete configured - PR will merge automatically upon approval"
+                      }
+                      catch {
+                          Write-Warning "Could not set auto-complete: $_"
+                      }
+                  }
+                  
+                  Write-Host "##vso[task.setvariable variable=PullRequestId;isOutput=true]$prId"
+                  Write-Host "##vso[task.setvariable variable=PullRequestUrl;isOutput=true]$($prResponse.url)"
+              }
+              catch {
+                  Write-Error "Failed to create pull request: $_"
+                  if ($_.Exception.Response) {
+                      $reader = [System.IO.StreamReader]::new($_.Exception.Response.GetResponseStream())
+                      $responseBody = $reader.ReadToEnd()
+                      Write-Host "Response body: $responseBody"
+                  }
+                  exit 1
+              }
+            displayName: 'Create Pull Request'
+            name: CreatePR
+            env:
+              targetEnv: $(targetEnv)
+
+          - powershell: |
+              $prUrl = "$(CreatePR.PullRequestUrl)"
+              $prId = "$(CreatePR.PullRequestId)"
+              $targetEnvName = "${{ parameters.targetEnvironmentName }}"
+              
+              Write-Host ""
+              Write-Host "========================================================================"
+              Write-Host "                         PROMOTION PR CREATED                          "
+              Write-Host "========================================================================"
+              Write-Host "  Solution: ${{ parameters.solutionName }}"
+              Write-Host "  From: ${{ parameters.sourceBranch }}"
+              Write-Host "  To: ${{ parameters.targetBranch }} ($targetEnvName)"
+              Write-Host "  PR ID: $prId"
+              Write-Host "========================================================================"
+              Write-Host "  PR Link: $prUrl"
+              Write-Host "========================================================================"
+              Write-Host "  Pipeline paused - Review and approve the PR to continue deployment   "
+              Write-Host "========================================================================"
+              Write-Host ""
+            displayName: 'Display PR Summary'
+
+  - stage: WaitForPRApproval
+    displayName: 'Wait for PR Approval'
+    dependsOn: CreatePromotionPR
+    variables:
+      PullRequestId: $[ stageDependencies.CreatePromotionPR.CreatePR.outputs['CreatePR.PullRequestId'] ]
+    jobs:
+      - job: WaitForPRApproval
+        displayName: 'Monitoring PR Status'
+        steps:
+          - powershell: |
+              $prId = "$(PullRequestId)"
+              if ([string]::IsNullOrEmpty($prId)) {
+                  Write-Error "Pull Request ID not found"
+                  exit 1
+              }
+              
+              Write-Host "========================================================================"
+              Write-Host "                    WAITING FOR PR APPROVAL                            "
+              Write-Host "========================================================================"
+              Write-Host ""
+              Write-Host "PR ID: $prId"
+              Write-Host "Max wait time: 60 minutes"
+              Write-Host ""
+              
+              $approved = $false
+              $maxAttempts = 120
+              $attempt = 0
+              
+              $headers = @{
+                  'Authorization' = "Bearer $(System.AccessToken)"
+                  'Content-Type' = 'application/json'
+              }
+              
+              # Get repository ID
+              $repoUrl = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)?api-version=7.0"
+              try {
+                  $repoInfo = Invoke-RestMethod -Uri $repoUrl -Method Get -Headers $headers
+                  $repoId = $repoInfo.id
+                  Write-Host "Repository ID: $repoId"
+                  Write-Host ""
+              }
+              catch {
+                  Write-Error "Failed to get repository information: $_"
+                  exit 1
+              }
+              
+              do {
+                  $attempt++
+                  $elapsed = $attempt * 30
+                  $minutes = [math]::Floor($elapsed / 60)
+                  $seconds = $elapsed % 60
+                  Write-Host "Check #$attempt/$maxAttempts (Elapsed: ${minutes}m ${seconds}s)"
+                  
+                  try {
+                      $prUrl = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$repoId/pullrequests/$prId" + "?api-version=7.0"
+                      $prStatus = Invoke-RestMethod -Uri $prUrl -Method Get -Headers $headers
+                      
+                      Write-Host "   Status: $($prStatus.status) | Merge Status: $($prStatus.mergeStatus)"
+                      
+                      if ($prStatus.status -eq "completed") {
+                          if ($prStatus.mergeStatus -eq "succeeded") {
+                              Write-Host ""
+                              Write-Host "Pull Request approved and completed successfully!"
+                              $approved = $true
+                          } else {
+                              Write-Host ""
+                              Write-Error "Pull Request completed but merge failed. Merge Status: $($prStatus.mergeStatus)"
+                              exit 1
+                          }
+                      }
+                      elseif ($prStatus.status -eq "abandoned") {
+                          Write-Host ""
+                          Write-Error "Pull Request has been abandoned"
+                          exit 1
+                      }
+                      else {
+                          # Check approval status
+                          $reviewsUrl = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$repoId/pullrequests/$prId/reviewers?api-version=7.0"
+                          try {
+                              $reviews = Invoke-RestMethod -Uri $reviewsUrl -Method Get -Headers $headers
+                              
+                              $approvedCount = ($reviews.value | Where-Object { $_.vote -eq 10 }).Count
+                              $rejectedCount = ($reviews.value | Where-Object { $_.vote -eq -10 }).Count
+                              $waitingCount = ($reviews.value | Where-Object { $_.vote -eq 0 }).Count
+                              
+                              Write-Host "   Approvals: $approvedCount | Rejections: $rejectedCount | Waiting: $waitingCount"
+                              
+                              if ($rejectedCount -gt 0) {
+                                  Write-Host ""
+                                  Write-Error "Pull Request has been rejected"
+                                  exit 1
+                              }
+                          }
+                          catch {
+                              Write-Warning "   Could not check review details: $_"
+                          }
+                      }
+                  }
+                  catch {
+                      Write-Warning "   Error checking PR status: $_"
+                  }
+                  
+                  if (-not $approved -and $attempt -lt $maxAttempts) {
+                      Start-Sleep -Seconds 30
+                  }
+                  
+              } while (-not $approved -and $attempt -lt $maxAttempts)
+              
+              if (-not $approved) {
+                  Write-Host ""
+                  Write-Error "Timeout waiting for PR approval after $($maxAttempts * 30) seconds"
+                  exit 1
+              }
+            displayName: 'Wait for PR Approval'
+
+  - stage: BackupTarget
+    displayName: 'Backup Target Environment'
+    dependsOn: 
+      - Setup
+      - CreatePromotionPR
+      - WaitForPRApproval
+    variables:
+      PacToolPath: $[ stageDependencies.Setup.PrepareTools.outputs['PackageDownload.PacToolPath'] ]
+    jobs:
+      - job: CreateBackup
+        displayName: 'Create Target Environment Backup'
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'pac-cli'
+              targetPath: '$(Pipeline.Workspace)\pac-cli'
+            displayName: 'Download PAC CLI'
+
+          - powershell: |
+              $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
+              $pacExe = Join-Path -Path $pacPath -ChildPath "pac.exe"
+              
+              Write-Host "Using PAC CLI from: $pacExe"
+              Write-Host "##vso[task.setvariable variable=PacExe]$pacExe"
+              
+              New-Item -ItemType Directory -Force -Path ".\backup" | Out-Null
+            displayName: 'Initialize PAC CLI'
+
+          - powershell: |
+              $pacExe = "$(PacExe)"
+              $solutionName = "${{ parameters.solutionName }}"
+              $targetEnvName = "${{ parameters.targetEnvironmentName }}"
+              
+              Write-Host "========================================================================"
+              Write-Host "                    BACKUP $targetEnvName ENVIRONMENT                  "
+              Write-Host "========================================================================"
+              Write-Host ""
+              
+              Write-Host "Connecting to $targetEnvName environment: $env:targetEnv"
+              & $pacExe auth create --url "$env:targetEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Failed to authenticate to $targetEnvName environment"
+                  exit 1
+              }
+              
+              Write-Host "Authentication successful"
+              Write-Host ""
+              Write-Host "Creating backup of $targetEnvName environment..."
+              $backupLabel = "Pre-$targetEnvName-Deploy-$solutionName-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+              
+              # Check if solution exists
+              Write-Host "Checking if solution exists in $targetEnvName..."
+              try {
+                  $solutions = & $pacExe solution list | Out-String
+                  if ($solutions -match $solutionName) {
+                      Write-Host "Solution found in $targetEnvName - creating backup..."
+                      
+                      try {
+                          $backupPath = ".\backup\${solutionName}_${targetEnvName}_backup_$(Get-Date -Format 'yyyyMMdd_HHmmss').zip"
+                          & $pacExe solution export --path $backupPath --name "$solutionName" --managed true --async false --overwrite
+                          if ($LASTEXITCODE -eq 0) {
+                              $backupFile = Get-Item $backupPath
+                              Write-Host "Solution backup created successfully"
+                              Write-Host "   File: $backupPath"
+                              Write-Host "   Size: $([math]::Round($backupFile.Length / 1MB, 2)) MB"
+                          } else {
+                              Write-Warning "Solution backup failed, but continuing"
+                          }
+                      }
+                      catch {
+                          Write-Warning "Solution backup failed: $_, but continuing"
+                      }
+                  } else {
+                      Write-Host "Solution not found in $targetEnvName - this will be a new installation"
+                      Write-Host "   No backup needed for new solution"
+                  }
+              }
+              catch {
+                  Write-Warning "Could not check solution list: $_, but continuing"
+              }
+              
+              Write-Host ""
+              Write-Host "Backup process completed"
+            displayName: 'Create Target Environment Backup'
+            continueOnError: true
+            env:
+              targetEnv: $(targetEnv)
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: './backup'
+              ArtifactName: 'target-backup-files'
+            displayName: 'Publish Backup Files'
+            condition: and(succeededOrFailed(), ne(variables['Agent.JobStatus'], 'Canceled'))
+
+  - stage: DeployToQA
+    displayName: 'Deploy to QA'
+    dependsOn:
+      - Setup
+      - CreatePromotionPR
+      - WaitForPRApproval
+      - BackupQA
+    variables:
+      PacToolPath: $[ stageDependencies.Setup.PrepareTools.outputs['PackageDownload.PacToolPath'] ]
+      PullRequestId: $[ stageDependencies.CreatePromotionPR.CreatePR.outputs['CreatePR.PullRequestId'] ]
+    jobs:
+      - job: DeployToQA
+        displayName: 'Deploy Solution to QA'
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'pac-cli'
+              targetPath: '$(Pipeline.Workspace)\pac-cli'
+            displayName: 'Download PAC CLI'
+
+          - checkout: self
+            persistCredentials: true
+
+          - powershell: |
+              $targetBranch = "${{ parameters.targetBranch }}"
+              $solutionName = "${{ parameters.solutionName }}"
+              
+              Write-Host "========================================================================"
+              Write-Host "                    LOCATING SOLUTION FILES                            "
+              Write-Host "========================================================================"
+              Write-Host ""
+              
+              Write-Host "Checking out target branch: $targetBranch"
+              
+              git config --global user.email "azure-pipeline@yourorg.com"
+              git config --global user.name "Azure Pipeline"
+              
+              git fetch origin
+              git checkout $targetBranch
+              git pull origin $targetBranch
+              
+              Write-Host "Current branch: $(git branch --show-current)"
+              Write-Host ""
+              
+              # Locate solution file
+              $managedSolutionPath = ".\solutions\${solutionName}_managed.zip"
+              
+              Write-Host "Looking for solution: $managedSolutionPath"
+              
+              if (-not (Test-Path $managedSolutionPath)) {
+                  Write-Host "Solution not found at expected location, searching..."
+                  
+                  $foundFiles = Get-ChildItem -Path "." -Recurse -Filter "*_managed.zip" -ErrorAction SilentlyContinue
+                  if ($foundFiles) {
+                      Write-Host "Found managed solutions:"
+                      $foundFiles | ForEach-Object { Write-Host "  - $($_.FullName)" }
+                      
+                      $targetFile = $foundFiles | Where-Object { $_.Name -like "*${solutionName}*" } | Select-Object -First 1
+                      if ($targetFile) {
+                          $managedSolutionPath = $targetFile.FullName
+                          Write-Host "Using: $managedSolutionPath"
+                      }
+                  }
+                  
+                  if (-not (Test-Path $managedSolutionPath)) {
+                      Write-Host "Available .zip files:"
+                      Get-ChildItem -Path "." -Recurse -Filter "*.zip" -ErrorAction SilentlyContinue | Select-Object FullName | Format-Table -AutoSize
+                      
+                      Write-Error "Managed solution file not found"
+                      exit 1
+                  }
+              }
+              
+              $solutionFile = Get-Item $managedSolutionPath
+              Write-Host ""
+              Write-Host "Solution located successfully"
+              Write-Host "   Path: $managedSolutionPath"
+              Write-Host "   Size: $([math]::Round($solutionFile.Length / 1MB, 2)) MB"
+              Write-Host "   Last Modified: $($solutionFile.LastWriteTime)"
+              Write-Host ""
+              Write-Host "##vso[task.setvariable variable=ManagedSolutionPath]$managedSolutionPath"
+            displayName: 'Locate Solution Files'
+
+          - powershell: |
+              $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
+              $pacExe = Join-Path -Path $pacPath -ChildPath "pac.exe"
+              
+              Write-Host "##vso[task.setvariable variable=PacExe]$pacExe"
+            displayName: 'Initialize PAC CLI'
+
+          - powershell: |
+              $pacExe = "$(PacExe)"
+              $solutionName = "${{ parameters.solutionName }}"
+              $managedSolutionPath = "$(ManagedSolutionPath)"
+              
+              Write-Host "========================================================================"
+              Write-Host "                    DEPLOYING TO QA ENVIRONMENT                        "
+              Write-Host "========================================================================"
+              Write-Host ""
+              Write-Host "  Solution: $solutionName"
+              Write-Host "  Target: $env:targetEnv"
+              Write-Host "  File: $managedSolutionPath"
+              Write-Host ""
+              
+              Write-Host "Authenticating to QA..."
+              & $pacExe auth create --url "$env:targetEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Authentication failed"
+                  exit 1
+              }
+              
+              Write-Host "Authentication successful"
+              Write-Host ""
+              
+              if (-not (Test-Path $managedSolutionPath)) {
+                  Write-Error "Solution file not found: $managedSolutionPath"
+                  exit 1
+              }
+              
+              # Check existing solution
+              Write-Host "Checking for existing solution..."
+              $solutions = & $pacExe solution list | Out-String
+              if ($solutions -match $solutionName) {
+                  Write-Host "Solution exists in QA"
+                  
+                  $solutionDetails = & $pacExe solution list --json | ConvertFrom-Json
+                  $existingSolution = $solutionDetails | Where-Object { $_.uniqueName -eq $solutionName }
+                  
+                  if ($existingSolution) {
+                      $isManaged = $existingSolution.isManaged
+                      Write-Host "   Type: $(if ($isManaged) { 'Managed' } else { 'Unmanaged' })"
+                      
+                      if ($isManaged -eq $false) {
+                          Write-Host ""
+                          Write-Host "Removing unmanaged solution before importing managed version..."
+                          & $pacExe solution delete --solution-name $solutionName
+                          if ($LASTEXITCODE -ne 0) {
+                              Write-Error "Failed to delete unmanaged solution"
+                              exit 1
+                          }
+                          Write-Host "Unmanaged solution removed"
+                      } else {
+                          Write-Host "   Action: Will upgrade existing managed solution"
+                      }
+                  }
+              } else {
+                  Write-Host "New solution installation (solution not found in QA)"
+              }
+              
+              Write-Host ""
+              Write-Host "========================================================================"
+              Write-Host "Importing solution to QA environment..."
+              Write-Host "========================================================================"
+              Write-Host ""
+              
+              $importOutput = & $pacExe solution import --path $managedSolutionPath --async false --activate-plugins true --force-overwrite true 2>&1
+              $importExitCode = $LASTEXITCODE
+              
+              if ($importExitCode -ne 0) {
+                  Write-Host ""
+                  Write-Host "========================================================================"
+                  Write-Host "                         SOLUTION IMPORT FAILED                        "
+                  Write-Host "========================================================================"
+                  Write-Host ""
+                  
+                  $errorMessage = $importOutput | Out-String
+                  
+                  if ($errorMessage -match "MissingDependencies" -or $errorMessage -match "Some dependencies are missing") {
+                      Write-Host "MISSING DEPENDENCIES DETECTED"
+                      Write-Host ""
+                      
+                      if ($errorMessage -match '<MissingDependencies.*?</MissingDependencies>') {
+                          $xmlContent = $matches[0]
+                          
+                          try {
+                              [xml]$dependenciesXml = $xmlContent
+                              $dependencies = @()
+                              
+                              foreach ($missingDep in $dependenciesXml.MissingDependencies.MissingDependency) {
+                                  $required = $missingDep.Required
+                                  $dependent = $missingDep.Dependent
+                                  
+                                  $dependencies += [PSCustomObject]@{
+                                      'Required Component' = if ($required.displayName) { $required.displayName } else { $required.schemaName }
+                                      'Schema Name' = $required.schemaName
+                                      'Type' = $required.type
+                                      'Parent' = if ($required.parentDisplayName) { $required.parentDisplayName } else { "N/A" }
+                                      'Dependent Component' = if ($dependent.displayName) { $dependent.displayName } else { $dependent.schemaName }
+                                      'Dependent Schema' = if ($dependent.schemaName) { $dependent.schemaName } else { "N/A" }
+                                  }
+                              }
+                              
+                              Write-Host "Missing Dependencies Summary:"
+                              Write-Host ("=" * 120)
+                              $dependencies | Format-Table -AutoSize -Wrap | Out-String | Write-Host
+                              Write-Host ("=" * 120)
+                              Write-Host ""
+                              Write-Host "REQUIRED ACTIONS:"
+                              Write-Host "1. Deploy missing components to QA environment first"
+                              Write-Host "2. OR add these components to your solution in staging"
+                              Write-Host "3. Re-run this deployment"
+                              Write-Host ""
+                              Write-Host "COMPONENT TYPE REFERENCE:"
+                              Write-Host "  Type 1  = Entity/Table"
+                              Write-Host "  Type 2  = Attribute/Field"
+                              Write-Host "  Type 26 = View"
+                              Write-Host "  Type 60 = Form"
+                              Write-Host "  Type 61 = Web Resource"
+                              Write-Host "  Type 80 = Dashboard"
+                              Write-Host ""
+                              
+                              Write-Host "GROUPED BY REQUIRED COMPONENT:"
+                              Write-Host ("=" * 120)
+                              $grouped = $dependencies | Group-Object -Property 'Required Component'
+                              foreach ($group in $grouped) {
+                                  Write-Host ""
+                                  Write-Host "  Missing: $($group.Name)"
+                                  Write-Host "     Schema: $($group.Group[0].'Schema Name')"
+                                  Write-Host "     Type: $($group.Group[0].'Type')"
+                                  Write-Host "     Used by $($group.Count) dependent component(s):"
+                                  foreach ($item in $group.Group) {
+                                      Write-Host "       - $($item.'Dependent Component')"
+                                  }
+                              }
+                              Write-Host ""
+                              Write-Host ("=" * 120)
+                          }
+                          catch {
+                              Write-Host "Could not parse dependency XML:"
+                              Write-Host $errorMessage
+                          }
+                      }
+                      else {
+                          Write-Host "Error details:"
+                          Write-Host $errorMessage
+                      }
+                  }
+                  else {
+                      Write-Host "IMPORT ERROR DETAILS:"
+                      Write-Host $errorMessage
+                  }
+                  
+                  Write-Host ""
+                  Write-Host "========================================================================"
+                  Write-Error "Solution import failed - see details above"
+                  exit 1
+              }
+              
+              Write-Host ""
+              Write-Host "========================================================================"
+              Write-Host "                    DEPLOYMENT SUCCESSFUL                              "
+              Write-Host "========================================================================"
+              Write-Host "  Solution: $solutionName"
+              Write-Host "  Environment: $env:targetEnv"
+              Write-Host "  Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+              Write-Host "========================================================================"
+              Write-Host ""
+            displayName: 'Deploy to QA Environment'
+            env:
+              targetEnv: $(targetEnv)
+
+          - powershell: |
+              Write-Host ""
+              Write-Host "========================================================================"
+              Write-Host "                         QA DEPLOYMENT COMPLETE                        "
+              Write-Host "========================================================================"
+              Write-Host "  Solution: ${{ parameters.solutionName }}"
+              Write-Host "  Source Branch: ${{ parameters.sourceBranch }}"
+              Write-Host "  Target Branch: ${{ parameters.targetBranch }}"
+              Write-Host "  QA Environment: $(targetEnv)"
+              Write-Host "  Status: SUCCESSFULLY DEPLOYED"
+              Write-Host "========================================================================"
+              Write-Host "  Next Steps:"
+              Write-Host "    1. Test the solution in QA environment"
+              Write-Host "    2. Verify all functionality works as expected"
+              Write-Host "    3. Ready for production promotion when QA testing passes"
+              Write-Host "========================================================================"
+              Write-Host ""
+            displayName: 'Deployment Summary'
+            env:
+              targetEnv: $(targetEnv)
