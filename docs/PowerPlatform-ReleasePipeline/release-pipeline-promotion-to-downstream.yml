@@ -19,10 +19,10 @@ parameters:
   - name: targetVariableGroupName
     type: string
     displayName: 'Target Variable Group Name (must contain funcTargetEnv, clientId, clientSecret, tenantId)'
-  - name: targetEnvironmentName
+  - name: settingsVariableGroupName
     type: string
-    displayName: 'Target Environment Display Name (e.g., QA, Production, UAT)'
-    default: 'Target'
+    displayName: 'Settings Variable Group Name (optional - for environment variables and connection references)'
+    default: ''
   - name: autoMergePR
     type: boolean
     displayName: 'Auto-complete PR after creation'
@@ -32,6 +32,8 @@ variables:
   - group: ${{ parameters.targetVariableGroupName }}
   - name: targetEnv
     value: '$(funcTargetEnv)'
+  - ${{ if ne(parameters.settingsVariableGroupName, '') }}:
+    - group: ${{ parameters.settingsVariableGroupName }}
 
 pool:
   vmImage: 'windows-2022'
@@ -47,7 +49,7 @@ stages:
               $solutionName = "${{ parameters.solutionName }}"
               $sourceBranch = "${{ parameters.sourceBranch }}"
               $targetBranch = "${{ parameters.targetBranch }}"
-              $targetEnvName = "${{ parameters.targetEnvironmentName }}"
+              $settingsVarGroup = "${{ parameters.settingsVariableGroupName }}"
               
               Write-Host "========================================================================"
               Write-Host "                    ENVIRONMENT PROMOTION VALIDATION                   "
@@ -76,8 +78,14 @@ stages:
                   exit 1
               }
               
-              Write-Host "  Target Environment: $targetEnvName"
               Write-Host "  Target Variable Group: ${{ parameters.targetVariableGroupName }}"
+              
+              if (-not [string]::IsNullOrWhiteSpace($settingsVarGroup)) {
+                  Write-Host "  Settings Variable Group: $settingsVarGroup"
+              } else {
+                  Write-Host "  Settings Variable Group: (not specified)"
+              }
+              
               Write-Host "========================================================================"
               Write-Host ""
               Write-Host "All validations passed"
@@ -172,7 +180,6 @@ stages:
                 Solution: ${{ parameters.solutionName }}
                 Source Branch: ${{ parameters.sourceBranch }}
                 Target Branch: ${{ parameters.targetBranch }}
-                Target Environment: ${{ parameters.targetEnvironmentName }}
                 
                 BEFORE APPROVING:
                 ---------------------------------------------------------------
@@ -360,7 +367,7 @@ stages:
               $targetBranch = "${{ parameters.targetBranch }}"
               $autoMerge = [System.Convert]::ToBoolean("${{ parameters.autoMergePR }}")
               $targetEnvUrl = "$env:targetEnv"
-              $targetEnvName = "${{ parameters.targetEnvironmentName }}"
+              $settingsVarGroup = "${{ parameters.settingsVariableGroupName }}"
               
               Write-Host "========================================================================"
               Write-Host "                    CREATING PULL REQUEST                              "
@@ -369,12 +376,15 @@ stages:
               
               # Build description using string concatenation to avoid YAML parsing issues
               $nl = [Environment]::NewLine
-              $description = "## Solution Promotion: $sourceBranch to $targetBranch ($targetEnvName)" + $nl + $nl
+              $description = "## Solution Promotion: $sourceBranch to $targetBranch" + $nl + $nl
               $description += "**Solution:** ``$solutionName``" + $nl
               $description += "**Source Branch:** $sourceBranch" + $nl
               $description += "**Target Branch:** $targetBranch" + $nl
-              $description += "**Target Environment:** $targetEnvName" + $nl
-              $description += "**Target Variable Group:** ${{ parameters.targetVariableGroupName }}" + $nl + $nl
+              $description += "**Target Variable Group:** ${{ parameters.targetVariableGroupName }}" + $nl
+              if (-not [string]::IsNullOrWhiteSpace($settingsVarGroup)) {
+                  $description += "**Settings Variable Group:** $settingsVarGroup" + $nl
+              }
+              $description += $nl
               $description += "---" + $nl + $nl
               $description += "### Pre-Deployment Validation Completed" + $nl + $nl
               $description += "This PR was created after:" + $nl
@@ -383,43 +393,59 @@ stages:
               $description += "- Solution file verification in $sourceBranch branch" + $nl + $nl
               $description += "---" + $nl + $nl
               $description += "### What's Included" + $nl + $nl
-              $description += "- Managed solution package (ready for $targetEnvName deployment)" + $nl
+              $description += "- Managed solution package (ready for deployment)" + $nl
               $description += "- Unmanaged solution package (for reference)" + $nl
               $description += "- Unpacked solution source (for detailed review)" + $nl
-              $description += "- Solution checker results from $sourceBranch deployment" + $nl + $nl
+              $description += "- Solution checker results from $sourceBranch deployment" + $nl
+              if (-not [string]::IsNullOrWhiteSpace($settingsVarGroup)) {
+                  $description += "- Environment variables and connection references from settings" + $nl
+              }
+              $description += $nl
               $description += "---" + $nl + $nl
               $description += "### Automated Actions" + $nl + $nl
               $description += "Upon approval and completion of this PR, the pipeline will:" + $nl
-              $description += "1. Authenticate to $targetEnvName environment" + $nl
+              $description += "1. Authenticate to target environment" + $nl
               $description += "2. Create backup of existing solution (if exists)" + $nl
-              $description += "3. Deploy solution to $targetEnvName environment: ``$targetEnvUrl``" + $nl
-              $description += "4. Verify deployment success" + $nl + $nl
+              if (-not [string]::IsNullOrWhiteSpace($settingsVarGroup)) {
+                  $description += "3. Generate deployment settings file (environment variables/connection references)" + $nl
+                  $description += "4. Deploy solution to target environment: ``$targetEnvUrl``" + $nl
+                  $description += "5. Verify deployment success" + $nl + $nl
+              } else {
+                  $description += "3. Deploy solution to target environment: ``$targetEnvUrl``" + $nl
+                  $description += "4. Verify deployment success" + $nl + $nl
+              }
               $description += "---" + $nl + $nl
               $description += "### Review Checklist" + $nl + $nl
               $description += "Before approving this PR, please verify:" + $nl + $nl
               $description += "- [ ] Review solution changes in the unpacked source" + $nl
               $description += "- [ ] Check solution checker results for any issues" + $nl
               $description += "- [ ] Confirm all source environment tests passed successfully" + $nl
-              $description += "- [ ] Verify dependent solutions are already in $targetEnvName" + $nl
-              $description += "- [ ] Validate $targetEnvName environment is ready for deployment" + $nl
+              $description += "- [ ] Verify dependent solutions are already in target" + $nl
+              $description += "- [ ] Validate target environment is ready for deployment" + $nl
               $description += "- [ ] Confirm target environment URL: ``$targetEnvUrl``" + $nl
+              if (-not [string]::IsNullOrWhiteSpace($settingsVarGroup)) {
+                  $description += "- [ ] Verify environment variables and connection references are correct" + $nl
+              }
               $description += "- [ ] Review backup strategy is acceptable" + $nl + $nl
               $description += "---" + $nl + $nl
               $description += "### Deployment Target" + $nl + $nl
-              $description += "**Environment:** $targetEnvName" + $nl
               $description += "**Environment URL:** ``$targetEnvUrl``" + $nl
-              $description += "**Variable Group:** ``${{ parameters.targetVariableGroupName }}``" + $nl + $nl
+              $description += "**Variable Group:** ``${{ parameters.targetVariableGroupName }}``" + $nl
+              if (-not [string]::IsNullOrWhiteSpace($settingsVarGroup)) {
+                  $description += "**Settings Variable Group:** ``$settingsVarGroup``" + $nl
+              }
+              $description += $nl
               $description += "---" + $nl + $nl
               $description += "### Notes" + $nl + $nl
               $description += "- This PR was automatically created after manual source environment approval" + $nl
               $description += "- A backup will be created before deployment" + $nl
               $description += "- Solution will be imported as **managed**" + $nl
-              $description += "- Any unmanaged version in $targetEnvName will be removed first" + $nl + $nl
+              $description += "- Any unmanaged version in target will be removed first" + $nl + $nl
               $description += "---" + $nl + $nl
-              $description += "**Ready for $targetEnvName deployment after your approval!**"
+              $description += "**Ready for deployment after your approval!**"
               
               $prBody = @{
-                  title = "Promote to $targetEnvName`: $solutionName ($sourceBranch to $targetBranch)"
+                  title = "Promote: $solutionName ($sourceBranch to $targetBranch)"
                   sourceRefName = "refs/heads/$promotionBranchName"
                   targetRefName = "refs/heads/$targetBranch"
                   description = $description
@@ -456,8 +482,8 @@ stages:
                   Write-Host ""
                   Write-Host "Next Steps:"
                   Write-Host "  1. Review the PR at: $($prResponse.url)"
-                  Write-Host "  2. Approve the PR to trigger QA deployment"
-                  Write-Host "  3. Monitor the QA deployment pipeline"
+                  Write-Host "  2. Approve the PR to trigger deployment"
+                  Write-Host "  3. Monitor the deployment pipeline"
                   Write-Host ""
                   
                   # Set auto-complete if enabled
@@ -505,7 +531,6 @@ stages:
           - powershell: |
               $prUrl = "$(CreatePR.PullRequestUrl)"
               $prId = "$(CreatePR.PullRequestId)"
-              $targetEnvName = "${{ parameters.targetEnvironmentName }}"
               
               Write-Host ""
               Write-Host "========================================================================"
@@ -513,7 +538,7 @@ stages:
               Write-Host "========================================================================"
               Write-Host "  Solution: ${{ parameters.solutionName }}"
               Write-Host "  From: ${{ parameters.sourceBranch }}"
-              Write-Host "  To: ${{ parameters.targetBranch }} ($targetEnvName)"
+              Write-Host "  To: ${{ parameters.targetBranch }}"
               Write-Host "  PR ID: $prId"
               Write-Host "========================================================================"
               Write-Host "  PR Link: $prUrl"
@@ -669,34 +694,34 @@ stages:
           - powershell: |
               $pacExe = "$(PacExe)"
               $solutionName = "${{ parameters.solutionName }}"
-              $targetEnvName = "${{ parameters.targetEnvironmentName }}"
+              $targetBranch = "${{ parameters.targetBranch }}"
               
               Write-Host "========================================================================"
-              Write-Host "                    BACKUP $targetEnvName ENVIRONMENT                  "
+              Write-Host "                    BACKUP TARGET ENVIRONMENT                          "
               Write-Host "========================================================================"
               Write-Host ""
               
-              Write-Host "Connecting to $targetEnvName environment: $env:targetEnv"
+              Write-Host "Connecting to target environment: $env:targetEnv"
               & $pacExe auth create --url "$env:targetEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
               if ($LASTEXITCODE -ne 0) {
-                  Write-Error "Failed to authenticate to $targetEnvName environment"
+                  Write-Error "Failed to authenticate to target environment"
                   exit 1
               }
               
               Write-Host "Authentication successful"
               Write-Host ""
-              Write-Host "Creating backup of $targetEnvName environment..."
-              $backupLabel = "Pre-$targetEnvName-Deploy-$solutionName-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+              Write-Host "Creating backup of target environment..."
+              $backupLabel = "Pre-Deploy-$solutionName-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
               
               # Check if solution exists
-              Write-Host "Checking if solution exists in $targetEnvName..."
+              Write-Host "Checking if solution exists in target..."
               try {
                   $solutions = & $pacExe solution list | Out-String
                   if ($solutions -match $solutionName) {
-                      Write-Host "Solution found in $targetEnvName - creating backup..."
+                      Write-Host "Solution found in target - creating backup..."
                       
                       try {
-                          $backupPath = ".\backup\${solutionName}_${targetEnvName}_backup_$(Get-Date -Format 'yyyyMMdd_HHmmss').zip"
+                          $backupPath = ".\backup\${solutionName}_${targetBranch}_backup_$(Get-Date -Format 'yyyyMMdd_HHmmss').zip"
                           & $pacExe solution export --path $backupPath --name "$solutionName" --managed true --async false --overwrite
                           if ($LASTEXITCODE -eq 0) {
                               $backupFile = Get-Item $backupPath
@@ -711,7 +736,7 @@ stages:
                           Write-Warning "Solution backup failed: $_, but continuing"
                       }
                   } else {
-                      Write-Host "Solution not found in $targetEnvName - this will be a new installation"
+                      Write-Host "Solution not found in target - this will be a new installation"
                       Write-Host "   No backup needed for new solution"
                   }
               }
@@ -759,7 +784,6 @@ stages:
           - powershell: |
               $targetBranch = "${{ parameters.targetBranch }}"
               $solutionName = "${{ parameters.solutionName }}"
-              $targetEnvName = "${{ parameters.targetEnvironmentName }}"
               
               Write-Host "========================================================================"
               Write-Host "                    LOCATING SOLUTION FILES                            "
@@ -825,21 +849,190 @@ stages:
             displayName: 'Initialize PAC CLI'
 
           - powershell: |
+              $settingsVarGroup = "${{ parameters.settingsVariableGroupName }}"
+              $solutionName = "${{ parameters.solutionName }}"
+              
+              Write-Host "========================================================================"
+              Write-Host "                    GENERATING SETTINGS FILE                           "
+              Write-Host "========================================================================"
+              Write-Host ""
+              
+              # Create deployment-settings directory for artifacts
+              $settingsDir = ".\deployment-settings"
+              New-Item -ItemType Directory -Force -Path $settingsDir | Out-Null
+              
+              if ([string]::IsNullOrWhiteSpace($settingsVarGroup)) {
+                  Write-Host "No settings variable group specified - skipping settings file generation"
+                  
+                  # Create a summary file indicating no settings were used
+                  $summaryContent = @{
+                      Message = "No settings variable group was specified for this deployment"
+                      Timestamp = (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+                      Solution = $solutionName
+                  }
+                  $summaryContent | ConvertTo-Json | Out-File -FilePath "$settingsDir\no-settings-summary.json" -Encoding UTF8
+                  
+                  Write-Host "##vso[task.setvariable variable=SettingsFilePath]"
+                  exit 0
+              }
+              
+              Write-Host "Processing settings from variable group: $settingsVarGroup"
+              Write-Host ""
+              
+              # Initialize arrays for environment variables and connection references
+              $environmentVariables = @()
+              $connectionReferences = @()
+              
+              # Get all environment variables that match our naming convention
+              # Environment variables: env_<name>_SchemaName, env_<name>_Value
+              # Connection references: cr_<name>_LogicalName, cr_<name>_ConnectorId, cr_<name>_ConnectionId
+              
+              $allEnvVars = Get-ChildItem env: | Where-Object { $_.Name -match '^(env_|cr_)' }
+              
+              Write-Host "Found $($allEnvVars.Count) matching variables"
+              Write-Host ""
+              
+              # Group environment variables by prefix (env_1, env_2, etc.)
+              $envVarGroups = @{}
+              $crGroups = @{}
+              
+              foreach ($var in $allEnvVars) {
+                  $name = $var.Name
+                  $value = $var.Value
+                  
+                  if ($name -match '^env_([^_]+)_(.+)$') {
+                      $groupKey = $matches[1]
+                      $property = $matches[2]
+                      
+                      if (-not $envVarGroups.ContainsKey($groupKey)) {
+                          $envVarGroups[$groupKey] = @{}
+                      }
+                      $envVarGroups[$groupKey][$property] = $value
+                      Write-Host "  Environment Variable [$groupKey]: $property = $value"
+                  }
+                  elseif ($name -match '^cr_([^_]+)_(.+)$') {
+                      $groupKey = $matches[1]
+                      $property = $matches[2]
+                      
+                      if (-not $crGroups.ContainsKey($groupKey)) {
+                          $crGroups[$groupKey] = @{}
+                      }
+                      $crGroups[$groupKey][$property] = $value
+                      Write-Host "  Connection Reference [$groupKey]: $property = $value"
+                  }
+              }
+              
+              Write-Host ""
+              
+              # Build environment variables array
+              foreach ($key in $envVarGroups.Keys) {
+                  $group = $envVarGroups[$key]
+                  if ($group.ContainsKey('SchemaName') -and $group.ContainsKey('Value')) {
+                      $environmentVariables += @{
+                          SchemaName = $group['SchemaName']
+                          Value = $group['Value']
+                      }
+                      Write-Host "Added Environment Variable: $($group['SchemaName']) = $($group['Value'])"
+                  } else {
+                      Write-Warning "Environment variable group '$key' is missing SchemaName or Value"
+                  }
+              }
+              
+              # Build connection references array
+              foreach ($key in $crGroups.Keys) {
+                  $group = $crGroups[$key]
+                  if ($group.ContainsKey('LogicalName') -and $group.ContainsKey('ConnectorId') -and $group.ContainsKey('ConnectionId')) {
+                      $connectionReferences += @{
+                          LogicalName = $group['LogicalName']
+                          ConnectorId = $group['ConnectorId']
+                          ConnectionId = $group['ConnectionId']
+                      }
+                      Write-Host "Added Connection Reference: $($group['LogicalName'])"
+                  } else {
+                      Write-Warning "Connection reference group '$key' is missing required properties (LogicalName, ConnectorId, ConnectionId)"
+                  }
+              }
+              
+              Write-Host ""
+              Write-Host "Summary:"
+              Write-Host "  Environment Variables: $($environmentVariables.Count)"
+              Write-Host "  Connection References: $($connectionReferences.Count)"
+              Write-Host ""
+              
+              # Only create settings file if we have something to include
+              if ($environmentVariables.Count -eq 0 -and $connectionReferences.Count -eq 0) {
+                  Write-Host "No environment variables or connection references found - skipping settings file"
+                  
+                  # Create a summary file indicating no settings were found
+                  $summaryContent = @{
+                      Message = "Settings variable group was specified but no matching variables were found"
+                      VariableGroup = $settingsVarGroup
+                      Timestamp = (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+                      Solution = $solutionName
+                      ExpectedFormat = @{
+                          EnvironmentVariables = "env_<id>_SchemaName, env_<id>_Value"
+                          ConnectionReferences = "cr_<id>_LogicalName, cr_<id>_ConnectorId, cr_<id>_ConnectionId"
+                      }
+                  }
+                  $summaryContent | ConvertTo-Json -Depth 5 | Out-File -FilePath "$settingsDir\no-settings-found.json" -Encoding UTF8
+                  
+                  Write-Host "##vso[task.setvariable variable=SettingsFilePath]"
+                  exit 0
+              }
+              
+              # Build settings object
+              $settings = @{
+                  EnvironmentVariables = $environmentVariables
+                  ConnectionReferences = $connectionReferences
+              }
+              
+              # Convert to JSON and save
+              $settingsFilePath = "$settingsDir\deployment-settings.json"
+              $settings | ConvertTo-Json -Depth 10 | Out-File -FilePath $settingsFilePath -Encoding UTF8
+              
+              Write-Host "Settings file created: $settingsFilePath"
+              Write-Host ""
+              Write-Host "Settings file contents:"
+              Write-Host "========================================================================"
+              Get-Content $settingsFilePath | Write-Host
+              Write-Host "========================================================================"
+              Write-Host ""
+              
+              # Also create a metadata file for reference
+              $metadata = @{
+                  GeneratedAt = (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+                  VariableGroup = $settingsVarGroup
+                  Solution = $solutionName
+                  EnvironmentVariablesCount = $environmentVariables.Count
+                  ConnectionReferencesCount = $connectionReferences.Count
+              }
+              $metadata | ConvertTo-Json | Out-File -FilePath "$settingsDir\settings-metadata.json" -Encoding UTF8
+              
+              Write-Host "##vso[task.setvariable variable=SettingsFilePath]$settingsFilePath"
+              Write-Host "##vso[task.setvariable variable=SettingsDir]$settingsDir"
+            displayName: 'Generate Deployment Settings File'
+
+          - powershell: |
               $pacExe = "$(PacExe)"
               $solutionName = "${{ parameters.solutionName }}"
               $managedSolutionPath = "$(ManagedSolutionPath)"
-              $targetEnvName = "${{ parameters.targetEnvironmentName }}"
+              $targetBranch = "${{ parameters.targetBranch }}"
+              $settingsFilePath = "$(SettingsFilePath)"
               
               Write-Host "========================================================================"
-              Write-Host "                    DEPLOYING TO $targetEnvName ENVIRONMENT            "
+              Write-Host "                    DEPLOYING TO TARGET ENVIRONMENT                    "
               Write-Host "========================================================================"
               Write-Host ""
               Write-Host "  Solution: $solutionName"
-              Write-Host "  Target: $env:targetEnv"
+              Write-Host "  Target Branch: $targetBranch"
+              Write-Host "  Target URL: $env:targetEnv"
               Write-Host "  File: $managedSolutionPath"
+              if (-not [string]::IsNullOrWhiteSpace($settingsFilePath)) {
+                  Write-Host "  Settings File: $settingsFilePath"
+              }
               Write-Host ""
               
-              Write-Host "Authenticating to $targetEnvName..."
+              Write-Host "Authenticating to target environment..."
               & $pacExe auth create --url "$env:targetEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
               if ($LASTEXITCODE -ne 0) {
                   Write-Error "Authentication failed"
@@ -858,7 +1051,7 @@ stages:
               Write-Host "Checking for existing solution..."
               $solutions = & $pacExe solution list | Out-String
               if ($solutions -match $solutionName) {
-                  Write-Host "Solution exists in $targetEnvName"
+                  Write-Host "Solution exists in target environment"
                   
                   $solutionDetails = & $pacExe solution list --json | ConvertFrom-Json
                   $existingSolution = $solutionDetails | Where-Object { $_.uniqueName -eq $solutionName }
@@ -881,16 +1074,29 @@ stages:
                       }
                   }
               } else {
-                  Write-Host "New solution installation (solution not found in $targetEnvName)"
+                  Write-Host "New solution installation (solution not found in target)"
               }
               
               Write-Host ""
               Write-Host "========================================================================"
-              Write-Host "Importing solution to $targetEnvName environment..."
+              Write-Host "Importing solution to target environment..."
               Write-Host "========================================================================"
               Write-Host ""
               
-              $importOutput = & $pacExe solution import --path $managedSolutionPath --async false --activate-plugins true --force-overwrite true 2>&1
+              # Build import command based on whether we have a settings file
+              if (-not [string]::IsNullOrWhiteSpace($settingsFilePath) -and (Test-Path $settingsFilePath)) {
+                  Write-Host "Using settings file: $settingsFilePath"
+                  Write-Host ""
+                  Write-Host "Settings file contents:"
+                  Get-Content $settingsFilePath | Write-Host
+                  Write-Host ""
+                  $importOutput = & $pacExe solution import --path $managedSolutionPath --settings-file $settingsFilePath --async false --activate-plugins true --force-overwrite true 2>&1
+              } else {
+                  Write-Host "No settings file - importing without environment variables"
+                  Write-Host ""
+                  $importOutput = & $pacExe solution import --path $managedSolutionPath --async false --activate-plugins true --force-overwrite true 2>&1
+              }
+              
               $importExitCode = $LASTEXITCODE
               
               if ($importExitCode -ne 0) {
@@ -933,7 +1139,7 @@ stages:
                               Write-Host ("=" * 120)
                               Write-Host ""
                               Write-Host "REQUIRED ACTIONS:"
-                              Write-Host "1. Deploy missing components to $targetEnvName environment first"
+                              Write-Host "1. Deploy missing components to target environment first"
                               Write-Host "2. OR add these components to your solution in source environment"
                               Write-Host "3. Re-run this deployment"
                               Write-Host ""
@@ -988,8 +1194,8 @@ stages:
               Write-Host "                    DEPLOYMENT SUCCESSFUL                              "
               Write-Host "========================================================================"
               Write-Host "  Solution: $solutionName"
-              Write-Host "  Environment: $targetEnvName"
-              Write-Host "  URL: $env:targetEnv"
+              Write-Host "  Target Branch: $targetBranch"
+              Write-Host "  Environment URL: $env:targetEnv"
               Write-Host "  Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
               Write-Host "========================================================================"
               Write-Host ""
@@ -997,9 +1203,14 @@ stages:
             env:
               targetEnv: $(targetEnv)
 
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: './deployment-settings'
+              ArtifactName: 'deployment-settings'
+            displayName: 'Publish Deployment Settings'
+            condition: and(succeededOrFailed(), ne(variables['Agent.JobStatus'], 'Canceled'))
+
           - powershell: |
-              $targetEnvName = "${{ parameters.targetEnvironmentName }}"
-              
               Write-Host ""
               Write-Host "========================================================================"
               Write-Host "                         DEPLOYMENT COMPLETE                           "
@@ -1007,12 +1218,15 @@ stages:
               Write-Host "  Solution: ${{ parameters.solutionName }}"
               Write-Host "  Source Branch: ${{ parameters.sourceBranch }}"
               Write-Host "  Target Branch: ${{ parameters.targetBranch }}"
-              Write-Host "  Target Environment: $targetEnvName"
               Write-Host "  Environment URL: $(targetEnv)"
               Write-Host "  Status: SUCCESSFULLY DEPLOYED"
               Write-Host "========================================================================"
+              Write-Host "  Artifacts Published:"
+              Write-Host "    - target-backup-files: Backup of existing solution (if any)"
+              Write-Host "    - deployment-settings: Environment variables and connection refs"
+              Write-Host "========================================================================"
               Write-Host "  Next Steps:"
-              Write-Host "    1. Test the solution in $targetEnvName environment"
+              Write-Host "    1. Test the solution in target environment"
               Write-Host "    2. Verify all functionality works as expected"
               Write-Host "    3. Ready for next environment promotion when testing passes"
               Write-Host "========================================================================"
