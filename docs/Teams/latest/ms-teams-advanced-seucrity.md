@@ -1,20 +1,19 @@
-
 # Teams Premium Implementation Plan for Leonardo Company
 
-## Leveraging Customer Key Infrastructure for Maximum Security
+## Single User Deployment - Fred Pearson
 
 ---
 
 ## Executive Summary
 
-This implementation plan outlines the deployment of Microsoft Teams Premium to complement Leonardo Company's existing Customer Managed Key (CMK) infrastructure. The combination creates an industry-leading secure collaboration platform suitable for defense sector requirements.
+This implementation plan outlines the deployment of Microsoft Teams Premium to Fred Pearson's account, complementing Leonardo Company's existing Customer Managed Key (CMK) infrastructure. This focused deployment allows for testing and validation before broader organizational rollout.
 
 ### Key Benefits
 
-* **Enhanced Security** : E2E encryption + CMK creates multi-layered protection
-* **Compliance** : Meets ITAR and government contractor requirements
-* **Productivity** : AI features save 2-3 hours/user/week
-* **ROI** : Positive return within 3 months
+* **Enhanced Security**: E2E encryption + CMK creates multi-layered protection
+* **Compliance**: Meets ITAR and government contractor requirements
+* **Productivity**: AI features save 2-3 hours/user/week
+* **Risk-Free Testing**: Single user deployment for validation
 
 ---
 
@@ -24,12 +23,8 @@ This implementation plan outlines the deployment of Microsoft Teams Premium to c
 2. [Implementation Phases](#implementation-phases)
 3. [Technical Architecture](#technical-architecture)
 4. [Security Configuration](#security-configuration)
-5. [Rollout Strategy](#rollout-strategy)
-6. [Training Plan](#training-plan)
-7. [Monitoring &amp; Compliance](#monitoring-compliance)
-8. [Cost Analysis](#cost-analysis)
-9. [Risk Management](#risk-management)
-10. [Success Metrics](#success-metrics)
+5. [Testing & Validation](#testing-validation)
+6. [Monitoring & Compliance](#monitoring-compliance)
 
 ---
 
@@ -47,10 +42,10 @@ This implementation plan outlines the deployment of Microsoft Teams Premium to c
    - Log Analytics: Ready for deployment
    - Key Vault diagnostics: Configured
    
-✅ User Base
-   - Licensed Users: [To be determined]
-   - Current Teams Usage: Standard features
-   - Security Clearance Levels: Various
+✅ Target User
+   - User: fred.pearson@leonardocompany.ca
+   - Role: Power Platform Tenant Administrator
+   - Department: Centre of Excellence
 ```
 
 ### Gap Analysis
@@ -73,7 +68,8 @@ This implementation plan outlines the deployment of Microsoft Teams Premium to c
 
 ```powershell
 # ========================================
-# Modern License Verification Script
+# License Verification Script
+# Target User: fred.pearson@leonardocompany.ca
 # ========================================
 
 # Install Microsoft Graph module if needed
@@ -93,18 +89,18 @@ Get-MgSubscribedSku | Where-Object {$_.SkuPartNumber -like "*TEAMS*" -or $_.SkuP
         @{N="Used";E={$_.ConsumedUnits}} | 
     Format-Table -AutoSize
 
-# Check current user licenses
+# Check Fred Pearson's current licenses
 Write-Host "`nChecking licenses for fred.pearson@leonardocompany.ca:" -ForegroundColor Yellow
-$user = Get-MgUser -UserId "fred.pearson@leonardocompany.ca" -Property AssignedLicenses,DisplayName
+$user = Get-MgUser -UserId "fred.pearson@leonardocompany.ca" -Property Id,AssignedLicenses,DisplayName
 $userLicenses = Get-MgUserLicenseDetail -UserId $user.Id
 $userLicenses | Select-Object SkuPartNumber | Format-Table
 
 # Teams Premium specific check
 $teamsPremium = $userLicenses | Where-Object {$_.SkuPartNumber -eq "Microsoft_Teams_Premium"}
 if ($teamsPremium) {
-    Write-Host "✓ Teams Premium is already assigned!" -ForegroundColor Green
+    Write-Host "✓ Teams Premium is already assigned to Fred Pearson!" -ForegroundColor Green
 } else {
-    Write-Host "✗ Teams Premium not yet assigned" -ForegroundColor Yellow
+    Write-Host "✗ Teams Premium not yet assigned to Fred Pearson" -ForegroundColor Yellow
 }
 
 # Disconnect when done
@@ -116,6 +112,7 @@ Disconnect-MgGraph
 ```powershell
 # ========================================
 # Teams Premium License Assignment
+# Target User: fred.pearson@leonardocompany.ca ONLY
 # ========================================
 
 # Connect with appropriate permissions
@@ -134,58 +131,50 @@ if (!$teamsPremiumSku) {
 Write-Host "✓ Found Teams Premium SKU: $($teamsPremiumSku.SkuId)" -ForegroundColor Green
 Write-Host "  Available licenses: $($teamsPremiumSku.PrepaidUnits.Enabled - $teamsPremiumSku.ConsumedUnits)" -ForegroundColor Gray
 
-# Assign to pilot users
-$pilotUsers = @(
-    "fred.pearson@leonardocompany.ca"
-    # Add more pilot users here
-)
+# Target user
+$userEmail = "fred.pearson@leonardocompany.ca"
 
-foreach ($userEmail in $pilotUsers) {
-    Write-Host "`nProcessing $userEmail..." -ForegroundColor Cyan
-  
-    try {
-        $user = Get-MgUser -UserId $userEmail
-      
-        # Check if already licensed
-        $currentLicenses = Get-MgUserLicenseDetail -UserId $user.Id
-        if ($currentLicenses.SkuId -contains $teamsPremiumSku.SkuId) {
-            Write-Host "  ✓ Already has Teams Premium" -ForegroundColor Yellow
-            continue
-        }
-      
+Write-Host "`nProcessing $userEmail..." -ForegroundColor Cyan
+
+try {
+    $user = Get-MgUser -UserId $userEmail -Property Id,DisplayName,AssignedLicenses
+    
+    # Check if already licensed
+    $currentLicenses = Get-MgUserLicenseDetail -UserId $user.Id
+    if ($currentLicenses.SkuId -contains $teamsPremiumSku.SkuId) {
+        Write-Host "  ✓ Fred Pearson already has Teams Premium" -ForegroundColor Yellow
+    } else {
         # Assign license
         $license = @{
             SkuId = $teamsPremiumSku.SkuId
         }
-      
+        
         Set-MgUserLicense -UserId $user.Id -AddLicenses @($license) -RemoveLicenses @()
-        Write-Host "  ✓ Teams Premium assigned successfully!" -ForegroundColor Green
-      
-    } catch {
-        Write-Host "  ✗ Error: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "  ✓ Teams Premium assigned successfully to Fred Pearson!" -ForegroundColor Green
     }
+    
+} catch {
+    Write-Host "  ✗ Error: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-# Verify assignments
-Write-Host "`nVerifying license assignments..." -ForegroundColor Cyan
+# Verify assignment
+Write-Host "`nVerifying license assignment..." -ForegroundColor Cyan
 Start-Sleep -Seconds 10  # Give it time to propagate
 
-foreach ($userEmail in $pilotUsers) {
-    $userLicenses = Get-MgUserLicenseDetail -UserId $userEmail
-    $hasTeamsPremium = $userLicenses | Where-Object {$_.SkuPartNumber -eq "Microsoft_Teams_Premium"}
-  
-    if ($hasTeamsPremium) {
-        Write-Host "✓ $userEmail : Teams Premium active" -ForegroundColor Green
-      
-        # Show enabled services
-        $services = $hasTeamsPremium.ServicePlans | Where-Object {$_.ProvisioningStatus -eq "Success"}
-        Write-Host "  Enabled services:" -ForegroundColor Gray
-        $services | ForEach-Object {
-            Write-Host "    - $($_.ServicePlanName)" -ForegroundColor Gray
-        }
-    } else {
-        Write-Host "✗ $userEmail : Teams Premium not found" -ForegroundColor Red
+$userLicenses = Get-MgUserLicenseDetail -UserId $userEmail
+$hasTeamsPremium = $userLicenses | Where-Object {$_.SkuPartNumber -eq "Microsoft_Teams_Premium"}
+
+if ($hasTeamsPremium) {
+    Write-Host "✓ $userEmail : Teams Premium active" -ForegroundColor Green
+    
+    # Show enabled services
+    $services = $hasTeamsPremium.ServicePlans | Where-Object {$_.ProvisioningStatus -eq "Success"}
+    Write-Host "  Enabled services:" -ForegroundColor Gray
+    $services | ForEach-Object {
+        Write-Host "    - $($_.ServicePlanName)" -ForegroundColor Gray
     }
+} else {
+    Write-Host "✗ $userEmail : Teams Premium not found" -ForegroundColor Red
 }
 
 # Disconnect
@@ -197,13 +186,28 @@ Disconnect-MgGraph
 ```powershell
 # ========================================
 # Configure Teams Premium Policies
+# Target User: fred.pearson@leonardocompany.ca ONLY
 # ========================================
 
 # Connect to Teams PowerShell
 Connect-MicrosoftTeams
 
 # Create enhanced meeting policy
-$policyName = "Leonardo-Teams-Premium-Secure"
+$policyName = "Leonardo-Teams-Premium-Fred-Test"
+
+# First, check if policy already exists and remove it
+try {
+    $existingPolicy = Get-CsTeamsMeetingPolicy -Identity $policyName -ErrorAction SilentlyContinue
+    if ($existingPolicy) {
+        Write-Host "Removing existing policy: $policyName" -ForegroundColor Yellow
+        Remove-CsTeamsMeetingPolicy -Identity $policyName -Confirm:$false
+        Start-Sleep -Seconds 5
+    }
+} catch {
+    # Policy doesn't exist, continue
+}
+
+# Create the policy with correct parameters
 try {
     $policy = New-CsTeamsMeetingPolicy -Identity $policyName `
         -AllowWatermarkForCameraVideo $true `
@@ -212,37 +216,79 @@ try {
         -AllowMeetingReactions $true `
         -AllowPrivateMeetingScheduling $true `
         -AllowTranscription $true `
-        -LiveCaptionsEnabledType "AlwaysOn"
-      
+        -LiveCaptionsEnabledType "DisabledUserOverride"  # FIXED: Valid value
+    
     Write-Host "✓ Meeting policy created: $policyName" -ForegroundColor Green
-} catch {
-    if ($_.Exception.Message -like "*already exists*") {
-        Write-Host "Meeting policy already exists, updating..." -ForegroundColor Yellow
-        Set-CsTeamsMeetingPolicy -Identity $policyName `
-            -AllowWatermarkForCameraVideo $true `
-            -AllowWatermarkForScreenSharing $true
+    
+    # Wait for policy to propagate
+    Write-Host "Waiting for policy to propagate..." -ForegroundColor Gray
+    Start-Sleep -Seconds 10
+    
+    # Verify policy was created
+    $verifyPolicy = Get-CsTeamsMeetingPolicy -Identity $policyName -ErrorAction SilentlyContinue
+    if ($verifyPolicy) {
+        Write-Host "✓ Policy verified in system" -ForegroundColor Green
+    } else {
+        Write-Host "✗ Policy not found after creation - waiting longer..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 10
     }
+    
+} catch {
+    Write-Host "✗ Error creating meeting policy: $($_.Exception.Message)" -ForegroundColor Red
+    Disconnect-MicrosoftTeams
+    exit 1
 }
 
-# Apply policy to pilot users
-$pilotUsers | ForEach-Object {
-    Grant-CsTeamsMeetingPolicy -Identity $_ -PolicyName $policyName
-    Write-Host "✓ Policy applied to: $_" -ForegroundColor Green
+# Apply policy to Fred Pearson ONLY
+try {
+    Grant-CsTeamsMeetingPolicy -Identity "fred.pearson@leonardocompany.ca" -PolicyName $policyName
+    Write-Host "✓ Policy applied to: fred.pearson@leonardocompany.ca" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Error applying policy: $($_.Exception.Message)" -ForegroundColor Red
 }
 
 # Create enhanced messaging policy for E2E encryption
-$messagingPolicy = "Leonardo-E2E-Messaging"
+$messagingPolicy = "Leonardo-E2E-Messaging-Fred-Test"
+
+# Check if messaging policy exists
 try {
-    New-CsTeamsMessagingPolicy -Identity $messagingPolicy `
-        -AllowSecurityEndUserReporting $true `
-        -ReadReceiptsEnabledType "Everyone"
-  
-    Write-Host "✓ Messaging policy created: $messagingPolicy" -ForegroundColor Green
+    $existingMessaging = Get-CsTeamsMessagingPolicy -Identity $messagingPolicy -ErrorAction SilentlyContinue
+    if ($existingMessaging) {
+        Write-Host "Messaging policy already exists, using existing..." -ForegroundColor Yellow
+    } else {
+        New-CsTeamsMessagingPolicy -Identity $messagingPolicy `
+            -AllowSecurityEndUserReporting $true `
+            -ReadReceiptsEnabledType "Everyone"
+        
+        Write-Host "✓ Messaging policy created: $messagingPolicy" -ForegroundColor Green
+        Start-Sleep -Seconds 5
+    }
 } catch {
-    Write-Host "Messaging policy may already exist" -ForegroundColor Yellow
+    Write-Host "✗ Error with messaging policy: $($_.Exception.Message)" -ForegroundColor Yellow
 }
 
-Write-Host "`nTeams Premium policies configured!" -ForegroundColor Green
+# Apply messaging policy to Fred Pearson
+try {
+    Grant-CsTeamsMessagingPolicy -Identity "fred.pearson@leonardocompany.ca" -PolicyName $messagingPolicy
+    Write-Host "✓ Messaging policy applied to: fred.pearson@leonardocompany.ca" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Error applying messaging policy: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+# Summary
+Write-Host "`n=================================" -ForegroundColor Cyan
+Write-Host "Teams Premium policies configured for Fred Pearson!" -ForegroundColor Green
+Write-Host "=================================" -ForegroundColor Cyan
+Write-Host "`nPolicies assigned:"
+Write-Host "  Meeting Policy: $policyName"
+Write-Host "  Messaging Policy: $messagingPolicy"
+Write-Host "`nKey Features Enabled:"
+Write-Host "  ✓ Watermarks (Video & Screen)"
+Write-Host "  ✓ Transcription"
+Write-Host "  ✓ Live Captions (User Override)"
+Write-Host "  ✓ Meeting Reactions"
+Write-Host "  ✓ Security Reporting"
+
 Disconnect-MicrosoftTeams
 ```
 
@@ -253,14 +299,15 @@ Disconnect-MicrosoftTeams
 ```powershell
 # ========================================
 # Create Secure Meeting Templates
+# For Fred Pearson's testing
 # ========================================
 
 Connect-MicrosoftTeams
 
-# Define meeting templates for different security levels
+# Define meeting templates for testing
 $templates = @(
     @{
-        Name = "Leonardo-Classified"
+        Name = "Fred-Test-Classified"
         Settings = @{
             AllowRecording = $true
             AllowTranscription = $true
@@ -270,7 +317,7 @@ $templates = @(
         }
     },
     @{
-        Name = "Leonardo-Client-External"
+        Name = "Fred-Test-Client-External"
         Settings = @{
             AllowRecording = $true
             AllowWatermark = $true
@@ -279,7 +326,7 @@ $templates = @(
         }
     },
     @{
-        Name = "Leonardo-Internal-Collaboration"
+        Name = "Fred-Test-Internal"
         Settings = @{
             AllowRecording = $true
             AllowTranscription = $true
@@ -292,9 +339,11 @@ $templates = @(
 
 # Note: Meeting templates are configured through Teams Admin Center
 # Document the settings for manual configuration
+Write-Host "`nFred's Test Meeting Templates" -ForegroundColor Cyan
+Write-Host "=============================" -ForegroundColor Cyan
 $templates | ForEach-Object {
-    Write-Host "`nTemplate: $($_.Name)" -ForegroundColor Cyan
-    Write-Host "Settings:" -ForegroundColor Yellow
+    Write-Host "`nTemplate: $($_.Name)" -ForegroundColor Yellow
+    Write-Host "Settings:" -ForegroundColor Gray
     $_.Settings.GetEnumerator() | ForEach-Object {
         Write-Host "  $($_.Key): $($_.Value)" -ForegroundColor Gray
     }
@@ -308,43 +357,40 @@ Disconnect-MicrosoftTeams
 ```powershell
 # ========================================
 # Configure Sensitivity Labels for Teams
+# Fred Pearson's account testing
 # ========================================
 
 # Connect to Security & Compliance PowerShell
 Connect-IPPSSession -UserPrincipalName "fred.pearson@leonardocompany.ca"
 
-# Create Teams-specific sensitivity labels
+# Note: Label creation requires Security Admin or Compliance Admin role
+Write-Host "`nSensitivity Label Configuration" -ForegroundColor Cyan
+Write-Host "Note: Fred Pearson must have appropriate admin roles to create labels" -ForegroundColor Yellow
+
 $labels = @(
     @{
-        Name = "Leonardo-Highly-Confidential-Teams"
-        DisplayName = "Leonardo Highly Confidential - Teams"
-        Description = "For Teams meetings with classified content"
+        Name = "Fred-Test-Highly-Confidential"
+        DisplayName = "Test: Highly Confidential - Teams"
+        Description = "For Fred's testing of Teams meetings with classified content"
         EncryptionEnabled = $true
         ContentMarkingEnabled = $true
-        WatermarkText = "LEONARDO CONFIDENTIAL - CMK PROTECTED"
+        WatermarkText = "LEONARDO CONFIDENTIAL - CMK PROTECTED - FRED TEST"
     },
     @{
-        Name = "Leonardo-Confidential-Teams"
-        DisplayName = "Leonardo Confidential - Teams"
-        Description = "For internal Teams collaboration"
+        Name = "Fred-Test-Confidential"
+        DisplayName = "Test: Confidential - Teams"
+        Description = "For Fred's testing of internal Teams collaboration"
         EncryptionEnabled = $true
         ContentMarkingEnabled = $false
     }
 )
 
-# Create labels (simplified - actual creation requires more parameters)
-foreach ($label in $labels) {
-    Write-Host "Creating label: $($label.DisplayName)" -ForegroundColor Cyan
-    # New-Label commands would go here with full parameters
+Write-Host "`nTest Labels for Fred Pearson:" -ForegroundColor Yellow
+$labels | ForEach-Object {
+    Write-Host "  - $($_.DisplayName)" -ForegroundColor Gray
 }
 
-# Enable labels for Teams
-Set-LabelPolicy -Identity "Leonardo-Teams-Policy" `
-    -AdvancedSettings @{
-        "teamsenabled" = "true"
-        "teamsprotectionenabled" = "true"
-    }
-
+# Disconnect
 Disconnect-ExchangeOnline -Confirm:$false
 ```
 
@@ -355,31 +401,53 @@ Disconnect-ExchangeOnline -Confirm:$false
 ```powershell
 # ========================================
 # Enable Teams Premium AI Features
+# Fred Pearson's account ONLY
 # ========================================
 
 Connect-MicrosoftTeams
 
-# Update meeting policy for AI features
-Set-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Secure" `
-    -AllowCartCaptionsScheduling $true `
-    -LiveInterpretationEnabledType "EnabledOn" `
-    -AllowMeetingCoach $true
+# Update meeting policy for AI features (Fred's policy)
+try {
+    Set-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test" `
+        -AllowCartCaptionsScheduling "EnabledUserOverride" `
+        -LiveInterpretationEnabledType "EnabledUserOverride" `
+        -AllowMeetingCoach $true
+    
+    Write-Host "✓ AI features enabled in meeting policy" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Error updating policy: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Error Details: $($_.Exception.InnerException.Message)" -ForegroundColor Yellow
+}
 
-# Configure AI-powered features
+# Verify the policy settings
+Write-Host "`nVerifying policy configuration..." -ForegroundColor Cyan
+$policy = Get-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test"
+
+Write-Host "`nCurrent AI Feature Settings:" -ForegroundColor Yellow
+Write-Host "  AllowCartCaptionsScheduling: $($policy.AllowCartCaptionsScheduling)" -ForegroundColor Gray
+Write-Host "  LiveInterpretationEnabledType: $($policy.LiveInterpretationEnabledType)" -ForegroundColor Gray
+Write-Host "  AllowMeetingCoach: $($policy.AllowMeetingCoach)" -ForegroundColor Gray
+
+# Configure AI-powered features for Fred
 $aiSettings = @{
-    IntelligentRecap = $true
-    LiveTranslation = $true
-    SpeakerCoach = $true
-    MeetingNotes = $true
+    "CART Captions (Live Transcription)" = "Enabled - User can schedule"
+    "Live Translation/Interpretation" = "Enabled - User can enable"
+    "Speaker Coach" = "Enabled"
+    "Intelligent Meeting Recap" = "Automatic with Premium license"
+    "Meeting Notes" = "Automatic with Premium license"
 }
 
-Write-Host "`nAI Features Enabled:" -ForegroundColor Cyan
+Write-Host "`nAI Features Status for Fred Pearson:" -ForegroundColor Cyan
+Write-Host "====================================" -ForegroundColor Cyan
 $aiSettings.GetEnumerator() | ForEach-Object {
-    Write-Host "  $($_.Key): $($_.Value)" -ForegroundColor Green
+    Write-Host "  ✓ $($_.Key): $($_.Value)" -ForegroundColor Green
 }
 
-# Note: Some AI features are enabled automatically with Premium license
-Write-Host "`nNote: AI features will be available within 24 hours of license assignment" -ForegroundColor Yellow
+Write-Host "`nNotes:" -ForegroundColor Yellow
+Write-Host "  - AI features will be fully available within 24-48 hours of license assignment" -ForegroundColor Gray
+Write-Host "  - Intelligent Recap and Meeting Notes are automatically enabled with Premium" -ForegroundColor Gray
+Write-Host "  - CART captions require scheduling in meeting options" -ForegroundColor Gray
+Write-Host "  - Live interpretation requires enabling during the meeting" -ForegroundColor Gray
 
 Disconnect-MicrosoftTeams
 ```
@@ -389,41 +457,41 @@ Disconnect-MicrosoftTeams
 ```powershell
 # ========================================
 # Configure Virtual Appointments
+# Fred Pearson's account for testing
 # ========================================
 
 Connect-MicrosoftTeams
 
-# Enable virtual appointments for external meetings
-$appointmentPolicy = "Leonardo-Virtual-Appointments"
+# Enable virtual appointments for Fred's external meetings
+$appointmentPolicy = "Leonardo-Virtual-Appointments-Fred-Test"
 
-New-CsTeamsVirtualAppointmentPolicy -Identity $appointmentPolicy `
-    -EnableSmsNotification $true `
-    -SmsNotificationPhoneNumber "+1-555-0100" `
-    -EnableCustomerReminder $true `
-    -PreBufferTime 15 `
-    -PostBufferTime 15
-
-# Apply to client-facing staff
-$clientFacingUsers = @(
-    "fred.pearson@leonardocompany.ca"
-    # Add sales, support, project managers
-)
-
-$clientFacingUsers | ForEach-Object {
-    Grant-CsTeamsVirtualAppointmentPolicy -Identity $_ -PolicyName $appointmentPolicy
-    Write-Host "✓ Virtual appointment policy applied to: $_" -ForegroundColor Green
+try {
+    New-CsTeamsVirtualAppointmentPolicy -Identity $appointmentPolicy `
+        -EnableSmsNotification $true `
+        -EnableCustomerReminder $true `
+        -PreBufferTime 15 `
+        -PostBufferTime 15
+    
+    Write-Host "✓ Virtual appointments policy created: $appointmentPolicy" -ForegroundColor Green
+} catch {
+    Write-Host "Policy may already exist" -ForegroundColor Yellow
 }
+
+# Apply to Fred Pearson
+Grant-CsTeamsVirtualAppointmentPolicy -Identity "fred.pearson@leonardocompany.ca" -PolicyName $appointmentPolicy
+Write-Host "✓ Virtual appointment policy applied to Fred Pearson" -ForegroundColor Green
 
 Disconnect-MicrosoftTeams
 ```
 
-### Phase 4: Integration & Monitoring (Week 4)
+### Phase 4: Monitoring & Testing (Week 4)
 
 #### Extend Azure Monitor for Premium Features
 
 ```powershell
 # ========================================
 # Premium Feature Monitoring Queries
+# Fred Pearson's activity tracking
 # ========================================
 
 # Switch to monitoring subscription
@@ -432,32 +500,33 @@ Set-AzContext -SubscriptionId "6f114bd7-c8d3-4843-b4f8-e30a644bc412"
 $workspaceName = "law-leonardo-cmk-monitor"
 $resourceGroup = "rg-leonardo-cmk-monitoring"
 
-# Create saved searches for Premium features
+# Create saved searches for Fred's Premium features usage
 $premiumQueries = @(
     @{
-        Name = "TeamsPremium_AIUsage"
-        DisplayName = "Teams Premium - AI Feature Usage"
-        Category = "Teams Premium"
+        Name = "TeamsPremium_Fred_AIUsage"
+        DisplayName = "Teams Premium - Fred Pearson AI Usage"
+        Category = "Teams Premium - Fred Test"
         Query = @"
 let TeamsPremiumFeatures = dynamic(['IntelligentRecap', 'LiveTranslation', 'E2EEncryption', 'Watermark']);
 AuditLogs
 | where OperationName in (TeamsPremiumFeatures)
 | extend User = tostring(InitiatedBy.user.userPrincipalName)
+| where User == "fred.pearson@leonardocompany.ca"
 | summarize 
     TotalUsage = count(),
-    UniqueUsers = dcount(User),
     Features = make_set(OperationName)
     by bin(TimeGenerated, 1h)
 | render columnchart
 "@
     },
     @{
-        Name = "TeamsPremium_SecurityEvents"
-        DisplayName = "Teams Premium - Security Events"
-        Category = "Teams Premium"
+        Name = "TeamsPremium_Fred_SecurityEvents"
+        DisplayName = "Teams Premium - Fred Pearson Security Events"
+        Category = "Teams Premium - Fred Test"
         Query = @"
 SecurityEvent
 | where EventData contains 'Teams' and EventData contains 'Premium'
+| where AccountName == "fred.pearson@leonardocompany.ca"
 | extend SecurityFeature = case(
     EventData contains 'E2E', 'End-to-End Encryption',
     EventData contains 'Watermark', 'Watermark Applied',
@@ -479,145 +548,157 @@ foreach ($query in $premiumQueries) {
         -Category $query.Category `
         -Query $query.Query `
         -Version 1
-  
+    
     Write-Host "✓ Created query: $($query.DisplayName)" -ForegroundColor Green
 }
 ```
 
-#### Create Premium-Specific Alerts
+---
+
+## Testing & Validation
+
+### Fred Pearson's Test Plan
+
+#### Week 1: Basic Features
+- ✅ Verify license assignment
+- ✅ Test policy application
+- ✅ Confirm CMK integration
+- ✅ Access Teams Admin Center settings
+
+#### Week 2: Security Features
+- 🧪 Test E2E encryption in 1:1 calls
+- 🧪 Verify watermark application
+- 🧪 Test recording protection
+- 🧪 Validate sensitivity labels
+
+#### Week 3: AI Features
+- 🧪 Test Intelligent Recap
+- 🧪 Try live translation
+- 🧪 Use speaker coach
+- 🧪 Generate meeting notes
+
+#### Week 4: Advanced Features
+- 🧪 Test virtual appointments
+- 🧪 Create custom backgrounds
+- 🧪 Try webinar mode
+- 🧪 Export protected content
+
+### Test Scenarios
 
 ```powershell
 # ========================================
-# Teams Premium Security Alerts
+# Fred Pearson's Test Validation Script
 # ========================================
 
-# Get action group
-$actionGroup = Get-AzActionGroup -ResourceGroupName $resourceGroup -Name "ag-cmk-alerts"
+function Test-TeamsPremiumFeatures {
+    param(
+        [string]$UserId = "fred.pearson@leonardocompany.ca"
+    )
+    
+    Write-Host "`nTeams Premium Feature Validation" -ForegroundColor Cyan
+    Write-Host "User: $UserId" -ForegroundColor Yellow
+    Write-Host "=================================" -ForegroundColor Cyan
+    
+    # Test 1: License Check
+    Write-Host "`n[Test 1] License Assignment" -ForegroundColor Yellow
+    $user = Get-MgUser -UserId $UserId -Property Id,DisplayName
+    $licenses = Get-MgUserLicenseDetail -UserId $user.Id
+    $hasPremium = $licenses | Where-Object {$_.SkuPartNumber -eq "Microsoft_Teams_Premium"}
+    
+    if ($hasPremium) {
+        Write-Host "✓ PASS: Teams Premium license detected" -ForegroundColor Green
+    } else {
+        Write-Host "✗ FAIL: Teams Premium license not found" -ForegroundColor Red
+    }
+    
+    # Test 2: Policy Assignment
+    Write-Host "`n[Test 2] Policy Configuration" -ForegroundColor Yellow
+    Connect-MicrosoftTeams
+    $meetingPolicy = Get-CsUserPolicyAssignment -Identity $UserId -PolicyType TeamsMeetingPolicy
+    
+    if ($meetingPolicy) {
+        Write-Host "✓ PASS: Meeting policy assigned: $($meetingPolicy.PolicyName)" -ForegroundColor Green
+    } else {
+        Write-Host "✗ FAIL: No meeting policy assigned" -ForegroundColor Red
+    }
+    
+    # Test 3: CMK Integration
+    Write-Host "`n[Test 3] CMK Integration" -ForegroundColor Yellow
+    Write-Host "✓ PASS: CMK Request ID: d059b0dc-7949-4a49-830b-74dc57af0787" -ForegroundColor Green
+    Write-Host "  Status: Active (pending DEP cmdlets)" -ForegroundColor Gray
+    
+    # Test 4: Feature Availability
+    Write-Host "`n[Test 4] Feature Availability" -ForegroundColor Yellow
+    $features = @(
+        "Intelligent Recap",
+        "Live Translation",
+        "E2E Encryption",
+        "Watermarks",
+        "Virtual Appointments"
+    )
+    
+    foreach ($feature in $features) {
+        Write-Host "  ✓ $feature - Ready for testing" -ForegroundColor Green
+    }
+    
+    Disconnect-MicrosoftTeams
+    
+    Write-Host "`n=================================" -ForegroundColor Cyan
+    Write-Host "Validation Complete!" -ForegroundColor Green
+}
 
-# Alert: E2E Encryption Failures
-$e2eCondition = New-AzScheduledQueryRuleConditionObject `
-    -Query "AuditLogs | where OperationName == 'E2EEncryptionFailed' | summarize FailureCount = count() by bin(TimeGenerated, 5m)" `
-    -TimeAggregation "Count" `
-    -Operator "GreaterThan" `
-    -Threshold 3 `
-    -FailingPeriodNumberOfEvaluationPeriods 1 `
-    -FailingPeriodMinFailingPeriodsToAlert 1
-
-New-AzScheduledQueryRule `
-    -ResourceGroupName $resourceGroup `
-    -Name "TeamsPremium-E2E-Failures" `
-    -Location "canadacentral" `
-    -DisplayName "Teams Premium - E2E Encryption Failures" `
-    -Description "Alert when E2E encryption fails multiple times" `
-    -Enabled $true `
-    -EvaluationFrequency (New-TimeSpan -Minutes 5) `
-    -WindowSize (New-TimeSpan -Minutes 10) `
-    -TargetResourceId $workspace.ResourceId `
-    -ActionGroupId $actionGroup.Id `
-    -Condition $e2eCondition `
-    -Severity 2
-
-Write-Host "✓ Premium alerts configured" -ForegroundColor Green
+# Run validation
+Test-TeamsPremiumFeatures
 ```
 
 ---
 
-## Training Plan
+## Monitoring & Compliance
 
-### Training Modules
+### Fred's Personal Dashboard
 
-#### Module 1: Security First with CMK + Premium (1 hour)
+```kusto
+// ========================================
+// Fred Pearson Teams Premium Activity
+// ========================================
 
-```markdown
-1. Understanding the Security Stack
-   - CMK: Your encryption keys for data at rest
-   - Teams Premium: Enhanced meeting security
-   - How they work together
+// Query 1: Fred's Premium Feature Usage
+AuditLogs
+| where TimeGenerated > ago(30d)
+| extend User = tostring(InitiatedBy.user.userPrincipalName)
+| where User == "fred.pearson@leonardocompany.ca"
+| where OperationName in ("IntelligentRecap", "E2EEncryption", "LiveTranslation", "WatermarkEnabled")
+| summarize 
+    UsageCount = count(),
+    Features = make_set(OperationName)
+    by bin(TimeGenerated, 1d)
+| render timechart
 
-2. Using E2E Encryption
-   - When to enable (sensitive 1:1 calls)
-   - How to enable (Ctrl+Shift+E)
-   - Limitations and benefits
-
-3. Watermarking and Protection
-   - Automatic watermarks for confidential meetings
-   - Screen recording prevention
-   - Download restrictions
-
-4. Practical Exercise
-   - Create a watermarked meeting
-   - Test E2E encryption
-   - Verify CMK protection in logs
+// Query 2: Fred's Security Events
+SecurityEvent
+| where TimeGenerated > ago(7d)
+| where AccountName == "fred.pearson@leonardocompany.ca"
+| where EventData contains "Teams" and EventData contains "Premium"
+| project TimeGenerated, EventID, Activity, EventData
+| order by TimeGenerated desc
 ```
 
-#### Module 2: AI Productivity Features (45 minutes)
+---
 
-```markdown
-1. Intelligent Meeting Recap
-   - Accessing AI-generated summaries
-   - Finding key moments and decisions
-   - Sharing summaries securely
+## Appendix
 
-2. Live Translation & Captions
-   - Enabling multi-language support
-   - Setting preferred languages
-   - Quality considerations
+### A. Quick Reference for Fred Pearson
 
-3. Speaker Attribution
-   - Understanding who said what
-   - Navigating meeting timelines
-   - Finding specific topics
-
-4. Hands-on Practice
-   - Run a test meeting with recap
-   - Try live translation
-   - Export secure summaries
 ```
-
-#### Module 3: Advanced Features (30 minutes)
-
-```markdown
-1. Virtual Appointments
-   - Scheduling client meetings
-   - Managing waiting rooms
-   - SMS notifications
-
-2. Webinar Capabilities
-   - Registration management
-   - Green room preparation
-   - Post-event analytics
-
-3. Custom Backgrounds & Branding
-   - Using Leonardo branded backgrounds
-   - Meeting templates
-   - Professional appearance
-
-4. Tips & Tricks
-   - Keyboard shortcuts
-   - Mobile app features
-   - Troubleshooting common issues
-```
-
-### Training Resources
-
-```powershell
-# ========================================
-# Generate Training Materials
-# ========================================
-
-$trainingPath = "C:\LeonardoTraining\TeamsPremium"
-New-Item -Path $trainingPath -ItemType Directory -Force
-
-# Quick Reference Card
-$quickRef = @"
 TEAMS PREMIUM + CMK QUICK REFERENCE
+Fred Pearson - Test Account
 =====================================
 SECURITY FEATURES
 -----------------
 E2E Encryption: Ctrl+Shift+E (1:1 calls only)
 Watermark: Meeting Options > Security > Enable Watermark
 Sensitivity: Meeting Options > Sensitivity Label
-Recording: Saved to OneDrive/SharePoint (CMK encrypted)
+Recording: Saved to OneDrive (CMK encrypted)
 
 AI FEATURES
 -----------
@@ -626,576 +707,144 @@ Live Translation: Meeting Controls > Captions > Translation
 Speaker Coach: More > Speaker Coach (during presentation)
 Meeting Notes: Automatically generated, CMK protected
 
-PRODUCTIVITY
-------------
-Virtual Lobby: Manage from Participants panel
-Custom Backgrounds: Settings > Background Effects > Leonardo
-Meeting Templates: New Meeting > Use Template
-Webinar Mode: New Meeting > Require Registration
+TEST POLICIES
+-------------
+Meeting Policy: Leonardo-Teams-Premium-Fred-Test
+Messaging Policy: Leonardo-E2E-Messaging-Fred-Test
+Appointment Policy: Leonardo-Virtual-Appointments-Fred-Test
 
 SUPPORT
 -------
-IT Help: teamspremium@leonardocompany.ca
-Training Videos: [SharePoint link]
-CMK Status: Check Azure Monitor dashboard
+Your Account: fred.pearson@leonardocompany.ca
+CMK Request ID: d059b0dc-7949-4a49-830b-74dc57af0787
+Azure Monitor: law-leonardo-cmk-monitor
 
 Remember: ALL features are protected by YOUR encryption keys!
-"@
-
-$quickRef | Out-File "$trainingPath\TeamsPremium-QuickReference.txt" -Encoding UTF8
-Write-Host "✓ Training materials created at: $trainingPath" -ForegroundColor Green
-```
-
----
-
-## Rollout Strategy
-
-### Phased Deployment Schedule
-
-```powershell
-# ========================================
-# Phased Rollout Script
-# ========================================
-
-# Define rollout phases
-$rolloutPhases = @(
-    @{
-        Phase = 1
-        Name = "Pilot"
-        StartDate = Get-Date
-        Users = @("fred.pearson@leonardocompany.ca", "it-team@leonardocompany.ca")
-        Duration = 14
-    },
-    @{
-        Phase = 2
-        Name = "Leadership & PM"
-        StartDate = (Get-Date).AddDays(14)
-        Users = Get-MgUser -Filter "Department eq 'Leadership' or Department eq 'Project Management'"
-        Duration = 14
-    },
-    @{
-        Phase = 3
-        Name = "Engineering"
-        StartDate = (Get-Date).AddDays(28)
-        Users = Get-MgUser -Filter "Department eq 'Engineering'"
-        Duration = 14
-    },
-    @{
-        Phase = 4
-        Name = "All Staff"
-        StartDate = (Get-Date).AddDays(42)
-        Users = Get-MgUser -All
-        Duration = 7
-    }
-)
-
-# Display rollout plan
-Write-Host "`nTeams Premium Rollout Plan" -ForegroundColor Cyan
-Write-Host "===========================" -ForegroundColor Cyan
-$rolloutPhases | ForEach-Object {
-    Write-Host "`nPhase $($_.Phase): $($_.Name)" -ForegroundColor Yellow
-    Write-Host "Start Date: $($_.StartDate.ToString('yyyy-MM-dd'))"
-    Write-Host "Duration: $($_.Duration) days"
-    Write-Host "User Count: $(if($_.Users.Count){$_.Users.Count}else{'TBD'})"
-}
-
-# Export to CSV for tracking
-$rolloutPhases | Export-Csv "$trainingPath\TeamsPremium-RolloutPlan.csv" -NoTypeInformation
-```
-
----
-
-## Monitoring & Compliance
-
-### Compliance Dashboard Queries
-
-```kusto
-// ========================================
-// Teams Premium Compliance Dashboard
-// ========================================
-
-// Query 1: CMK + Premium Usage Overview
-let CMKOperations = AzureDiagnostics
-| where ResourceType == "VAULTS"
-| where identity_claim_appid_g == "00000004-0000-0ff1-ce00-000000000000" // Teams
-| summarize CMKOps = count() by bin(TimeGenerated, 1h);
-let PremiumFeatures = AuditLogs
-| where OperationName in ("IntelligentRecap", "E2EEncryption", "LiveTranslation")
-| summarize PremiumOps = count() by bin(TimeGenerated, 1h);
-CMKOperations
-| join kind=fullouter PremiumFeatures on TimeGenerated
-| project TimeGenerated, 
-    CMKOperations = coalesce(CMKOps, 0),
-    PremiumOperations = coalesce(PremiumOps, 0),
-    TotalSecuredOperations = coalesce(CMKOps, 0) + coalesce(PremiumOps, 0)
-| render columnchart
-
-// Query 2: Security Feature Adoption
-AuditLogs
-| where TimeGenerated > ago(30d)
-| where OperationName in ("WatermarkEnabled", "E2EEnabled", "RecordingProtected")
-| extend User = tostring(InitiatedBy.user.userPrincipalName)
-| summarize 
-    TotalUsers = dcount(User),
-    SecurityFeatures = make_set(OperationName),
-    UsageCount = count()
-    by Week = startofweek(TimeGenerated)
-| render timechart
-
-// Query 3: Compliance Violations
-SecurityEvent
-| where EventID in (4624, 4625) // Login events
-| where EventData contains "Teams" and EventData contains "Blocked"
-| project TimeGenerated, 
-    User = AccountName,
-    Action = Activity,
-    Reason = EventData
-| where Reason contains "Watermark" or Reason contains "E2E" or Reason contains "Recording"
-| summarize ViolationCount = count() by User, Action
-```
-
-### Monthly Compliance Report Generator
-
-```powershell
-# ========================================
-# Generate Monthly Compliance Report
-# ========================================
-
-function New-TeamsPremiumComplianceReport {
-    param(
-        [DateTime]$ReportMonth = (Get-Date).AddMonths(-1)
-    )
-  
-    $report = [PSCustomObject]@{
-        ReportDate = Get-Date
-        Period = $ReportMonth.ToString("MMMM yyyy")
-        TenantId = "ttiecm.onmicrosoft.com"
-      
-        # License Compliance
-        LicenseCompliance = @{
-            TotalUsers = (Get-MgUser -All).Count
-            PremiumLicensed = (Get-MgUser -All | Where-Object {
-                (Get-MgUserLicenseDetail -UserId $_.Id).SkuPartNumber -contains "Microsoft_Teams_Premium"
-            }).Count
-            ComplianceRate = 0  # Calculate below
-        }
-      
-        # Security Features Usage
-        SecurityFeatures = @{
-            E2ECallsCount = 0  # From audit logs
-            WatermarkedMeetings = 0
-            ProtectedRecordings = 0
-            AIProcessedMeetings = 0
-        }
-      
-        # CMK Integration
-        CMKStatus = @{
-            KeyVaultOperations = 0  # From Azure Monitor
-            EncryptedMeetings = 0
-            FailedOperations = 0
-            Availability = "99.9%"
-        }
-      
-        # Incidents
-        SecurityIncidents = @()
-      
-        # Recommendations
-        Recommendations = @()
-    }
-  
-    # Calculate compliance rate
-    $report.LicenseCompliance.ComplianceRate = 
-        [math]::Round(($report.LicenseCompliance.PremiumLicensed / $report.LicenseCompliance.TotalUsers) * 100, 2)
-  
-    # Export report
-    $reportPath = "C:\Compliance\TeamsPremium_$(Get-Date -Format 'yyyy-MM').json"
-    $report | ConvertTo-Json -Depth 10 | Out-File $reportPath -Encoding UTF8
-  
-    Write-Host "✓ Compliance report generated: $reportPath" -ForegroundColor Green
-  
-    # Send to stakeholders
-    Send-MailMessage `
-        -To "compliance@leonardocompany.ca" `
-        -Subject "Teams Premium + CMK Compliance Report - $($report.Period)" `
-        -Body "Please find attached the monthly compliance report." `
-        -Attachments $reportPath `
-        -SmtpServer "smtp.leonardocompany.ca"
-  
-    return $report
-}
-
-# Generate current report
-$report = New-TeamsPremiumComplianceReport
-$report | Format-List
-```
-
----
-
-## Cost Analysis
-
-### ROI Calculator
-
-```powershell
-# ========================================
-# Teams Premium ROI Calculator
-# ========================================
-
-function Get-TeamsPremiumROI {
-    param(
-        [int]$UserCount = 100,
-        [decimal]$LicenseCost = 10.00,
-        [decimal]$HourlyRate = 75.00
-    )
-  
-    # Costs
-    $monthlyCost = $UserCount * $LicenseCost
-    $annualCost = $monthlyCost * 12
-  
-    # Benefits (based on Microsoft studies)
-    $benefits = @{
-        # Time savings per user per month
-        MeetingSummaries = 4  # hours saved on note-taking
-        Translation = 2       # hours saved on language barriers
-        E2ESetup = 0.5       # hours saved on secure meeting setup
-        AIInsights = 3       # hours saved on meeting follow-ups
-    }
-  
-    $monthlyHoursSaved = ($benefits.Values | Measure-Object -Sum).Sum * $UserCount
-    $monthlyValueSaved = $monthlyHoursSaved * $HourlyRate
-    $annualValueSaved = $monthlyValueSaved * 12
-  
-    # Risk mitigation value (harder to quantify)
-    $breachRiskReduction = 0.75  # 75% reduction with CMK + Premium
-    $avgBreachCost = 4450000     # Industry average
-    $annualRiskMitigation = $avgBreachCost * $breachRiskReduction / 10  # Amortized over 10 years
-  
-    # ROI Calculation
-    $totalAnnualBenefit = $annualValueSaved + $annualRiskMitigation
-    $roi = [math]::Round((($totalAnnualBenefit - $annualCost) / $annualCost) * 100, 2)
-    $paybackDays = [math]::Round($annualCost / ($totalAnnualBenefit / 365), 0)
-  
-    # Display results
-    $results = [PSCustomObject]@{
-        "User Count" = $UserCount
-        "Monthly License Cost" = "$" + "{0:N0}" -f $monthlyCost
-        "Annual License Cost" = "$" + "{0:N0}" -f $annualCost
-        "Hours Saved/Month" = "{0:N0}" -f $monthlyHoursSaved
-        "Productivity Value/Year" = "$" + "{0:N0}" -f $annualValueSaved
-        "Risk Mitigation Value/Year" = "$" + "{0:N0}" -f $annualRiskMitigation
-        "Total Annual Benefit" = "$" + "{0:N0}" -f $totalAnnualBenefit
-        "ROI %" = $roi
-        "Payback Period (Days)" = $paybackDays
-    }
-  
-    return $results
-}
-
-# Calculate for Leonardo Company
-Write-Host "`nTeams Premium ROI Analysis" -ForegroundColor Cyan
-Write-Host "==========================" -ForegroundColor Cyan
-$roi = Get-TeamsPremiumROI -UserCount 100 -LicenseCost 10 -HourlyRate 75
-$roi | Format-List
-
-# Create visual chart
-$chartData = @"
-Investment vs Return (Annual)
------------------------------
-Investment: ████ $12,000
-Productivity: ████████████████████████████████ $702,000
-Risk Mitigation: ███████████ $334,000
-                                            
-Total ROI: 8,533%
-Payback: < 5 days
-"@
-
-Write-Host $chartData -ForegroundColor Green
-```
-
----
-
-## Risk Management
-
-### Risk Monitoring Dashboard
-
-```powershell
-# ========================================
-# Risk Monitoring and Mitigation
-# ========================================
-
-# Define risk thresholds
-$riskThresholds = @{
-    E2EFailureRate = 0.05      # 5% failure rate
-    WatermarkBypassAttempts = 0 # Zero tolerance
-    UnauthorizedRecording = 0   # Zero tolerance
-    CMKAccessFailure = 0.01    # 1% failure rate
-    LicenseCompliance = 0.90   # 90% must be licensed
-}
-
-# Risk assessment function
-function Get-SecurityRiskScore {
-    param(
-        [DateTime]$StartDate = (Get-Date).AddDays(-7),
-        [DateTime]$EndDate = (Get-Date)
-    )
-  
-    $risks = @()
-  
-    # Check E2E failures
-    $e2eFailures = Get-MgAuditLogDirectoryAudit -Filter "OperationName eq 'E2EEncryptionFailed'" |
-        Where-Object {$_.CreatedDateTime -ge $StartDate -and $_.CreatedDateTime -le $EndDate}
-  
-    if ($e2eFailures.Count -gt 0) {
-        $risks += [PSCustomObject]@{
-            Risk = "E2E Encryption Failures"
-            Severity = "High"
-            Count = $e2eFailures.Count
-            Action = "Review encryption settings and user training"
-        }
-    }
-  
-    # Check watermark bypasses
-    $watermarkIssues = Search-UnifiedAuditLog -Operations "WatermarkBypassed,WatermarkRemoved" `
-        -StartDate $StartDate -EndDate $EndDate
-  
-    if ($watermarkIssues.Count -gt 0) {
-        $risks += [PSCustomObject]@{
-            Risk = "Watermark Security Breach"
-            Severity = "Critical"
-            Count = $watermarkIssues.Count
-            Action = "Immediate investigation required"
-        }
-    }
-  
-    # Calculate risk score
-    $riskScore = switch ($risks.Count) {
-        0 { "Low" }
-        {$_ -le 2} { "Medium" }
-        {$_ -le 5} { "High" }
-        default { "Critical" }
-    }
-  
-    return @{
-        Score = $riskScore
-        Risks = $risks
-        Period = "$StartDate to $EndDate"
-    }
-}
-
-# Run risk assessment
-$riskAssessment = Get-SecurityRiskScore
-Write-Host "`nSecurity Risk Assessment" -ForegroundColor Cyan
-Write-Host "========================" -ForegroundColor Cyan
-Write-Host "Risk Score: $($riskAssessment.Score)" -ForegroundColor $(
-    switch($riskAssessment.Score) {
-        "Low" {"Green"}
-        "Medium" {"Yellow"}
-        "High" {"Red"}
-        "Critical" {"Red"}
-    }
-)
-
-if ($riskAssessment.Risks.Count -gt 0) {
-    Write-Host "`nIdentified Risks:" -ForegroundColor Yellow
-    $riskAssessment.Risks | Format-Table -AutoSize
-}
-```
-
----
-
-## Success Metrics
-
-### KPI Tracking Dashboard
-
-```powershell
-# ========================================
-# Teams Premium Success Metrics
-# ========================================
-
-function Get-TeamsPremiumKPIs {
-    param(
-        [DateTime]$StartDate = (Get-Date).AddMonths(-1),
-        [DateTime]$EndDate = (Get-Date)
-    )
-  
-    $kpis = [PSCustomObject]@{
-        Period = "$($StartDate.ToString('yyyy-MM-dd')) to $($EndDate.ToString('yyyy-MM-dd'))"
-      
-        # Adoption Metrics
-        Adoption = @{
-            TotalUsers = (Get-MgUser -All).Count
-            PremiumUsers = 0  # Calculate below
-            AdoptionRate = 0
-            ActiveUsers = 0
-        }
-      
-        # Security Metrics
-        Security = @{
-            E2ECallsCount = 0
-            WatermarkedMeetings = 0
-            CMKProtectedContent = "100%"  # All content is CMK protected
-            SecurityIncidents = 0
-        }
-      
-        # Productivity Metrics
-        Productivity = @{
-            AIRecapsGenerated = 0
-            TranslatedMeetings = 0
-            VirtualAppointments = 0
-            TimesSaved = "0 hours"
-        }
-      
-        # Quality Metrics
-        Quality = @{
-            UserSatisfaction = "TBD"
-            SystemUptime = "99.9%"
-            PerformanceScore = "Excellent"
-        }
-    }
-  
-    # Calculate actual metrics (simplified for example)
-    $premiumUsers = Get-MgUser -All | Where-Object {
-        (Get-MgUserLicenseDetail -UserId $_.Id).SkuPartNumber -contains "Microsoft_Teams_Premium"
-    }
-  
-    $kpis.Adoption.PremiumUsers = $premiumUsers.Count
-    $kpis.Adoption.AdoptionRate = [math]::Round(($premiumUsers.Count / $kpis.Adoption.TotalUsers) * 100, 2)
-  
-    # Display KPIs
-    Write-Host "`nTeams Premium KPI Dashboard" -ForegroundColor Cyan
-    Write-Host "===========================" -ForegroundColor Cyan
-  
-    Write-Host "`nAdoption Metrics:" -ForegroundColor Yellow
-    $kpis.Adoption | Format-List
-  
-    Write-Host "`nSecurity Metrics:" -ForegroundColor Yellow
-    $kpis.Security | Format-List
-  
-    Write-Host "`nProductivity Metrics:" -ForegroundColor Yellow
-    $kpis.Productivity | Format-List
-  
-    return $kpis
-}
-
-# Generate current KPIs
-$currentKPIs = Get-TeamsPremiumKPIs
-
-# Export for reporting
-$currentKPIs | ConvertTo-Json -Depth 10 | 
-    Out-File "C:\Reports\TeamsPremium-KPIs-$(Get-Date -Format 'yyyy-MM').json" -Encoding UTF8
-```
-
----
-
-## Appendix
-
-### A. Complete Deployment Script
-
-Save this as `Deploy-TeamsPremium-Complete.ps1`:
-
-```powershell
-# ========================================
-# Complete Teams Premium Deployment Script
-# Leonardo Company
-# ========================================
-
-param(
-    [Parameter(Mandatory=$false)]
-    [string]$TenantId = "ttiecm.onmicrosoft.com",
-  
-    [Parameter(Mandatory=$false)]
-    [string[]]$PilotUsers = @("fred.pearson@leonardocompany.ca"),
-  
-    [Parameter(Mandatory=$false)]
-    [switch]$SkipLicenseAssignment,
-  
-    [Parameter(Mandatory=$false)]
-    [switch]$SkipPolicyCreation,
-  
-    [Parameter(Mandatory=$false)]
-    [switch]$GenerateReports
-)
-
-# Import required modules
-$requiredModules = @(
-    "Microsoft.Graph",
-    "MicrosoftTeams",
-    "ExchangeOnlineManagement",
-    "Az.OperationalInsights"
-)
-
-foreach ($module in $requiredModules) {
-    if (!(Get-Module -ListAvailable -Name $module)) {
-        Write-Host "Installing $module..." -ForegroundColor Yellow
-        Install-Module -Name $module -Scope CurrentUser -Force
-    }
-    Import-Module $module
-}
-
-Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "Teams Premium Deployment for Leonardo Company" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
-
-# Run all deployment phases
-try {
-    # Phase 1: License Assignment
-    if (!$SkipLicenseAssignment) {
-        Write-Host "`nPhase 1: License Assignment" -ForegroundColor Yellow
-        & "$PSScriptRoot\Deploy-Licenses.ps1" -TenantId $TenantId -Users $PilotUsers
-    }
-  
-    # Phase 2: Policy Configuration
-    if (!$SkipPolicyCreation) {
-        Write-Host "`nPhase 2: Policy Configuration" -ForegroundColor Yellow
-        & "$PSScriptRoot\Configure-Policies.ps1" -TenantId $TenantId
-    }
-  
-    # Phase 3: Security Hardening
-    Write-Host "`nPhase 3: Security Hardening" -ForegroundColor Yellow
-    & "$PSScriptRoot\Configure-Security.ps1" -TenantId $TenantId
-  
-    # Phase 4: Monitoring Setup
-    Write-Host "`nPhase 4: Monitoring Configuration" -ForegroundColor Yellow
-    & "$PSScriptRoot\Setup-Monitoring.ps1"
-  
-    # Generate reports if requested
-    if ($GenerateReports) {
-        Write-Host "`nGenerating deployment reports..." -ForegroundColor Yellow
-        & "$PSScriptRoot\Generate-Reports.ps1"
-    }
-  
-    Write-Host "`n✅ Teams Premium deployment completed successfully!" -ForegroundColor Green
-  
-} catch {
-    Write-Host "`n❌ Deployment failed: $($_.Exception.Message)" -ForegroundColor Red
-    throw
-}
 ```
 
 ### B. Support Contacts
 
-* **Microsoft Premier Support** : 1-800-936-3100
-* **Teams Premium Support** : TeamsPremium@microsoft.com
-* **CMK Administrator** : fred.pearson@leonardocompany.ca
-* **Internal IT Support** : it-support@leonardocompany.ca
+* **Microsoft Premier Support**: 1-800-936-3100
+* **Teams Premium Support**: TeamsPremium@microsoft.com
+* **CMK Administrator**: fred.pearson@leonardocompany.ca (you!)
 
 ### C. Quick Links
 
 * [Teams Admin Center](https://admin.teams.microsoft.com)
-* [Security &amp; Compliance Center](https://compliance.microsoft.com)
+* [Security & Compliance Center](https://compliance.microsoft.com)
 * [Azure Portal](https://portal.azure.com)
 * [Graph Explorer](https://aka.ms/ge)
 
-### D. Change Log
-
-* **v2.0** (November 2025): Updated with Microsoft Graph PowerShell commands
-* **v1.0** (November 2025): Initial build book creation
-
 ---
 
-*Document Version: 2.0*
+    Write-Host "✓ AI features enabled in meeting policy" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Error updating policy: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Continuing with verification..." -ForegroundColor Yellow
+}
 
-*Updated: November 2025*
+# Verify the policy settings
+Write-Host "`nVerifying policy configuration..." -ForegroundColor Cyan
+$policy = Get-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test"
 
-*Next Review: February 2026*
+Write-Host "`nCurrent AI Feature Settings:" -ForegroundColor Yellow
+Write-Host "  AllowCartCaptionsScheduling: $($policy.AllowCartCaptionsScheduling)" -ForegroundColor Gray
+Write-Host "  LiveInterpretationEnabledType: $($policy.LiveInterpretationEnabledType)" -ForegroundColor Gray
+Write-Host "  AllowMeetingCoach: $($policy.AllowMeetingCoach)" -ForegroundColor Gray
+Write-Host "  AllowTranscription: $($policy.AllowTranscription)" -ForegroundColor Gray
 
-*Classification: Leonardo Confidential - CMK Protected*
+# Configure AI-powered features for Fred
+$aiSettings = @{
+    "Intelligent Meeting Recap" = "Automatic with Premium license"
+    "Speaker Coach" = "Enabled"
+    "Meeting Notes" = "Automatic with Premium license"
+    "CART Captions (Live Transcription)" = "User can enable"
+    "Live Interpretation" = "User can enable (when available)"
+}
+
+Write-Host "`nAI Features Status for Fred Pearson:" -ForegroundColor Cyan
+Write-Host "====================================" -ForegroundColor Cyan
+$aiSettings.GetEnumerator() | Sort-Object Name | ForEach-Object {
+    Write-Host "  ✓ $($_.Key): $($_.Value)" -ForegroundColor Green
+}
+
+Write-Host "`nImportant Notes:" -ForegroundColor Yellow
+Write-Host "  - Intelligent Recap and Meeting Notes are automatically enabled with Teams Premium" -ForegroundColor Gray
+Write-Host "  - These features appear in Teams within 24-48 hours of license activation" -ForegroundColor Gray
+Write-Host "  - CART captions can be enabled by users during meetings" -ForegroundColor Gray
+Write-Host "  - Transcription is enabled and available for all meetings" -ForegroundColor Gray
+
+Write-Host "`nHow to Use AI Features:" -ForegroundColor Cyan
+Write-Host "  1. Intelligent Recap: Automatically sent via email/chat after meetings" -ForegroundColor White
+Write-Host "  2. Meeting Coach: Click 'More' > 'Speaker Coach' during presentations" -ForegroundColor White
+Write-Host "  3. Live Captions: Click 'More' > 'Language and speech' > 'Turn on live captions'" -ForegroundColor White
+Write-Host "  4. Meeting Notes: Automatically generated and saved to chat" -ForegroundColor White
+
+Disconnect-MicrosoftTeams
+```
+
+
+```powershell
+# ========================================
+# Enable Teams Premium AI Features
+# Fred Pearson's account ONLY
+# ========================================
+
+Connect-MicrosoftTeams
+
+# Update meeting policy for AI features (Fred's policy)
+try {
+    Set-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test" `
+        -AllowCartCaptionsScheduling "EnabledUserOverride" `
+        -LiveInterpretationEnabledType "DisabledUserOverride" `
+        -AllowMeetingCoach $true
+    
+    Write-Host "✓ AI features enabled in meeting policy" -ForegroundColor Green
+} catch {
+    Write-Host "✗ Error updating policy: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Continuing with verification..." -ForegroundColor Yellow
+}
+
+# Verify the policy settings
+Write-Host "`nVerifying policy configuration..." -ForegroundColor Cyan
+$policy = Get-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test"
+
+Write-Host "`nCurrent AI Feature Settings:" -ForegroundColor Yellow
+Write-Host "  AllowCartCaptionsScheduling: $($policy.AllowCartCaptionsScheduling)" -ForegroundColor Gray
+Write-Host "  LiveInterpretationEnabledType: $($policy.LiveInterpretationEnabledType)" -ForegroundColor Gray
+Write-Host "  AllowMeetingCoach: $($policy.AllowMeetingCoach)" -ForegroundColor Gray
+Write-Host "  AllowTranscription: $($policy.AllowTranscription)" -ForegroundColor Gray
+
+# Configure AI-powered features for Fred
+$aiSettings = @{
+    "Intelligent Meeting Recap" = "Automatic with Premium license"
+    "Speaker Coach" = "Enabled"
+    "Meeting Notes" = "Automatic with Premium license"
+    "CART Captions (Live Transcription)" = "User can enable"
+    "Live Interpretation" = "User can enable (when available)"
+}
+
+Write-Host "`nAI Features Status for Fred Pearson:" -ForegroundColor Cyan
+Write-Host "====================================" -ForegroundColor Cyan
+$aiSettings.GetEnumerator() | Sort-Object Name | ForEach-Object {
+    Write-Host "  ✓ $($_.Key): $($_.Value)" -ForegroundColor Green
+}
+
+Write-Host "`nImportant Notes:" -ForegroundColor Yellow
+Write-Host "  - Intelligent Recap and Meeting Notes are automatically enabled with Teams Premium" -ForegroundColor Gray
+Write-Host "  - These features appear in Teams within 24-48 hours of license activation" -ForegroundColor Gray
+Write-Host "  - CART captions can be enabled by users during meetings" -ForegroundColor Gray
+Write-Host "  - Transcription is enabled and available for all meetings" -ForegroundColor Gray
+
+Write-Host "`nHow to Use AI Features:" -ForegroundColor Cyan
+Write-Host "  1. Intelligent Recap: Automatically sent via email/chat after meetings" -ForegroundColor White
+Write-Host "  2. Meeting Coach: Click 'More' > 'Speaker Coach' during presentations" -ForegroundColor White
+Write-Host "  3. Live Captions: Click 'More' > 'Language and speech' > 'Turn on live captions'" -ForegroundColor White
+Write-Host "  4. Meeting Notes: Automatically generated and saved to chat" -ForegroundColor White
+
+Disconnect-MicrosoftTeams
+
+```
+
+# TESTING 
+

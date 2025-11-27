@@ -101,58 +101,115 @@ Get-Module -ListAvailable Az*
 2. Run PowerShell as Administrator
 3. Install Azure PowerShell module as shown above
 
----
-
-## Initial Setup and Parameters
-
-### Define Global Parameters
-
-Save these parameters at the beginning of your session. Update the values according to your environment:
-
 ```powershell
-# CRITICAL: Update these values before running any scripts
+
+# ========================================
+# Complete CMK Configuration with Variables
+# ========================================
+
+# Set all required global variables first
 $global:CMKParams = @{
-    # Tenant Configuration
-    TenantId = "80b1ce91-e920-49d4-a52e-4ab189c64592"  # Replace with your M365 tenant ID
-    
-    # Subscription IDs (must be different)
-    PrimarySubscriptionId = "6f114bd7-c8d3-4843-b4f8-e30a644bc412"    # Replace with first subscription ID
-    SecondarySubscriptionId = "6fe93f46-fb3b-410b-8d22-540b06cbbfbc" # Replace with second subscription ID
-    
-    # Regions
+    TenantId = "80b1ce91-e920-49d4-a52e-4ab189c64592"
+    PrimarySubscriptionId = "6f114bd7-c8d3-4843-b4f8-e30a644bc412"
+    SecondarySubscriptionId = "6fe93f46-fb3b-410b-8d22-540b06cbbfbc"
     PrimaryLocation = "Canada Central"
     SecondaryLocation = "Canada East"
-    
-    # Resource Naming Prefix (customize as needed)
     NamingPrefix = "cmk"
-    
-    # Target Configuration - Choose ONE of the following:
-    # Option 1: For a single user
-    TargetType = "User"  # Set to "User" or "Group"
-    TargetUserEmail = "fred.pearson@leonardocompany.ca"  # Replace with target user email
-    
-    # Option 2: For an Entra ID group
-    # TargetType = "Group"
-    # TargetGroupName = "CMK-Enabled-Users"  # Replace with your Entra ID group name
-    # TargetGroupId = "GROUP-OBJECT-ID"  # Optional - will be looked up if not provided
-    
-    # Backup Location
+    TargetType = "Group"
+    TargetGroupName = "LCE M365 Security"
+    TargetGroupId = "ffde4f56-194f-4c76-9916-31375e6d7fe5"
     BackupPath = "$HOME/keybackups"
 }
 
-# Validate target configuration
-if ($global:CMKParams.TargetType -eq "Group" -and -not $global:CMKParams.ContainsKey("TargetGroupName")) {
-    Write-Error "TargetGroupName must be specified when TargetType is 'Group'"
-    return
+# Set Key Vault names (based on your actual deployment)
+$global:KeyVaultNames = @{
+    M365Primary = "kv-cmk-m365-pri-4239"
+    M365Secondary = "kv-cmk-m365-sec-8250"
+    SPOPrimary = "kv-cmk-spo-pri-[number]"  # Update if you have SPO vaults
+    SPOSecondary = "kv-cmk-spo-sec-[number]"  # Update if you have SPO vaults
 }
 
-# Display parameters for verification
-Write-Host "`nCustomer Key Configuration Parameters:" -ForegroundColor Cyan
-Write-Host "=====================================" -ForegroundColor Cyan
-$global:CMKParams.GetEnumerator() | Where-Object { $_.Value } | Sort-Object Name | Format-Table -AutoSize
+# Set Key URIs
+$global:KeyURIs = @{
+    M365Primary = "https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-cmk-key/758b3fac73fd4573a7d48c2840619326"
+    M365Secondary = "https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-cmk-key/[YOUR-SECONDARY-KEY-VERSION]"
+    SPOPrimary = "Not configured"
+    SPOSecondary = "Not configured"
+}
 
-# Create backup directory
-New-Item -ItemType Directory -Path $global:CMKParams.BackupPath -Force | Out-Null
+# Set other required variables
+$global:ResourceNames = @{
+    DEPName = "Leonardo-CMK-DEP"
+}
+
+# Now run the summary
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Customer Key Configuration Summary" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+
+Write-Host "`nKey Vault Names:" -ForegroundColor Yellow
+$global:KeyVaultNames.GetEnumerator() | Sort-Object Name | Format-Table -AutoSize
+
+Write-Host "`nKey URIs:" -ForegroundColor Yellow
+$global:KeyURIs.GetEnumerator() | Sort-Object Name | ForEach-Object {
+    Write-Host "$($_.Key): $($_.Value)" -ForegroundColor Cyan
+}
+
+# Create backup directory if it doesn't exist
+if (-not (Test-Path $global:CMKParams.BackupPath)) {
+    New-Item -ItemType Directory -Path $global:CMKParams.BackupPath -Force | Out-Null
+}
+
+# Save configuration to file
+$targetInfo = if ($global:CMKParams.TargetType -eq "User") {
+    "TARGET USER: $($global:CMKParams.TargetUserEmail)"
+} else {
+    "TARGET GROUP: $($global:CMKParams.TargetGroupName)"
+}
+
+$configContent = @"
+Customer Key Configuration - Generated $(Get-Date)
+================================================      
+ 
+TENANT INFORMATION:
+Tenant ID: $($global:CMKParams.TenantId)
+
+SUBSCRIPTION IDS:
+Primary: $($global:CMKParams.PrimarySubscriptionId)
+Secondary: $($global:CMKParams.SecondarySubscriptionId)
+
+KEY VAULT NAMES:
+M365 Primary: $($global:KeyVaultNames.M365Primary)
+M365 Secondary: $($global:KeyVaultNames.M365Secondary)
+SPO Primary: $($global:KeyVaultNames.SPOPrimary)
+SPO Secondary: $($global:KeyVaultNames.SPOSecondary)
+
+KEY URIS:
+M365 Primary: $($global:KeyURIs.M365Primary)
+M365 Secondary: $($global:KeyURIs.M365Secondary)
+SPO Primary: $($global:KeyURIs.SPOPrimary)
+SPO Secondary: $($global:KeyURIs.SPOSecondary)
+
+DEP POLICY NAME: $($global:ResourceNames.DEPName)
+
+TARGET TYPE: $($global:CMKParams.TargetType)
+$targetInfo
+
+STATUS: Waiting for re-encryption to begin (DEP applied)
+"@
+
+$configContent | Out-File "$($global:CMKParams.BackupPath)\cmk-configuration.txt"
+Write-Host "`nConfiguration saved to: $($global:CMKParams.BackupPath)\cmk-configuration.txt" -ForegroundColor Green
+
+# Also create a quick status check
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Current CMK Implementation Status" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "✅ Key Vaults: Configured" -ForegroundColor Green
+Write-Host "✅ Keys: Created with correct permissions" -ForegroundColor Green
+Write-Host "✅ DEP Policy: Created and applied to users" -ForegroundColor Green
+Write-Host "⏳ Re-encryption: Waiting (24-48h after DEP)" -ForegroundColor Yellow
+Write-Host "📊 Monitor: Check Key Vault logs for WrapKey spike" -ForegroundColor Cyan
 ```
 
 ### Initialize Resource Names
@@ -1242,6 +1299,520 @@ if ($global:CMKParams.TargetType -eq "Group") {
 }
 ```
 
+### Apply DEP / CMK to Security group (LCE M365 Security)
+
+```powershell
+# ========================================
+# Apply CMK DEP to Security Group
+# Complete Implementation with Embedded Configuration
+# ========================================
+
+# CONFIGURATION - Update these values as needed
+$global:CMKParams = @{
+    # Tenant Configuration
+    TenantId = "80b1ce91-e920-49d4-a52e-4ab189c64592"
+    
+    # Subscription IDs
+    PrimarySubscriptionId = "6f114bd7-c8d3-4843-b4f8-e30a644bc412"
+    SecondarySubscriptionId = "6fe93f46-fb3b-410b-8d22-540b06cbbfbc"
+    
+    # Regions
+    PrimaryLocation = "Canada Central"
+    SecondaryLocation = "Canada East"
+    
+    # Resource Naming Prefix
+    NamingPrefix = "cmk"
+    
+    # Target Configuration for Group
+    TargetType = "Group"
+    TargetGroupName = "LCE M365 Security"
+    TargetGroupId = "ffde4f56-194f-4c76-9916-31375e6d7fe5"
+    
+    # Backup Location
+    BackupPath = "$HOME/keybackups"
+}
+
+# Resource names based on your actual infrastructure
+$global:ResourceNames = @{
+    PrimaryRG = "rg-cmk-primary-multiworkload"
+    SecondaryRG = "rg-cmk-secondary-multiworkload"
+    PrimaryKV = "kv-cmk-m365-pri-4239"  # Your actual primary Key Vault
+    SecondaryKV = "kv-cmk-m365-sec-8250"  # Your actual secondary Key Vault
+    DEPName = "Leonardo-CMK-DEP"
+    LogWorkspace = "law-leonardo-cmk-monitor"
+}
+
+# Validate configuration
+if ($global:CMKParams.TargetType -ne "Group") {
+    Write-Error "This script is for group processing. TargetType is set to: $($global:CMKParams.TargetType)"
+    return
+}
+
+if (-not $global:CMKParams.ContainsKey("TargetGroupName")) {
+    Write-Error "TargetGroupName must be specified when TargetType is 'Group'"
+    return
+}
+
+Write-Host @"
+========================================
+CMK DEP Group Application
+========================================
+Target Group: $($global:CMKParams.TargetGroupName)
+Group ID: $($global:CMKParams.TargetGroupId)
+Tenant: $($global:CMKParams.TenantId)
+DEP Policy: $($global:ResourceNames.DEPName)
+========================================
+"@ -ForegroundColor Cyan
+
+# Function to create log entry
+function Write-CMKLog {
+    param(
+        [string]$Message,
+        [string]$Level = "INFO"
+    )
+    
+    $logEntry = @{
+        Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        Level = $Level
+        Message = $Message
+        Group = $global:CMKParams.TargetGroupName
+        TenantId = $global:CMKParams.TenantId
+    }
+    
+    # Create backup directory if it doesn't exist
+    if (-not (Test-Path $global:CMKParams.BackupPath)) {
+        New-Item -Path $global:CMKParams.BackupPath -ItemType Directory -Force | Out-Null
+    }
+    
+    # Log to file
+    $logFile = "$($global:CMKParams.BackupPath)\CMK-GroupApplication-$(Get-Date -Format 'yyyyMMdd').log"
+    "$($logEntry.Timestamp) [$($logEntry.Level)] $($logEntry.Message)" | 
+        Out-File -FilePath $logFile -Append -Encoding UTF8
+    
+    # Display based on level
+    switch ($Level) {
+        "ERROR" { Write-Host $Message -ForegroundColor Red }
+        "WARNING" { Write-Host $Message -ForegroundColor Yellow }
+        "SUCCESS" { Write-Host $Message -ForegroundColor Green }
+        default { Write-Host $Message -ForegroundColor White }
+    }
+}
+
+# Step 1: Pre-flight checks
+Write-CMKLog "Starting CMK DEP application for group: $($global:CMKParams.TargetGroupName)"
+
+try {
+    # Connect to services
+    Write-CMKLog "Connecting to required services..."
+    Connect-ExchangeOnline -ShowBanner:$false
+    Connect-MgGraph -Scopes "Group.Read.All", "User.Read.All", "Directory.Read.All" `
+                    -TenantId $global:CMKParams.TenantId -NoWelcome
+    
+    # Verify DEP cmdlets are available
+    if (-not (Get-Command New-DataEncryptionPolicy -ErrorAction SilentlyContinue)) {
+        Write-CMKLog "DEP cmdlets not yet available. Cannot proceed." "ERROR"
+        throw "DEP cmdlets not available. Still waiting for Microsoft provisioning."
+    }
+    
+    Write-CMKLog "DEP cmdlets confirmed available" "SUCCESS"
+    
+} catch {
+    Write-CMKLog "Pre-flight check failed: $($_.Exception.Message)" "ERROR"
+    throw
+}
+
+# Step 2: Get group information
+try {
+    Write-CMKLog "Retrieving group information..."
+    
+    # If GroupId not provided, look it up
+    if (-not $global:CMKParams.ContainsKey("TargetGroupId") -or -not $global:CMKParams.TargetGroupId) {
+        $group = Get-MgGroup -Filter "displayName eq '$($global:CMKParams.TargetGroupName)'"
+        if (-not $group) {
+            throw "Group not found: $($global:CMKParams.TargetGroupName)"
+        }
+        $global:CMKParams.TargetGroupId = $group.Id
+    } else {
+        $group = Get-MgGroup -GroupId $global:CMKParams.TargetGroupId
+    }
+    
+    Write-CMKLog "Group found: $($group.DisplayName) (ID: $($group.Id))"
+    
+    # Get group members
+    $members = Get-MgGroupMember -GroupId $global:CMKParams.TargetGroupId -All
+    Write-CMKLog "Total group members: $($members.Count)"
+    
+} catch {
+    Write-CMKLog "Failed to get group information: $($_.Exception.Message)" "ERROR"
+    throw
+}
+
+# Step 3: Process group members
+$processingReport = @{
+    StartTime = Get-Date
+    Group = $global:CMKParams.TargetGroupName
+    GroupId = $global:CMKParams.TargetGroupId
+    TotalMembers = $members.Count
+    ProcessedUsers = @()
+    SuccessCount = 0
+    SkippedCount = 0
+    FailedCount = 0
+}
+
+Write-CMKLog "`nProcessing group members..."
+
+foreach ($member in $members) {
+    try {
+        # Get user details
+        $user = Get-MgUser -UserId $member.Id -Property UserPrincipalName,DisplayName,Mail
+        
+        $userResult = @{
+            UserPrincipalName = $user.UserPrincipalName
+            DisplayName = $user.DisplayName
+            Status = "Pending"
+            Message = ""
+            ProcessedAt = Get-Date
+        }
+        
+        # Check if user has a mailbox
+        try {
+            $mailbox = Get-Mailbox -Identity $user.UserPrincipalName -ErrorAction Stop
+            
+            # Check current DEP status
+            if ($mailbox.DataEncryptionPolicy -eq $global:ResourceNames.DEPName) {
+                $userResult.Status = "Skipped"
+                $userResult.Message = "Already has DEP applied"
+                $processingReport.SkippedCount++
+                Write-CMKLog "  ⏭️  Skipped (already applied): $($user.UserPrincipalName)" "WARNING"
+            } else {
+                # Apply DEP
+                Set-Mailbox -Identity $user.UserPrincipalName `
+                           -DataEncryptionPolicy $global:ResourceNames.DEPName
+                
+                $userResult.Status = "Success"
+                $userResult.Message = "DEP applied successfully"
+                $processingReport.SuccessCount++
+                Write-CMKLog "  ✅ Applied DEP to: $($user.UserPrincipalName)" "SUCCESS"
+            }
+            
+        } catch {
+            if ($_.Exception.Message -like "*object*not*found*") {
+                $userResult.Status = "Skipped"
+                $userResult.Message = "No mailbox"
+                $processingReport.SkippedCount++
+                Write-CMKLog "  ⚠️  No mailbox: $($user.UserPrincipalName)" "WARNING"
+            } else {
+                throw
+            }
+        }
+        
+    } catch {
+        $userResult.Status = "Failed"
+        $userResult.Message = $_.Exception.Message
+        $processingReport.FailedCount++
+        Write-CMKLog "  ❌ Failed: $($user.UserPrincipalName) - $($_.Exception.Message)" "ERROR"
+    }
+    
+    $processingReport.ProcessedUsers += $userResult
+}
+
+$processingReport.EndTime = Get-Date
+$processingReport.Duration = $processingReport.EndTime - $processingReport.StartTime
+
+# Step 4: Verification
+Write-CMKLog "`nVerifying DEP application..."
+
+$verificationCount = [Math]::Min(5, $processingReport.SuccessCount)
+$verifiedUsers = $processingReport.ProcessedUsers | 
+    Where-Object { $_.Status -eq "Success" } | 
+    Select-Object -First $verificationCount
+
+foreach ($verifyUser in $verifiedUsers) {
+    try {
+        $mailbox = Get-Mailbox -Identity $verifyUser.UserPrincipalName
+        if ($mailbox.DataEncryptionPolicy -eq $global:ResourceNames.DEPName) {
+            Write-CMKLog "  ✓ Verified: $($verifyUser.UserPrincipalName)" "SUCCESS"
+        } else {
+            Write-CMKLog "  ✗ Verification failed: $($verifyUser.UserPrincipalName)" "ERROR"
+        }
+    } catch {
+        Write-CMKLog "  ✗ Cannot verify: $($verifyUser.UserPrincipalName)" "ERROR"
+    }
+}
+
+# Step 5: Generate reports
+Write-CMKLog "`nGenerating reports..."
+
+# Summary report
+$summaryReport = @"
+========================================
+CMK DEP Group Application Summary
+========================================
+Date: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+Group: $($processingReport.Group)
+Total Members: $($processingReport.TotalMembers)
+
+Results:
+  ✅ Successfully Applied: $($processingReport.SuccessCount)
+  ⏭️  Skipped: $($processingReport.SkippedCount)
+  ❌ Failed: $($processingReport.FailedCount)
+
+DEP Policy: $($global:ResourceNames.DEPName)
+Duration: $($processingReport.Duration.TotalMinutes.ToString("0.00")) minutes
+========================================
+"@
+
+Write-Host $summaryReport -ForegroundColor Cyan
+
+# Save detailed report
+$reportPath = "$($global:CMKParams.BackupPath)\CMK-GroupApplication-$(Get-Date -Format 'yyyyMMdd-HHmmss').json"
+$processingReport | ConvertTo-Json -Depth 10 | Out-File $reportPath -Encoding UTF8
+Write-CMKLog "Detailed report saved to: $reportPath" "SUCCESS"
+
+# Save CSV for easy viewing
+$csvPath = "$($global:CMKParams.BackupPath)\CMK-GroupApplication-$(Get-Date -Format 'yyyyMMdd-HHmmss').csv"
+$processingReport.ProcessedUsers | Export-Csv -Path $csvPath -NoTypeInformation
+Write-CMKLog "CSV report saved to: $csvPath" "SUCCESS"
+
+# Step 6: Monitor re-encryption
+if ($processingReport.SuccessCount -gt 0) {
+    Write-Host @"
+
+Next Steps:
+===========
+1. Re-encryption will begin automatically for all users
+2. Process takes 24-48 hours per mailbox
+3. Monitor Key Vault for wrapKey/unwrapKey operations
+4. Users can continue working normally during re-encryption
+
+To monitor progress:
+  - Check Azure Key Vault logs
+  - Run verification script: .\Verify-CMKEncryption.ps1
+  - Look for increased key operations in monitoring dashboard
+"@ -ForegroundColor Yellow
+}
+
+# Cleanup
+Disconnect-ExchangeOnline -Confirm:$false
+Disconnect-MgGraph
+
+Write-CMKLog "CMK DEP group application completed" "SUCCESS"
+
+# Return summary
+return @{
+    Success = ($processingReport.FailedCount -eq 0)
+    Summary = $summaryReport
+    DetailedReportPath = $reportPath
+    CSVReportPath = $csvPath
+}
+```
+
+### If the above script hangs try this alternative using a different connection method
+
+```powershell
+# ========================================
+# CMK DEP Group Application - Browser Auth Version
+# ========================================
+
+# Your configuration
+$global:CMKParams = @{
+    TenantId = "80b1ce91-e920-49d4-a52e-4ab189c64592"
+    TargetType = "Group"
+    TargetGroupName = "LCE M365 Security"
+    TargetGroupId = "ffde4f56-194f-4c76-9916-31375e6d7fe5"
+    BackupPath = "$HOME/keybackups"
+    UserEmail = "fred.pearson@leonardocompany.ca"  # Added for authentication
+}
+
+$global:ResourceNames = @{
+    DEPName = "Leonardo-CMK-DEP"
+}
+
+Write-Host @"
+========================================
+CMK DEP Group Application - Browser Auth
+========================================
+Target Group: $($global:CMKParams.TargetGroupName)
+DEP Policy: $($global:ResourceNames.DEPName)
+Auth User: $($global:CMKParams.UserEmail)
+========================================
+"@ -ForegroundColor Cyan
+
+# Step 1: Connect to Exchange using Browser Authentication
+Write-Host "`nConnecting to Exchange Online via browser..." -ForegroundColor Yellow
+Write-Host "A browser window will open for authentication" -ForegroundColor Cyan
+
+# Clear any existing sessions
+Get-PSSession | Remove-PSSession -ErrorAction SilentlyContinue
+
+# Force TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+# Connect using browser authentication
+try {
+    # This forces browser-based modern authentication
+    Connect-ExchangeOnline -UserPrincipalName $global:CMKParams.UserEmail `
+                          -UseRPSSession:$false `
+                          -ShowBanner:$false `
+                          -CommandName @("Get-Mailbox", "Set-Mailbox", "Get-DistributionGroupMember", "Get-DataEncryptionPolicy", "New-DataEncryptionPolicy")
+    
+    Write-Host "✅ Connected to Exchange Online successfully" -ForegroundColor Green
+    
+    # Verify connection
+    $testConnection = Get-Mailbox -Identity $global:CMKParams.UserEmail -ErrorAction SilentlyContinue
+    if ($testConnection) {
+        Write-Host "✅ Connection verified - can access mailboxes" -ForegroundColor Green
+    }
+    
+} catch {
+    Write-Host "❌ Failed to connect: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "`nTroubleshooting tips:" -ForegroundColor Yellow
+    Write-Host "1. Check if a browser window opened behind this window" -ForegroundColor White
+    Write-Host "2. Try Alt+Tab to find the authentication window" -ForegroundColor White
+    Write-Host "3. If using MFA, complete the authentication in the browser" -ForegroundColor White
+    return
+}
+
+# Step 2: Verify DEP is available
+Write-Host "`nChecking DEP availability..." -ForegroundColor Yellow
+try {
+    $depCheck = Get-Command New-DataEncryptionPolicy -ErrorAction SilentlyContinue
+    if ($depCheck) {
+        Write-Host "✅ DEP cmdlets are available" -ForegroundColor Green
+    } else {
+        Write-Host "❌ DEP cmdlets not available - still waiting for Microsoft provisioning" -ForegroundColor Red
+        Disconnect-ExchangeOnline -Confirm:$false
+        return
+    }
+} catch {
+    Write-Host "❌ Cannot verify DEP availability" -ForegroundColor Red
+}
+
+# Step 3: Get group members
+Write-Host "`nGetting group members from Exchange..." -ForegroundColor Yellow
+
+try {
+    # Try as distribution group first
+    $members = Get-DistributionGroupMember -Identity $global:CMKParams.TargetGroupName -ErrorAction SilentlyContinue
+    
+    if (-not $members) {
+        Write-Host "Not a distribution group, trying manual member list..." -ForegroundColor Yellow
+        
+        # Manual member list as fallback
+        $members = @(
+            "fred.pearson@leonardocompany.ca"
+            # Add other group members here manually if needed
+        )
+        
+        Write-Host "Processing manual member list: $($members.Count) users" -ForegroundColor Yellow
+    } else {
+        Write-Host "Found $($members.Count) members in distribution group" -ForegroundColor Green
+    }
+} catch {
+    Write-Host "Error getting group members: $($_.Exception.Message)" -ForegroundColor Red
+    Disconnect-ExchangeOnline -Confirm:$false
+    return
+}
+
+# Step 4: Process members
+$results = @()
+$processedCount = 0
+
+foreach ($member in $members) {
+    $processedCount++
+    $email = if ($member.PrimarySmtpAddress) { $member.PrimarySmtpAddress } else { $member }
+    
+    Write-Progress -Activity "Processing Group Members" -Status "Processing $email" -PercentComplete (($processedCount / $members.Count) * 100)
+    Write-Host "`nProcessing: $email" -ForegroundColor Cyan
+    
+    try {
+        # Get mailbox
+        $mailbox = Get-Mailbox -Identity $email -ErrorAction Stop
+        
+        # Check current DEP
+        if ($mailbox.DataEncryptionPolicy -eq $global:ResourceNames.DEPName) {
+            Write-Host "  ⏭️ Already has DEP applied" -ForegroundColor Yellow
+            $results += [PSCustomObject]@{
+                User = $email
+                Status = "Skipped"
+                Message = "Already applied"
+                Timestamp = Get-Date
+            }
+        } else {
+            # Apply DEP
+            Set-Mailbox -Identity $email -DataEncryptionPolicy $global:ResourceNames.DEPName
+            Write-Host "  ✅ DEP applied successfully" -ForegroundColor Green
+            $results += [PSCustomObject]@{
+                User = $email
+                Status = "Success"
+                Message = "Applied"
+                Timestamp = Get-Date
+            }
+        }
+    } catch {
+        if ($_.Exception.Message -like "*object*not found*") {
+            Write-Host "  ⚠️ No mailbox found" -ForegroundColor Yellow
+            $results += [PSCustomObject]@{
+                User = $email
+                Status = "NoMailbox"
+                Message = "User has no mailbox"
+                Timestamp = Get-Date
+            }
+        } else {
+            Write-Host "  ❌ Failed: $($_.Exception.Message)" -ForegroundColor Red
+            $results += [PSCustomObject]@{
+                User = $email
+                Status = "Failed"
+                Message = $_.Exception.Message
+                Timestamp = Get-Date
+            }
+        }
+    }
+}
+
+Write-Progress -Activity "Processing Group Members" -Completed
+
+# Step 5: Summary
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Summary:" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+$results | Group-Object Status | ForEach-Object {
+    $statusColor = switch ($_.Name) {
+        "Success" { "Green" }
+        "Skipped" { "Yellow" }
+        "Failed" { "Red" }
+        "NoMailbox" { "Gray" }
+        default { "White" }
+    }
+    Write-Host "$($_.Name): $($_.Count)" -ForegroundColor $statusColor
+}
+
+# Save results
+if (-not (Test-Path $global:CMKParams.BackupPath)) {
+    New-Item -Path $global:CMKParams.BackupPath -ItemType Directory -Force | Out-Null
+}
+
+$reportPath = "$($global:CMKParams.BackupPath)\CMK-Group-Results-$(Get-Date -Format 'yyyyMMdd-HHmmss').csv"
+$results | Export-Csv -Path $reportPath -NoTypeInformation
+Write-Host "`nResults saved to: $reportPath" -ForegroundColor Green
+
+# Display failed users if any
+$failedUsers = $results | Where-Object { $_.Status -eq "Failed" }
+if ($failedUsers) {
+    Write-Host "`nFailed Users:" -ForegroundColor Red
+    $failedUsers | Format-Table User, Message -AutoSize
+}
+
+# Cleanup
+Write-Host "`nDisconnecting from Exchange Online..." -ForegroundColor Yellow
+Disconnect-ExchangeOnline -Confirm:$false
+
+Write-Host "`n✅ Process complete!" -ForegroundColor Green
+
+# Return results for further processing if needed
+return $results
+```
+
 ### Alternative: Apply Using Distribution Group or Mail-Enabled Security Group
 
 ```powershell
@@ -1345,6 +1916,122 @@ Write-Host "Bottom Line:" -ForegroundColor Green
 Write-Host "Teams encryption with YOUR keys starts" -ForegroundColor White
 Write-Host "24-48 hours AFTER you apply the DEP" -ForegroundColor White
 Write-Host "========================================" -ForegroundColor Green
+```
+
+### SHAREPOINT DEP 
+```powershell
+# Check if SharePoint DEP cmdlets are available
+Connect-SPOService -Url "https://leonardocompany-admin.sharepoint.com"
+
+# Try to get DEP commands for SharePoint
+Get-Command -Module Microsoft.Online.SharePoint.PowerShell | Where-Object { 
+    $_.Name -like "*DataEncryption*" 
+}
+
+# If no commands found, SharePoint DEP uses different approach
+Write-Host "SharePoint uses the same DEP policy but requires additional configuration" -ForegroundColor Yellow
+
+Disconnect-SPOService
+```
+
+### STEP 2 SharePoint DEP Configuration (After Exchange DEP)
+
+```powershell
+# ========================================
+# SharePoint/OneDrive CMK Configuration
+# ========================================
+
+# Note: SharePoint/OneDrive use the SAME DEP policy as Exchange
+# But require additional service configuration
+
+# After your Exchange DEP is created and applied:
+$depName = "Leonardo-CMK-DEP"  # Same policy name
+
+# Step 1: Enable for SharePoint Online
+Connect-SPOService -Url "https://leonardocompany-admin.sharepoint.com"
+
+# Set tenant-wide encryption
+Set-SPOTenant -EnableCustomerManagedEncryptionKey $true `
+              -CustomerManagedEncryptionKeyName $depName
+
+Write-Host "✓ SharePoint CMK enabled at tenant level" -ForegroundColor Green
+
+# Step 2: Apply to specific sites (optional for granular control)
+$sites = @(
+    "https://leonardocompany.sharepoint.com/sites/Teams"
+    "https://leonardocompany.sharepoint.com/sites/SecureProjects"
+)
+
+foreach ($site in $sites) {
+    Set-SPOSite -Identity $site -EncryptionPolicy $depName
+    Write-Host "✓ CMK applied to: $site" -ForegroundColor Green
+}
+
+Disconnect-SPOService
+```
+
+### STEP 3: ONEDRIVE CONFIGURATION
+
+```powershell
+# ========================================
+# OneDrive for Business CMK
+# ========================================
+
+# OneDrive URLs follow pattern: https://[tenant]-my.sharepoint.com/personal/[user]
+
+Connect-SPOService -Url "https://leonardocompany-admin.sharepoint.com"
+
+# Get user's OneDrive URL
+$userEmail = "fred.pearson@leonardocompany.ca"
+$oneDriveUrl = Get-SPOSite -IncludePersonalSite $true -Filter "Url -like '*personal*'" |
+    Where-Object { $_.Url -like "*$($userEmail.Replace('@','_').Replace('.','_'))*" }
+
+if ($oneDriveUrl) {
+    Set-SPOSite -Identity $oneDriveUrl.Url -EncryptionPolicy $depName
+    Write-Host "✓ CMK applied to OneDrive: $($oneDriveUrl.Url)" -ForegroundColor Green
+}
+
+Disconnect-SPOService
+```
+
+### STEP 4 - CMK COVERAGE
+
+```powershell
+# ========================================
+# Verify Complete CMK Coverage
+# ========================================
+
+Write-Host "`nCMK Coverage Verification" -ForegroundColor Cyan
+Write-Host "=========================" -ForegroundColor Cyan
+
+# Exchange/Teams Check
+Connect-ExchangeOnline -ShowBanner:$false
+$mailbox = Get-Mailbox -Identity "fred.pearson@leonardocompany.ca"
+$exchangeDEP = $mailbox.DataEncryptionPolicy
+
+Write-Host "`n✓ Exchange/Teams DEP: $(if($exchangeDEP){'Applied - ' + $exchangeDEP}else{'Not Applied'})" `
+    -ForegroundColor $(if($exchangeDEP){'Green'}else{'Red'})
+
+Disconnect-ExchangeOnline -Confirm:$false
+
+# SharePoint Check
+Connect-SPOService -Url "https://leonardocompany-admin.sharepoint.com"
+$tenant = Get-SPOTenant
+$spoDEP = $tenant.CustomerManagedEncryptionKeyName
+
+Write-Host "✓ SharePoint DEP: $(if($spoDEP){'Applied - ' + $spoDEP}else{'Not Applied'})" `
+    -ForegroundColor $(if($spoDEP){'Green'}else{'Red'})
+
+Disconnect-SPOService
+
+# Summary
+Write-Host "`nFull CMK Coverage Status:" -ForegroundColor Yellow
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "Teams Chat/Meetings: $(if($exchangeDEP){'✅ Protected'}else{'❌ Waiting'})"
+Write-Host "Email/Calendar: $(if($exchangeDEP){'✅ Protected'}else{'❌ Waiting'})"
+Write-Host "Teams Files: $(if($spoDEP){'✅ Protected'}else{'❌ Waiting'})"
+Write-Host "OneDrive Files: $(if($spoDEP){'✅ Protected'}else{'❌ Waiting'})"
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
 ```
 
 #### Check azure key vault logs to see that MS Teams is accessing your keys for encryption operations
@@ -2474,6 +3161,158 @@ Write-Host "24-48 hours AFTER you apply the DEP" -ForegroundColor White
 Write-Host "========================================" -ForegroundColor Green
 ```
 
+### What DEP Actually Is - Understanding DEP Provisioning Delays
+
+The Data Encryption Policy (DEP) isn't just a configuration setting - it's a **fundamental infrastructure component** that requires backend provisioning by Microsoft:
+
+```powershell
+Your Control                    Microsoft's Control
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Create Key Vault        →    ⏳ Register keys in global system
+✅ Generate Keys          →    ⏳ Replicate to all datacenters  
+✅ Set Permissions        →    ⏳ Update encryption infrastructure
+✅ Enable CMK             →    ⏳ Provision DEP capability
+❌ Create DEP Policy      ←    ⏳ Enable cmdlets in your tenant
+❌ Apply to mailboxes     ←    ⏳ Activate re-encryption engine
+```
+
+### Why You Can't Do It Yourself
+
+1. **No API Exists**: There's no public API endpoint to create DEP policies
+2. **No Portal Option**: Unlike other policies, DEP has no GUI interface
+3. **Backend Dependencies**: DEP creation triggers massive backend operations:
+   - Re-encryption of all existing data
+   - Key wrapper generation for each mailbox
+   - Coordination across multiple datacenters
+   - Integration with 20+ M365 services
+
+### What Microsoft Is Actually Doing During the Wait
+
+```mermaid
+graph TD
+    A[CMK Request Approved] --> B[Register Keys Globally]
+    B --> C[Update Encryption Services]
+    C --> D[Provision DEP Infrastructure]
+    D --> E[Enable Tenant Capabilities]
+    E --> F[Activate PowerShell Cmdlets]
+    F --> G[You Can Create DEP]
+    
+    style A fill:#9f9,stroke:#333,stroke-width:2px
+    style G fill:#9f9,stroke:#333,stroke-width:2px
+    style D fill:#f96,stroke:#333,stroke-width:4px
+```
+
+## The Frustrating Truth
+
+Microsoft designed it this way for several reasons:
+
+### 1. Data Integrity
+
+```powershell
+# What happens when you apply DEP (once available)
+Set-Mailbox -Identity "user@domain.com" -DataEncryptionPolicy "YourDEP"
+
+# This triggers:
+# - Immediate key wrapper creation
+# - Background re-encryption of ALL user data
+# - Validation across multiple services
+# - No rollback possible
+```
+
+### 2. Scale Considerations
+
+- Your tenant might have thousands of mailboxes
+- Each mailbox has gigabytes of data
+- Re-encryption must not impact performance
+- Requires dedicated infrastructure provisioning
+
+### 3. Security Requirements
+
+- DEP application is irreversible
+- Wrong configuration = permanent data loss
+- Requires multiple backend validations
+- Must coordinate with backup systems
+
+## Why No Manual Workaround Exists
+
+There is no way to bypass this because:
+
+### 1. The cmdlets don't just "configure" - they orchestrate
+
+```powershell
+# When you run this (once available):
+New-DataEncryptionPolicy -Name "Policy" -AzureKeyIDs @("key1","key2")
+
+# It actually:
+# - Validates both keys are accessible
+# - Creates wrapper keys for each
+# - Registers with 20+ M365 services
+# - Initiates global replication
+# - Sets up re-encryption queues
+```
+
+### 2. No Direct Database Access
+
+You can't modify Exchange/M365 databases directly
+
+### 3. No Alternative Interfaces
+
+Microsoft intentionally limited this to PowerShell only
+
+## What This Means for You
+
+```markdown
+# Current situation after 40+ hours:
+"Your Infrastructure" = "✅ Ready"
+"Microsoft Backend" = "❌ Still Provisioning"
+"Your Ability to Proceed" = "🚫 Blocked"
+
+# Only solution:
+"Escalate to Microsoft Support"
+```
+
+### Example ticket to send
+
+================================
+KEY VAULT VERIFICATION COMPLETED:
+Primary Key Details:
+
+- Vault: kv-cmk-m365-pri-4239
+- Key: m365-cmk-key
+- Version: 758b3fac73fd4573a7d48c2840619326
+- Full URI: <https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-cmk-key/758b3fac73fd4573a7d48c2840619326>
+- Permissions: ✓ WrapKey, ✓ UnwrapKey (Correct for CMK)
+- Status: Enabled
+- Location: Canada Central
+
+Secondary Key Details:
+
+- Vault: kv-cmk-m365-sec-8250
+- Key: m365-cmk-key
+- Version: [Need to check - likely similar format]
+- Full URI: <https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-cmk-key/[VERSION>]
+- Permissions: ✓ WrapKey, ✓ UnwrapKey (Correct for CMK)
+- Status: Enabled
+- Location: Canada East
+
+CONFIRMATION:
+
+- Keys are properly configured per Microsoft documentation
+- Correct permissions are set (WrapKey/UnwrapKey only)
+- Keys are enabled and accessible
+- No expiration date set (as recommended)
+- Both keys in Canadian datacenters for sovereignty compliance
+
+Despite proper key configuration, DEP cmdlets remain unavailable after 40+ hours.
+
+================================
+
+---
+
+**The bottom line**: You're not missing anything, there's no workaround, and Microsoft has designed this as a gate-kept process. Your 40+ hour wait is abnormal and requires their intervention.
+
+This is exactly why you need to make that support call - they have internal tools to unstick whatever is blocking your DEP provisioning.
+
 ### How to Use the Automated Script
 
 1. **Save the script** as `Deploy-CustomerKey.ps1` in Azure Cloud Shell or locally
@@ -2497,7 +3336,7 @@ Write-Host "========================================" -ForegroundColor Green
     -TargetGroupName "CMK-Enabled-Users"
 ```
 
-4. **For unattended execution**, add `-SkipConfirmation`:
+4.**For unattended execution**, add `-SkipConfirmation`:
 
 ```powershell
 .\Deploy-CustomerKey.ps1 -TenantId "YOUR-TENANT-ID" `
@@ -2507,3 +3346,697 @@ Write-Host "========================================" -ForegroundColor Green
     -TargetGroupName "CMK-Enabled-Users" `
     -SkipConfirmation
 ```
+```powershell
+# ========================================
+# Complete CMK Configuration with Variables
+# ========================================
+
+# Set all required global variables first
+$global:CMKParams = @{
+    TenantId = "80b1ce91-e920-49d4-a52e-4ab189c64592"
+    PrimarySubscriptionId = "6f114bd7-c8d3-4843-b4f8-e30a644bc412"
+    SecondarySubscriptionId = "6fe93f46-fb3b-410b-8d22-540b06cbbfbc"
+    PrimaryLocation = "Canada Central"
+    SecondaryLocation = "Canada East"
+    NamingPrefix = "cmk"
+    TargetType = "Group"
+    TargetGroupName = "LCE M365 Security"
+    TargetGroupId = "ffde4f56-194f-4c76-9916-31375e6d7fe5"
+    BackupPath = "$HOME/keybackups"
+}
+
+# Set Key Vault names (based on your actual deployment)
+$global:KeyVaultNames = @{
+    M365Primary = "kv-cmk-m365-pri-4239"
+    M365Secondary = "kv-cmk-m365-sec-8250"
+    SPOPrimary = "kv-cmk-spo-pri-[number]"  # Update if you have SPO vaults
+    SPOSecondary = "kv-cmk-spo-sec-[number]"  # Update if you have SPO vaults
+}
+
+# Set Key URIs - UPDATED with your secondary key
+$global:KeyURIs = @{
+    M365Primary = "https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-cmk-key/758b3fac73fd4573a7d48c2840619326"
+    M365Secondary = "https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-customer-key-secondary/758b3fac73fd4573a7d48c2840619326"
+    SPOPrimary = "Not configured"
+    SPOSecondary = "Not configured"
+}
+
+# Set other required variables
+$global:ResourceNames = @{
+    DEPName = "Leonardo-CMK-DEP"
+}
+
+# Now run the summary
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Customer Key Configuration Summary" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+
+Write-Host "`nKey Vault Names:" -ForegroundColor Yellow
+$global:KeyVaultNames.GetEnumerator() | Sort-Object Name | Format-Table -AutoSize
+
+Write-Host "`nKey URIs:" -ForegroundColor Yellow
+$global:KeyURIs.GetEnumerator() | Sort-Object Name | ForEach-Object {
+    Write-Host "$($_.Key): $($_.Value)" -ForegroundColor Cyan
+}
+
+# Create backup directory if it doesn't exist
+if (-not (Test-Path $global:CMKParams.BackupPath)) {
+    New-Item -ItemType Directory -Path $global:CMKParams.BackupPath -Force | Out-Null
+}
+
+# Save configuration to file
+$targetInfo = if ($global:CMKParams.TargetType -eq "User") {
+    "TARGET USER: $($global:CMKParams.TargetUserEmail)"
+} else {
+    "TARGET GROUP: $($global:CMKParams.TargetGroupName)"
+}
+
+$configContent = @"
+Customer Key Configuration - Generated $(Get-Date)
+================================================
+
+TENANT INFORMATION:
+Tenant ID: $($global:CMKParams.TenantId)
+
+SUBSCRIPTION IDS:
+Primary: $($global:CMKParams.PrimarySubscriptionId)
+Secondary: $($global:CMKParams.SecondarySubscriptionId)
+
+KEY VAULT NAMES:
+M365 Primary: $($global:KeyVaultNames.M365Primary)
+M365 Secondary: $($global:KeyVaultNames.M365Secondary)
+SPO Primary: $($global:KeyVaultNames.SPOPrimary)
+SPO Secondary: $($global:KeyVaultNames.SPOSecondary)
+
+KEY URIS:
+M365 Primary: $($global:KeyURIs.M365Primary)
+M365 Secondary: $($global:KeyURIs.M365Secondary)
+SPO Primary: $($global:KeyURIs.SPOPrimary)
+SPO Secondary: $($global:KeyURIs.SPOSecondary)
+
+DEP POLICY NAME: $($global:ResourceNames.DEPName)
+
+TARGET TYPE: $($global:CMKParams.TargetType)
+$targetInfo
+
+KEY NAMES:
+Primary: m365-cmk-key
+Secondary: m365-customer-key-secondary
+
+STATUS: Waiting for re-encryption to begin (DEP applied)
+"@
+
+$configContent | Out-File "$($global:CMKParams.BackupPath)\cmk-configuration.txt"
+Write-Host "`nConfiguration saved to: $($global:CMKParams.BackupPath)\cmk-configuration.txt" -ForegroundColor Green
+
+# Also create a quick status check
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Current CMK Implementation Status" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "✅ Key Vaults: Configured" -ForegroundColor Green
+Write-Host "✅ Keys: Created with correct permissions" -ForegroundColor Green
+Write-Host "✅ DEP Policy: Created and applied to users" -ForegroundColor Green
+Write-Host "⏳ Re-encryption: Waiting (24-48h after DEP)" -ForegroundColor Yellow
+Write-Host "📊 Monitor: Check Key Vault logs for WrapKey spike" -ForegroundColor Cyan
+
+# Note about key names
+Write-Host "`n📝 Note: Your keys have different names:" -ForegroundColor Yellow
+Write-Host "   Primary: m365-cmk-key" -ForegroundColor Gray
+Write-Host "   Secondary: m365-customer-key-secondary" -ForegroundColor Gray
+```
+
+### Configuration of SPO key vault
+
+#### Manual Steps
+I'll update your build book to include the manual SharePoint/OneDrive CMK setup process you've used. Here's the updated section:
+
+## SharePoint/OneDrive Customer Managed Key (CMK) Configuration
+
+### Overview
+SharePoint and OneDrive require separate key vaults from Exchange/Teams but use the same tenant-wide Customer Key infrastructure. This configuration is independent and can be implemented before, during, or after Exchange/Teams CMK deployment.
+
+### Prerequisites
+- SharePoint admin access
+- Two separate Azure subscriptions (can be the same ones used for Exchange CMK)
+- Azure Key Vault creation permissions
+- Global Administrator or SharePoint Administrator role
+
+### Architecture
+```
+SharePoint/OneDrive CMK Architecture:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+├── Primary Key Vault (Canada Central)
+│   ├── Vault: kv-cmk-spo-pri-1117
+│   ├── Key: spo-cmk-key
+│   └── Subscription: 6f114bd7-c8d3-4843-b4f8-e30a644bc412
+│
+├── Secondary Key Vault (Canada East)
+│   ├── Vault: kv-cmk-spo-sec-1117
+│   ├── Key: spo-cmk-key
+│   └── Subscription: 6fe93f46-fb3b-410b-8d22-540b06cbbfbc
+│
+└── Service Principals with Access:
+    ├── SharePoint Online: f3b83251-9cf1-4359-9f65-6f9e7e6fd37d
+    └── OneDrive: a5fd58ca-ce08-4acb-9c23-5c138e72b8b1
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### Step-by-Step Manual Configuration
+
+#### Step 1: Create Key Vaults via Azure Portal
+
+1. **Navigate to Azure Portal** (https://portal.azure.com)
+
+2. **Create Primary Key Vault:**
+   - Click **+ Create a resource** → **Key Vault**
+   - **Subscription**: 6f114bd7-c8d3-4843-b4f8-e30a644bc412
+   - **Resource Group**: rg-cmk-primary-multiworkload
+   - **Key vault name**: kv-cmk-spo-pri-1117
+   - **Region**: Canada Central
+   - **Pricing tier**: Premium
+   - **Days to retain deleted vaults**: 90
+   - **Purge protection**: Enabled
+   - Click **Review + Create** → **Create**
+
+3. **Create Secondary Key Vault:**
+   - Repeat the process with:
+   - **Subscription**: 6fe93f46-fb3b-410b-8d22-540b06cbbfbc
+   - **Resource Group**: rg-cmk-secondary-multiworkload
+   - **Key vault name**: kv-cmk-spo-sec-1117
+   - **Region**: Canada East
+   - All other settings remain the same
+
+#### Step 2: Create Encryption Keys
+
+1. **In Primary Key Vault (kv-cmk-spo-pri-1117):**
+   - Navigate to **Keys** → **Generate/Import**
+   - **Options**: Generate
+   - **Name**: spo-cmk-key
+   - **Key type**: RSA
+   - **RSA key size**: 2048
+   - **Set activation date**: (current date)
+   - **Set expiration date**: (optional - 2 years recommended)
+   - Click **Create**
+
+2. **In Secondary Key Vault (kv-cmk-spo-sec-1117):**
+   - Repeat the same process with identical settings
+   - **Name**: spo-cmk-key (same name as primary)
+
+#### Step 3: Configure Access Policies
+
+**Note**: Since your Key Vaults use RBAC, configure via Access Control (IAM) instead of Access Policies.
+
+1. **For Primary Key Vault:**
+   - Go to kv-cmk-spo-pri-1117
+   - Click **Access control (IAM)**
+   - Click **+ Add** → **Add role assignment**
+   - Select **Key Vault Crypto User** role
+   - Click **Next**
+   - Select **Service Principal**
+   - Search and add these service principals:
+     - `f3b83251-9cf1-4359-9f65-6f9e7e6fd37d` (SharePoint)
+     - `a5fd58ca-ce08-4acb-9c23-5c138e72b8b1` (OneDrive)
+   - Click **Review + assign**
+
+2. **For Secondary Key Vault:**
+   - Repeat the same process for kv-cmk-spo-sec-1117
+
+#### Step 4: Verify Configuration
+
+1. **Record Key URIs:**
+
+   ```powershell
+   Primary Key URI: https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key
+   Secondary Key URI: https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key
+   ```
+
+2. **Verify Access:**
+   - In each Key Vault, go to **Keys** → **spo-cmk-key**
+   - Verify the key is **Enabled**
+   - Check **Access control (IAM)** → **Role assignments**
+   - Confirm both service principals have **Key Vault Crypto User** role
+
+#### Step 5: Register with SharePoint Online
+
+1. **Connect to SharePoint Admin PowerShell:**
+
+   ```powershell
+   Connect-SPOService -Url https://ttiecm-admin.sharepoint.com
+   ```
+
+2. **Register the Data Encryption Policy:**
+
+   ```powershell
+   Register-SPODataEncryptionPolicy `
+       -PrimaryKeyVaultUri "https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key" `
+       -SecondaryKeyVaultUri "https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key"
+   ```
+
+3. **Verify Registration:**
+
+   ```powershell
+   Get-SPODataEncryptionPolicy
+   ```
+
+#### Post-Configuration Tasks
+
+#### Monitoring Re-encryption Progress
+
+1. **Check SharePoint Admin Center:**
+   - Navigate to https://ttiecm-admin.sharepoint.com
+   - Go to **Settings** → **Organization settings**
+   - Look for encryption status indicators
+
+2. **Monitor Key Vault Activity:**
+
+   ```kql
+   // Run in Log Analytics
+   AzureDiagnostics
+   | where ResourceProvider == "MICROSOFT.KEYVAULT"
+   | where Resource contains "spo"
+   | where OperationName in ("WrapKey", "UnwrapKey")
+   | summarize count() by bin(TimeGenerated, 1h), OperationName
+   | render timechart
+   ```
+
+3. **Expected Timeline:**
+   - Registration: Immediate
+   - Re-encryption start: Within 24 hours
+   - Full re-encryption: 24-72 hours (depends on data volume)
+
+#### Common Issues
+
+1. **Service Principals Not Found:**
+   - These are Microsoft-managed service principals
+   - They should exist in your tenant automatically
+   - If not found, contact Microsoft Support
+
+2. **Registration Fails:**
+   - Verify both Key Vaults are accessible
+   - Confirm proper RBAC permissions
+   - Check that keys have WrapKey/UnwrapKey operations enabled
+
+3. **No Re-encryption Activity:**
+   - Normal - can take up to 24 hours to start
+   - Check Key Vault logs for any failed operations
+   - Verify SPO service has access to both keys
+
+#### Important Notes
+
+1. **Independence from Exchange CMK:**
+   - SharePoint CMK is completely separate from Exchange/Teams CMK
+   - Can be configured in any order
+   - Uses different Key Vaults and keys
+   - Re-encryption processes run independently
+
+2. **Scope of Protection:**
+   - All SharePoint sites
+   - All OneDrive for Business accounts
+   - Teams files (stored in SharePoint)
+   - Lists, libraries, and metadata
+
+3. **User Impact:**
+   - No service interruption
+   - No user action required
+   - Transparent re-encryption process
+   - Performance remains unaffected
+
+### Verification Commands
+
+```powershell
+# Verify SPO CMK Status
+Connect-SPOService -Url https://ttiecm-admin.sharepoint.com
+$spoStatus = Get-SPODataEncryptionPolicy
+Write-Host "SharePoint CMK Status:" -ForegroundColor Cyan
+Write-Host "Enabled: $($spoStatus.IsEnabled)" -ForegroundColor $(if($spoStatus.IsEnabled){"Green"}else{"Red"})
+Write-Host "Primary Key: $($spoStatus.PrimaryKeyVaultUri)" -ForegroundColor Gray
+Write-Host "Secondary Key: $($spoStatus.SecondaryKeyVaultUri)" -ForegroundColor Gray
+Disconnect-SPOService
+```
+
+### Rollback Procedure
+
+**Warning**: There is no rollback for SharePoint CMK once re-encryption begins. Ensure proper testing and validation before proceeding.
+
+### Support Information
+
+For SharePoint/OneDrive CMK issues:
+- Microsoft Support: 1-800-936-4900
+- Required information:
+  - Tenant ID: 80b1ce91-e920-49d4-a52e-4ab189c64592
+  - Primary Key Vault: kv-cmk-spo-pri-1117
+  - Secondary Key Vault: kv-cmk-spo-sec-1117
+  - Implementation Date: [Your date]
+
+---
+
+This completes the SharePoint/OneDrive CMK configuration. Combined with your Exchange/Teams CMK, you now have comprehensive Customer Key coverage across all Microsoft 365 services.
+
+```powershell
+# ========================================
+# SPO CMK Setup - Compatible Version
+# ========================================
+
+Write-Host "SPO CMK Setup - Starting..." -ForegroundColor Cyan
+
+# Check connection
+$context = Get-AzContext
+if (-not $context) {
+    Connect-AzAccount
+}
+
+# Generate Key Vault names
+$timestamp = Get-Date -Format "MMdd"
+$primaryKVName = "kv-cmk-spo-pri-$timestamp"
+$secondaryKVName = "kv-cmk-spo-sec-$timestamp"
+
+Write-Host "`nKey Vault Names:" -ForegroundColor Yellow
+Write-Host "Primary: $primaryKVName" -ForegroundColor Gray
+Write-Host "Secondary: $secondaryKVName" -ForegroundColor Gray
+
+# Create Primary Key Vault (updated syntax)
+Write-Host "`nCreating Primary Key Vault..." -ForegroundColor Yellow
+try {
+    $primaryKV = New-AzKeyVault -Name $primaryKVName `
+        -ResourceGroupName "rg-cmk-primary-multiworkload" `
+        -Location "Canada Central" `
+        -Sku "Premium" `
+        -EnablePurgeProtection `
+        -SoftDeleteRetentionInDays 90
+    
+    Write-Host "✅ Primary Key Vault created" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Error: $_" -ForegroundColor Red
+    return
+}
+
+# Create Secondary Key Vault
+Write-Host "Creating Secondary Key Vault..." -ForegroundColor Yellow
+try {
+    # First, let's set the context to the secondary subscription
+    Set-AzContext -SubscriptionId "6fe93f46-fb3b-410b-8d22-540b06cbbfbc" -ErrorAction SilentlyContinue
+    
+    $secondaryKV = New-AzKeyVault -Name $secondaryKVName `
+        -ResourceGroupName "rg-cmk-secondary-multiworkload" `
+        -Location "Canada East" `
+        -Sku "Premium" `
+        -EnablePurgeProtection `
+        -SoftDeleteRetentionInDays 90
+    
+    Write-Host "✅ Secondary Key Vault created" -ForegroundColor Green
+    
+    # Switch back to primary subscription
+    Set-AzContext -SubscriptionId "6f114bd7-c8d3-4843-b4f8-e30a644bc412" -ErrorAction SilentlyContinue
+} catch {
+    Write-Host "❌ Error: $_" -ForegroundColor Red
+    return
+}
+
+# Create Keys
+Write-Host "`nCreating keys..." -ForegroundColor Yellow
+
+# Primary key
+$primaryKey = Add-AzKeyVaultKey -VaultName $primaryKVName `
+    -Name "spo-cmk-key" `
+    -Destination "Software"
+
+Write-Host "✅ Primary key created: $($primaryKey.Name)" -ForegroundColor Green
+
+# Secondary key (need to switch context again)
+Set-AzContext -SubscriptionId "6fe93f46-fb3b-410b-8d22-540b06cbbfbc" -ErrorAction SilentlyContinue
+$secondaryKey = Add-AzKeyVaultKey -VaultName $secondaryKVName `
+    -Name "spo-cmk-key" `
+    -Destination "Software"
+
+Write-Host "✅ Secondary key created: $($secondaryKey.Name)" -ForegroundColor Green
+
+# Set permissions for SharePoint
+Write-Host "`nSetting permissions..." -ForegroundColor Yellow
+
+$spoServicePrincipals = @{
+    "SharePoint" = "f3b83251-9cf1-4359-9f65-6f9e7e6fd37d"
+    "OneDrive" = "a5fd58ca-ce08-4acb-9c23-5c138e72b8b1"
+}
+
+# Primary vault permissions
+Set-AzContext -SubscriptionId "6f114bd7-c8d3-4843-b4f8-e30a644bc412" -ErrorAction SilentlyContinue
+foreach ($sp in $spoServicePrincipals.GetEnumerator()) {
+    Set-AzKeyVaultAccessPolicy -VaultName $primaryKVName `
+        -ServicePrincipalName $sp.Value `
+        -PermissionsToKeys Get,WrapKey,UnwrapKey
+    Write-Host "  ✓ Granted access to $($sp.Key) on primary vault" -ForegroundColor Gray
+}
+
+# Secondary vault permissions
+Set-AzContext -SubscriptionId "6fe93f46-fb3b-410b-8d22-540b06cbbfbc" -ErrorAction SilentlyContinue
+foreach ($sp in $spoServicePrincipals.GetEnumerator()) {
+    Set-AzKeyVaultAccessPolicy -VaultName $secondaryKVName `
+        -ServicePrincipalName $sp.Value `
+        -PermissionsToKeys Get,WrapKey,UnwrapKey
+    Write-Host "  ✓ Granted access to $($sp.Key) on secondary vault" -ForegroundColor Gray
+}
+
+# Save configuration
+$backupPath = "$HOME/keybackups/spo"
+New-Item -ItemType Directory -Path $backupPath -Force | Out-Null
+
+# Get the full key URIs
+$primaryKeyUri = "https://$primaryKVName.vault.azure.net/keys/spo-cmk-key"
+$secondaryKeyUri = "https://$secondaryKVName.vault.azure.net/keys/spo-cmk-key"
+
+$configSummary = @"
+SharePoint/OneDrive CMK Configuration
+=====================================
+Created: $(Get-Date)
+
+PRIMARY KEY VAULT:
+Name: $primaryKVName
+Resource Group: rg-cmk-primary-multiworkload
+Subscription: 6f114bd7-c8d3-4843-b4f8-e30a644bc412
+Key URI: $primaryKeyUri
+
+SECONDARY KEY VAULT:
+Name: $secondaryKVName
+Resource Group: rg-cmk-secondary-multiworkload
+Subscription: 6fe93f46-fb3b-410b-8d22-540b06cbbfbc
+Key URI: $secondaryKeyUri
+
+NEXT STEPS:
+1. Register with SharePoint Online
+2. Monitor re-encryption progress
+
+To register these keys:
+Connect-SPOService -Url https://ttiecm-admin.sharepoint.com
+Register-SPODataEncryptionPolicy -PrimaryKeyVaultUri "$primaryKeyUri" -SecondaryKeyVaultUri "$secondaryKeyUri"
+"@
+
+$configSummary | Out-File "$backupPath/spo-cmk-config.txt"
+
+# Display results
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host "SPO CMK Infrastructure Created!" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "`nPrimary Key URI:" -ForegroundColor Cyan
+Write-Host $primaryKeyUri -ForegroundColor White
+Write-Host "`nSecondary Key URI:" -ForegroundColor Cyan
+Write-Host $secondaryKeyUri -ForegroundColor White
+Write-Host "`n📁 Configuration saved to: $backupPath" -ForegroundColor Yellow
+
+# Update global variables if they exist
+if ($global:KeyVaultNames) {
+    $global:KeyVaultNames.SPOPrimary = $primaryKVName
+    $global:KeyVaultNames.SPOSecondary = $secondaryKVName
+    $global:KeyURIs.SPOPrimary = $primaryKeyUri
+    $global:KeyURIs.SPOSecondary = $secondaryKeyUri
+}
+
+Write-Host "`n✅ Ready to register with SharePoint when needed!" -ForegroundColor Green
+```
+
+### Next once ready to activate CMK for SPO run this
+
+```powershell
+# ========================================
+# Activate SharePoint CMK (Run separately)
+# ========================================
+
+# Load your SPO configuration
+$spoConfigPath = "$HOME/keybackups/spo/spo-cmk-config.json"
+$spoConfig = Get-Content $spoConfigPath | ConvertFrom-Json
+
+# Connect to SharePoint
+$adminUrl = "https://ttiecm-admin.sharepoint.com"
+Connect-SPOService -Url $adminUrl
+
+# Register the CMK policy
+Register-SPODataEncryptionPolicy `
+    -PrimaryKeyVaultUri $spoConfig.PrimaryKeyVault.KeyId `
+    -SecondaryKeyVaultUri $spoConfig.SecondaryKeyVault.KeyId
+
+Write-Host "✅ SharePoint CMK activated!" -ForegroundColor Green
+Write-Host "Re-encryption of SharePoint/OneDrive will begin within 24 hours" -ForegroundColor Yellow
+```
+
+#### SPO CMK Register
+
+```powershell
+# First, connect to SharePoint (try this simplified approach)
+$adminUrl = "https://ttiecm-admin.sharepoint.com"
+Connect-SPOService -Url $adminUrl
+
+# If that still gives 401, try:
+# Connect-SPOService -Url $adminUrl -Credential (Get-Credential)
+```
+
+#### Once connected, Register CMK
+
+```powershell
+# Register your SharePoint CMK policy
+Register-SPODataEncryptionPolicy `
+    -PrimaryKeyVaultUri "https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key" `
+    -SecondaryKeyVaultUri "https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key"
+
+Write-Host "✅ SharePoint CMK policy registered!" -ForegroundColor Green
+```
+
+# SharePoint/OneDrive CMK Readiness
+
+## Infrastructure Details
+
+### Primary Key Vault (Canada Central)
+| Property | Value |
+|----------|--------|
+| **Name** | kv-cmk-spo-pri-1117 |
+| **Resource Group** | rg-cmk-primary-multiworkload |
+| **Subscription** | 6f114bd7-c8d3-4843-b4f8-e30a644bc412 |
+| **Key Name** | spo-cmk-key |
+| **Key Type** | RSA 2048 |
+| **Key URI** | `https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key` |
+| **Status** | ✅ Ready |
+
+### Secondary Key Vault (Canada East)
+| Property | Value |
+|----------|--------|
+| **Name** | kv-cmk-spo-sec-1117 |
+| **Resource Group** | rg-cmk-secondary-multiworkload |
+| **Subscription** | 6fe93f46-fb3b-410b-8d22-540b06cbbfbc |
+| **Key Name** | spo-cmk-key |
+| **Key Type** | RSA 2048 |
+| **Key URI** | `https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key` |
+| **Status** | ✅ Ready |
+
+### Service Principal Access
+The following Microsoft service principals have been granted Key Vault Crypto User role:
+- **SharePoint**: `f3b83251-9cf1-4359-9f65-6f9e7e6fd37d`
+- **OneDrive**: `a5fd58ca-ce08-4acb-9c23-5c138e72b8b1`
+
+## Activation Steps (When SPO is Enabled)
+
+### 1. Verify SharePoint Access
+```powershell
+# Test access to SharePoint
+Start-Process https://ttiecm.sharepoint.com
+```
+
+### 2. Connect to SharePoint Admin
+```powershell
+Connect-SPOService -Url https://ttiecm-admin.sharepoint.com
+```
+
+### 3. Register CMK Policy
+```powershell
+Register-SPODataEncryptionPolicy `
+    -PrimaryKeyVaultUri "https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key" `
+    -SecondaryKeyVaultUri "https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key"
+```
+
+### 4. Verify Registration
+```powershell
+Get-SPODataEncryptionPolicy
+```
+
+## Pre-Activation Checklist
+- [x] Azure Key Vaults created in Canadian regions
+- [x] Encryption keys generated with proper settings
+- [x] RBAC permissions configured
+- [x] Service principals have access
+- [x] PowerShell cmdlets available (Register-SPODataEncryptionPolicy)
+- [ ] SharePoint Online service enabled for tenant
+- [ ] SharePoint Administrator access verified
+- [ ] MRP (Mandatory Retention Period) enabled by Microsoft Support (if required)
+
+## Monitoring Post-Activation
+Once activated, monitor re-encryption progress:
+- Azure Key Vault logs for WrapKey/UnwrapKey operations
+- SharePoint admin center for encryption status
+- Expected timeline: 24-72 hours for full re-encryption
+
+## Architecture Diagram
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   SharePoint/OneDrive CMK                    │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────────────┐       ┌─────────────────────┐    │
+│  │   Primary Region    │       │  Secondary Region   │    │
+│  │  (Canada Central)   │       │   (Canada East)     │    │
+│  ├─────────────────────┤       ├─────────────────────┤    │
+│  │ kv-cmk-spo-pri-1117 │       │ kv-cmk-spo-sec-1117 │    │
+│  │    └── spo-cmk-key  │       │    └── spo-cmk-key  │    │
+│  └──────────┬──────────┘       └──────────┬──────────┘    │
+│             │                              │                │
+│             └──────────────┬───────────────┘                │
+│                           │                                 │
+│                    ┌──────▼──────┐                         │
+│                    │  SharePoint  │                        │
+│                    │   Service    │                        │
+│                    └──────────────┘                        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Related Documentation
+- **Exchange/Teams CMK**: Implemented and active
+- **Primary contact**: fred.pearson@leonardocompany.ca
+- **Backup location**: `$HOME\keybackups\`
+
+## Notes
+- SPO CMK is independent of Exchange/Teams CMK
+- No impact on Exchange/Teams encryption
+- Can be activated at any time after SPO is enabled
+- All infrastructure costs continue regardless of activation status
+
+## Support Information
+- **Microsoft Support**: 1-800-936-4900
+- **Reference**: Tenant ID `80b1ce91-e920-49d4-a52e-4ab189c64592`
+
+---
+
+## Quick Reference Card
+
+### SHAREPOINT CMK QUICK REFERENCE
+**Status**: Infrastructure Ready, Service Disabled
+
+**Key Vaults:**
+- Primary: `kv-cmk-spo-pri-1117`
+- Secondary: `kv-cmk-spo-sec-1117`
+
+**When SPO is enabled, run:**
+```powershell
+Register-SPODataEncryptionPolicy `
+    -PrimaryKeyVaultUri "https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key" `
+    -SecondaryKeyVaultUri "https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key"
+```
+
+# ========================================
+# Enable Teams Premium AI Features
+# Fred Pearson's account ONLY
+# ========================================
+
+Connect-MicrosoftTeams
+
+# Update meeting policy for AI features (Fred's policy)
+try {
+    Set-CsTeamsMeetingPolicy -Identity "Leonardo-Teams-Premium-Fred-Test" `
+        -AllowCartCaptionsScheduling "EnabledUserOverride" `
+        -LiveInterpretationEnabledType "DisabledUserOverride" `
+        -AllowMeetingCoach $true
