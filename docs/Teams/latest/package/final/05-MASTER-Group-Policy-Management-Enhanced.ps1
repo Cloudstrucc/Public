@@ -6,8 +6,7 @@
     
     Features:
     - Monitors distribution group membership
-    - Automatically assigns/removes Teams policies
-    - Assigns sensitivity labels
+    - Automatically assigns/removes Teams meeting policies
     - Maintains audit log
     - Reports on all changes
     
@@ -19,60 +18,67 @@
 .AUTHOR
     Fred Pearson & George Zarif
 .DATE
-    November 22, 2025
+    November 27, 2025
 .NOTES
-    VERSION 9.0
+    VERSION 10.0
+    - Fixed policy name to match actual policy
+    - Simplified connection logic
+    - Removed unused Purview connection
+    - Added policy existence validation
     Safe to run multiple times - idempotent
 #>
 
 #Requires -Modules ExchangeOnlineManagement, MicrosoftTeams
 
-# Configuration
+# ============================================================
+# CONFIGURATION - UPDATE THESE VALUES AS NEEDED
+# ============================================================
+
 $CONFIG = @{
+    # Distribution group containing Protected B users
     GroupEmail = "lcem365security@leonardocompany.ca"
     GroupName = "LCE M365 Security"
     
-    # Teams Policies
-    MeetingPolicy = "LCE-Protected-B-Policy"
+    # Teams Meeting Policy to assign (MUST MATCH ACTUAL POLICY NAME)
+    MeetingPolicy = "Leonardo-Secure-Meeting-Group"
     
-    # Sensitivity Labels (GUIDs - will be retrieved)
-    ProtectedBLabel = "Protected B - Secure Meeting"
-    GeneralLabel = "General - Regular Meeting"
-    
-    # Reporting
+    # Reporting paths
     ReportPath = "C:\LeonardoReports"
     LogPath = "C:\LeonardoReports\Logs"
-    
-    # Email notifications (future enhancement)
-    NotifyEmail = "lcem365security@leonardocompany.ca"
 }
 
-# Initialize
+# ============================================================
+# INITIALIZATION
+# ============================================================
+
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 $reportTimestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 
 Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║  MASTER GROUP POLICY MANAGEMENT                                 ║" -ForegroundColor Cyan
+Write-Host "║  MASTER GROUP POLICY MANAGEMENT v10.0                           ║" -ForegroundColor Cyan
 Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
 
 Write-Host "`nStarted: $timestamp" -ForegroundColor Gray
-Write-Host "Group: $($CONFIG.GroupEmail)`n" -ForegroundColor White
+Write-Host "Group: $($CONFIG.GroupEmail)" -ForegroundColor White
+Write-Host "Policy: $($CONFIG.MeetingPolicy)`n" -ForegroundColor White
 
 # Create directories
 New-Item -Path $CONFIG.ReportPath -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
 New-Item -Path $CONFIG.LogPath -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
 
-# Initialize results
+# Initialize results tracking
 $results = @{
     Timestamp = $timestamp
     GroupMembers = @()
     PoliciesAssigned = @()
     PoliciesRemoved = @()
+    AlreadyCorrect = @()
     Errors = @()
-    Summary = ""
 }
 
-#region Functions
+# ============================================================
+# FUNCTIONS
+# ============================================================
 
 function Write-Log {
     param(
@@ -88,10 +94,11 @@ function Write-Log {
         'Error' { 'Red' }
     }
     
-    $logMessage = "[$timestamp] [$Level] $Message"
+    $logTimestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logMessage = "[$logTimestamp] [$Level] $Message"
     Write-Host $logMessage -ForegroundColor $color
     
-    # Write to log file
+    # Write to daily log file
     $logFile = Join-Path $CONFIG.LogPath "PolicyManagement-$(Get-Date -Format 'yyyyMMdd').log"
     Add-Content -Path $logFile -Value $logMessage -ErrorAction SilentlyContinue
 }
@@ -99,26 +106,57 @@ function Write-Log {
 function Connect-Services {
     Write-Log "Connecting to Microsoft 365 services..." -Level Info
     
+    $connected = @{
+        Exchange = $false
+        Teams = $false
+    }
+    
+    # Connect to Exchange Online (for distribution group)
+    Write-Host "  → Exchange Online..." -ForegroundColor Gray
     try {
-        # Connect to Exchange Online
-        Write-Host "  → Exchange Online..." -ForegroundColor Gray
-        Connect-ExchangeOnline -ShowBanner:$false -ErrorAction Stop
-        Write-Log "  ✓ Exchange Online connected" -Level Success
-        
-        # Connect to Teams
-        Write-Host "  → Microsoft Teams..." -ForegroundColor Gray
+        # Check if already connected
+        $exoTest = Get-PSSession | Where-Object { $_.ConfigurationName -eq "Microsoft.Exchange" -and $_.State -eq "Opened" }
+        if ($exoTest) {
+            Write-Log "  ✓ Exchange Online (existing session)" -Level Success
+            $connected.Exchange = $true
+        } else {
+            Connect-ExchangeOnline -ShowBanner:$false -ErrorAction Stop
+            Write-Log "  ✓ Exchange Online connected" -Level Success
+            $connected.Exchange = $true
+        }
+    } catch {
+        Write-Log "  ✗ Exchange Online failed: $($_.Exception.Message)" -Level Error
+        $results.Errors += "Exchange connection failed: $($_.Exception.Message)"
+    }
+    
+    # Connect to Teams (for policy assignment)
+    Write-Host "  → Microsoft Teams..." -ForegroundColor Gray
+    try {
         Connect-MicrosoftTeams -ErrorAction Stop | Out-Null
         Write-Log "  ✓ Teams connected" -Level Success
-        
-        # Connect to Compliance (for labels)
-        Write-Host "  → Microsoft Purview..." -ForegroundColor Gray
-        Connect-IPPSSession -ErrorAction Stop
-        Write-Log "  ✓ Purview connected" -Level Success
-        
+        $connected.Teams = $true
+    } catch {
+        Write-Log "  ✗ Teams failed: $($_.Exception.Message)" -Level Error
+        $results.Errors += "Teams connection failed: $($_.Exception.Message)"
+    }
+    
+    return ($connected.Exchange -and $connected.Teams)
+}
+
+function Test-PolicyExists {
+    Write-Log "Validating policy exists..." -Level Info
+    
+    try {
+        $policy = Get-CsTeamsMeetingPolicy -Identity $CONFIG.MeetingPolicy -ErrorAction Stop
+        Write-Log "  ✓ Policy found: $($policy.Identity)" -Level Success
         return $true
     } catch {
-        Write-Log "Connection failed: $($_.Exception.Message)" -Level Error
-        $results.Errors += "Connection failed: $($_.Exception.Message)"
+        Write-Log "  ✗ Policy NOT FOUND: $($CONFIG.MeetingPolicy)" -Level Error
+        Write-Host "`n  Available policies:" -ForegroundColor Yellow
+        Get-CsTeamsMeetingPolicy | Where-Object { $_.Identity -notlike "Tag:*Global*" } | ForEach-Object {
+            Write-Host "    • $($_.Identity)" -ForegroundColor Gray
+        }
+        $results.Errors += "Policy not found: $($CONFIG.MeetingPolicy)"
         return $false
     }
 }
@@ -143,27 +181,38 @@ function Get-GroupMembers {
         
         return $members
     } catch {
-        Write-Log "Failed to retrieve group members: $($_.Exception.Message)" -Level Error
+        Write-Log "  ✗ Failed to retrieve group members: $($_.Exception.Message)" -Level Error
         $results.Errors += "Group retrieval failed: $($_.Exception.Message)"
         return @()
     }
 }
 
 function Get-AllTeamsUsers {
-    Write-Log "`nRetrieving all Teams users..." -Level Info
+    Write-Log "`nRetrieving Teams users..." -Level Info
     
     try {
-        $allUsers = Get-CsOnlineUser -Filter {Enabled -eq $true} -ErrorAction Stop
+        # Get all users (filter removed - was causing errors in newer module versions)
+        # We'll filter in PowerShell instead
+        $allUsers = Get-CsOnlineUser -ResultSize Unlimited -ErrorAction Stop | 
+                    Where-Object { $_.AccountEnabled -eq $true }
         Write-Log "  ✓ Found $($allUsers.Count) enabled Teams users" -Level Success
         return $allUsers
     } catch {
-        Write-Log "Failed to retrieve Teams users: $($_.Exception.Message)" -Level Error
-        $results.Errors += "Teams users retrieval failed: $($_.Exception.Message)"
-        return @()
+        # Fallback: try without any filtering
+        try {
+            Write-Log "  ⚠ Retrying without filter..." -Level Warning
+            $allUsers = Get-CsOnlineUser -ResultSize Unlimited -ErrorAction Stop
+            Write-Log "  ✓ Found $($allUsers.Count) Teams users (unfiltered)" -Level Success
+            return $allUsers
+        } catch {
+            Write-Log "  ✗ Failed to retrieve Teams users: $($_.Exception.Message)" -Level Error
+            $results.Errors += "Teams users retrieval failed: $($_.Exception.Message)"
+            return @()
+        }
     }
 }
 
-function Assign-TeamsPolicies {
+function Sync-TeamsPolicies {
     param(
         [Parameter(Mandatory)]
         [object[]]$GroupMembers,
@@ -171,47 +220,57 @@ function Assign-TeamsPolicies {
         [object[]]$AllTeamsUsers
     )
     
-    Write-Log "`nProcessing policy assignments..." -Level Info
+    Write-Log "`nSynchronizing policy assignments..." -Level Info
     
-    # Get group member emails
+    # Get group member emails (lowercase for comparison)
     $groupEmails = $GroupMembers | ForEach-Object { $_.PrimarySmtpAddress.ToLower() }
+    
+    # Expected policy name format (with or without Tag: prefix)
+    $expectedPolicies = @(
+        $CONFIG.MeetingPolicy,
+        "Tag:$($CONFIG.MeetingPolicy)"
+    )
     
     foreach ($user in $AllTeamsUsers) {
         $userEmail = $user.UserPrincipalName.ToLower()
+        $userDisplayName = $user.DisplayName
         $shouldHavePolicy = $groupEmails -contains $userEmail
         $currentPolicy = $user.TeamsMeetingPolicy
         
+        # Check if user has the correct policy (handle Tag: prefix)
+        $hasCorrectPolicy = $expectedPolicies -contains $currentPolicy
+        
         try {
             if ($shouldHavePolicy) {
-                # User SHOULD have policy
-                if ($currentPolicy -ne $CONFIG.MeetingPolicy) {
-                    Write-Host "  → Assigning policy to: $($user.DisplayName)" -ForegroundColor Cyan
+                # User IS in group - should have policy
+                if (-not $hasCorrectPolicy) {
+                    Write-Host "  → Assigning policy to: $userDisplayName" -ForegroundColor Cyan
                     
                     Grant-CsTeamsMeetingPolicy -Identity $userEmail -PolicyName $CONFIG.MeetingPolicy -ErrorAction Stop
                     
-                    Write-Log "    ✓ Assigned $($CONFIG.MeetingPolicy) to $($user.DisplayName)" -Level Success
+                    Write-Log "    ✓ Assigned to $userDisplayName (was: $currentPolicy)" -Level Success
                     
                     $results.PoliciesAssigned += [PSCustomObject]@{
-                        User = $user.DisplayName
+                        User = $userDisplayName
                         Email = $userEmail
                         Policy = $CONFIG.MeetingPolicy
                         PreviousPolicy = $currentPolicy
                         Timestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
                     }
                 } else {
-                    Write-Host "  ✓ $($user.DisplayName) - Already has correct policy" -ForegroundColor Green
+                    $results.AlreadyCorrect += $userDisplayName
                 }
             } else {
-                # User should NOT have policy (if they currently have it, remove it)
-                if ($currentPolicy -eq $CONFIG.MeetingPolicy) {
-                    Write-Host "  → Removing policy from: $($user.DisplayName)" -ForegroundColor Yellow
+                # User NOT in group - should NOT have this policy
+                if ($hasCorrectPolicy) {
+                    Write-Host "  → Removing policy from: $userDisplayName" -ForegroundColor Yellow
                     
                     Grant-CsTeamsMeetingPolicy -Identity $userEmail -PolicyName $null -ErrorAction Stop
                     
-                    Write-Log "    ✓ Removed $($CONFIG.MeetingPolicy) from $($user.DisplayName)" -Level Success
+                    Write-Log "    ✓ Removed from $userDisplayName (reverted to Global)" -Level Success
                     
                     $results.PoliciesRemoved += [PSCustomObject]@{
-                        User = $user.DisplayName
+                        User = $userDisplayName
                         Email = $userEmail
                         Policy = $CONFIG.MeetingPolicy
                         Timestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
@@ -219,9 +278,17 @@ function Assign-TeamsPolicies {
                 }
             }
         } catch {
-            $errorMsg = "Failed to process $($user.DisplayName): $($_.Exception.Message)"
+            $errorMsg = "Failed to process $userDisplayName : $($_.Exception.Message)"
             Write-Log "    ✗ $errorMsg" -Level Error
             $results.Errors += $errorMsg
+        }
+    }
+    
+    # Summary of users already correct
+    if ($results.AlreadyCorrect.Count -gt 0) {
+        Write-Host "`n  Already have correct policy:" -ForegroundColor Green
+        foreach ($user in $results.AlreadyCorrect) {
+            Write-Host "    ✓ $user" -ForegroundColor Green
         }
     }
 }
@@ -232,11 +299,9 @@ function Disconnect-Services {
     try {
         Disconnect-ExchangeOnline -Confirm:$false -ErrorAction SilentlyContinue
         Disconnect-MicrosoftTeams -Confirm:$false -ErrorAction SilentlyContinue
-        # Purview/Compliance disconnects with Exchange
-        
         Write-Log "  ✓ Disconnected" -Level Success
     } catch {
-        Write-Log "Disconnect warning: $($_.Exception.Message)" -Level Warning
+        Write-Log "  ⚠ Disconnect warning: $($_.Exception.Message)" -Level Warning
     }
 }
 
@@ -249,6 +314,10 @@ MASTER GROUP POLICY MANAGEMENT - EXECUTION REPORT
 ═══════════════════════════════════════════════════════════════════
 
 Execution Time: $($results.Timestamp)
+Script Version: 10.0
+
+CONFIGURATION
+───────────────────────────────────────────────────────────────────
 Group: $($CONFIG.GroupEmail)
 Policy: $($CONFIG.MeetingPolicy)
 
@@ -262,19 +331,21 @@ POLICY CHANGES
 ───────────────────────────────────────────────────────────────────
 Policies Assigned: $($results.PoliciesAssigned.Count)
 Policies Removed: $($results.PoliciesRemoved.Count)
+Already Correct: $($results.AlreadyCorrect.Count)
 
 $(if ($results.PoliciesAssigned.Count -gt 0) {
-"Assigned:
-$($results.PoliciesAssigned | ForEach-Object { "  ✓ $($_.User) - $($_.Email)" } | Out-String)"
-} else {
-"  (No policies assigned)"
+"ASSIGNED:
+$($results.PoliciesAssigned | ForEach-Object { "  ✓ $($_.User) ($($_.Email)) - was: $($_.PreviousPolicy)" } | Out-String)"
 })
 
 $(if ($results.PoliciesRemoved.Count -gt 0) {
-"Removed:
-$($results.PoliciesRemoved | ForEach-Object { "  ✗ $($_.User) - $($_.Email)" } | Out-String)"
-} else {
-"  (No policies removed)"
+"REMOVED:
+$($results.PoliciesRemoved | ForEach-Object { "  ✗ $($_.User) ($($_.Email))" } | Out-String)"
+})
+
+$(if ($results.AlreadyCorrect.Count -gt 0) {
+"ALREADY CORRECT:
+$($results.AlreadyCorrect | ForEach-Object { "  ✓ $_" } | Out-String)"
 })
 
 ERRORS
@@ -291,8 +362,6 @@ STATUS
 ───────────────────────────────────────────────────────────────────
 Overall: $(if ($results.Errors.Count -eq 0) { "SUCCESS" } else { "COMPLETED WITH ERRORS" })
 
-Next Scheduled Run: $(if ($env:SCHEDULED_TASK -eq "true") { "Tomorrow (daily task)" } else { "Manual execution - schedule as needed" })
-
 ═══════════════════════════════════════════════════════════════════
 "@
 
@@ -308,18 +377,29 @@ Next Scheduled Run: $(if ($env:SCHEDULED_TASK -eq "true") { "Tomorrow (daily tas
     return $reportFile
 }
 
-#endregion
-
-#region Main Execution
+# ============================================================
+# MAIN EXECUTION
+# ============================================================
 
 try {
     # Step 1: Connect to services
+    Write-Host "[Step 1/5] " -NoNewline -ForegroundColor Cyan
     if (-not (Connect-Services)) {
         Write-Log "Cannot proceed without service connections" -Level Error
         exit 1
     }
     
-    # Step 2: Get group members
+    # Step 2: Validate policy exists
+    Write-Host "`n[Step 2/5] " -NoNewline -ForegroundColor Cyan
+    if (-not (Test-PolicyExists)) {
+        Write-Log "Cannot proceed - policy does not exist" -Level Error
+        Write-Host "`n  Update the `$CONFIG.MeetingPolicy variable to match your policy name" -ForegroundColor Yellow
+        Disconnect-Services
+        exit 1
+    }
+    
+    # Step 3: Get group members
+    Write-Host "`n[Step 3/5] " -NoNewline -ForegroundColor Cyan
     $groupMembers = Get-GroupMembers
     
     if ($groupMembers.Count -eq 0) {
@@ -328,7 +408,8 @@ try {
         exit 0
     }
     
-    # Step 3: Get all Teams users
+    # Step 4: Get all Teams users and sync policies
+    Write-Host "`n[Step 4/5] " -NoNewline -ForegroundColor Cyan
     $allTeamsUsers = Get-AllTeamsUsers
     
     if ($allTeamsUsers.Count -eq 0) {
@@ -337,45 +418,38 @@ try {
         exit 1
     }
     
-    # Step 4: Assign/remove policies
-    Assign-TeamsPolicies -GroupMembers $groupMembers -AllTeamsUsers $allTeamsUsers
+    Sync-TeamsPolicies -GroupMembers $groupMembers -AllTeamsUsers $allTeamsUsers
     
-    # Step 5: Generate report
+    # Step 5: Generate report and disconnect
+    Write-Host "`n[Step 5/5] " -NoNewline -ForegroundColor Cyan
     $reportFile = New-ExecutionReport
-    
-    # Step 6: Disconnect
     Disconnect-Services
     
     # Final status
-    Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "║  ✅ EXECUTION COMPLETE                                          ║" -ForegroundColor Green
-    Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor Green
+    Write-Host "`n╔══════════════════════════════════════════════════════════════════╗" -ForegroundColor $(if ($results.Errors.Count -eq 0) { "Green" } else { "Yellow" })
+    Write-Host "║  $(if ($results.Errors.Count -eq 0) { "✅ EXECUTION COMPLETE" } else { "⚠️  COMPLETED WITH ERRORS" })                                          ║" -ForegroundColor $(if ($results.Errors.Count -eq 0) { "Green" } else { "Yellow" })
+    Write-Host "╚══════════════════════════════════════════════════════════════════╝" -ForegroundColor $(if ($results.Errors.Count -eq 0) { "Green" } else { "Yellow" })
     
     Write-Host "`nSummary:" -ForegroundColor Cyan
     Write-Host "  Group members: $($results.GroupMembers.Count)" -ForegroundColor White
-    Write-Host "  Policies assigned: $($results.PoliciesAssigned.Count)" -ForegroundColor Green
-    Write-Host "  Policies removed: $($results.PoliciesRemoved.Count)" -ForegroundColor Yellow
+    Write-Host "  Policies assigned: $($results.PoliciesAssigned.Count)" -ForegroundColor $(if ($results.PoliciesAssigned.Count -gt 0) { "Green" } else { "White" })
+    Write-Host "  Policies removed: $($results.PoliciesRemoved.Count)" -ForegroundColor $(if ($results.PoliciesRemoved.Count -gt 0) { "Yellow" } else { "White" })
+    Write-Host "  Already correct: $($results.AlreadyCorrect.Count)" -ForegroundColor Green
     Write-Host "  Errors: $($results.Errors.Count)" -ForegroundColor $(if ($results.Errors.Count -eq 0) { "Green" } else { "Red" })
     
     Write-Host "`n📄 Report: $reportFile" -ForegroundColor Gray
     
     # Exit code
-    if ($results.Errors.Count -eq 0) {
-        exit 0
-    } else {
-        exit 1
-    }
+    exit $(if ($results.Errors.Count -eq 0) { 0 } else { 1 })
     
 } catch {
-    Write-Log "Fatal error in main execution: $($_.Exception.Message)" -Level Error
+    Write-Log "Fatal error: $($_.Exception.Message)" -Level Error
     Write-Host "`nStack trace:" -ForegroundColor Red
     Write-Host $_.ScriptStackTrace -ForegroundColor Red
     
     Disconnect-Services
     exit 1
 }
-
-#endregion
 
 Write-Host "`nPress any key to exit..." -ForegroundColor Gray
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
