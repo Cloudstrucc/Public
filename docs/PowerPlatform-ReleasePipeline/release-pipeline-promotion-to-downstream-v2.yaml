@@ -14,22 +14,19 @@ parameters:
     type: string
     displayName: 'Source Branch'
     default: 'staging'
-    values:
-      - main
+    values:      
       - staging
-      - qa
-      - uat
-      - production
+      - QA
+      - ET
+      - PR
   - name: targetBranch
     type: string
     displayName: 'Target Branch'
-    default: 'qa'
+    default: 'QA'
     values:
-      - main
-      - staging
-      - qa
-      - uat
-      - production
+      - QA
+      - ET
+      - PR
   - name: targetVariableGroupName
     type: string
     displayName: 'Target Variable Group Name (must contain funcTargetEnv, clientId, clientSecret, tenantId)'
@@ -40,7 +37,7 @@ parameters:
   - name: settingsVariableGroupName
     type: string
     displayName: 'Settings Variable Group Name (only required if above is checked)'
-    default: ''
+    default: 'not-used'
   - name: autoMergePR
     type: boolean
     displayName: 'Auto-complete PR after creation'
