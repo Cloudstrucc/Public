@@ -12,10 +12,10 @@ parameters:
     displayName: 'Solution Name (logical name) to Deploy'
   - name: sourceBranch
     type: string
-    displayName: 'Source Branch Name'
+    displayName: 'Source Branch Name (e.g., staging, QA, ET)'
   - name: targetBranch
     type: string
-    displayName: 'Target Branch Name'
+    displayName: 'Target Branch Name (e.g., QA, ET, PR)'
   - name: targetVariableGroupName
     type: string
     displayName: 'Target Variable Group Name (must contain funcTargetEnv, clientId, clientSecret, tenantId)'
