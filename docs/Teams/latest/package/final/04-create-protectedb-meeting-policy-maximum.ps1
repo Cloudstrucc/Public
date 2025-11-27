@@ -40,14 +40,8 @@ Write-Host "   This policy sets secure DEFAULTS that organizers start with.`n" -
 # ============================================================
 
 $CONFIG = @{
-    # Primary policy name
-    PolicyName = "LCE-Protected-B-Policy"
-    
-    # Check for these alternative names first
-    AlternativeNames = @(
-        "Leonardo-Secure-Meeting-Group"
-    )
-    
+    PolicyName = "Leonardo-Secure-Meeting-Group"
+    AlternativeNames = @()    
     # Reporting
     ReportPath = "C:\LeonardoReports"
 }
