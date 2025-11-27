@@ -1,10 +1,8 @@
 # staging-deploy-pipeline.yml 
 # This pipeline exports a solution from Dev and deploys it to Staging environment
- 
 trigger: none
- 
 pr: none
- 
+
 parameters:
 - name: variableGroupName
   type: string
@@ -12,22 +10,24 @@ parameters:
 - name: solutionName
   type: string
   displayName: 'Solution Name (logical name) to Deploy'
-- name: branchName
-  type: string
-  displayName: 'Target Branch Name (e.g., staging, qa, et, pr)'
-  default: 'staging'
+- name: useSettingsVariableGroup
+  type: boolean
+  displayName: 'Use Settings Variable Group (for environment variables/connection references)'
+  default: false
 - name: settingsVariableGroupName
   type: string
-  displayName: 'Settings Variable Group Name (optional - for environment variables and connection references)'
-  default: ''
- 
+  displayName: 'Settings Variable Group Name (only required if above is checked)'
+  default: 'not-used'
+
 variables:
 - group: ${{ parameters.variableGroupName }}
 - name: sourceEnv
   value: '$(dataverseDevUrl)'
 - name: targetEnv
   value: '$(funcStagingUrl)'
-- ${{ if ne(parameters.settingsVariableGroupName, '') }}:
+- name: branchName
+  value: 'staging'
+- ${{ if eq(parameters.useSettingsVariableGroup, true) }}:
   - group: ${{ parameters.settingsVariableGroupName }}
  
 pool:
@@ -42,6 +42,7 @@ stages:
     steps:
     - powershell: |
         $solutionName = "${{ parameters.solutionName }}"
+        $useSettings = [System.Convert]::ToBoolean("${{ parameters.useSettingsVariableGroup }}")
         $settingsVarGroup = "${{ parameters.settingsVariableGroupName }}"
         
         Write-Host "========================================================================"
@@ -54,12 +55,16 @@ stages:
         }
         Write-Host "  Solution: $solutionName"
         Write-Host "  Variable Group: ${{ parameters.variableGroupName }}"
-        Write-Host "  Target Branch: ${{ parameters.branchName }}"
+        Write-Host "  Target Branch: $(branchName)"
         
-        if (-not [string]::IsNullOrWhiteSpace($settingsVarGroup)) {
-            Write-Host "  Settings Variable Group: $settingsVarGroup"
+        if ($useSettings) {
+            if ([string]::IsNullOrWhiteSpace($settingsVarGroup) -or $settingsVarGroup -eq 'not-used') {
+                Write-Error "Settings Variable Group name is required when 'Use Settings Variable Group' is enabled"
+                exit 1
+            }
+            Write-Host "  Settings Variable Group: $settingsVarGroup (enabled)"
         } else {
-            Write-Host "  Settings Variable Group: (not specified)"
+            Write-Host "  Settings Variable Group: (not enabled)"
         }
         
         Write-Host "========================================================================"
@@ -148,7 +153,7 @@ stages:
  
     - powershell: |
         # Since the PR was completed and merged, the files should now be in the target branch
-        $targetBranch = "${{ parameters.branchName }}"
+        $targetBranch = "$(branchName)"
         Write-Host "Checking out target branch: $targetBranch"
  
         # Configure Git
@@ -220,6 +225,7 @@ stages:
         $pacExe = "$(PacExe)"
         $featureBranchName = "$(FeatureBranchName)"
         $solutionName = "${{ parameters.solutionName }}"
+        $targetBranch = "$(branchName)"
  
         Write-Host "Using PAC CLI from: $pacExe"
         Write-Host "Connecting to source environment: $env:sourceEnv"
@@ -339,12 +345,12 @@ stages:
         }
  
         Write-Host "Creating pull request..."
-        $description = "## Solution Deployment Request`n`n**Solution:** $solutionName`n**Target Branch:** ${{ parameters.branchName }}`n**Deployment Target:** `$(targetEnv)`n`n### What's Included`n- Managed solution package (for deployment)`n- Unmanaged solution package (for reference)`n- **Unpacked solution source** (for detailed review)`n- Solution checker results`n- Automated backup will be created before deployment`n`n### Review Checklist`n- [ ] Review unpacked solution source in solutions/$solutionName/ folder`n- [ ] Check solution checker results for any issues`n- [ ] Verify solution components are as expected`n- [ ] Confirm deployment target environment`n`n**Note:** Upon approval and completion of this PR, the solution will be automatically deployed to the target environment after creating a backup."
+        $description = "## Solution Deployment Request`n`n**Solution:** $solutionName`n**Target Branch:** $targetBranch`n**Deployment Target:** `$(targetEnv)`n`n### What's Included`n- Managed solution package (for deployment)`n- Unmanaged solution package (for reference)`n- **Unpacked solution source** (for detailed review)`n- Solution checker results`n- Automated backup will be created before deployment`n`n### Review Checklist`n- [ ] Review unpacked solution source in solutions/$solutionName/ folder`n- [ ] Check solution checker results for any issues`n- [ ] Verify solution components are as expected`n- [ ] Confirm deployment target environment`n`n**Note:** Upon approval and completion of this PR, the solution will be automatically deployed to the target environment after creating a backup."
  
         $body = @{
             title = "Solution Deploy: $solutionName"
             sourceRefName = "refs/heads/$featureBranchName"
-            targetRefName = "refs/heads/${{ parameters.branchName }}"
+            targetRefName = "refs/heads/$targetBranch"
             description = $description
         } | ConvertTo-Json
  
@@ -655,7 +661,7 @@ stages:
  
     - powershell: |
         # Configure Git and checkout the target branch where PR was merged
-        $targetBranch = "${{ parameters.branchName }}"
+        $targetBranch = "$(branchName)"
         Write-Host "Checking out target branch: $targetBranch"
         
         git config --global user.email "azure-pipeline@yourorg.com"
@@ -721,6 +727,7 @@ stages:
       displayName: 'Initialize PAC CLI'
  
     - powershell: |
+        $useSettings = [System.Convert]::ToBoolean("${{ parameters.useSettingsVariableGroup }}")
         $settingsVarGroup = "${{ parameters.settingsVariableGroupName }}"
         $solutionName = "${{ parameters.solutionName }}"
         
@@ -733,12 +740,12 @@ stages:
         $settingsDir = ".\deployment-settings"
         New-Item -ItemType Directory -Force -Path $settingsDir | Out-Null
         
-        if ([string]::IsNullOrWhiteSpace($settingsVarGroup)) {
-            Write-Host "No settings variable group specified - skipping settings file generation"
+        if (-not $useSettings -or [string]::IsNullOrWhiteSpace($settingsVarGroup) -or $settingsVarGroup -eq 'not-used') {
+            Write-Host "Settings variable group not enabled - skipping settings file generation"
             
             # Create a summary file indicating no settings were used
             $summaryContent = @{
-                Message = "No settings variable group was specified for this deployment"
+                Message = "Settings variable group was not enabled for this deployment"
                 Timestamp = (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
                 Solution = $solutionName
             }
@@ -1091,7 +1098,7 @@ stages:
         Write-Host "                         DEPLOYMENT COMPLETE                           "
         Write-Host "========================================================================"
         Write-Host "  Solution: ${{ parameters.solutionName }}"
-        Write-Host "  Target Branch: ${{ parameters.branchName }}"
+        Write-Host "  Target Branch: $(branchName)"
         Write-Host "  Environment URL: $(targetEnv)"
         Write-Host "  Status: SUCCESSFULLY DEPLOYED"
         Write-Host "========================================================================"
