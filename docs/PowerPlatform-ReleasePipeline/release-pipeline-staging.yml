@@ -1,10 +1,10 @@
-# staging-deploy-pipeline.yml
+# staging-deploy-pipeline.yml 
 # This pipeline exports a solution from Dev and deploys it to Staging environment
-
+ 
 trigger: none
-
+ 
 pr: none
-
+ 
 parameters:
 - name: variableGroupName
   type: string
@@ -20,7 +20,7 @@ parameters:
   type: string
   displayName: 'Settings Variable Group Name (optional - for environment variables and connection references)'
   default: ''
-
+ 
 variables:
 - group: ${{ parameters.variableGroupName }}
 - name: sourceEnv
@@ -29,10 +29,10 @@ variables:
   value: '$(funcStagingUrl)'
 - ${{ if ne(parameters.settingsVariableGroupName, '') }}:
   - group: ${{ parameters.settingsVariableGroupName }}
-
+ 
 pool:
   vmImage: 'windows-2022'
-
+ 
 stages:
 - stage: ValidateInputs
   displayName: 'Validate Inputs'
@@ -66,7 +66,7 @@ stages:
         Write-Host ""
         Write-Host "All validations passed"
       displayName: 'Validate Inputs'
-
+ 
 - stage: Setup
   displayName: 'Setup Tools'
   jobs:
@@ -76,39 +76,39 @@ stages:
     - powershell: |
         Write-Host "Configuring environment..."
         Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-
+ 
         # Configure working directory
         $toolsPath = "$(Build.ArtifactStagingDirectory)\tools"
         New-Item -ItemType Directory -Force -Path $toolsPath | Out-Null
         Set-Location $toolsPath
-
+ 
         # Download NuGet
         Write-Host "Downloading NuGet..."
         $sourceNugetExe = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
         $targetNugetExe = ".\nuget.exe"
         Invoke-WebRequest $sourceNugetExe -OutFile $targetNugetExe
-
+ 
         # Install PowerApps CLI via NuGet
         Write-Host "Installing PowerApps CLI..."
         .\nuget.exe install Microsoft.PowerApps.CLI -Version '1.48.2' -O .
-
+ 
         # Find PAC CLI recursively
         $pacPath = Get-ChildItem -Path . -Recurse -Filter "pac.exe" | Select-Object -First 1 -ExpandProperty FullName
         if (-not $pacPath) {
             Write-Error "Failed to find pac.exe"
             exit 1
         }
-
+ 
         $pacDirectory = Split-Path $pacPath -Parent
         Write-Host "PAC CLI found at: $pacPath"
-
+ 
         # Create a new directory for the PAC tool
         $pacToolDir = "$(Build.ArtifactStagingDirectory)\tools\pacTool"
         New-Item -ItemType Directory -Force -Path $pacToolDir | Out-Null
-
+ 
         # Copy PAC files to the new directory
         Copy-Item -Path "$pacDirectory\*" -Destination $pacToolDir -Recurse
-
+ 
         # Verify PAC CLI
         Set-Location $pacToolDir
         .\pac.exe help
@@ -116,18 +116,18 @@ stages:
             Write-Error "PAC CLI verification failed"
             exit 1
         }
-
+ 
         Write-Host "##vso[task.setvariable variable=PacToolPath;isOutput=true]$pacToolDir"
       displayName: 'Install PAC CLI via NuGet'
       name: PackageDownload
-
+ 
     - task: PublishPipelineArtifact@1
       inputs:
         targetPath: '$(Build.ArtifactStagingDirectory)/tools/pacTool'
         artifact: 'pac-cli'
         publishLocation: 'pipeline'
       displayName: 'Publish PAC CLI'
-
+ 
 - stage: ExportSolutionSource
   displayName: 'Export Solution from Source'
   dependsOn: Setup
@@ -142,29 +142,29 @@ stages:
         artifactName: 'pac-cli'
         targetPath: '$(Pipeline.Workspace)\pac-cli'
       displayName: 'Download PAC CLI'
-
+ 
     - checkout: self
       persistCredentials: true
-
+ 
     - powershell: |
         # Since the PR was completed and merged, the files should now be in the target branch
         $targetBranch = "${{ parameters.branchName }}"
         Write-Host "Checking out target branch: $targetBranch"
-
+ 
         # Configure Git
         git config --global user.email "azure-pipeline@yourorg.com"
         git config --global user.name "Azure Pipeline"
-
+ 
         git fetch origin
         git checkout $targetBranch
         git pull origin $targetBranch
-
+ 
         Write-Host "Current branch:"
         git branch --show-current
-
+ 
         Write-Host "Recent commits:"
         git log --oneline -5
-
+ 
         Write-Host "Looking for solution files..."
         if (Test-Path ".\solutions") {
             Write-Host "Solutions directory contents:"
@@ -172,19 +172,19 @@ stages:
         } else {
             Write-Host "Solutions directory not found"
         }
-
+ 
         Write-Host "Repository contents (solution-related files):"
         Get-ChildItem -Path "." -Recurse -Name | Where-Object { $_ -like "*solution*" -or $_ -like "*.zip" } | ForEach-Object { Write-Host "  $_" }
       displayName: 'Checkout Target Branch'
-
+ 
     - powershell: |
         # Use Windows-style path separators
         $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
         $pacExe = Join-Path -Path $pacPath -ChildPath "pac.exe"
-
+ 
         Write-Host "Verifying PAC CLI..."
         Write-Host "PAC Path: $pacExe"
-
+ 
         # Test if file exists
         if (-not (Test-Path $pacExe)) {
             Write-Error "PAC CLI not found at: $pacExe"
@@ -192,46 +192,46 @@ stages:
             Get-ChildItem -Path $pacPath -Recurse
             exit 1
         }
-
+ 
         # Try to execute PAC
         & $pacExe help
         if ($LASTEXITCODE -ne 0) {
             Write-Error "PAC CLI verification failed"
             exit 1
         }
-
+ 
         Write-Host "##vso[task.setvariable variable=PacExe]$pacExe"
-
+ 
         # Create solutions directory
         New-Item -ItemType Directory -Force -Path ".\solutions" | Out-Null
-
+ 
         # Configure Git
         git config --global user.email "azure-pipeline@yourorg.com"
         git config --global user.name "Azure Pipeline"
-
+ 
         $featureBranchName = "solution/deploy_${{ parameters.solutionName }}_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
         git checkout -b $featureBranchName
         Write-Host "Created feature branch: $featureBranchName"
-
+ 
         Write-Host "##vso[task.setvariable variable=FeatureBranchName]$featureBranchName"
       displayName: 'Initialize Environment'
-
+ 
     - powershell: |
         $pacExe = "$(PacExe)"
         $featureBranchName = "$(FeatureBranchName)"
         $solutionName = "${{ parameters.solutionName }}"
-
+ 
         Write-Host "Using PAC CLI from: $pacExe"
         Write-Host "Connecting to source environment: $env:sourceEnv"
-
+ 
         & $pacExe auth create --url "$env:sourceEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
         if ($LASTEXITCODE -ne 0) {
             Write-Error "Failed to authenticate to source environment"
             exit 1
         }
-
+ 
         Write-Host "Exporting solution: $solutionName"
-
+ 
         # Check if solution exists in source environment
         Write-Host "Verifying solution exists in source environment..."
         $solutions = & $pacExe solution list | Out-String
@@ -241,10 +241,10 @@ stages:
             Write-Host $solutions
             exit 1
         }
-
+ 
         # Create solutions directory and clean any existing files
         New-Item -ItemType Directory -Force -Path ".\solutions" | Out-Null
-
+ 
         # Remove any existing solution files to avoid conflicts
         if (Test-Path ".\solutions\$solutionName.zip") {
             Write-Host "Removing existing unmanaged solution file..."
@@ -254,7 +254,7 @@ stages:
             Write-Host "Removing existing managed solution file..."
             Remove-Item ".\solutions\${solutionName}_managed.zip" -Force
         }
-
+ 
         # Export unmanaged solution for source control
         Write-Host "Exporting unmanaged solution for source control..."
         & $pacExe solution export --path ".\solutions\$solutionName.zip" --name "$solutionName" --managed false --async false --overwrite
@@ -262,7 +262,7 @@ stages:
             Write-Error "Unmanaged solution export failed"
             exit 1
         }
-
+ 
         # Export managed version for deployment
         Write-Host "Exporting managed solution for deployment..."
         & $pacExe solution export --path ".\solutions\${solutionName}_managed.zip" --name "$solutionName" --managed true --async false --overwrite
@@ -270,7 +270,7 @@ stages:
             Write-Error "Managed solution export failed"
             exit 1
         }
-
+ 
         # Create solution checker results directory and clean any existing files
         $solutionCheckerDir = ".\solution-checker-results"
         if (Test-Path $solutionCheckerDir) {
@@ -278,12 +278,12 @@ stages:
             Remove-Item -Path $solutionCheckerDir -Recurse -Force
         }
         New-Item -ItemType Directory -Force -Path $solutionCheckerDir | Out-Null
-
+ 
         Write-Host "Running solution checker..."
         & $pacExe solution check --path ".\solutions\$solutionName.zip" --outputDirectory $solutionCheckerDir --errorLevel "High"
         $solutionCheckerExitCode = $LASTEXITCODE
         Write-Host "Solution checker completed with exit code: $solutionCheckerExitCode"
-
+ 
         # Check if solution checker created any results
         if (Test-Path $solutionCheckerDir) {
             $checkerFiles = Get-ChildItem -Path $solutionCheckerDir -Recurse
@@ -300,7 +300,7 @@ stages:
             New-Item -ItemType Directory -Force -Path $solutionCheckerDir | Out-Null
             "Solution checker failed to run or create results. Exit code: $solutionCheckerExitCode" | Out-File -FilePath "$solutionCheckerDir\error.txt"
         }
-
+ 
         # Unpack solution for source control review
         Write-Host "Unpacking solution for source control..."
         $unpackedDir = ".\solutions\$solutionName"
@@ -309,51 +309,51 @@ stages:
             Remove-Item -Path $unpackedDir -Recurse -Force
         }
         New-Item -ItemType Directory -Force -Path $unpackedDir | Out-Null
-
+ 
         & $pacExe solution unpack --zipfile ".\solutions\$solutionName.zip" --folder $unpackedDir --packagetype Unmanaged --allowWrite --allowDelete
         if ($LASTEXITCODE -ne 0) {
             Write-Warning "Solution unpack failed, but continuing with deployment"
         } else {
             Write-Host "Solution unpacked successfully for review"
         }
-
+ 
         # Git operations
         Write-Host "Staging solution files and unpacked source..."
         git add ".\solutions\$solutionName\*" --force
         git add ".\solutions\*.zip" --force
-
+ 
         if (Test-Path "$solutionCheckerDir\*") {
             Write-Host "Staging solution checker results..."
             git add $solutionCheckerDir --force
         }
-
+ 
         Write-Host "Committing changes..."
         $commitMessage = "feat: Export solution $solutionName for deployment - Added managed and unmanaged solution packages - Included unpacked solution source for review - Solution checker results attached - Ready for deployment review [skip ci]"
         git commit -m $commitMessage
-
+ 
         Write-Host "Pushing changes..."
         git push origin $featureBranchName
         if ($LASTEXITCODE -ne 0) {
             Write-Warning "Failed to push changes. Exit code: $LASTEXITCODE"
             exit 1
         }
-
+ 
         Write-Host "Creating pull request..."
         $description = "## Solution Deployment Request`n`n**Solution:** $solutionName`n**Target Branch:** ${{ parameters.branchName }}`n**Deployment Target:** `$(targetEnv)`n`n### What's Included`n- Managed solution package (for deployment)`n- Unmanaged solution package (for reference)`n- **Unpacked solution source** (for detailed review)`n- Solution checker results`n- Automated backup will be created before deployment`n`n### Review Checklist`n- [ ] Review unpacked solution source in solutions/$solutionName/ folder`n- [ ] Check solution checker results for any issues`n- [ ] Verify solution components are as expected`n- [ ] Confirm deployment target environment`n`n**Note:** Upon approval and completion of this PR, the solution will be automatically deployed to the target environment after creating a backup."
-
+ 
         $body = @{
             title = "Solution Deploy: $solutionName"
             sourceRefName = "refs/heads/$featureBranchName"
             targetRefName = "refs/heads/${{ parameters.branchName }}"
             description = $description
         } | ConvertTo-Json
-
+ 
         $url = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullrequests?api-version=6.0"
         $headers = @{
             'Content-Type' = 'application/json'
             'Authorization' = "Bearer $(System.AccessToken)"
         }
-
+ 
         try {
             $prResponse = Invoke-RestMethod -Uri $url -Method Post -Body $body -Headers $headers
             $prId = $prResponse.pullRequestId
@@ -369,14 +369,14 @@ stages:
       name: ExportSolution
       env:
         sourceEnv: $(sourceEnv)
-
+ 
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: './solution-checker-results'
         ArtifactName: 'solution-checker-report'
       displayName: 'Publish Solution Checker Results'
       condition: and(succeededOrFailed(), ne(variables['Agent.JobStatus'], 'Canceled'))
-
+ 
 - stage: WaitForApproval
   displayName: 'Wait for PR Approval'
   dependsOn: ExportSolutionSource
@@ -391,14 +391,14 @@ stages:
         artifactName: 'pac-cli'
         targetPath: '$(Pipeline.Workspace)\pac-cli'
       displayName: 'Download PAC CLI'
-
+ 
     - powershell: |
         $prId = "$(PullRequestId)"
         if ([string]::IsNullOrEmpty($prId)) {
             Write-Error "Pull Request ID not found"
             exit 1
         }
-
+ 
         Write-Host "========================================================================"
         Write-Host "                    WAITING FOR PR APPROVAL                            "
         Write-Host "========================================================================"
@@ -410,12 +410,12 @@ stages:
         $approved = $false
         $maxAttempts = 60  # Wait up to 30 minutes (30 seconds * 60 attempts)
         $attempt = 0
-
+ 
         $headers = @{
             'Authorization' = "Bearer $(System.AccessToken)"
             'Content-Type' = 'application/json'
         }
-
+ 
         # Get repository ID first
         $repoUrl = "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)?api-version=7.0"
         try {
@@ -428,7 +428,7 @@ stages:
             Write-Error "Failed to get repository information: $_"
             exit 1
         }
-
+ 
         do {
             $attempt++
             $elapsed = $attempt * 30
@@ -497,14 +497,14 @@ stages:
             }
             
         } while (-not $approved -and $attempt -lt $maxAttempts)
-
+ 
         if (-not $approved) {
             Write-Host ""
             Write-Error "Timeout waiting for PR approval after $($maxAttempts * 30) seconds"
             exit 1
         }
       displayName: 'Wait for PR Approval'
-
+ 
 - stage: BackupTarget
   displayName: 'Backup Target Environment'
   dependsOn:
@@ -521,23 +521,23 @@ stages:
         artifactName: 'pac-cli'
         targetPath: '$(Pipeline.Workspace)\pac-cli'
       displayName: 'Download PAC CLI'
-
+ 
     - powershell: |
         # Use Windows-style path separators
         $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
         $pacExe = Join-Path -Path $pacPath -ChildPath "pac.exe"
-
+ 
         Write-Host "Using PAC CLI from: $pacExe"
         Write-Host "##vso[task.setvariable variable=PacExe]$pacExe"
-
+ 
         # Create backup directory
         New-Item -ItemType Directory -Force -Path ".\backup" | Out-Null
       displayName: 'Initialize PAC CLI'
-
+ 
     - powershell: |
         $pacExe = "$(PacExe)"
         $solutionName = "${{ parameters.solutionName }}"
-
+ 
         Write-Host "========================================================================"
         Write-Host "                    BACKUP TARGET ENVIRONMENT                          "
         Write-Host "========================================================================"
@@ -549,12 +549,12 @@ stages:
             Write-Error "Failed to authenticate to target environment"
             exit 1
         }
-
+ 
         Write-Host "Authentication successful"
         Write-Host ""
         Write-Host "Creating backup snapshot of target environment before deployment..."
         $backupLabel = "Pre-Deploy-$solutionName-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
-
+ 
         # Check if solution exists in target environment
         Write-Host "Checking if solution '$solutionName' exists in target environment..."
         try {
@@ -586,7 +586,7 @@ stages:
         catch {
             Write-Warning "Could not check solution list: $_, but continuing with deployment"
         }
-
+ 
         # Create environment backup/snapshot using Admin API if available
         Write-Host ""
         Write-Host "Attempting to create environment backup snapshot: $backupLabel"
@@ -607,21 +607,21 @@ stages:
             Write-Warning "Environment backup failed: $_"
             Write-Warning "This may be due to insufficient permissions - continuing with deployment"
         }
-
+ 
         Write-Host ""
         Write-Host "Backup process completed - proceeding with deployment"
       displayName: 'Create Target Environment Backup'
       continueOnError: true
       env:
         targetEnv: $(targetEnv)
-
+ 
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: './backup'
         ArtifactName: 'backup-files'
       displayName: 'Publish Backup Files'
       condition: and(succeededOrFailed(), ne(variables['Agent.JobStatus'], 'Canceled'))
-
+ 
 - stage: DeployToTarget
   displayName: 'Deploy to Target Environment'
   dependsOn:
@@ -640,10 +640,10 @@ stages:
         artifactName: 'pac-cli'
         targetPath: '$(Pipeline.Workspace)\pac-cli'
       displayName: 'Download PAC CLI'
-
+ 
     - checkout: self
       persistCredentials: true
-
+ 
     - task: DownloadBuildArtifacts@1
       inputs:
         buildType: 'current'
@@ -652,7 +652,7 @@ stages:
         downloadPath: '$(Pipeline.Workspace)'
       displayName: 'Download Solution Checker Report'
       continueOnError: true
-
+ 
     - powershell: |
         # Configure Git and checkout the target branch where PR was merged
         $targetBranch = "${{ parameters.branchName }}"
@@ -671,9 +671,9 @@ stages:
         # Find the managed solution file from the target branch
         $solutionName = "${{ parameters.solutionName }}"
         $managedSolutionPath = ".\solutions\${solutionName}_managed.zip"
-
+ 
         Write-Host "Looking for managed solution at: $managedSolutionPath"
-
+ 
         if (-not (Test-Path $managedSolutionPath)) {
             Write-Host "Managed solution file not found at expected location: $managedSolutionPath"
             Write-Host "Searching for solution files in the repository..."
@@ -706,20 +706,20 @@ stages:
                 exit 1
             }
         }
-
+ 
         Write-Host "Found managed solution at: $managedSolutionPath"
         Write-Host "##vso[task.setvariable variable=ManagedSolutionPath]$managedSolutionPath"
       displayName: 'Locate Solution Files'
-
+ 
     - powershell: |
         # Use Windows-style path separators
         $pacPath = Join-Path -Path "$(Pipeline.Workspace)" -ChildPath "pac-cli"
         $pacExe = Join-Path -Path $pacPath -ChildPath "pac.exe"
-
+ 
         Write-Host "Using PAC CLI from: $pacExe"
         Write-Host "##vso[task.setvariable variable=PacExe]$pacExe"
       displayName: 'Initialize PAC CLI'
-
+ 
     - powershell: |
         $settingsVarGroup = "${{ parameters.settingsVariableGroupName }}"
         $solutionName = "${{ parameters.solutionName }}"
@@ -883,13 +883,13 @@ stages:
         Write-Host "##vso[task.setvariable variable=SettingsFilePath]$settingsFilePath"
         Write-Host "##vso[task.setvariable variable=SettingsDir]$settingsDir"
       displayName: 'Generate Deployment Settings File'
-
+ 
     - powershell: |
         $pacExe = "$(PacExe)"
         $solutionName = "${{ parameters.solutionName }}"
         $managedSolutionPath = "$(ManagedSolutionPath)"
         $settingsFilePath = "$(SettingsFilePath)"
-
+ 
         Write-Host "========================================================================"
         Write-Host "                    DEPLOYING TO TARGET ENVIRONMENT                    "
         Write-Host "========================================================================"
@@ -901,23 +901,23 @@ stages:
             Write-Host "  Settings File: $settingsFilePath"
         }
         Write-Host ""
-
+ 
         Write-Host "Connecting to target environment: $env:targetEnv"
         & $pacExe auth create --url "$env:targetEnv" --applicationId "$(clientId)" --clientSecret "$(clientSecret)" --tenant "$(tenantId)"
         if ($LASTEXITCODE -ne 0) {
             Write-Error "Failed to authenticate to target environment"
             exit 1
         }
-
+ 
         Write-Host "Authentication successful"
         Write-Host ""
         Write-Host "Importing managed solution to target..."
-
+ 
         if (-not (Test-Path $managedSolutionPath)) {
             Write-Error "Managed solution file not found at: $managedSolutionPath"
             exit 1
         }
-
+ 
         # Check if solution already exists in target environment and get its type
         Write-Host "Checking for existing solution in target environment..."
         $solutions = & $pacExe solution list | Out-String
@@ -952,13 +952,13 @@ stages:
             Write-Host "Solution '$solutionName' not found in target environment"
             Write-Host "Proceeding with new solution import..."
         }
-
+ 
         Write-Host ""
         Write-Host "========================================================================"
         Write-Host "Importing solution to target environment..."
         Write-Host "========================================================================"
         Write-Host ""
-
+ 
         # Build import command based on whether we have a settings file
         if (-not [string]::IsNullOrWhiteSpace($settingsFilePath) -and (Test-Path $settingsFilePath)) {
             Write-Host "Using settings file: $settingsFilePath"
@@ -974,7 +974,7 @@ stages:
         }
         
         $importExitCode = $LASTEXITCODE
-
+ 
         if ($importExitCode -ne 0) {
             Write-Host ""
             Write-Host "========================================================================"
@@ -1064,7 +1064,7 @@ stages:
             Write-Error "Solution import failed - see details above"
             exit 1
         }
-
+ 
         Write-Host ""
         Write-Host "========================================================================"
         Write-Host "                    DEPLOYMENT SUCCESSFUL                              "
@@ -1077,14 +1077,14 @@ stages:
       displayName: 'Deploy to Target Environment'
       env:
         targetEnv: $(targetEnv)
-
+ 
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: './deployment-settings'
         ArtifactName: 'deployment-settings'
       displayName: 'Publish Deployment Settings'
       condition: and(succeededOrFailed(), ne(variables['Agent.JobStatus'], 'Canceled'))
-
+ 
     - powershell: |
         Write-Host ""
         Write-Host "========================================================================"
