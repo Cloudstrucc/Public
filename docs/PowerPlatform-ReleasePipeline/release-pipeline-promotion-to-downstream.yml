@@ -22,7 +22,7 @@ parameters:
   - name: settingsVariableGroupName
     type: string
     displayName: 'Settings Variable Group Name (optional - for environment variables and connection references)'
-    default: ''
+    default: 'none'
   - name: autoMergePR
     type: boolean
     displayName: 'Auto-complete PR after creation'
