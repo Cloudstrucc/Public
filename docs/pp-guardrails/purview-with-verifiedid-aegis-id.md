@@ -4,7 +4,7 @@
 <br>
 
 # Government of Canada Cloud Security & Identity Modernization
-## Microsoft Purview Information Protection + Aegis ID Decentralized Identity
+## Microsoft Purview Information Protection + Aagis ID Decentralized Identity
 
 **Document Version:** 3.0  
 **Effective Date:** December 2025  
@@ -19,7 +19,7 @@
 |---------|------|--------|---------|
 | 1.0 | December 2025 | SSC/TBS Working Group | Initial buildbook |
 | 2.0 | December 2025 | SSC/TBS Working Group | Added OOB Canadian templates, Custom Protected B policy |
-| 3.0 | December 2025 | SSC/TBS Working Group | Added Executive Summary, HSM cost analysis, Aegis ID decentralized identity, SSC management model, combined ROI analysis |
+| 3.0 | December 2025 | SSC/TBS Working Group | Added Executive Summary, HSM cost analysis, Aagis ID decentralized identity, SSC management model, combined ROI analysis |
 
 **Review Schedule:** Quarterly or as required by regulatory changes  
 **Next Review Date:** March 2026  
@@ -42,9 +42,9 @@
 - [B.3 HSM Solutions Comparison](#b3-hsm-solutions-comparison)
 - [B.4 SSC Management Model](#b4-ssc-management-model)
 
-### Part C: Aegis ID Decentralized Identity
+### Part C: Aagis ID Decentralized Identity
 - [C.1 Current Certificate Authentication Challenges](#c1-current-certificate-authentication-challenges)
-- [C.2 Aegis ID Architecture](#c2-Aegis-id-architecture)
+- [C.2 Aagis ID Architecture](#c2-aagis-id-architecture)
 - [C.3 Entra Verified ID Integration](#c3-entra-verified-id-integration)
 - [C.4 Inter-Agency Mobility](#c4-inter-agency-mobility)
 - [C.5 Implementation Costs & Savings](#c5-implementation-costs--savings)
@@ -100,7 +100,7 @@ This buildbook presents a comprehensive security modernization strategy with two
 - Encryption keys controlled by GC, stored in Canadian HSMs
 - Data remains protected even if Microsoft infrastructure is compromised
 
-**Pillar 2: Aegis ID Decentralized Identity**
+**Pillar 2: Aagis ID Decentralized Identity**
 - Replace costly Entrust certificate authentication with verifiable credentials
 - Enable seamless inter-agency employee mobility on same devices
 - Leverage existing Active Directory and Microsoft Authenticator infrastructure
@@ -187,7 +187,7 @@ YOUR DATA → YOUR KEYS → YOUR CONTROL
 - **Thales Luna** - Industry-leading performance
 - **Azure Managed HSM** - Cloud-native, lower upfront cost
 
-### Component 3: Aegis ID Decentralized Identity
+### Component 3: Aagis ID Decentralized Identity
 
 **What It Does:**
 - Replaces Entrust certificate authentication with verifiable credentials
@@ -212,12 +212,12 @@ YOUR DATA → YOUR KEYS → YOUR CONTROL
 |-----------|-------------|----------------|----------------|
 | **Purview Information Protection** | $10,000,000 | — | — |
 | **HSM Infrastructure (Entrust)** | $1,000,000 | — | — |
-| **Aegis ID** | $11,400,000 | $23,850,000 | $95,400,000 |
+| **Aagis ID** | $11,400,000 | $23,850,000 | $95,400,000 |
 | **TOTAL INVESTMENT** | **$22,400,000** | — | — |
 | **TOTAL SAVINGS** | — | — | **$131,080,000** |
 | **NET 5-YEAR BENEFIT** | — | — | **$108,680,000** |
 
-### Savings Breakdown (Aegis ID)
+### Savings Breakdown (Aagis ID)
 
 | Current Cost Eliminated | Annual Savings |
 |------------------------|----------------|
@@ -248,7 +248,7 @@ YOUR DATA → YOUR KEYS → YOUR CONTROL
    - Allocate M365 E5 Compliance licensing
    - Establish SSC key management team (6 FTEs)
 
-2. **Fund Aegis ID Development**
+2. **Fund Aagis ID Development**
    - Commission detailed technical design
    - Establish SSC infrastructure allocation
    - Engage Microsoft for Verified ID partnership
@@ -283,7 +283,7 @@ YOUR DATA → YOUR KEYS → YOUR CONTROL
 | Phase 2: HSM Deployment | Days 61-150 | Entrust installation, Key Vault integration |
 | Phase 3: Purview Configuration | Days 151-210 | Labels, auto-labeling, DLP |
 | Phase 4: Production | Days 211-240 | Pilot rollout, full deployment |
-| Phase 5: Aegis ID | Months 7-18 | Development, integration, agency rollout |
+| Phase 5: Aagis ID | Months 7-18 | Development, integration, agency rollout |
 
 ---
 
@@ -519,7 +519,7 @@ YOUR DATA → YOUR KEYS → YOUR CONTROL
 
 ---
 
-# PART C: Aegis ID DECENTRALIZED IDENTITY
+# PART C: AAGIS ID DECENTRALIZED IDENTITY
 
 ## C.1 Current Certificate Authentication Challenges
 
@@ -567,9 +567,9 @@ YOUR DATA → YOUR KEYS → YOUR CONTROL
 
 ---
 
-## C.2 Aegis ID Architecture
+## C.2 Aagis ID Architecture
 
-### What is Aegis ID?
+### What is Aagis ID?
 
 A **custom DID (Decentralized Identifier) service** built on W3C standards, integrated with **Microsoft Entra Verified ID**, providing:
 
@@ -584,13 +584,13 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 ```
 ┌────────────────────────────────────────────────────────────────────┐
 │                                                                    │
-│                      Aegis ID ARCHITECTURE                         │
+│                      AAGIS ID ARCHITECTURE                         │
 │                                                                    │
 │   ┌────────────────────────────────────────────────────────────┐  │
 │   │                  SSC DATA CENTRE                            │  │
 │   │                                                             │  │
 │   │   ┌──────────────┐    ┌──────────────┐    ┌────────────┐   │  │
-│   │   │   Aegis ID   │    │    DID       │    │ Credential │   │  │
+│   │   │   Aagis ID   │    │    DID       │    │ Credential │   │  │
 │   │   │   Service    │◀──▶│  Registry    │◀──▶│   Store    │   │  │
 │   │   │  (Issuer)    │    │ (Ledger)     │    │ (Verifier) │   │  │
 │   │   └──────────────┘    └──────────────┘    └────────────┘   │  │
@@ -620,7 +620,7 @@ Each employee receives a DID with agency-specific claims:
 ```
 ┌────────────────────────────────────────────────────────────────────┐
 │                                                                    │
-│   🆔 EMPLOYEE DID: did:Aegis:gc:employee:abc123def456             │
+│   🆔 EMPLOYEE DID: did:aagis:gc:employee:abc123def456             │
 │                                                                    │
 │   ┌──────────────────────────────────────────────────────────────┐│
 │   │                     VERIFIABLE CREDENTIALS                   ││
@@ -634,7 +634,7 @@ Each employee receives a DID with agency-specific claims:
 │   │   │   claim:office = "140 Promenade du Portage"        │    ││
 │   │   │   claim:valid_from = "2024-01-15"                  │    ││
 │   │   │   claim:valid_until = "2027-01-15"                 │    ││
-│   │   │   issuer: did:Aegis:gc:issuer:esdc                 │    ││
+│   │   │   issuer: did:aagis:gc:issuer:esdc                 │    ││
 │   │   │                                                     │    ││
 │   │   └────────────────────────────────────────────────────┘    ││
 │   │                                                              ││
@@ -663,7 +663,7 @@ Each employee receives a DID with agency-specific claims:
 
 | New Component | Description |
 |--------------|-------------|
-| 🆕 Aegis ID service | SSC-hosted DID resolver/issuer |
+| 🆕 Aagis ID service | SSC-hosted DID resolver/issuer |
 | 🆕 Verified ID tenant configuration | Enable in Entra admin center |
 | 🆕 Agency credential templates | Define claims per department |
 | 🆕 OIDC integration | Connect relying party applications |
@@ -685,12 +685,12 @@ Each employee receives a DID with agency-specific claims:
 │                                  │ DID Resolution                  │
 │                                  ▼                                 │
 │   ┌─────────────────────────────────────────────────────────────┐ │
-│   │                    Aegis ID (SSC-HOSTED)                     │ │
+│   │                    AAGIS ID (SSC-HOSTED)                     │ │
 │   │                                                              │ │
 │   │   ┌──────────────┐    ┌──────────────┐    ┌────────────┐   │ │
 │   │   │  DID Method  │    │  Credential  │    │   Issuer   │   │ │
 │   │   │   Resolver   │◀──▶│   Registry   │◀──▶│  Services  │   │ │
-│   │   │ (did:Aegis)  │    │              │    │ (per dept) │   │ │
+│   │   │ (did:aagis)  │    │              │    │ (per dept) │   │ │
 │   │   └──────────────┘    └──────────────┘    └────────────┘   │ │
 │   │                                                              │ │
 │   └─────────────────────────────────────────────────────────────┘ │
@@ -710,13 +710,13 @@ Each employee receives a DID with agency-specific claims:
 │                                   │                                │
 │   2. APP REQUESTS VERIFICATION    │                                │
 │      ┌─────────────────┐◀─────────┘                               │
-│      │ Aegis ID OIDC   │                                          │
+│      │ Aagis ID OIDC   │                                          │
 │      │ Provider        │                                          │
 │      └────────┬────────┘                                          │
 │               │                                                    │
 │   3. USER PRESENTS CREDENTIAL                                      │
 │      ┌─────────────────┐         ┌─────────────────┐              │
-│      │ MS Authenticator│◀───────▶│ Aegis ID        │              │
+│      │ MS Authenticator│◀───────▶│ Aagis ID        │              │
 │      │ (Shows prompt)  │         │ Verifier        │              │
 │      └─────────────────┘         └────────┬────────┘              │
 │                                           │                        │
@@ -743,7 +743,7 @@ Each employee receives a DID with agency-specific claims:
 │                                                                    │
 │   STEP 1: ESDC Revokes Credential (Instant)                       │
 │   ┌────────────────────────────────────────────────────────────┐  │
-│   │ ❌ ESDC credential marked REVOKED in Aegis ID registry     │  │
+│   │ ❌ ESDC credential marked REVOKED in Aagis ID registry     │  │
 │   │ 🔒 All ESDC data on device becomes inaccessible            │  │
 │   │ ⚡ Happens in real-time, no device collection needed        │  │
 │   └────────────────────────────────────────────────────────────┘  │
@@ -796,7 +796,7 @@ Each employee receives a DID with agency-specific claims:
 
 ### Security Comparison
 
-| Security Aspect | Certificate Auth | Aegis ID (DID) |
+| Security Aspect | Certificate Auth | Aagis ID (DID) |
 |-----------------|-----------------|----------------|
 | **Key Storage** | Smart card/TPM | Authenticator secure enclave |
 | **Revocation Speed** | Hours to days (CRL/OCSP) | **Instant** (real-time registry) |
@@ -811,7 +811,7 @@ Each employee receives a DID with agency-specific claims:
 
 ## C.5 Implementation Costs & Savings
 
-### Aegis ID 5-Year TCO
+### Aagis ID 5-Year TCO
 
 **For Government of Canada (~300,000 employees)**
 
@@ -822,7 +822,7 @@ Each employee receives a DID with agency-specific claims:
 | HSM for DID signing | $200,000 | $50,000 | $400,000 |
 | Network/security zones | $300,000 | $75,000 | $600,000 |
 | **Software** | | | |
-| Aegis ID development | $2,000,000 | — | $2,000,000 |
+| Aagis ID development | $2,000,000 | — | $2,000,000 |
 | Entra Verified ID config | $500,000 | $100,000 | $900,000 |
 | **Operations** | | | |
 | SSC operations (4 FTEs) | $500,000 | $500,000 | $2,500,000 |
@@ -861,7 +861,7 @@ Each employee receives a DID with agency-specific claims:
 │   ┌────────────────────────────────────────────────────────────┐  │
 │   │                                                            │  │
 │   │   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐  │  │
-│   │   │ Aegis ID     │   │ DID Registry │   │ HSM Cluster  │  │  │
+│   │   │ Aagis ID     │   │ DID Registry │   │ HSM Cluster  │  │  │
 │   │   │ API Cluster  │   │ Nodes (3)    │   │ (Signing)    │  │  │
 │   │   │ (HA)         │   │              │   │              │  │  │
 │   │   └──────────────┘   └──────────────┘   └──────────────┘  │  │
@@ -1678,7 +1678,7 @@ Label: Protected B - Financial (inherited)
 │  └─────────────────────────────────────┘                          │
 │                                                                    │
 │           ┌─────────────────────────────────────┐                 │
-│           │ Aegis ID DEVELOPMENT                │                 │
+│           │ AAGIS ID DEVELOPMENT                │                 │
 │           │ • Core platform build               │                 │
 │           │ • SSC data centre deployment        │                 │
 │           │ • Entra Verified ID integration     │                 │
@@ -1765,7 +1765,7 @@ Label: Protected B - Financial (inherited)
 - [ ] Enable sensitivity labels in Power BI
 - [ ] Test label inheritance
 
-### Phase 9: Aegis ID Development (Months 5-12)
+### Phase 9: Aagis ID Development (Months 5-12)
 
 - [ ] Complete technical design
 - [ ] Deploy infrastructure to SSC data centres
@@ -1777,7 +1777,7 @@ Label: Protected B - Financial (inherited)
 ### Phase 10: Agency Rollout (Months 13-18)
 
 - [ ] Select 5 pilot agencies
-- [ ] Deploy Aegis ID to pilots
+- [ ] Deploy Aagis ID to pilots
 - [ ] Test inter-agency mobility
 - [ ] Refine based on feedback
 - [ ] Full rollout to all departments
@@ -1812,7 +1812,7 @@ Label: Protected B - Financial (inherited)
 | Sensitive documents labeled | >95% |
 | Unlabeled sensitive documents | <5% |
 | External sharing violations detected | 100% |
-| Mean time to revoke access (Aegis ID) | <1 hour |
+| Mean time to revoke access (Aagis ID) | <1 hour |
 | Device reprovisioning for transfers | <10% of current |
 | Certificate-related help desk tickets | -90% |
 
@@ -1874,7 +1874,7 @@ Label: Protected B - Financial (inherited)
 
 | Term | Definition |
 |------|------------|
-| **Aegis ID** | Custom GC decentralized identity service |
+| **Aagis ID** | Custom GC decentralized identity service |
 | **BYOK** | Bring Your Own Key - import customer keys to Azure |
 | **CMK** | Customer-Managed Keys - encryption keys you control |
 | **DID** | Decentralized Identifier - W3C standard for digital identity |
@@ -1894,7 +1894,7 @@ Label: Protected B - Financial (inherited)
 
 ## Appendix C: Compliance Mapping
 
-| Requirement | Purview | CMK | Aegis ID |
+| Requirement | Purview | CMK | Aagis ID |
 |-------------|---------|-----|----------|
 | PIPEDA - Safeguards | ✅ | ✅ | ✅ |
 | PIPEDA - Accountability | ✅ | ✅ | ✅ |
@@ -1940,19 +1940,4 @@ Label: Protected B - Financial (inherited)
 
 ### Contact Information
 
-| Issue | Contact |
-|-------|---------|
-| Technical support | IT Help Desk |
-| Policy questions | Information Protection Team |
-| Security incidents | security@[domain].gc.ca |
-| HSM operations | SSC Key Management Team |
-| Aegis ID support | Aegis-support@ssc-spc.gc.ca |
-
----
-
-**Document Classification:** Protected B  
-**Authority:** Shared Services Canada (SSC) & Treasury Board Secretariat (TBS)
-
----
-
-*End of Document*
+ contact@vanguardcs.ca 
