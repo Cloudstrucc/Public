@@ -682,15 +682,3 @@ Microsoft Purview + Customer-Managed Keys
 | ITSG-33 AC-3 | Access Enforcement (Label-based) |
 | TBS Directive | Data Classification (Sensitivity Labels) |
 | Provincial Health | HIA/PHIPA/PHIA Templates |
-
----
-
-<!-- _class: lead -->
-<!-- _backgroundColor: #198754 -->
-<!-- _color: white -->
-
-# ✅ Ready to Proceed
-
-## Your data deserves the highest protection.
-
-## Let's make it happen.
