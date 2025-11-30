@@ -30,7 +30,7 @@ style: |
 # 🛡️ Protecting Government Data in the Cloud Era
 
 ## Microsoft Purview Information Protection
-## + Aagis ID Decentralized Identity
+## + Aegis ID Decentralized Identity
 
 ### Executive Strategy Briefing
 
@@ -54,7 +54,7 @@ style: |
 │  PART 3: IMPLEMENTATION COSTS & HSM OPTIONS                       │
 │  └─ Detailed cost analysis, Entrust & alternatives, SSC mgmt      │
 │                                                                    │
-│  PART 4: AAGIS ID - DECENTRALIZED IDENTITY FOR GOC                │
+│  PART 4: Aegis ID - DECENTRALIZED IDENTITY FOR GOC                │
 │  └─ Replacing certificate auth, cross-agency mobility             │
 │                                                                    │
 │  PART 5: COMBINED ROI & RECOMMENDATIONS                           │
@@ -552,7 +552,7 @@ style: |
 <!-- _color: white -->
 
 # PART 4
-# Aagis ID: Decentralized Identity for GC
+# Aegis ID: Decentralized Identity for GC
 
 ---
 
@@ -606,11 +606,11 @@ style: |
 
 ---
 
-# Introducing Aagis ID
+# Introducing Aegis ID
 
 ## Decentralized Identity for the Government of Canada
 
-### **What is Aagis ID?**
+### **What is Aegis ID?**
 
 A **custom DID (Decentralized Identifier) service** built on W3C standards, integrated with **Microsoft Entra Verified ID**, providing:
 
@@ -622,20 +622,20 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 
 ---
 
-# How Aagis ID Works
+# How Aegis ID Works
 
 ## Decentralized Identity Architecture
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
 │                                                                    │
-│                      AAGIS ID ARCHITECTURE                         │
+│                      Aegis ID ARCHITECTURE                         │
 │                                                                    │
 │   ┌────────────────────────────────────────────────────────────┐  │
 │   │                  SSC DATA CENTRE                            │  │
 │   │                                                             │  │
 │   │   ┌──────────────┐    ┌──────────────┐    ┌────────────┐   │  │
-│   │   │   Aagis ID   │    │    DID       │    │ Credential │   │  │
+│   │   │   Aegis ID   │    │    DID       │    │ Credential │   │  │
 │   │   │   Service    │◀──▶│  Registry    │◀──▶│   Store    │   │  │
 │   │   │  (Issuer)    │    │ (Blockchain) │    │ (Verifier) │   │  │
 │   │   └──────────────┘    └──────────────┘    └────────────┘   │  │
@@ -669,7 +669,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 ```
 ┌────────────────────────────────────────────────────────────────────┐
 │                                                                    │
-│   🆔 EMPLOYEE DID: did:aagis:gc:employee:abc123def456             │
+│   🆔 EMPLOYEE DID: did:Aegis:gc:employee:abc123def456             │
 │                                                                    │
 │   ┌──────────────────────────────────────────────────────────────┐│
 │   │                     VERIFIABLE CREDENTIALS                   ││
@@ -683,7 +683,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 │   │   │   claim:office = "140 Promenade du Portage"        │    ││
 │   │   │   claim:valid_from = "2024-01-15"                  │    ││
 │   │   │   claim:valid_until = "2027-01-15"                 │    ││
-│   │   │   issuer: did:aagis:gc:issuer:esdc                 │    ││
+│   │   │   issuer: did:Aegis:gc:issuer:esdc                 │    ││
 │   │   │                                                     │    ││
 │   │   └────────────────────────────────────────────────────┘    ││
 │   │                                                              ││
@@ -705,7 +705,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 │                                                                    │
 │   STEP 1: ESDC Revokes Credential (Instant)                       │
 │   ┌────────────────────────────────────────────────────────────┐  │
-│   │ ❌ ESDC credential marked REVOKED in Aagis ID registry     │  │
+│   │ ❌ ESDC credential marked REVOKED in Aegis ID registry     │  │
 │   │ 🔒 All ESDC data on device becomes inaccessible            │  │
 │   │ ⚡ Happens in real-time, no device collection needed        │  │
 │   └────────────────────────────────────────────────────────────┘  │
@@ -783,7 +783,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 │                                                                    │
 │   WHAT NEEDS TO BE ADDED:                                          │
 │                                                                    │
-│   🆕 Aagis ID service (SSC-hosted DID resolver/issuer)            │
+│   🆕 Aegis ID service (SSC-hosted DID resolver/issuer)            │
 │   🆕 Verified ID tenant configuration                              │
 │   🆕 Agency credential templates                                   │
 │   🆕 OIDC integration with relying party apps                      │
@@ -800,7 +800,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 
 # Entra Verified ID Integration
 
-## Microsoft's DID Platform + Aagis ID Custom Service
+## Microsoft's DID Platform + Aegis ID Custom Service
 
 ### **Architecture Components:**
 
@@ -819,12 +819,12 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 │                                  │ DID Resolution                  │
 │                                  ▼                                 │
 │   ┌─────────────────────────────────────────────────────────────┐ │
-│   │                    AAGIS ID (SSC-HOSTED)                     │ │
+│   │                    Aegis ID (SSC-HOSTED)                     │ │
 │   │                                                              │ │
 │   │   ┌──────────────┐    ┌──────────────┐    ┌────────────┐   │ │
 │   │   │  DID Method  │    │  Credential  │    │   Issuer   │   │ │
 │   │   │   Resolver   │◀──▶│   Registry   │◀──▶│  Services  │   │ │
-│   │   │ (did:aagis)  │    │              │    │ (per dept) │   │ │
+│   │   │ (did:Aegis)  │    │              │    │ (per dept) │   │ │
 │   │   └──────────────┘    └──────────────┘    └────────────┘   │ │
 │   │                                                              │ │
 │   └─────────────────────────────────────────────────────────────┘ │
@@ -850,13 +850,13 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 │                                   │                                │
 │   2. APP REQUESTS VERIFICATION    │                                │
 │      ┌─────────────────┐◀─────────┘                               │
-│      │ Aagis ID OIDC   │                                          │
+│      │ Aegis ID OIDC   │                                          │
 │      │ Provider        │                                          │
 │      └────────┬────────┘                                          │
 │               │                                                    │
 │   3. USER PRESENTS CREDENTIAL                                      │
 │      ┌─────────────────┐         ┌─────────────────┐              │
-│      │ MS Authenticator│◀───────▶│ Aagis ID        │              │
+│      │ MS Authenticator│◀───────▶│ Aegis ID        │              │
 │      │ (Shows prompt)  │         │ Verifier        │              │
 │      └─────────────────┘         └────────┬────────┘              │
 │                                           │                        │
@@ -876,7 +876,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 
 ## Why DID is More Secure Than Certificates
 
-| Security Aspect | Certificate Auth | Aagis ID (DID) |
+| Security Aspect | Certificate Auth | Aegis ID (DID) |
 |-----------------|-----------------|----------------|
 | **Key Storage** | Smart card/TPM | Authenticator (secure enclave) |
 | **Revocation Speed** | Hours to days (CRL/OCSP) | **Instant** (real-time registry) |
@@ -891,7 +891,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 
 # SSC Data Centre Deployment
 
-## Aagis ID Infrastructure Requirements
+## Aegis ID Infrastructure Requirements
 
 ### **Deployment Architecture:**
 
@@ -902,7 +902,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 │   ┌────────────────────────────────────────────────────────────┐  │
 │   │                                                            │  │
 │   │   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐  │  │
-│   │   │ Aagis ID     │   │ DID Registry │   │ HSM Cluster  │  │  │
+│   │   │ Aegis ID     │   │ DID Registry │   │ HSM Cluster  │  │  │
 │   │   │ API Cluster  │   │ Nodes (3)    │   │ (Signing)    │  │  │
 │   │   │ (HA)         │   │              │   │              │  │  │
 │   │   └──────────────┘   └──────────────┘   └──────────────┘  │  │
@@ -921,7 +921,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 
 ---
 
-# Aagis ID Implementation Costs
+# Aegis ID Implementation Costs
 
 ## 5-Year Total Cost of Ownership
 
@@ -934,7 +934,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 | HSM for DID signing | $200,000 | $50,000 | $400,000 |
 | Network/security zones | $300,000 | $75,000 | $600,000 |
 | **Software** | | | |
-| Aagis ID development | $2,000,000 | — | $2,000,000 |
+| Aegis ID development | $2,000,000 | — | $2,000,000 |
 | Entra Verified ID config | $500,000 | $100,000 | $900,000 |
 | **Operations** | | | |
 | SSC operations (4 FTEs) | $500,000 | $500,000 | $2,500,000 |
@@ -946,7 +946,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 
 ---
 
-# Savings from Aagis ID
+# Savings from Aegis ID
 
 ## Eliminating Certificate Auth Costs
 
@@ -978,7 +978,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 
 # Combined Solution Architecture
 
-## Purview + CMK + Aagis ID
+## Purview + CMK + Aegis ID
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
@@ -988,7 +988,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 │   ┌────────────────────────────────────────────────────────────┐  │
 │   │                      IDENTITY LAYER                         │  │
 │   │                                                             │  │
-│   │   Aagis ID ──▶ Entra Verified ID ──▶ MS Authenticator      │  │
+│   │   Aegis ID ──▶ Entra Verified ID ──▶ MS Authenticator      │  │
 │   │   (SSC)         (Microsoft)          (Employee)             │  │
 │   │                                                             │  │
 │   └─────────────────────────┬───────────────────────────────────┘  │
@@ -1025,7 +1025,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 |-----------|-------------|
 | Purview Information Protection | $10,000,000 |
 | HSM Infrastructure (Entrust) | $1,000,000 |
-| Aagis ID | $11,400,000 |
+| Aegis ID | $11,400,000 |
 | **Total Investment** | **$22,400,000** |
 
 ### **Savings & Avoided Costs:**
@@ -1084,7 +1084,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 │  └─────────────────────────────┘                                  │
 │                                                                    │
 │           ┌─────────────────────────────┐                         │
-│           │ AAGIS ID DEVELOPMENT        │                         │
+│           │ Aegis ID DEVELOPMENT        │                         │
 │           │ • Core platform build       │                         │
 │           │ • SSC deployment            │                         │
 │           │ • Entra integration         │                         │
@@ -1110,7 +1110,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 - Allocate M365 E5 Compliance licensing
 - Establish SSC key management team
 
-### **2. Fund Aagis ID Development**
+### **2. Fund Aegis ID Development**
 - Commission detailed technical design
 - Establish SSC infrastructure allocation
 - Engage Microsoft for Verified ID partnership
@@ -1136,7 +1136,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 | Approve $22.4M 5-year investment | CIO Council | Q1 2026 |
 | Designate SSC as operational lead | DM-level | Q1 2026 |
 | Approve Entrust HSM procurement | SSC CIO | Q1 2026 |
-| Fund Aagis ID development | TBS | Q1 2026 |
+| Fund Aegis ID development | TBS | Q1 2026 |
 | Select pilot agencies | CIO Council | Q1 2026 |
 | Mandate Verified ID for new apps | TBS | Q2 2026 |
 
@@ -1156,7 +1156,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 
 ### **The Solution:**
 - Microsoft Purview with Customer-Managed Keys (Entrust HSM)
-- Aagis ID decentralized identity with Entra Verified ID
+- Aegis ID decentralized identity with Entra Verified ID
 - SSC-hosted, fully sovereign infrastructure
 
 ### **The Outcome:**
@@ -1183,7 +1183,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 
 | Term | Definition |
 |------|------------|
-| **Aagis ID** | Custom GC decentralized identity service |
+| **Aegis ID** | Custom GC decentralized identity service |
 | **BYOK** | Bring Your Own Key - import customer keys to Azure |
 | **CMK** | Customer-Managed Keys - encryption keys you control |
 | **DID** | Decentralized Identifier - W3C standard for digital identity |
@@ -1222,8 +1222,8 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 | DID Resolution | w3c-ccg.github.io/did-resolution | Resolver spec |
 | Presentation Exchange | identity.foundation/presentation-exchange | Proof requests |
 
-### **Aagis ID Method:**
-- Method name: `did:aagis`
+### **Aegis ID Method:**
+- Method name: `did:Aegis`
 - Registry: SSC-hosted (permissioned)
 - Resolution: HTTPS + DID Universal Resolver
 
@@ -1231,7 +1231,7 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 
 # Appendix D: Compliance Mapping
 
-| Requirement | Purview | CMK | Aagis ID |
+| Requirement | Purview | CMK | Aegis ID |
 |-------------|---------|-----|----------|
 | PIPEDA - Safeguards | ✅ | ✅ | ✅ |
 | PIPEDA - Accountability | ✅ | ✅ | ✅ |
