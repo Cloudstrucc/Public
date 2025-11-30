@@ -1676,7 +1676,7 @@ Label: Protected B - Financial (inherited)
 │  │ • Auto-labeling policies            │                          │
 │  │ • DLP deployment                    │                          │
 │  └─────────────────────────────────────┘                          │
-│                                                                    │
+│                                                                    │     
 │           ┌─────────────────────────────────────┐                 │
 │           │ Aegis ID DEVELOPMENT                │                 │
 │           │ • Core platform build               │                 │
