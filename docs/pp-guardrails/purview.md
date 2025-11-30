@@ -3016,7 +3016,7 @@ Get-LabelPolicy -Identity "GC-Standard-Policy" | Select-Object -ExpandProperty L
 | 1.0 | December 2025 | SSC/TBS Working Group | Initial annex |
 
 **Classification:** Protected B  
-**Author:** Frederick Pearson & References to official Microsoft Documentation, Canadian IT regulatory compliance documentation and community documentation (open source) with local LLM summaries and content generation - References outlined in the next section.
+**Authority:** Shared Services Canada (SSC) & Treasury Board Secretariat (TBS)
 
 ---
 
