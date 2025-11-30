@@ -1242,17 +1242,3 @@ A **custom DID (Decentralized Identifier) service** built on W3C standards, inte
 | ITSG-33 AU-2 (Audit) | ✅ | ✅ | ✅ |
 | TBS Identity Directive | | | ✅ |
 | CATS (future) | | | ✅ |
-
----
-
-<!-- _class: lead -->
-<!-- _backgroundColor: #198754 -->
-<!-- _color: white -->
-
-# ✅ Ready to Transform GC Security
-
-## Data sovereignty through encryption.
-## Identity sovereignty through decentralization.
-## Operational savings through modernization.
-
-**Let's make it happen.**
