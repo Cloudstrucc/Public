@@ -2003,15 +2003,20 @@ Disconnect-SPOService
 Write-Host "`nCMK Coverage Verification" -ForegroundColor Cyan
 Write-Host "=========================" -ForegroundColor Cyan
 
-# SharePoint Check FIRST (avoids MSAL DLL conflict with Exchange module)
-Connect-SPOService -Url "https://ttiecm-admin.sharepoint.com"
-$tenant = Get-SPOTenant
-$spoDEP = $tenant.CustomerManagedEncryptionKeyName
+# SharePoint Check (isolated process to avoid DLL conflicts)
+$spoResult = Start-Job -ScriptBlock {
+    Import-Module Microsoft.Online.SharePoint.PowerShell -UseWindowsPowerShell
+    Connect-SPOService -Url "https://ttiecm-admin.sharepoint.com"
+    $tenant = Get-SPOTenant
+    $tenant.CustomerManagedEncryptionKeyName
+    Disconnect-SPOService
+} | Wait-Job | Receive-Job
+
+$spoDEP = $spoResult
 Write-Host "`n✓ SharePoint DEP: $(if($spoDEP){'Applied - ' + $spoDEP}else{'Not Applied'})" `
     -ForegroundColor $(if($spoDEP){'Green'}else{'Red'})
-Disconnect-SPOService
 
-# Exchange/Teams Check SECOND
+# Exchange/Teams Check
 Connect-ExchangeOnline -ShowBanner:$false
 $mailbox = Get-Mailbox -Identity "fred.pearson@leonardocompany.ca"
 $exchangeDEP = $mailbox.DataEncryptionPolicy
