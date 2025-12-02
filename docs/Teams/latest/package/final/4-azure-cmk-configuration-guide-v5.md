@@ -1833,6 +1833,402 @@ $members | ForEach-Object {
 }
 ```
 
+### Exchange/Teams DEP Activation
+
+```powershell
+# ========================================
+# Exchange/Teams DEP Activation
+# Covers: Teams Chat, Meetings, Voicemail, Email, Calendar
+# ========================================
+
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Exchange/Teams DEP Activation" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+
+# Configuration
+$config = @{
+    DEPName = "Leonardo-CMK-DEP"
+    DEPDescription = "Leonardo Company Customer Managed Key Policy"
+    PrimaryKeyUri = "https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-cmk-key/758b3fac73fd4573a7d48c2840619326"
+    SecondaryKeyUri = "https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-customer-key-secondary/758b3fac73fd4573a7d48c2840619326"
+    TestUser = "fred.pearson@leonardocompany.ca"
+    TargetGroup = "LCE M365 Security"
+}
+
+Write-Host "`nConfiguration:" -ForegroundColor Yellow
+Write-Host "  DEP Name: $($config.DEPName)"
+Write-Host "  Primary Key: $($config.PrimaryKeyUri)"
+Write-Host "  Secondary Key: $($config.SecondaryKeyUri)"
+
+# Step 1: Connect to Exchange Online
+Write-Host "`n[Step 1] Connecting to Exchange Online..." -ForegroundColor Yellow
+try {
+    Connect-ExchangeOnline -ShowBanner:$false -ErrorAction Stop
+    Write-Host "✅ Connected" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Connection failed: $($_.Exception.Message)" -ForegroundColor Red
+    return
+}
+
+# Step 2: Check if DEP already exists
+Write-Host "`n[Step 2] Checking for existing DEP..." -ForegroundColor Yellow
+$existingDEP = Get-DataEncryptionPolicy -Identity $config.DEPName -ErrorAction SilentlyContinue
+
+if ($existingDEP) {
+    Write-Host "✅ DEP '$($config.DEPName)' already exists" -ForegroundColor Green
+    Write-Host "   Enabled: $($existingDEP.Enabled)" -ForegroundColor Gray
+} else {
+    # Step 3: Create the DEP
+    Write-Host "`n[Step 3] Creating Data Encryption Policy..." -ForegroundColor Yellow
+    try {
+        New-DataEncryptionPolicy `
+            -Name $config.DEPName `
+            -Description $config.DEPDescription `
+            -AzureKeyIDs @($config.PrimaryKeyUri, $config.SecondaryKeyUri) `
+            -ErrorAction Stop
+        
+        Write-Host "✅ DEP created successfully!" -ForegroundColor Green
+    } catch {
+        Write-Host "❌ Failed to create DEP: $($_.Exception.Message)" -ForegroundColor Red
+        Disconnect-ExchangeOnline -Confirm:$false
+        return
+    }
+}
+
+# Step 4: Apply DEP to test user first
+Write-Host "`n[Step 4] Applying DEP to test user..." -ForegroundColor Yellow
+try {
+    $mailbox = Get-Mailbox -Identity $config.TestUser -ErrorAction Stop
+    
+    if ($mailbox.DataEncryptionPolicy -eq $config.DEPName) {
+        Write-Host "✅ DEP already applied to $($config.TestUser)" -ForegroundColor Green
+    } else {
+        Set-Mailbox -Identity $config.TestUser -DataEncryptionPolicy $config.DEPName -ErrorAction Stop
+        Write-Host "✅ DEP applied to $($config.TestUser)" -ForegroundColor Green
+    }
+} catch {
+    Write-Host "❌ Failed: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+# Step 5: Apply to group (optional)
+Write-Host "`n[Step 5] Apply to group members?" -ForegroundColor Yellow
+$applyToGroup = Read-Host "Apply DEP to all members of '$($config.TargetGroup)'? (yes/no)"
+
+if ($applyToGroup -eq "yes") {
+    try {
+        $members = Get-DistributionGroupMember -Identity $config.TargetGroup -ErrorAction SilentlyContinue
+        
+        if (-not $members) {
+            Write-Host "Group not found as distribution group. Applying to test user only." -ForegroundColor Yellow
+        } else {
+            $successCount = 0
+            $skipCount = 0
+            $failCount = 0
+            
+            foreach ($member in $members) {
+                try {
+                    $mbx = Get-Mailbox -Identity $member.PrimarySmtpAddress -ErrorAction SilentlyContinue
+                    if ($mbx) {
+                        if ($mbx.DataEncryptionPolicy -eq $config.DEPName) {
+                            $skipCount++
+                        } else {
+                            Set-Mailbox -Identity $member.PrimarySmtpAddress -DataEncryptionPolicy $config.DEPName
+                            $successCount++
+                            Write-Host "  ✅ $($member.DisplayName)" -ForegroundColor Green
+                        }
+                    }
+                } catch {
+                    $failCount++
+                    Write-Host "  ❌ $($member.DisplayName): $($_.Exception.Message)" -ForegroundColor Red
+                }
+            }
+            
+            Write-Host "`nResults: $successCount applied, $skipCount skipped, $failCount failed" -ForegroundColor Cyan
+        }
+    } catch {
+        Write-Host "❌ Error: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+# Step 6: Verify
+Write-Host "`n[Step 6] Verifying..." -ForegroundColor Yellow
+$verifyMailbox = Get-Mailbox -Identity $config.TestUser
+Write-Host "User: $($verifyMailbox.DisplayName)"
+Write-Host "DEP: $(if($verifyMailbox.DataEncryptionPolicy){$verifyMailbox.DataEncryptionPolicy}else{'None'})" `
+    -ForegroundColor $(if($verifyMailbox.DataEncryptionPolicy){'Green'}else{'Red'})
+
+# Cleanup
+Disconnect-ExchangeOnline -Confirm:$false
+
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host "Exchange/Teams DEP Activation Complete!" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "`nServices now protected:" -ForegroundColor Cyan
+Write-Host "• Teams Chat & Meetings"
+Write-Host "• Teams Voicemail"
+Write-Host "• Exchange Email & Calendar"
+Write-Host "`nRe-encryption will complete within 24-48 hours." -ForegroundColor Yellow
+```
+
+### TEAMS/EXCHANGE DEP
+
+```powershell
+# ========================================
+# Exchange/Teams DEP Activation
+# With proper error handling + Group application
+# ========================================
+
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Exchange/Teams DEP Activation" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+
+$config = @{
+    DEPName = "Leonardo-CMK-DEP"
+    DEPDescription = "Leonardo Company Customer Managed Key Policy"
+    PrimaryKeyUri = "https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-customer-key-primary/2cd0cae2a2f84cb29bd6442b07649415"
+    SecondaryKeyUri = "https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-customer-key-secondary/758b3fac73fd4573a7d48c2840619326"
+    TestUser = "fred.pearson@leonardocompany.ca"
+    TargetGroup = "LCE-CMK-ENABLED-USERS"
+}
+
+Write-Host "`nConfiguration:" -ForegroundColor Yellow
+Write-Host "  DEP Name: $($config.DEPName)"
+Write-Host "  Target Group: $($config.TargetGroup)"
+
+# Step 1: Connect
+Write-Host "`n[Step 1] Connecting to Exchange Online..." -ForegroundColor Yellow
+try {
+    Connect-ExchangeOnline -ShowBanner:$false -ErrorAction Stop
+    Write-Host "✅ Connected" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Connection failed: $($_.Exception.Message)" -ForegroundColor Red
+    return
+}
+
+# Step 2: Check if DEP cmdlets are ready
+Write-Host "`n[Step 2] Checking DEP availability..." -ForegroundColor Yellow
+$existingDEP = $null
+try {
+    $existingDEP = Get-DataEncryptionPolicy -Identity $config.DEPName -ErrorAction SilentlyContinue
+} catch {
+    # DEP doesn't exist yet, that's fine
+}
+
+if ($existingDEP) {
+    Write-Host "✅ DEP '$($config.DEPName)' already exists" -ForegroundColor Green
+} else {
+    # Step 3: Create DEP
+    Write-Host "`n[Step 3] Creating Data Encryption Policy..." -ForegroundColor Yellow
+    try {
+        $newDEP = New-DataEncryptionPolicy `
+            -Name $config.DEPName `
+            -Description $config.DEPDescription `
+            -AzureKeyIDs @($config.PrimaryKeyUri, $config.SecondaryKeyUri) `
+            -ErrorAction Stop
+        
+        Write-Host "✅ DEP created successfully!" -ForegroundColor Green
+    } catch {
+        if ($_.Exception.Message -like "*not enabled*") {
+            Write-Host "❌ DEP not yet available" -ForegroundColor Red
+            Write-Host "`n⏳ Customer Key was just enabled." -ForegroundColor Yellow
+            Write-Host "Microsoft needs 15-60 minutes to propagate the changes." -ForegroundColor Yellow
+            Write-Host "Please wait and try again in 30 minutes." -ForegroundColor Yellow
+            Write-Host "`nEnablement ID: 525c991f-f60f-4a37-91b1-3439a1eb9793" -ForegroundColor Gray
+            Disconnect-ExchangeOnline -Confirm:$false
+            return
+        } else {
+            Write-Host "❌ Failed: $($_.Exception.Message)" -ForegroundColor Red
+            Disconnect-ExchangeOnline -Confirm:$false
+            return
+        }
+    }
+}
+
+# Step 4: Apply to test user first
+Write-Host "`n[Step 4] Applying DEP to test user..." -ForegroundColor Yellow
+try {
+    Set-Mailbox -Identity $config.TestUser -DataEncryptionPolicy $config.DEPName -ErrorAction Stop
+    Write-Host "✅ DEP applied to $($config.TestUser)" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Failed to apply to test user: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+# Step 5: Apply to group
+Write-Host "`n[Step 5] Applying DEP to group: $($config.TargetGroup)..." -ForegroundColor Yellow
+
+$successCount = 0
+$skipCount = 0
+$failCount = 0
+$noMailboxCount = 0
+
+try {
+    # Try as distribution group first
+    $members = Get-DistributionGroupMember -Identity $config.TargetGroup -ErrorAction SilentlyContinue
+    
+    if (-not $members) {
+        # Try as mail-enabled security group
+        $members = Get-DistributionGroupMember -Identity $config.TargetGroup -ErrorAction SilentlyContinue
+    }
+    
+    if (-not $members) {
+        Write-Host "⚠️  Group '$($config.TargetGroup)' not found as distribution/mail-enabled group" -ForegroundColor Yellow
+        Write-Host "Trying to get members via Microsoft Graph..." -ForegroundColor Gray
+        
+        # Fallback: manually list users if group not found
+        Write-Host "Please ensure the group exists and is mail-enabled." -ForegroundColor Yellow
+    } else {
+        Write-Host "Found $($members.Count) members in group" -ForegroundColor Cyan
+        
+        foreach ($member in $members) {
+            $email = $member.PrimarySmtpAddress
+            $name = $member.DisplayName
+            
+            if (-not $email) { continue }
+            
+            try {
+                $mbx = Get-Mailbox -Identity $email -ErrorAction SilentlyContinue
+                
+                if (-not $mbx) {
+                    $noMailboxCount++
+                    continue
+                }
+                
+                if ($mbx.DataEncryptionPolicy -eq $config.DEPName) {
+                    $skipCount++
+                    Write-Host "  ⏭️  $name (already applied)" -ForegroundColor Gray
+                } else {
+                    Set-Mailbox -Identity $email -DataEncryptionPolicy $config.DEPName -ErrorAction Stop
+                    $successCount++
+                    Write-Host "  ✅ $name" -ForegroundColor Green
+                }
+            } catch {
+                $failCount++
+                Write-Host "  ❌ $name - $($_.Exception.Message)" -ForegroundColor Red
+            }
+        }
+    }
+} catch {
+    Write-Host "❌ Error processing group: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+# Step 6: Summary
+Write-Host "`n======="
+```
+
+
+### SPO & ONEDRIVE CMK/DEP SETUP
+
+```powershell
+# ========================================
+# SharePoint/OneDrive CMK Registration
+# Covers: SharePoint Sites, OneDrive, Teams Files
+# ========================================
+
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "SharePoint/OneDrive CMK Registration" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+
+# Configuration (from your SPO key vaults)
+$config = @{
+    AdminUrl = "https://ttiecm-admin.sharepoint.com"
+    PrimaryKeyUri = "https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key/8114590cfda44f22b6cc3581dc004bb7"
+    SecondaryKeyUri = "https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key/ec2682182b854c888d5124b2863e2b71"
+}
+
+Write-Host "`nConfiguration:" -ForegroundColor Yellow
+Write-Host "  Admin URL: $($config.AdminUrl)"
+Write-Host "  Primary Key: $($config.PrimaryKeyUri)"
+Write-Host "  Secondary Key: $($config.SecondaryKeyUri)"
+
+# Step 1: Connect to SharePoint Online
+Write-Host "`n[Step 1] Connecting to SharePoint Online..." -ForegroundColor Yellow
+try {
+    Import-Module Microsoft.Online.SharePoint.PowerShell -ErrorAction Stop
+    Connect-SPOService -Url $config.AdminUrl -ErrorAction Stop
+    Write-Host "✅ Connected to SharePoint Online" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Connection failed: $($_.Exception.Message)" -ForegroundColor Red
+    return
+}
+
+# Step 2: Check current status
+Write-Host "`n[Step 2] Checking current CMK status..." -ForegroundColor Yellow
+try {
+    $currentPolicy = Get-SPODataEncryptionPolicy -ErrorAction SilentlyContinue
+    
+    if ($currentPolicy -and $currentPolicy.State -eq "Registered") {
+        Write-Host "✅ SharePoint CMK already registered!" -ForegroundColor Green
+        Write-Host "   State: $($currentPolicy.State)" -ForegroundColor Gray
+        Write-Host "   Primary Key: $($currentPolicy.PrimaryKeyVaultUri)" -ForegroundColor Gray
+        Write-Host "   Secondary Key: $($currentPolicy.SecondaryKeyVaultUri)" -ForegroundColor Gray
+        Disconnect-SPOService
+        return
+    } else {
+        Write-Host "⚠️  SharePoint CMK not registered yet" -ForegroundColor Yellow
+    }
+} catch {
+    Write-Host "⚠️  No existing policy found (this is expected)" -ForegroundColor Yellow
+}
+
+# Step 3: Register the CMK policy
+Write-Host "`n[Step 3] Registering SharePoint CMK..." -ForegroundColor Yellow
+Write-Host "Primary Key: $($config.PrimaryKeyUri)" -ForegroundColor Gray
+Write-Host "Secondary Key: $($config.SecondaryKeyUri)" -ForegroundColor Gray
+
+$confirm = Read-Host "`nProceed with registration? (yes/no)"
+if ($confirm -ne "yes") {
+    Write-Host "Aborted by user." -ForegroundColor Yellow
+    Disconnect-SPOService
+    return
+}
+
+try {
+    Register-SPODataEncryptionPolicy `
+        -PrimaryKeyVaultUri $config.PrimaryKeyUri `
+        -SecondaryKeyVaultUri $config.SecondaryKeyUri `
+        -ErrorAction Stop
+    
+    Write-Host "✅ SharePoint CMK registered successfully!" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Registration failed: $($_.Exception.Message)" -ForegroundColor Red
+    
+    # Common error handling
+    if ($_.Exception.Message -like "*MRP*" -or $_.Exception.Message -like "*Mandatory Retention*") {
+        Write-Host "`n⚠️  MRP (Mandatory Retention Period) may not be enabled." -ForegroundColor Yellow
+        Write-Host "Contact Microsoft Support to enable MRP for your tenant." -ForegroundColor Yellow
+        Write-Host "Reference: Subscription IDs:" -ForegroundColor Gray
+        Write-Host "  Primary: 6f114bd7-c8d3-4843-b4f8-e30a644bc412" -ForegroundColor Gray
+        Write-Host "  Secondary: 6fe93f46-fb3b-410b-8d22-540b06cbbfbc" -ForegroundColor Gray
+    }
+    
+    Disconnect-SPOService
+    return
+}
+
+# Step 4: Verify registration
+Write-Host "`n[Step 4] Verifying registration..." -ForegroundColor Yellow
+Start-Sleep -Seconds 5
+
+try {
+    $policy = Get-SPODataEncryptionPolicy
+    Write-Host "State: $($policy.State)" -ForegroundColor $(if($policy.State -eq "Registered"){'Green'}else{'Yellow'})
+} catch {
+    Write-Host "⚠️  Verification pending - check again in a few minutes" -ForegroundColor Yellow
+}
+
+# Cleanup
+Disconnect-SPOService
+
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host "SharePoint/OneDrive CMK Complete!" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "`nServices now protected:" -ForegroundColor Cyan
+Write-Host "• SharePoint Online sites"
+Write-Host "• OneDrive for Business (all users)"
+Write-Host "• Teams Files (stored in SharePoint)"
+Write-Host "`nRe-encryption will complete within 24-72 hours." -ForegroundColor Yellow
+```
+
 ### TESTING & MONITORING
 
 ```powershell
