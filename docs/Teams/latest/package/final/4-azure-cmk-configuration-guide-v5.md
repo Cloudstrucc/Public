@@ -1921,7 +1921,7 @@ Write-Host "========================================" -ForegroundColor Green
 ### SHAREPOINT DEP 
 ```powershell
 # Check if SharePoint DEP cmdlets are available
-Connect-SPOService -Url "https://ttiecm.sharepoint.com"
+Connect-SPOService -Url "https://ttiecm-admin.sharepoint.com"
 
 # Try to get DEP commands for SharePoint
 Get-Command -Module Microsoft.Online.SharePoint.PowerShell | Where-Object { 
@@ -1948,7 +1948,7 @@ Disconnect-SPOService
 $depName = "Leonardo-CMK-DEP"  # Same policy name
 
 # Step 1: Enable for SharePoint Online
-Connect-SPOService -Url "https://ttiecm.sharepoint.com"
+Connect-SPOService -Url "https://ttiecm-admin.sharepoint.com"
 
 # Set tenant-wide encryption
 Set-SPOTenant -EnableCustomerManagedEncryptionKey $true `
@@ -1958,8 +1958,8 @@ Write-Host "✓ SharePoint CMK enabled at tenant level" -ForegroundColor Green
 
 # Step 2: Apply to specific sites (optional for granular control)
 $sites = @(
-    "https://ttiecm.sharepoint.com.com/sites/Teams"
-    "https://ttiecm.sharepoint.com.com/sites/SecureProjects"
+    "https://ttiecm-admin.sharepoint.com.com/sites/Teams"
+    "https://ttiecm-admin.sharepoint.com.com/sites/SecureProjects"
 )
 
 foreach ($site in $sites) {
@@ -1979,7 +1979,7 @@ Disconnect-SPOService
 
 # OneDrive URLs follow pattern: https://[tenant]-my.sharepoint.com/personal/[user]
 
-Connect-SPOService -Url "https://ttiecm.sharepoint.com"
+Connect-SPOService -Url "https://ttiecm-admin.sharepoint.com"
 
 # Get user's OneDrive URL
 $userEmail = "fred.pearson@leonardocompany.ca"
@@ -2004,7 +2004,7 @@ Write-Host "`nCMK Coverage Verification" -ForegroundColor Cyan
 Write-Host "=========================" -ForegroundColor Cyan
 
 # SharePoint Check FIRST (avoids MSAL DLL conflict with Exchange module)
-Connect-SPOService -Url "https://ttiecm.sharepoint.com"
+Connect-SPOService -Url "https://ttiecm-admin.sharepoint.com"
 $tenant = Get-SPOTenant
 $spoDEP = $tenant.CustomerManagedEncryptionKeyName
 Write-Host "`n✓ SharePoint DEP: $(if($spoDEP){'Applied - ' + $spoDEP}else{'Not Applied'})" `
@@ -3930,7 +3930,7 @@ The following Microsoft service principals have been granted Key Vault Crypto Us
 ### 1. Verify SharePoint Access
 ```powershell
 # Test access to SharePoint
-Start-Process https://ttiecm.sharepoint.com
+Start-Process https://ttiecm-admin.sharepoint.com
 ```
 
 ### 2. Connect to SharePoint Admin
