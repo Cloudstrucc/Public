@@ -2000,29 +2000,24 @@ Disconnect-SPOService
 # ========================================
 # Verify Complete CMK Coverage
 # ========================================
-
 Write-Host "`nCMK Coverage Verification" -ForegroundColor Cyan
 Write-Host "=========================" -ForegroundColor Cyan
 
-# Exchange/Teams Check
-Connect-ExchangeOnline -ShowBanner:$false
-$mailbox = Get-Mailbox -Identity "fred.pearson@leonardocompany.ca"
-$exchangeDEP = $mailbox.DataEncryptionPolicy
-
-Write-Host "`n✓ Exchange/Teams DEP: $(if($exchangeDEP){'Applied - ' + $exchangeDEP}else{'Not Applied'})" `
-    -ForegroundColor $(if($exchangeDEP){'Green'}else{'Red'})
-
-Disconnect-ExchangeOnline -Confirm:$false
-
-# SharePoint Check
+# SharePoint Check FIRST (avoids MSAL DLL conflict with Exchange module)
 Connect-SPOService -Url "https://ttiecm.sharepoint.com"
 $tenant = Get-SPOTenant
 $spoDEP = $tenant.CustomerManagedEncryptionKeyName
-
-Write-Host "✓ SharePoint DEP: $(if($spoDEP){'Applied - ' + $spoDEP}else{'Not Applied'})" `
+Write-Host "`n✓ SharePoint DEP: $(if($spoDEP){'Applied - ' + $spoDEP}else{'Not Applied'})" `
     -ForegroundColor $(if($spoDEP){'Green'}else{'Red'})
-
 Disconnect-SPOService
+
+# Exchange/Teams Check SECOND
+Connect-ExchangeOnline -ShowBanner:$false
+$mailbox = Get-Mailbox -Identity "fred.pearson@leonardocompany.ca"
+$exchangeDEP = $mailbox.DataEncryptionPolicy
+Write-Host "`n✓ Exchange/Teams DEP: $(if($exchangeDEP){'Applied - ' + $exchangeDEP}else{'Not Applied'})" `
+    -ForegroundColor $(if($exchangeDEP){'Green'}else{'Red'})
+Disconnect-ExchangeOnline -Confirm:$false
 
 # Summary
 Write-Host "`nFull CMK Coverage Status:" -ForegroundColor Yellow
