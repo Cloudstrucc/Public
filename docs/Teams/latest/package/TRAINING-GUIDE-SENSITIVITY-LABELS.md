@@ -1,6 +1,6 @@
 # Microsoft Teams Sensitivity Labels
 ## User Training Guide
-### Leonardo Company - Centre of Excellence
+### Leonardo Company
 
 ---
 
@@ -10,7 +10,6 @@
 |-------|-------|
 | **Version** | 1.0 |
 | **Date** | November 2025 |
-| **Author** | Fred Pearson, Power Platform Tenant Administrator |
 | **Classification** | Internal Use Only |
 | **Audience** | All Leonardo Company Employees |
 

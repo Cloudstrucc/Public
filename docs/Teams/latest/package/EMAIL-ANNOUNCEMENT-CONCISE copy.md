@@ -14,10 +14,8 @@ All Teams meetings now require a sensitivity label:
 
 | Label | Use For | Key Features |
 |-------|---------|--------------|
-| **Protected B - Official Sensitive - NATO - Secure Meeting** *(Default)* | Classified info, contracts, NDA topics, customer data | Watermarks, external user restrictions, organizer-only presenting |
-| **General - Regular Meeting** | Team syncs, social calls, non-sensitive training | Standard Teams features, no restrictions |
-
-**Protected B - Official Sensitive - NATO is automatically selected** for all new meetings. Change to General only if content is truly non-sensitive.
+| **Protected B - Official Sensitive - NATO - Secure Meeting** | Classified info, contracts, NDA topics, customer data | Watermarks, external user restrictions, organizer-only presenting |
+| **Unclassified** | Team syncs, social calls, non-sensitive training | Standard Teams features, no restrictions |
 
 ---
 
@@ -57,9 +55,9 @@ A Data Loss Prevention (DLP) policy now monitors Teams chat for sensitive inform
 
 ---
 
-### 4. SharePoint Site Labels (NEW)
+### 4. SharePoint / Onedrive Site Labels (NEW)
 
-Key SharePoint sites now have **Protected B - Official Sensitive - NATO** labels applied at the site level, which:
+Key SharePoint / Onedrive sites now have **Protected B - Official Sensitive - NATO** labels applied at the site level, which:
 - Controls external sharing settings
 - Enforces privacy and security policies
 - Ensures consistent protection across all documents in the site
@@ -75,7 +73,7 @@ All Microsoft 365 data is now encrypted with **Leonardo Company-controlled encry
 | Teams Chat & Meetings | ✅ Leonardo-controlled keys |
 | Teams Voicemail | ✅ Leonardo-controlled keys |
 | Exchange Email & Calendar | ✅ Leonardo-controlled keys |
-| SharePoint & OneDrive | ✅ Leonardo-controlled keys |
+| SharePoint / Onedrive & OneDrive | ✅ Leonardo-controlled keys |
 
 This provides additional sovereignty and control over our data for Protected B - Official Sensitive - NATO compliance.
 
@@ -99,7 +97,7 @@ This provides additional sovereignty and control over our data for Protected B -
 
 | Scenario | What You'll See |
 |----------|-----------------|
-| Creating a Teams meeting | Protected B - Official Sensitive - NATO label auto-selected |
+| Creating a Teams meeting | You will be prompted to chose one of the following sensitivity labels: Protected B - Official Sensitive - NATO label or Unclassified |
 | Composing an email | Sensitivity button in ribbon |
 | Typing a SIN in Teams chat | Warning policy tip appears |
 | Joining a Protected B - Official Sensitive - NATO meeting | Watermark on video/screen share |
@@ -125,7 +123,6 @@ Thank you for your attention to these critical security enhancements. These cont
 **Security is everyone's job.**
 
 Fred Pearson  
-Power Platform Tenant Administrator  
 Leonardo Company - Centre of Excellence  
 fred.pearson@leonardocompany.ca
 

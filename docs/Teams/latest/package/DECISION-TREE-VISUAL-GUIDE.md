@@ -7,13 +7,13 @@
 
 This guide covers mandatory sensitivity labeling across:
 
-| Application | Labels Available | Default |
+| Application | Labels Available | Options |
 |-------------|-----------------|---------|
 | **Teams Meetings** | Protected B - Official Sensitive - NATO - Secure Meeting / General - Regular Meeting | Protected B - Official Sensitive - NATO |
-| **Outlook Email** | Protected B - Official Sensitive - NATO / Unclassified | Must select |
-| **Word Documents** | Protected B - Official Sensitive - NATO / Unclassified | Must select |
-| **Excel Spreadsheets** | Protected B - Official Sensitive - NATO / Unclassified | Must select |
-| **PowerPoint Presentations** | Protected B - Official Sensitive - NATO / Unclassified | Must select |
+| **Outlook Email** | Protected B - Official Sensitive - NATO / Unclassified | Protected B - Official Sensitive - NATO OR Unclassified |
+| **Word Documents** | Protected B - Official Sensitive - NATO / Unclassified | Protected B - Official Sensitive - NATO OR Unclassified |
+| **Excel Spreadsheets** | Protected B - Official Sensitive - NATO / Unclassified | Protected B - Official Sensitive - NATO OR Unclassified |
+| **PowerPoint Presentations** | Protected B - Official Sensitive - NATO / Unclassified | Protected B - Official Sensitive - NATO OR Unclassified |
 | **Teams Chat** | DLP Monitoring (44 sensitive info types) | Always active |
 | **SharePoint Sites** | Protected B - Official Sensitive - NATO / Unclassified | Site-level |
 
@@ -167,7 +167,7 @@ flowchart TD
 ║                                                                                ║
 ║  4. Compose your email and send                                                ║
 ║                                                                                ║
-║  ⚠️  You MUST select a label before sending!                                   ║
+║  ⚠️  You Protected B - Official Sensitive - NATO OR Unclassified a label before sending!                                   ║
 ║                                                                                ║
 ╚════════════════════════════════════════════════════════════════════════════════╝
 ```
@@ -226,7 +226,7 @@ flowchart TD
 ║                                                                                ║
 ║  4. Save your document                                                         ║
 ║                                                                                ║
-║  ⚠️  You MUST select a label before saving!                                    ║
+║  ⚠️  You Protected B - Official Sensitive - NATO OR Unclassified a label before saving!                                    ║
 ║                                                                                ║
 ║  💡 TIP: Label early! Apply the label when you                                 ║
 ║     create the document, not just before sharing.                              ║
@@ -351,7 +351,7 @@ Teams chat is automatically monitored for **44 sensitive information types**. Yo
 ║                                                                                ║
 ║  BEST PRACTICE:                                                                ║
 ║  → Put sensitive info in a Protected B - Official Sensitive - NATO document    ║
-║  → Share via email or SharePoint                                               ║
+║  → Share via email                                               ║
 ║  → Chat is for quick communications, not PII                                   ║
 ║                                                                                ║
 ╚════════════════════════════════════════════════════════════════════════════════╝
