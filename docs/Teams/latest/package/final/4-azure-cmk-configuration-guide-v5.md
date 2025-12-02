@@ -2412,271 +2412,124 @@ Write-Host "and run the verification script again." -ForegroundColor Yellow
 # ============================================================================
 # Create DLP Policy for Teams Chat - Sensitive Information Protection
 # ============================================================================
-# This script creates a DLP policy that:
-# - Monitors Teams chat (1:1 and group chats) for sensitive information
-# - Shows users a policy tip warning when sensitive content is detected
-# - Allows users to override with business justification
-# - Notifies compliance team of violations
-# ============================================================================
 
 Write-Host "`n============================================================================" -ForegroundColor Cyan
 Write-Host "Teams Chat DLP Policy - Sensitive Information Protection" -ForegroundColor Cyan
 Write-Host "============================================================================" -ForegroundColor Cyan
 
-# ----------------------------------------
-# CONFIGURATION
-# ----------------------------------------
+# Configuration
+$policyName = "LCE Teams Chat - Sensitive Information Protection"
+$complianceEmail = "fred.pearson@leonardocompany.ca"
+
+Write-Host "`nPolicy: $policyName" -ForegroundColor Yellow
+Write-Host "Notifications: $complianceEmail" -ForegroundColor Yellow
+
+$confirm = Read-Host "`nProceed? (yes/no)"
+if ($confirm -ne "yes") { return }
+
+$dlpScript = @'
+Connect-IPPSSession -ErrorAction Stop
 
 $policyName = "LCE Teams Chat - Sensitive Information Protection"
-$policyDescription = "Protects sensitive information in Teams chat including PII, financial data, health information, and credentials for US, Canada, UK, EU, and Italy."
+$complianceEmail = "fred.pearson@leonardocompany.ca"
 
-# Compliance team email for notifications
-$complianceEmail = "fred.pearson@leonardocompany.ca"  # Update this
+Write-Host "Connected to Security and Compliance Center" -ForegroundColor Green
 
-# ----------------------------------------
-# SENSITIVE INFORMATION TYPES
-# ----------------------------------------
+# Check if policy exists
+$existing = Get-DlpCompliancePolicy -Identity $policyName -ErrorAction SilentlyContinue
+if ($existing) {
+    Write-Host "Removing existing policy..." -ForegroundColor Yellow
+    Remove-DlpCompliancePolicy -Identity $policyName -Confirm:$false
+    Start-Sleep -Seconds 5
+}
 
-# Full list of sensitive information types to detect
-$sensitiveTypes = @(
-    # US Information
-    "U.S. / U.K. Passport Number",
-    "U.S. Bank Account Number",
+# Create policy
+Write-Host "Creating DLP Policy..." -ForegroundColor Yellow
+New-DlpCompliancePolicy -Name $policyName -Comment "Protects sensitive information in Teams chat" -TeamsLocation "All" -Mode "Enable" -ErrorAction Stop
+Write-Host "Policy created" -ForegroundColor Green
+
+# Build sensitive info types
+Write-Host "Building sensitive information types..." -ForegroundColor Yellow
+
+$sitNames = @(
+    "U.S./U.K. Passport Number",
+    "U.S. Bank Account Number", 
     "U.S. Driver's License Number",
     "U.S. Individual Taxpayer Identification Number (ITIN)",
-    "U.S. Physical Addresses",
     "U.S. Social Security Number (SSN)",
-    
-    # Canada Information
     "Canada Bank Account Number",
     "Canada Driver's License Number",
     "Canada Health Service Number",
     "Canada Passport Number",
     "Canada Personal Health Identification Number (PHIN)",
-    "Canada Physical Addresses",
     "Canada Social Insurance Number",
-    
-    # UK Information
     "U.K. Driver's License Number",
     "U.K. Electoral Roll Number",
     "U.K. National Health Service Number",
     "U.K. National Insurance Number (NINO)",
-    "U.K. Physical Addresses",
     "U.K. Unique Taxpayer Reference Number",
-    
-    # EU Information
     "EU Debit Card Number",
     "EU Driver's License Number",
     "EU National Identification Number",
     "EU Passport Number",
     "EU Social Security Number or Equivalent ID",
     "EU Tax Identification Number (TIN)",
-    
-    # Finland
-    "Finland European Health Insurance Number",
-    
-    # Italy
     "Italy Driver's License Number",
     "Italy Fiscal Code",
     "Italy Passport Number",
-    "Italy Physical Addresses",
     "Italy Value Added Tax Number",
-    
-    # Financial & Credentials
-    "Azure Storage Account Key",
     "Credit Card Number",
-    "General Password",
-    "GitHub Personal Access Token",
-    "Google API Key",
+    "Azure Storage Account Key (Generic)",
     "IP Address",
-    "IP Address v4",
-    "IP Address v6",
-    "Microsoft Entra Client Secret",
-    "SWIFT Code",
-    "User Login Credentials",
-    "X.509 Certificate Private Key"
+    "SWIFT Code"
 )
-
-# ----------------------------------------
-# SCRIPT
-# ----------------------------------------
-
-$dlpScript = @'
-param(
-    [string]$PolicyName,
-    [string]$PolicyDescription,
-    [string]$ComplianceEmail,
-    [string[]]$SensitiveTypes
-)
-
-try {
-    Connect-IPPSSession -ErrorAction Stop
-    Write-Host "Connected to Security & Compliance Center" -ForegroundColor Green
-} catch {
-    Write-Host "ERROR: Failed to connect - $($_.Exception.Message)" -ForegroundColor Red
-    exit 1
-}
-
-Write-Host ""
-Write-Host "Creating DLP Policy: $PolicyName" -ForegroundColor Cyan
-Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
-
-# Step 1: Check if policy already exists
-$existingPolicy = Get-DlpCompliancePolicy -Identity $PolicyName -ErrorAction SilentlyContinue
-if ($existingPolicy) {
-    Write-Host "Policy already exists. Removing old policy..." -ForegroundColor Yellow
-    Remove-DlpCompliancePolicy -Identity $PolicyName -Confirm:$false
-    Start-Sleep -Seconds 5
-}
-
-# Step 2: Create the DLP Policy
-Write-Host ""
-Write-Host "[Step 1/3] Creating DLP Policy..." -ForegroundColor Yellow
-
-try {
-    $policy = New-DlpCompliancePolicy `
-        -Name $PolicyName `
-        -Comment $PolicyDescription `
-        -TeamsLocation "All" `
-        -Mode "Enable" `
-        -ErrorAction Stop
-    
-    Write-Host "  ✅ Policy created" -ForegroundColor Green
-} catch {
-    Write-Host "  ❌ Failed to create policy: $($_.Exception.Message)" -ForegroundColor Red
-    Disconnect-ExchangeOnline -Confirm:$false
-    exit 1
-}
-
-# Step 3: Build sensitive information type array for the rule
-Write-Host ""
-Write-Host "[Step 2/3] Building sensitive information types..." -ForegroundColor Yellow
 
 $sensitiveInfoTypes = @()
-foreach ($typeName in $SensitiveTypes) {
-    # Get the actual SIT to verify it exists
-    $sit = Get-DlpSensitiveInformationType -Identity $typeName -ErrorAction SilentlyContinue
+foreach ($name in $sitNames) {
+    $sit = Get-DlpSensitiveInformationType | Where-Object { $_.Name -like "*$name*" } | Select-Object -First 1
     if ($sit) {
         $sensitiveInfoTypes += @{
-            Name = $typeName
+            Name = $sit.Name
             minCount = 1
-            maxCount = -1
             confidencelevel = "Medium"
-            minConfidence = 75
-            maxConfidence = 100
         }
-        Write-Host "  ✓ $typeName" -ForegroundColor Gray
-    } else {
-        Write-Host "  ⚠ Not found: $typeName" -ForegroundColor Yellow
+        Write-Host "  Found: $($sit.Name)" -ForegroundColor Gray
     }
 }
 
-Write-Host "  Found $($sensitiveInfoTypes.Count) of $($SensitiveTypes.Count) sensitive types" -ForegroundColor Cyan
+Write-Host "Found $($sensitiveInfoTypes.Count) sensitive types" -ForegroundColor Cyan
 
-# Step 4: Create the DLP Rule with policy tips and override
-Write-Host ""
-Write-Host "[Step 3/3] Creating DLP Rule with policy tips..." -ForegroundColor Yellow
+# Create rule
+Write-Host "Creating DLP Rule..." -ForegroundColor Yellow
 
-$ruleName = "$PolicyName - Detection Rule"
+$ruleName = "LCE Teams Chat - Detection Rule"
+$tipText = "SENSITIVE INFO DETECTED - This message may contain PII or credentials. Use secure channels for sensitive data."
 
-try {
-    $rule = New-DlpComplianceRule `
-        -Name $ruleName `
-        -Policy $PolicyName `
-        -ContentContainsSensitiveInformation $sensitiveInfoTypes `
-        -BlockAccess $true `
-        -BlockAccessScope "All" `
-        -NotifyUser "LastModifier", "Owner" `
-        -NotifyUserType "NotifyUser" `
-        -NotifyPolicyTipCustomText "⚠️ SENSITIVE INFORMATION DETECTED: This message contains sensitive information (PII, financial data, or credentials). Sharing this information in Teams chat may violate security policies. Consider sharing via encrypted email or a protected document instead." `
-        -NotifyEmailCustomText "A Teams chat message you sent contained sensitive information that may violate data protection policies. Please review your message and ensure sensitive data is shared through approved secure channels." `
-        -GenerateIncidentReport $ComplianceEmail `
-        -IncidentReportContent "All" `
-        -ReportSeverityLevel "Medium" `
-        -NotifyOverride "WithJustification" `
-        -ErrorAction Stop
-    
-    Write-Host "  ✅ Rule created with policy tips and override" -ForegroundColor Green
-} catch {
-    Write-Host "  ❌ Failed to create rule: $($_.Exception.Message)" -ForegroundColor Red
-    
-    # Try simpler rule if the full one fails
-    Write-Host "  Attempting simplified rule..." -ForegroundColor Yellow
-    
-    try {
-        $rule = New-DlpComplianceRule `
-            -Name $ruleName `
-            -Policy $PolicyName `
-            -ContentContainsSensitiveInformation $sensitiveInfoTypes `
-            -NotifyUser "LastModifier" `
-            -NotifyPolicyTipCustomText "⚠️ This message may contain sensitive information. Please verify before sending." `
-            -NotifyOverride "WithJustification" `
-            -ErrorAction Stop
-        
-        Write-Host "  ✅ Simplified rule created" -ForegroundColor Green
-    } catch {
-        Write-Host "  ❌ Failed to create simplified rule: $($_.Exception.Message)" -ForegroundColor Red
-    }
-}
+New-DlpComplianceRule -Name $ruleName -Policy $policyName -ContentContainsSensitiveInformation $sensitiveInfoTypes -NotifyUser "LastModifier" -NotifyPolicyTipCustomText $tipText -NotifyOverride "WithJustification" -GenerateIncidentReport $complianceEmail -IncidentReportContent "All" -ReportSeverityLevel "Medium" -ErrorAction Stop
 
-# Summary
-Write-Host ""
-Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
-Write-Host "DLP Policy Summary:" -ForegroundColor Cyan
-Write-Host "  Policy Name: $PolicyName" -ForegroundColor White
-Write-Host "  Location: Teams Chat (1:1 and Group)" -ForegroundColor White
-Write-Host "  Sensitive Types: $($sensitiveInfoTypes.Count)" -ForegroundColor White
-Write-Host "  User Action: Block with Override (justification required)" -ForegroundColor White
-Write-Host "  Policy Tip: ✅ Enabled" -ForegroundColor White
-Write-Host "  Incident Reports: $ComplianceEmail" -ForegroundColor White
-Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host "Rule created with policy tips" -ForegroundColor Green
 
 Write-Host ""
-Write-Host "⏳ Allow 15-60 minutes for policy to propagate to Teams clients." -ForegroundColor Yellow
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "DLP Policy Created Successfully" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "Policy: $policyName"
+Write-Host "Location: Teams Chat"
+Write-Host "Sensitive Types: $($sensitiveInfoTypes.Count)"
+Write-Host "User Override: With Justification"
+Write-Host "Incident Reports: $complianceEmail"
+Write-Host ""
+Write-Host "Allow 15-60 minutes for propagation" -ForegroundColor Yellow
 
 Disconnect-ExchangeOnline -Confirm:$false
 '@
 
-# Save script to temp file and execute
-$tempScript = [System.IO.Path]::GetTempFileName() + ".ps1"
-$dlpScript | Out-File -FilePath $tempScript -Encoding UTF8
-
-Write-Host "`nConfiguration:" -ForegroundColor Yellow
-Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
-Write-Host "  Policy: $policyName" -ForegroundColor White
-Write-Host "  Sensitive Types: $($sensitiveTypes.Count)" -ForegroundColor White
-Write-Host "  Notifications: $complianceEmail" -ForegroundColor White
-Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
-
-$confirm = Read-Host "`nProceed with creating DLP policy? (yes/no)"
-if ($confirm -ne "yes") {
-    Write-Host "Aborted." -ForegroundColor Yellow
-    Remove-Item $tempScript -ErrorAction SilentlyContinue
-    return
-}
-
-# Convert array to string for passing to subprocess
-$sensitiveTypesString = $sensitiveTypes -join "|"
-
-Write-Host "`nRunning in isolated PowerShell process..." -ForegroundColor Yellow
-Write-Host "A sign-in prompt will appear." -ForegroundColor Gray
-
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File $tempScript `
-    -PolicyName $policyName `
-    -PolicyDescription $policyDescription `
-    -ComplianceEmail $complianceEmail `
-    -SensitiveTypes $sensitiveTypes
-
-Remove-Item $tempScript -ErrorAction SilentlyContinue
+Write-Host "`nRunning in isolated PowerShell..." -ForegroundColor Yellow
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command $dlpScript
 
 Write-Host "`n============================================================================" -ForegroundColor Green
 Write-Host "Complete!" -ForegroundColor Green
 Write-Host "============================================================================" -ForegroundColor Green
-Write-Host "`nNext Steps:" -ForegroundColor Yellow
-Write-Host "1. Wait 15-60 minutes for policy propagation" -ForegroundColor White
-Write-Host "2. Test by sending a fake SSN (e.g., 123-45-6789) in Teams chat" -ForegroundColor White
-Write-Host "3. You should see a policy tip warning appear" -ForegroundColor White
-Write-Host "4. Monitor incidents in Microsoft Purview > DLP > Activity Explorer" -ForegroundColor White
 ```
 
 ### TESTING & MONITORING
