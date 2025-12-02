@@ -1,16 +1,32 @@
-**Subject: ACTION REQUIRED: New Microsoft 365 Security Controls - Effective [DATE]**
+# Subject: ACTION REQUIRED: New Microsoft 365 Security Controls - Effective [DATE]
 
 Dear Team,
 
-Starting **[DATE]**, we are implementing enhanced security controls across Microsoft Teams and Outlook. This email summarizes the key changes. **Please review the attached User Guide for complete details.**
+Starting **[DATE]**, we are implementing enhanced security controls across Microsoft 365. This email summarizes the key changes. **Please review the attached User Guide for complete details.**
 
 ---
 
 ## WHAT'S CHANGING
 
-### 1. Meeting Sensitivity Labels (NEW)
+### 1. Mandatory Sensitivity Labels (NEW)
 
-All Teams meetings now require a sensitivity label:
+Sensitivity labels are now **mandatory** across the following applications:
+
+| Application | Requirement |
+|-------------|-------------|
+| **Teams Meetings** | Must select a label before scheduling |
+| **Outlook Email** | Must select a label before sending |
+| **Word Documents** | Must select a label before saving |
+| **Excel Spreadsheets** | Must select a label before saving |
+| **PowerPoint Presentations** | Must select a label before saving |
+
+**Important - Label Inheritance:** When you attach a labeled document to an email, the email's protection level will automatically match the attachment. For example, if you attach a **Protected B** Word document, the email will also be classified as **Protected B**.
+
+---
+
+### 2. Meeting Sensitivity Labels
+
+All Teams meetings require a sensitivity label:
 
 | Label | Use For | Key Features |
 |-------|---------|--------------|
@@ -21,34 +37,82 @@ All Teams meetings now require a sensitivity label:
 
 ---
 
-### 2. Email Sensitivity Labels (NEW)
+### 3. Email & Document Sensitivity Labels
 
-When composing emails in Outlook, you can now apply sensitivity labels:
+When composing emails or creating documents:
 
 | Label | Use For | What It Does |
 |-------|---------|--------------|
-| **Protected B** | Classified content, contracts, PII | Applies encryption, restricts forwarding |
-| **Unclassified** | General business communications | Standard email behavior |
+| **Protected B** | Classified content, contracts, PII | Applies encryption, restricts forwarding/copying |
+| **Unclassified** | General business communications | Standard behavior |
 
-**How to apply:** Click the **Sensitivity** button in the Outlook ribbon when composing an email and select the appropriate label.
+**How to apply:** Click the **Sensitivity** button in the ribbon (Outlook, Word, Excel, PowerPoint) and select the appropriate label.
 
 ---
 
-### 3. Teams Chat Protection (NEW)
+### 4. Teams Chat Protection (NEW)
 
-A Data Loss Prevention (DLP) policy now monitors Teams chat for sensitive information:
+A Data Loss Prevention (DLP) policy now monitors Teams chat for **44 sensitive information types**:
 
-**Protected Information Types (subset/examples):**
+**🇨🇦 Canada**
+- Bank Account Number
+- Driver's License Number
+- Health Service Number
+- Passport Number
+- Personal Health Identification Number (PHIN)
+- Physical Addresses
+- Social Insurance Number
 
-- 🇨🇦 Canadian: SIN, passport, driver's license, bank accounts, health service numbers
-- 🇺🇸 US: SSN, passport, bank accounts, ITIN
-- 🇬🇧 UK: National Insurance, NHS numbers, passport
-- 🇪🇺 EU: National IDs, tax IDs, passport numbers
-- 💳 Financial: Credit cards, SWIFT codes, bank accounts
-- 🔐 Credentials: API keys, passwords, certificates
+**🇺🇸 United States**
+- U.S. / U.K. Passport Number
+- Bank Account Number
+- Driver's License Number
+- Individual Taxpayer Identification Number (ITIN)
+- Physical Addresses
+- Social Security Number (SSN)
+
+**🇬🇧 United Kingdom**
+- Driver's License Number
+- Electoral Roll Number
+- National Health Service Number
+- National Insurance Number (NINO)
+- Physical Addresses
+- Unique Taxpayer Reference Number
+
+**🇪🇺 European Union**
+- Debit Card Number
+- Driver's License Number
+- National Identification Number
+- Passport Number
+- Social Security Number (SSN) or Equivalent ID
+- Tax Identification Number (TIN)
+
+**🇮🇹 Italy**
+- Driver's License Number
+- Fiscal Code
+- Passport Number
+- Physical Addresses
+- Value Added Tax Number
+
+**🇫🇮 Finland**
+- European Health Insurance Number
+
+**💳 Financial**
+- Credit Card Number
+- SWIFT Code
+
+**🔐 Credentials & Technical**
+- Azure Storage Account Key
+- Azure Storage Account Key (Generic)
+- General Password
+- GitHub Personal Access Token
+- Google API Key
+- IP Address (v4 and v6)
+- Microsoft Entra Client Secret
+- User Login Credentials
+- X.509 Certificate Private Key
 
 **What you'll see:**
-
 - A **policy tip warning** appears if you type sensitive data in chat
 - You can **acknowledge and proceed** if there's a legitimate business need
 - Incidents are logged for compliance review
@@ -57,7 +121,7 @@ A Data Loss Prevention (DLP) policy now monitors Teams chat for sensitive inform
 
 ---
 
-### 4. SharePoint Site Labels (NEW)
+### 5. SharePoint Site Labels (NEW)
 
 Key SharePoint sites now have **Protected B** labels applied at the site level, which:
 - Controls external sharing settings
@@ -66,9 +130,9 @@ Key SharePoint sites now have **Protected B** labels applied at the site level, 
 
 ---
 
-### 5. Enhanced Encryption (NEW)
+### 6. Enhanced Encryption (NEW)
 
-All Microsoft 365 data is now encrypted with **Leonardo Company-controlled encryption keys** (Customer Managed Keys) rather than Microsoft-managed keys:
+All Microsoft 365 data is now encrypted with **Leonardo Company-controlled encryption keys** (Customer Managed Keys):
 
 | Service | Protection Status |
 |---------|------------------|
@@ -100,7 +164,9 @@ This provides additional sovereignty and control over our data for Protected B c
 | Scenario | What You'll See |
 |----------|-----------------|
 | Creating a Teams meeting | Protected B label auto-selected |
-| Composing an email | Sensitivity button in ribbon |
+| Composing an email | Must select sensitivity label before sending |
+| Creating a Word/Excel/PowerPoint file | Must select sensitivity label before saving |
+| Attaching a Protected B document to email | Email automatically inherits Protected B |
 | Typing a SIN in Teams chat | Warning policy tip appears |
 | Joining a Protected B meeting | Watermark on video/screen share |
 
@@ -125,12 +191,9 @@ Thank you for your attention to these critical security enhancements. These cont
 **Security is everyone's job.**
 
 Fred Pearson  
-Power Platform Tenant Administrator  
-Leonardo Company - Centre of Excellence  
+Senior Architect  
 fred.pearson@leonardocompany.ca
 
 ---
 
 **Classification:** Internal Use Only
-
----
