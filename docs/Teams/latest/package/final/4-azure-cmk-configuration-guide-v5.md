@@ -125,16 +125,16 @@ $global:CMKParams = @{
 $global:KeyVaultNames = @{
     M365Primary = "kv-cmk-m365-pri-4239"
     M365Secondary = "kv-cmk-m365-sec-8250"
-    SPOPrimary = "kv-cmk-spo-pri-[number]"  # Update if you have SPO vaults
-    SPOSecondary = "kv-cmk-spo-sec-[number]"  # Update if you have SPO vaults
+    SPOPrimary = "kv-cmk-spo-pri-1117"  # Update if you have SPO vaults
+    SPOSecondary = "kv-cmk-spo-sec-1117"  # Update if you have SPO vaults
 }
 
 # Set Key URIs
 $global:KeyURIs = @{
     M365Primary = "https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-cmk-key/758b3fac73fd4573a7d48c2840619326"
-    M365Secondary = "https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-cmk-key/[YOUR-SECONDARY-KEY-VERSION]"
-    SPOPrimary = "Not configured"
-    SPOSecondary = "Not configured"
+    M365Secondary = "https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-customer-key-secondary/758b3fac73fd4573a7d48c2840619326"
+    SPOPrimary =  "https://kv-cmk-spo-pri-1117.vault.azure.net/keys/spo-cmk-key/8114590cfda44f22b6cc3581dc004bb7"
+    SPOSecondary = "https://kv-cmk-spo-sec-1117.vault.azure.net/keys/spo-cmk-key/ec2682182b854c888d5124b2863e2b71"
 }
 
 # Set other required variables
