@@ -1,204 +1,136 @@
-Subject: IMPORTANT: New Security Controls for Teams Meetings - Effective [DATE]
+**Subject: ACTION REQUIRED: New Microsoft 365 Security Controls - Effective [DATE]**
 
 Dear Team,
 
-**This email announces upcoming changes to Microsoft Teams meetings that will be rolled out in the coming days.** Starting **[DATE]**, all Teams meetings will require a **Sensitivity Label** to ensure proper security controls. This is a mandatory security enhancement for our defense contractor operations.
+Starting **[DATE]**, we are implementing enhanced security controls across Microsoft Teams and Outlook. This email summarizes the key changes. **Please review the attached User Guide for complete details.**
 
-**Timeline:**
-- **[DATE]:** Security labels become available in Teams
-- **[DATE]:** All users should see the new sensitivity options
-- **[DATE]:** Mandatory compliance begins
+---
 
-═══════════════════════════════════════════════════════════════════════════════
+## WHAT'S CHANGING
 
-## TEAMS ROLLOUT & SECURITY PROCEDURES
+### 1. Meeting Sensitivity Labels (NEW)
 
-**Default Behavior:**
-When you create a Teams meeting, **"Protected B - Secure Meeting" is automatically selected** as the default label. This ensures all meetings are secure by default.
+All Teams meetings now require a sensitivity label:
 
-To use a different label: Click the **Sensitivity dropdown** and select "General - Regular Meeting"
+| Label | Use For | Key Features |
+|-------|---------|--------------|
+| **Protected B - Secure Meeting** *(Default)* | Classified info, contracts, NDA topics, customer data | Watermarks, external user restrictions, organizer-only presenting |
+| **General - Regular Meeting** | Team syncs, social calls, non-sensitive training | Standard Teams features, no restrictions |
 
-**The Two Security Levels:**
+**Protected B is automatically selected** for all new meetings. Change to General only if content is truly non-sensitive.
 
-**🔴 PROTECTED B - SECURE MEETING** (Default - Auto-Selected)
-For: Classified info, contracts, technical data, NDA topics, customer confidential data
+---
 
-Security features (ENFORCED):
-• Watermarks on all video and screen shares
-• External users have limited functionality:
-  - Can participate and view
-  - CANNOT take screenshots
-  - CANNOT record
-  - CANNOT download transcripts or meeting content
-• Only organizer can present
-• End-to-end encryption
+### 2. Email Sensitivity Labels (NEW)
 
-**🟢 GENERAL - REGULAR MEETING** (Select from dropdown)
-For: Team syncs, social calls, training (non-sensitive), routine admin
+When composing emails in Outlook, you can now apply sensitivity labels:
 
-Security features (FLEXIBLE):
-• No watermarks
-• You control all settings
-• External users have full functionality
-• Standard Teams features
+| Label | Use For | What It Does |
+|-------|---------|--------------|
+| **Protected B** | Classified content, contracts, PII | Applies encryption, restricts forwarding |
+| **Unclassified** | General business communications | Standard email behavior |
 
-═══════════════════════════════════════════════════════════════════════════════
+**How to apply:** Click the **Sensitivity** button in the Outlook ribbon when composing an email and select the appropriate label.
 
-## WHY THIS MATTERS
+---
 
-**As a Canadian defense contractor, we handle:**
-- Classified government contracts (Protected A/B)
-- Proprietary defense technologies
-- Export-controlled information (ITAR/EAR)
-- Customer confidential data
+### 3. Teams Chat Protection (NEW)
 
-**Regulatory Requirements:**
-- **Protected B Classification:** Government of Canada information security standard
-- **PIPEDA:** Personal Information Protection and Electronic Documents Act
-- **CCCS ITSG-33:** IT Security Risk Management framework
-- **Canadian Controlled Goods Program:** Compliance with controlled goods regulations
+A Data Loss Prevention (DLP) policy now monitors Teams chat for sensitive information:
 
-**Cloud Security = Shared Responsibility**
-- Microsoft secures the infrastructure
-- **We secure access and data** ← This is our part
-- Sensitivity labels provide necessary guardrails
+**Protected Information Types (subset/examples):**
 
-**Without proper controls, we risk:**
-- Unauthorized recording of classified discussions
-- Data spillage to foreign entities
-- Contract violations and loss of clearance
-- Non-compliance with Canadian security requirements
+- 🇨🇦 Canadian: SIN, passport, driver's license, bank accounts, health service numbers
+- 🇺🇸 US: SSN, passport, bank accounts, ITIN
+- 🇬🇧 UK: National Insurance, NHS numbers, passport
+- 🇪🇺 EU: National IDs, tax IDs, passport numbers
+- 💳 Financial: Credit cards, SWIFT codes, bank accounts
+- 🔐 Credentials: API keys, passwords, certificates
 
-═══════════════════════════════════════════════════════════════════════════════
+**What you'll see:**
 
-## WHICH LABEL TO USE?
+- A **policy tip warning** appears if you type sensitive data in chat
+- You can **acknowledge and proceed** if there's a legitimate business need
+- Incidents are logged for compliance review
 
-**ALWAYS use Protected B for:**
-✓ Contract discussions
-✓ Technical specifications
-✓ Government meetings
-✓ Proprietary information
-✓ NDA-covered topics
-✓ **When in doubt!**
+**Best Practice:** Use sensitivity-labeled documents or encrypted email for sharing sensitive information rather than chat.
 
-**Use General for:**
-✓ Team stand-ups (non-sensitive)
-✓ Social gatherings
-✓ Training (non-classified)
-✓ Routine admin meetings
+---
 
-═══════════════════════════════════════════════════════════════════════════════
+### 4. SharePoint Site Labels (NEW)
 
-## WHAT YOU'LL SEE
+Key SharePoint sites now have **Protected B** labels applied at the site level, which:
+- Controls external sharing settings
+- Enforces privacy and security policies
+- Ensures consistent protection across all documents in the site
 
-**Creating meetings:**
-- **Protected B - Secure Meeting is automatically selected by default**
-- For casual meetings: Click the **Sensitivity dropdown** and change to "General - Regular Meeting"
-- Complete meeting details and send
+---
 
-**In Protected B meetings:**
-• Watermarks visible on all video/screens (your name + timestamp)
-• External participants have view-only capabilities (no recording/screenshots)
-• Only organizer can present
-• Settings locked with 🔒 icons
+### 5. Enhanced Encryption (NEW)
 
-**In General meetings:**
-• No watermarks
-• Normal Teams functionality
-• No restrictions
+All Microsoft 365 data is now encrypted with **Leonardo Company-controlled encryption keys** (Customer Managed Keys) rather than Microsoft-managed keys:
 
-═══════════════════════════════════════════════════════════════════════════════
+| Service | Protection Status |
+|---------|------------------|
+| Teams Chat & Meetings | ✅ Leonardo-controlled keys |
+| Teams Voicemail | ✅ Leonardo-controlled keys |
+| Exchange Email & Calendar | ✅ Leonardo-controlled keys |
+| SharePoint & OneDrive | ✅ Leonardo-controlled keys |
 
-## RESOURCES
+This provides additional sovereignty and control over our data for Protected B compliance.
 
-**📎 Attached Documents:**
-• Complete User Guide
-• Quick Reference Card (print and keep at your desk)
-• Decision Tree (which label to use)
+---
 
-**📹 Video Tutorial:** [5-minute walkthrough: LINK]
+## QUICK REFERENCE
 
-**💬 Support:**
-• Email: itsupport@leonardocompany.ca
-• Teams: "IT Support" channel
-• Phone: [PHONE]
-• Contact: Fred Pearson (fred.pearson@leonardocompany.ca)
+**When in doubt → Choose Protected B**
 
-═══════════════════════════════════════════════════════════════════════════════
+| Always Protected B | General/Unclassified is OK |
+|-------------------|---------------------------|
+| Contract discussions | Team stand-ups |
+| Technical specifications | Social gatherings |
+| Government communications | Non-classified training |
+| NDA-covered topics | Routine admin |
+| Customer PII | General announcements |
 
-## QUICK FAQ
+---
 
-**Q: What if I forget to select a label?**
-A: Don't worry! Protected B is automatically selected by default for every new meeting. 
-   You're secure by default. Only change it to General (via the dropdown) if the 
-   meeting content is truly non-sensitive.
+## WHAT TO EXPECT
 
-**Q: Can external partners join Protected B meetings?**
-A: Yes, but with limited functionality. They can participate and view content but 
-   cannot take screenshots, record, or download transcripts.
+| Scenario | What You'll See |
+|----------|-----------------|
+| Creating a Teams meeting | Protected B label auto-selected |
+| Composing an email | Sensitivity button in ribbon |
+| Typing a SIN in Teams chat | Warning policy tip appears |
+| Joining a Protected B meeting | Watermark on video/screen share |
 
-**Q: Can I change the label after creating the meeting?**
-A: Yes, before the meeting starts. Not possible once the meeting begins.
-
-**Q: When in doubt, which label?**
-A: Always use Protected B - Secure Meeting. Better safe than sorry!
-
-═══════════════════════════════════════════════════════════════════════════════
-
-## IMPORTANT DATES
-
-| Date | Milestone |
-|------|-----------|
-| [DATE] | Labels go live |
-| [DATE] | **Acknowledgment deadline** ← Reply to this email |
-| [DATE] | Mandatory compliance begins |
-
-═══════════════════════════════════════════════════════════════════════════════
+---
 
 ## ACTION REQUIRED
 
-**Please acknowledge receipt by replying to this email.**
+**Please reply with "Acknowledged" by [DATE].**
 
-Simply reply with: **"Acknowledged"** or hit "Reply All" and confirm receipt.
+---
 
-Deadline: **[DATE]**
+## RESOURCES
 
-═══════════════════════════════════════════════════════════════════════════════
+- 📎 **Attached:** Complete User Guide, Quick Reference Card, Decision Tree
+- 📹 **Video Tutorial:** [LINK]
+- 💬 **Support:** itsupport@leonardocompany.ca or Fred Pearson (fred.pearson@leonardocompany.ca)
 
-## YOUR RESPONSIBILITY
+---
 
-You are responsible for selecting the appropriate label based on meeting content.
-
-**When in doubt → Use Protected B - Secure Meeting**
-
-═══════════════════════════════════════════════════════════════════════════════
-
-Thank you for your attention to this critical security enhancement. These controls protect Leonardo Company, our employees, our customers, and national security interests.
+Thank you for your attention to these critical security enhancements. These controls protect Leonardo Company, our employees, our customers, and national security interests.
 
 **Security is everyone's job.**
 
-Best regards,
-
-Fred Pearson
-Power Platform Tenant Administrator
-Leonardo Company - Centre of Excellence
+Fred Pearson  
+Power Platform Tenant Administrator  
+Leonardo Company - Centre of Excellence  
 fred.pearson@leonardocompany.ca
-[PHONE]
 
 ---
 
-**📎 Attachments:**
-• Teams-Sensitivity-Labels-User-Guide.pdf
-• Quick-Reference-Card.pdf
-• Label-Selection-Decision-Tree.pdf
-
-**🔗 Important Links:**
-• Video Tutorial: [LINK]
-• FAQ Page: [LINK]
-
----
-
-**Classification:** Internal Use Only  
-**Distribution:** All Leonardo Company Employees
+**Classification:** Internal Use Only
 
 ---
