@@ -2115,7 +2115,6 @@ try {
 Write-Host "`n======="
 ```
 
-
 ### SPO & ONEDRIVE CMK/DEP SETUP
 
 ```powershell
@@ -2229,65 +2228,183 @@ Write-Host "• Teams Files (stored in SharePoint)"
 Write-Host "`nRe-encryption will complete within 24-72 hours." -ForegroundColor Yellow
 ```
 
+### SharePoint Site (apply only LCE Meeting Policy Labels)
+
+```powershell
+$fixPolicyScript = @'
+Connect-IPPSSession
+
+Write-Host ""
+Write-Host "Updating LCE Meeting Labels policy for SharePoint..." -ForegroundColor Cyan
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+
+try {
+    Set-LabelPolicy -Identity "LCE Meeting Labels" -AddSharePointLocation "All"
+    Write-Host "✅ SharePoint location added" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Error: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+Write-Host ""
+Write-Host "Verifying..." -ForegroundColor Yellow
+
+$policy = Get-LabelPolicy -Identity "LCE Meeting Labels"
+Write-Host ""
+Write-Host "Policy: $($policy.Name)" -ForegroundColor White
+Write-Host "  Labels: $($policy.Labels -join ', ')" -ForegroundColor Gray
+Write-Host "  SharePointLocation: $(if($policy.SharePointLocation){'✅ ' + $policy.SharePointLocation}else{'❌ Empty'})" -ForegroundColor $(if($policy.SharePointLocation){'Green'}else{'Red'})
+
+Write-Host ""
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+Write-Host ""
+Write-Host "⏳ Wait 15-30 minutes, then re-run the site labeling script." -ForegroundColor Yellow
+
+Disconnect-ExchangeOnline -Confirm:$false
+'@
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command $fixPolicyScript
+```
+
 ### SharePoint Site (documents section with Protected B Label)
 
-```sharepoint
+```powershell
 # ========================================
-# Apply Default Labels (Isolated Process)
+# Update Policy & Apply Labels to Sites
 # ========================================
 
 Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "SharePoint Library Default Labels" -ForegroundColor Cyan
+Write-Host "Update Policy & Apply Site Labels" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 
-$spoScript = @'
-$labelGuids = @{
-    "Unclassified" = "168978df-d32f-45da-91d2-5fb967fef366"
-    "Protected B"  = "0c27e851-be47-4874-8ddc-8e505bf9d35f"
-}
+# Step 1: Update Label Policy
+Write-Host "`n[Step 1] Updating LCE Meeting Labels policy..." -ForegroundColor Yellow
 
-$configurations = @(
-    @{
-        SiteUrl = "https://ttiecm.sharepoint.com/sites/PowerPlatform-DataverseIntegrationBaselineTheme"
-        Label = "Protected B"
-    },
-    @{
-        SiteUrl = "https://ttiecm.sharepoint.com/sites/PowerPlatform-BaselineQA"
-        Label = "Protected B"
-    }
-)
+$updatePolicyScript = @'
+Connect-IPPSSession
 
 try {
-    Import-Module Microsoft.Online.SharePoint.PowerShell -ErrorAction Stop
-    Connect-SPOService -Url "https://ttiecm-admin.sharepoint.com" -ErrorAction Stop
-    Write-Host "Connected to SharePoint Online" -ForegroundColor Green
-    
-    foreach ($config in $configurations) {
-        Write-Host ""
-        Write-Host "Processing: $($config.SiteUrl)" -ForegroundColor Cyan
-        try {
-            Set-SPOSite -Identity $config.SiteUrl -SensitivityLabel $labelGuids[$config.Label] -ErrorAction Stop
-            Write-Host "  SUCCESS: Label set to $($config.Label)" -ForegroundColor Green
-        } catch {
-            Write-Host "  FAILED: $($_.Exception.Message)" -ForegroundColor Red
-        }
-    }
-    
-    Disconnect-SPOService
-    Write-Host ""
-    Write-Host "Complete!" -ForegroundColor Green
+    Set-LabelPolicy -Identity "LCE Meeting Labels" -AddSharePointLocation "All"
+    Write-Host "SUCCESS" 
 } catch {
-    Write-Host "ERROR: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "ERROR|$($_.Exception.Message)"
 }
+
+Disconnect-ExchangeOnline -Confirm:$false
 '@
 
-Write-Host "Running in isolated Windows PowerShell process..." -ForegroundColor Yellow
-Write-Host "A sign-in prompt will appear." -ForegroundColor Gray
+$policyResult = powershell.exe -NoProfile -ExecutionPolicy Bypass -Command $updatePolicyScript 2>&1 | Select-Object -Last 1
+
+if ($policyResult -like "SUCCESS*") {
+    Write-Host "✅ Policy updated - SharePoint location added" -ForegroundColor Green
+} else {
+    $errorMsg = if ($policyResult -like "ERROR|*") { ($policyResult -split '\|')[1] } else { $policyResult }
+    Write-Host "❌ Policy update failed: $errorMsg" -ForegroundColor Red
+}
+
+# Step 2: Wait for propagation
+Write-Host "`n[Step 2] Waiting for policy propagation..." -ForegroundColor Yellow
+Write-Host "This may take a few minutes..." -ForegroundColor Gray
+
+$waitSeconds = 60
+for ($i = $waitSeconds; $i -gt 0; $i--) {
+    Write-Progress -Activity "Waiting for policy propagation" -Status "$i seconds remaining" -PercentComplete ((($waitSeconds - $i) / $waitSeconds) * 100)
+    Start-Sleep -Seconds 1
+}
+Write-Progress -Activity "Waiting for policy propagation" -Completed
+
+# Step 3: Apply labels to sites
+Write-Host "`n[Step 3] Applying Protected B label to sites..." -ForegroundColor Yellow
+
+$applyLabelsScript = @'
+Import-Module Microsoft.Online.SharePoint.PowerShell -WarningAction SilentlyContinue
+Connect-SPOService -Url "https://ttiecm-admin.sharepoint.com"
+
+$labelGuid = "0c27e851-be47-4874-8ddc-8e505bf9d35f"  # Protected B
+
+$sites = @(
+    "https://ttiecm.sharepoint.com/sites/PowerPlatform-DataverseIntegrationBaselineTheme",
+    "https://ttiecm.sharepoint.com/sites/PowerPlatform-BaselineQA"
+)
+
+foreach ($siteUrl in $sites) {
+    try {
+        Set-SPOSite -Identity $siteUrl -SensitivityLabel $labelGuid -ErrorAction Stop
+        $site = Get-SPOSite -Identity $siteUrl
+        if ($site.SensitivityLabel -eq $labelGuid) {
+            Write-Host "SUCCESS|$siteUrl"
+        } else {
+            Write-Host "PENDING|$siteUrl"
+        }
+    } catch {
+        Write-Host "ERROR|$siteUrl|$($_.Exception.Message)"
+    }
+}
+
+Disconnect-SPOService
+'@
+
+$labelResults = powershell.exe -NoProfile -ExecutionPolicy Bypass -Command $applyLabelsScript 2>&1
+
+foreach ($result in $labelResults) {
+    if ($result -like "SUCCESS|*") {
+        $site = ($result -split '\|')[1]
+        Write-Host "✅ $site" -ForegroundColor Green
+    } elseif ($result -like "PENDING|*") {
+        $site = ($result -split '\|')[1]
+        Write-Host "⏳ $site (pending propagation)" -ForegroundColor Yellow
+    } elseif ($result -like "ERROR|*") {
+        $parts = $result -split '\|'
+        Write-Host "❌ $($parts[1]): $($parts[2])" -ForegroundColor Red
+    }
+}
+
+# Step 4: Verify
+Write-Host "`n[Step 4] Verifying labels..." -ForegroundColor Yellow
+
+$verifyScript = @'
+Import-Module Microsoft.Online.SharePoint.PowerShell -WarningAction SilentlyContinue
+Connect-SPOService -Url "https://ttiecm-admin.sharepoint.com"
+
+$sites = @(
+    "https://ttiecm.sharepoint.com/sites/PowerPlatform-DataverseIntegrationBaselineTheme",
+    "https://ttiecm.sharepoint.com/sites/PowerPlatform-BaselineQA"
+)
+
+foreach ($siteUrl in $sites) {
+    $site = Get-SPOSite -Identity $siteUrl
+    if ($site.SensitivityLabel -eq "0c27e851-be47-4874-8ddc-8e505bf9d35f") {
+        Write-Host "PROTECTED_B|$siteUrl"
+    } elseif ($site.SensitivityLabel) {
+        Write-Host "OTHER|$siteUrl|$($site.SensitivityLabel)"
+    } else {
+        Write-Host "NONE|$siteUrl"
+    }
+}
+
+Disconnect-SPOService
+'@
+
+$verifyResults = powershell.exe -NoProfile -ExecutionPolicy Bypass -Command $verifyScript 2>&1
+
 Write-Host ""
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+foreach ($result in $verifyResults) {
+    if ($result -like "PROTECTED_B|*") {
+        $site = ($result -split '\|')[1]
+        Write-Host "✅ $site → Protected B" -ForegroundColor Green
+    } elseif ($result -like "NONE|*") {
+        $site = ($result -split '\|')[1]
+        Write-Host "❌ $site → No label (may need more time)" -ForegroundColor Yellow
+    }
+}
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
 
-powershell.exe -NoProfile -ExecutionPolicy Bypass -Command $spoScript
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host "Complete!" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "`nIf labels show as pending, wait 15-30 minutes" -ForegroundColor Yellow
+Write-Host "and run the verification script again." -ForegroundColor Yellow
 ```
-
 
 ### TESTING & MONITORING
 
