@@ -2229,6 +2229,66 @@ Write-Host "• Teams Files (stored in SharePoint)"
 Write-Host "`nRe-encryption will complete within 24-72 hours." -ForegroundColor Yellow
 ```
 
+### SharePoint Site (documents section with Protected B Label)
+
+```sharepoint
+# ========================================
+# Apply Default Labels (Isolated Process)
+# ========================================
+
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "SharePoint Library Default Labels" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+
+$spoScript = @'
+$labelGuids = @{
+    "Unclassified" = "168978df-d32f-45da-91d2-5fb967fef366"
+    "Protected B"  = "0c27e851-be47-4874-8ddc-8e505bf9d35f"
+}
+
+$configurations = @(
+    @{
+        SiteUrl = "https://ttiecm.sharepoint.com/sites/PowerPlatform-DataverseIntegrationBaselineTheme"
+        Label = "Protected B"
+    },
+    @{
+        SiteUrl = "https://ttiecm.sharepoint.com/sites/PowerPlatform-BaselineQA"
+        Label = "Protected B"
+    }
+)
+
+try {
+    Import-Module Microsoft.Online.SharePoint.PowerShell -ErrorAction Stop
+    Connect-SPOService -Url "https://ttiecm-admin.sharepoint.com" -ErrorAction Stop
+    Write-Host "Connected to SharePoint Online" -ForegroundColor Green
+    
+    foreach ($config in $configurations) {
+        Write-Host ""
+        Write-Host "Processing: $($config.SiteUrl)" -ForegroundColor Cyan
+        try {
+            Set-SPOSite -Identity $config.SiteUrl -SensitivityLabel $labelGuids[$config.Label] -ErrorAction Stop
+            Write-Host "  SUCCESS: Label set to $($config.Label)" -ForegroundColor Green
+        } catch {
+            Write-Host "  FAILED: $($_.Exception.Message)" -ForegroundColor Red
+        }
+    }
+    
+    Disconnect-SPOService
+    Write-Host ""
+    Write-Host "Complete!" -ForegroundColor Green
+} catch {
+    Write-Host "ERROR: $($_.Exception.Message)" -ForegroundColor Red
+}
+'@
+
+Write-Host "Running in isolated Windows PowerShell process..." -ForegroundColor Yellow
+Write-Host "A sign-in prompt will appear." -ForegroundColor Gray
+Write-Host ""
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command $spoScript
+```
+
+
 ### TESTING & MONITORING
 
 ```powershell
