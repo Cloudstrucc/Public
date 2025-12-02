@@ -1998,6 +1998,91 @@ Disconnect-SPOService
 
 ```powershell
 # ========================================
+# Customer Key Enablement - Clean Session
+# ========================================
+
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "Customer Key Enablement (Clean Session)" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+
+# Step 1: Clear ALL existing connections
+Write-Host "`n[Step 1] Clearing existing sessions..." -ForegroundColor Yellow
+Disconnect-AzAccount -ErrorAction SilentlyContinue | Out-Null
+Clear-AzContext -Force -ErrorAction SilentlyContinue | Out-Null
+Write-Host "✅ Sessions cleared" -ForegroundColor Green
+
+# Step 2: Remove and reimport the module
+Write-Host "`n[Step 2] Reloading modules..." -ForegroundColor Yellow
+Remove-Module M365CustomerKeyOnboarding -Force -ErrorAction SilentlyContinue
+Remove-Module Az.Accounts -Force -ErrorAction SilentlyContinue
+Import-Module Az.Accounts -Force
+Import-Module M365CustomerKeyOnboarding -Force
+Write-Host "✅ Modules reloaded" -ForegroundColor Green
+
+# Configuration
+$config = @{
+    TenantId = "80b1ce91-e920-49d4-a52e-4ab189c64592"
+    PrimarySubscriptionId = "6f114bd7-c8d3-4843-b4f8-e30a644bc412"
+    SecondarySubscriptionId = "6fe93f46-fb3b-410b-8d22-540b06cbbfbc"
+    PrimaryKeyUri = "https://kv-cmk-m365-pri-4239.vault.azure.net/keys/m365-cmk-key/758b3fac73fd4573a7d48c2840619326"
+    SecondaryKeyUri = "https://kv-cmk-m365-sec-8250.vault.azure.net/keys/m365-customer-key-secondary/758b3fac73fd4573a7d48c2840619326"
+}
+
+# Step 3: Connect fresh - select subscription 3 (Primary)
+Write-Host "`n[Step 3] Connecting to Azure (select option 3 - Primary subscription)..." -ForegroundColor Yellow
+Connect-AzAccount -TenantId $config.TenantId -SubscriptionId $config.PrimarySubscriptionId
+
+$context = Get-AzContext
+Write-Host "✅ Connected: $($context.Subscription.Name)" -ForegroundColor Green
+
+# Step 4: Run validation
+Write-Host "`n[Step 4] Validating Customer Key configuration..." -ForegroundColor Yellow
+
+try {
+    $validationResult = New-CustomerKeyOnboardingRequest `
+        -Organization $config.TenantId `
+        -Scenario MDEP `
+        -Subscription1 $config.PrimarySubscriptionId `
+        -KeyIdentifier1 $config.PrimaryKeyUri `
+        -Subscription2 $config.SecondarySubscriptionId `
+        -KeyIdentifier2 $config.SecondaryKeyUri `
+        -OnboardingMode Validate
+
+    if ($validationResult.ValidationResult -eq "Success") {
+        Write-Host "✅ Validation PASSED!" -ForegroundColor Green
+        
+        # Step 5: Enable
+        Write-Host "`n[Step 5] Enabling Customer Key..." -ForegroundColor Yellow
+        $confirm = Read-Host "Proceed? (yes/no)"
+        
+        if ($confirm -eq "yes") {
+            $enableResult = New-CustomerKeyOnboardingRequest `
+                -Organization $config.TenantId `
+                -Scenario MDEP `
+                -Subscription1 $config.PrimarySubscriptionId `
+                -KeyIdentifier1 $config.PrimaryKeyUri `
+                -Subscription2 $config.SecondarySubscriptionId `
+                -KeyIdentifier2 $config.SecondaryKeyUri `
+                -OnboardingMode Enable
+
+            if ($enableResult.EnablementResult -eq "Success") {
+                Write-Host "`n✅ CUSTOMER KEY ENABLED!" -ForegroundColor Green
+            } else {
+                Write-Host "Result: $($enableResult.EnablementResult)" -ForegroundColor Yellow
+                $enableResult | Format-List
+            }
+        }
+    } else {
+        Write-Host "❌ Validation failed" -ForegroundColor Red
+        $validationResult.FailedValidations | Format-Table -AutoSize
+    }
+} catch {
+    Write-Host "❌ Error: $($_.Exception.Message)" -ForegroundColor Red
+}
+```
+
+```powershell
+# ========================================
 # Verify Complete CMK Coverage
 # ========================================
 Write-Host "`nCMK Coverage Verification" -ForegroundColor Cyan
