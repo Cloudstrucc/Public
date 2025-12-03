@@ -136,13 +136,13 @@ if ($deletionSuccess) {
 Write-Host "`n[Verification] Checking labels still exist..." -ForegroundColor Cyan
 
 try {
-    $protectedBLabel = Get-Label -Identity "Protected B - Secure Meeting" -ErrorAction SilentlyContinue
-    $generalLabel = Get-Label -Identity "General - Regular Meeting" -ErrorAction SilentlyContinue
+    $protectedBLabel = Get-Label -Identity "Protected B - Official Sensitive - NATO" -ErrorAction SilentlyContinue
+    $generalLabel = Get-Label -Identity "Unclassified" -ErrorAction SilentlyContinue
     
     if ($protectedBLabel -and $generalLabel) {
         Write-Host "  ✓ Labels still exist (good - they weren't deleted)" -ForegroundColor Green
-        Write-Host "    • Protected B - Secure Meeting" -ForegroundColor Gray
-        Write-Host "    • General - Regular Meeting" -ForegroundColor Gray
+        Write-Host "    • Protected B - Official Sensitive - NATO" -ForegroundColor Gray
+        Write-Host "    • Unclassified" -ForegroundColor Gray
     } else {
         Write-Host "  ⚠️  One or both labels missing" -ForegroundColor Yellow
         Write-Host "    You may need to re-run: 01-Create-Sensitivity-Labels.ps1" -ForegroundColor Yellow
@@ -178,8 +178,8 @@ Policy Details (Before Deletion):
   OneDrive Locations: $($policy.OneDriveLocation.Count)
 
 Labels Still Exist:
-  • Protected B - Secure Meeting: $(if ($protectedBLabel) { "Yes" } else { "No" })
-  • General - Regular Meeting: $(if ($generalLabel) { "Yes" } else { "No" })
+  • Protected B - Official Sensitive - NATO: $(if ($protectedBLabel) { "Yes" } else { "No" })
+  • Unclassified: $(if ($generalLabel) { "Yes" } else { "No" })
 
 REQUIRED NEXT STEPS:
 1. Re-run: 02-Configure-Label-Policy-TeamsOnly.ps1

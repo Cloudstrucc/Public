@@ -3,8 +3,8 @@
     Create Meeting Sensitivity Labels for LCE
 .DESCRIPTION
     Creates two sensitivity labels for Teams meetings:
-    - Protected B - Secure Meeting (dark red, maximum security)
-    - General - Regular Meeting (green, standard collaboration)
+    - Protected B - Official Sensitive - NATO (dark red, maximum security)
+    - Unclassified (green, standard collaboration)
     
     IMPORTANT: These labels will ONLY appear in Teams after Phase 3.
     
@@ -24,8 +24,8 @@ Write-Host "╚═════════════════════�
 
 Write-Host "`nWhat this script does:" -ForegroundColor Yellow
 Write-Host "  1. Connects to Microsoft Purview (Security & Compliance)" -ForegroundColor White
-Write-Host "  2. Creates 'Protected B - Secure Meeting' label (dark red)" -ForegroundColor White
-Write-Host "  3. Creates 'General - Regular Meeting' label (green)" -ForegroundColor White
+Write-Host "  2. Creates 'Protected B - Official Sensitive - NATO' label (dark red)" -ForegroundColor White
+Write-Host "  3. Creates 'Unclassified' label (green)" -ForegroundColor White
 Write-Host "  4. Verifies both labels exist" -ForegroundColor White
 Write-Host "`n  These labels won't appear anywhere yet - Phase 3 publishes them." -ForegroundColor Gray
 
@@ -51,19 +51,19 @@ try {
 }
 
 # Create Protected B label
-Write-Host "`n[Step 2/4] Creating 'Protected B - Secure Meeting' label..." -ForegroundColor Cyan
+Write-Host "`n[Step 2/4] Creating 'Protected B - Official Sensitive - NATO' label..." -ForegroundColor Cyan
 Write-Host "  → Color: Dark red (#A4262C)" -ForegroundColor Gray
 Write-Host "  → Purpose: Classified/sensitive meetings" -ForegroundColor Gray
 
 try {
     # Check if it already exists
-    $existingProtectedB = Get-Label -Identity "Protected B - Secure Meeting" -ErrorAction SilentlyContinue
+    $existingProtectedB = Get-Label -Identity "Protected B - Official Sensitive - NATO" -ErrorAction SilentlyContinue
     
     if ($existingProtectedB) {
         Write-Host "  ℹ️  Label already exists - updating it" -ForegroundColor Yellow
         
-        Set-Label -Identity "Protected B - Secure Meeting" `
-            -DisplayName "Protected B - Secure Meeting" `
+        Set-Label -Identity "Protected B - Official Sensitive - NATO" `
+            -DisplayName "Protected B - Official Sensitive - NATO" `
             -Tooltip "Use for classified/sensitive government meetings (Protected B)" `
             -Comment "Protected B classification - Watermarks, restricted lobby, CMK encryption, ALL SETTINGS LOCKED" `
             -AdvancedSettings @{
@@ -75,10 +75,10 @@ try {
         Write-Host "  → Creating new label..." -ForegroundColor Gray
         
         New-Label `
-            -DisplayName "Protected B - Secure Meeting" `
+            -DisplayName "Protected B - Official Sensitive - Nato" `
             -Name "ProtectedB-SecureMeeting" `
             -Tooltip "Use for classified/sensitive government meetings (Protected B)" `
-            -Comment "Protected B classification - Watermarks, restricted lobby, CMK encryption, ALL SETTINGS LOCKED" `
+            -Comment "Protected B classification - Watermarks, restricted lobby, CMK encryption, etc." `
             -AdvancedSettings @{
                 color = "#A4262C"
             }
@@ -94,19 +94,19 @@ try {
 }
 
 # Create General label
-Write-Host "`n[Step 3/4] Creating 'General - Regular Meeting' label..." -ForegroundColor Cyan
+Write-Host "`n[Step 3/4] Creating 'Unclassified' label..." -ForegroundColor Cyan
 Write-Host "  → Color: Green (#107C10)" -ForegroundColor Gray
 Write-Host "  → Purpose: Regular, non-classified meetings" -ForegroundColor Gray
 
 try {
     # Check if it already exists
-    $existingGeneral = Get-Label -Identity "General - Regular Meeting" -ErrorAction SilentlyContinue
+    $existingGeneral = Get-Label -Identity "Unclassified" -ErrorAction SilentlyContinue
     
     if ($existingGeneral) {
         Write-Host "  ℹ️  Label already exists - updating it" -ForegroundColor Yellow
         
-        Set-Label -Identity "General - Regular Meeting" `
-            -DisplayName "General - Regular Meeting" `
+        Set-Label -Identity "Unclassified" `
+            -DisplayName "Unclassified" `
             -Tooltip "Use for regular, non-classified meetings" `
             -Comment "General/Unclassified - Open collaboration, standard security" `
             -AdvancedSettings @{
@@ -118,7 +118,7 @@ try {
         Write-Host "  → Creating new label..." -ForegroundColor Gray
         
         New-Label `
-            -DisplayName "General - Regular Meeting" `
+            -DisplayName "Unclassified" `
             -Name "General-RegularMeeting" `
             -Tooltip "Use for regular, non-classified meetings" `
             -Comment "General/Unclassified - Open collaboration, standard security" `

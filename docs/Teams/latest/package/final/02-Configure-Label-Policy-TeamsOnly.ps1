@@ -158,13 +158,13 @@ try {
 Write-Host "`n[Step 2/6] Finding sensitivity labels..." -ForegroundColor Cyan
 
 $allLabels = Get-Label
-$protectedB = $allLabels | Where-Object {$_.DisplayName -eq "Protected B - Secure Meeting"}
-$general = $allLabels | Where-Object {$_.DisplayName -eq "General - Regular Meeting"}
+$protectedB = $allLabels | Where-Object {$_.DisplayName -eq "Protected B - Official Sensitive - NATO"}
+$general = $allLabels | Where-Object {$_.DisplayName -eq "Unclassified"}
 
 if (-not $protectedB -or -not $general) {
     Write-Host "  ✗ Labels not found! Run Phase 2 first." -ForegroundColor Red
-    Write-Host "    Expected: 'Protected B - Secure Meeting'" -ForegroundColor Yellow
-    Write-Host "    Expected: 'General - Regular Meeting'" -ForegroundColor Yellow
+    Write-Host "    Expected: 'Protected B - Official Sensitive - NATO'" -ForegroundColor Yellow
+    Write-Host "    Expected: 'Unclassified'" -ForegroundColor Yellow
     Disconnect-ExchangeOnline -Confirm:$false -ErrorAction SilentlyContinue
     exit 1
 }
