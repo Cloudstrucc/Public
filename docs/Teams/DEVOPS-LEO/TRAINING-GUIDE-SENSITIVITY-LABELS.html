@@ -1,0 +1,1688 @@
+<!DOCTYPE html><html><head>
+<title>TRAINING-GUIDE-SENSITIVITY-LABELS.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*
+
+Arduino® Light Theme - Stefania Mellai <s.mellai@arduino.cc>
+
+*/
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: #FFFFFF;
+}
+
+.hljs,
+.hljs-subst {
+  color: #434f54;
+}
+
+.hljs-keyword,
+.hljs-attribute,
+.hljs-selector-tag,
+.hljs-doctag,
+.hljs-name {
+  color: #00979D;
+}
+
+.hljs-built_in,
+.hljs-literal,
+.hljs-bullet,
+.hljs-code,
+.hljs-addition {
+  color: #D35400;
+}
+
+.hljs-regexp,
+.hljs-symbol,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-link,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: #00979D;
+}
+
+.hljs-type,
+.hljs-string,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-quote,
+.hljs-template-tag,
+.hljs-deletion {
+  color: #005C5F;
+}
+
+.hljs-title,
+.hljs-section {
+  color: #880000;
+  font-weight: bold;
+}
+
+.hljs-comment {
+  color: rgba(149,165,166,.8);
+}
+
+.hljs-meta-keyword {
+  color: #728E00;
+}
+
+.hljs-meta {
+  color: #434f54;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-function {
+  color: #728E00;
+}
+
+.hljs-number {
+  color: #8A7B52;  
+}
+
+</style>
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family:   "HelveticaNeue-Light", sans-serif, "宋体","Segoe WPC", "Segoe UI", "SFUIText-Light","Droid Sans Fallback";
+	font-size: 18px;
+	padding: 0 12px;
+	line-height: 1.6;
+	word-wrap: break-word;
+	color: #333333;
+}
+
+.content-wrapper{
+	max-width: 860px;
+    margin: 0 auto;
+    padding: 0 30px;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom: 1px solid #eee;
+}
+
+
+h2{
+	padding-bottom: .3em;
+    font-size: 2em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+
+h3{
+	font-size: 1.75em;
+    line-height: 1.225;
+}
+
+h1, h2, h3 {
+	font-weight: bold;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+.table-of-contents li{
+	list-style-type: initial;
+}
+</style>
+
+<style>
+@font-face{font-family:KaTeX_AMS;font-style:normal;font-weight:400;src:url(fonts/KaTeX_AMS-Regular.woff2) format("woff2"),url(fonts/KaTeX_AMS-Regular.woff) format("woff"),url(fonts/KaTeX_AMS-Regular.ttf) format("truetype")}@font-face{font-family:KaTeX_Caligraphic;font-style:normal;font-weight:700;src:url(fonts/KaTeX_Caligraphic-Bold.woff2) format("woff2"),url(fonts/KaTeX_Caligraphic-Bold.woff) format("woff"),url(fonts/KaTeX_Caligraphic-Bold.ttf) format("truetype")}@font-face{font-family:KaTeX_Caligraphic;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Caligraphic-Regular.woff2) format("woff2"),url(fonts/KaTeX_Caligraphic-Regular.woff) format("woff"),url(fonts/KaTeX_Caligraphic-Regular.ttf) format("truetype")}@font-face{font-family:KaTeX_Fraktur;font-style:normal;font-weight:700;src:url(fonts/KaTeX_Fraktur-Bold.woff2) format("woff2"),url(fonts/KaTeX_Fraktur-Bold.woff) format("woff"),url(fonts/KaTeX_Fraktur-Bold.ttf) format("truetype")}@font-face{font-family:KaTeX_Fraktur;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Fraktur-Regular.woff2) format("woff2"),url(fonts/KaTeX_Fraktur-Regular.woff) format("woff"),url(fonts/KaTeX_Fraktur-Regular.ttf) format("truetype")}@font-face{font-family:KaTeX_Main;font-style:normal;font-weight:700;src:url(fonts/KaTeX_Main-Bold.woff2) format("woff2"),url(fonts/KaTeX_Main-Bold.woff) format("woff"),url(fonts/KaTeX_Main-Bold.ttf) format("truetype")}@font-face{font-family:KaTeX_Main;font-style:italic;font-weight:700;src:url(fonts/KaTeX_Main-BoldItalic.woff2) format("woff2"),url(fonts/KaTeX_Main-BoldItalic.woff) format("woff"),url(fonts/KaTeX_Main-BoldItalic.ttf) format("truetype")}@font-face{font-family:KaTeX_Main;font-style:italic;font-weight:400;src:url(fonts/KaTeX_Main-Italic.woff2) format("woff2"),url(fonts/KaTeX_Main-Italic.woff) format("woff"),url(fonts/KaTeX_Main-Italic.ttf) format("truetype")}@font-face{font-family:KaTeX_Main;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Main-Regular.woff2) format("woff2"),url(fonts/KaTeX_Main-Regular.woff) format("woff"),url(fonts/KaTeX_Main-Regular.ttf) format("truetype")}@font-face{font-family:KaTeX_Math;font-style:italic;font-weight:700;src:url(fonts/KaTeX_Math-BoldItalic.woff2) format("woff2"),url(fonts/KaTeX_Math-BoldItalic.woff) format("woff"),url(fonts/KaTeX_Math-BoldItalic.ttf) format("truetype")}@font-face{font-family:KaTeX_Math;font-style:italic;font-weight:400;src:url(fonts/KaTeX_Math-Italic.woff2) format("woff2"),url(fonts/KaTeX_Math-Italic.woff) format("woff"),url(fonts/KaTeX_Math-Italic.ttf) format("truetype")}@font-face{font-family:"KaTeX_SansSerif";font-style:normal;font-weight:700;src:url(fonts/KaTeX_SansSerif-Bold.woff2) format("woff2"),url(fonts/KaTeX_SansSerif-Bold.woff) format("woff"),url(fonts/KaTeX_SansSerif-Bold.ttf) format("truetype")}@font-face{font-family:"KaTeX_SansSerif";font-style:italic;font-weight:400;src:url(fonts/KaTeX_SansSerif-Italic.woff2) format("woff2"),url(fonts/KaTeX_SansSerif-Italic.woff) format("woff"),url(fonts/KaTeX_SansSerif-Italic.ttf) format("truetype")}@font-face{font-family:"KaTeX_SansSerif";font-style:normal;font-weight:400;src:url(fonts/KaTeX_SansSerif-Regular.woff2) format("woff2"),url(fonts/KaTeX_SansSerif-Regular.woff) format("woff"),url(fonts/KaTeX_SansSerif-Regular.ttf) format("truetype")}@font-face{font-family:KaTeX_Script;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Script-Regular.woff2) format("woff2"),url(fonts/KaTeX_Script-Regular.woff) format("woff"),url(fonts/KaTeX_Script-Regular.ttf) format("truetype")}@font-face{font-family:KaTeX_Size1;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size1-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size1-Regular.woff) format("woff"),url(fonts/KaTeX_Size1-Regular.ttf) format("truetype")}@font-face{font-family:KaTeX_Size2;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size2-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size2-Regular.woff) format("woff"),url(fonts/KaTeX_Size2-Regular.ttf) format("truetype")}@font-face{font-family:KaTeX_Size3;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size3-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size3-Regular.woff) format("woff"),url(fonts/KaTeX_Size3-Regular.ttf) format("truetype")}@font-face{font-family:KaTeX_Size4;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size4-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size4-Regular.woff) format("woff"),url(fonts/KaTeX_Size4-Regular.ttf) format("truetype")}@font-face{font-family:KaTeX_Typewriter;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Typewriter-Regular.woff2) format("woff2"),url(fonts/KaTeX_Typewriter-Regular.woff) format("woff"),url(fonts/KaTeX_Typewriter-Regular.ttf) format("truetype")}.katex{text-rendering:auto;font:normal 1.21em KaTeX_Main,Times New Roman,serif;line-height:1.2;text-indent:0}.katex *{-ms-high-contrast-adjust:none!important;border-color:currentColor}.katex .katex-version:after{content:"0.16.2"}.katex .katex-mathml{clip:rect(1px,1px,1px,1px);border:0;height:1px;overflow:hidden;padding:0;position:absolute;width:1px}.katex .katex-html>.newline{display:block}.katex .base{position:relative;white-space:nowrap;width:-webkit-min-content;width:-moz-min-content;width:min-content}.katex .base,.katex .strut{display:inline-block}.katex .textbf{font-weight:700}.katex .textit{font-style:italic}.katex .textrm{font-family:KaTeX_Main}.katex .textsf{font-family:KaTeX_SansSerif}.katex .texttt{font-family:KaTeX_Typewriter}.katex .mathnormal{font-family:KaTeX_Math;font-style:italic}.katex .mathit{font-family:KaTeX_Main;font-style:italic}.katex .mathrm{font-style:normal}.katex .mathbf{font-family:KaTeX_Main;font-weight:700}.katex .boldsymbol{font-family:KaTeX_Math;font-style:italic;font-weight:700}.katex .amsrm,.katex .mathbb,.katex .textbb{font-family:KaTeX_AMS}.katex .mathcal{font-family:KaTeX_Caligraphic}.katex .mathfrak,.katex .textfrak{font-family:KaTeX_Fraktur}.katex .mathtt{font-family:KaTeX_Typewriter}.katex .mathscr,.katex .textscr{font-family:KaTeX_Script}.katex .mathsf,.katex .textsf{font-family:KaTeX_SansSerif}.katex .mathboldsf,.katex .textboldsf{font-family:KaTeX_SansSerif;font-weight:700}.katex .mathitsf,.katex .textitsf{font-family:KaTeX_SansSerif;font-style:italic}.katex .mainrm{font-family:KaTeX_Main;font-style:normal}.katex .vlist-t{border-collapse:collapse;display:inline-table;table-layout:fixed}.katex .vlist-r{display:table-row}.katex .vlist{display:table-cell;position:relative;vertical-align:bottom}.katex .vlist>span{display:block;height:0;position:relative}.katex .vlist>span>span{display:inline-block}.katex .vlist>span>.pstrut{overflow:hidden;width:0}.katex .vlist-t2{margin-right:-2px}.katex .vlist-s{display:table-cell;font-size:1px;min-width:2px;vertical-align:bottom;width:2px}.katex .vbox{align-items:baseline;display:inline-flex;flex-direction:column}.katex .hbox{width:100%}.katex .hbox,.katex .thinbox{display:inline-flex;flex-direction:row}.katex .thinbox{max-width:0;width:0}.katex .msupsub{text-align:left}.katex .mfrac>span>span{text-align:center}.katex .mfrac .frac-line{border-bottom-style:solid;display:inline-block;width:100%}.katex .hdashline,.katex .hline,.katex .mfrac .frac-line,.katex .overline .overline-line,.katex .rule,.katex .underline .underline-line{min-height:1px}.katex .mspace{display:inline-block}.katex .clap,.katex .llap,.katex .rlap{position:relative;width:0}.katex .clap>.inner,.katex .llap>.inner,.katex .rlap>.inner{position:absolute}.katex .clap>.fix,.katex .llap>.fix,.katex .rlap>.fix{display:inline-block}.katex .llap>.inner{right:0}.katex .clap>.inner,.katex .rlap>.inner{left:0}.katex .clap>.inner>span{margin-left:-50%;margin-right:50%}.katex .rule{border:0 solid;display:inline-block;position:relative}.katex .hline,.katex .overline .overline-line,.katex .underline .underline-line{border-bottom-style:solid;display:inline-block;width:100%}.katex .hdashline{border-bottom-style:dashed;display:inline-block;width:100%}.katex .sqrt>.root{margin-left:.27777778em;margin-right:-.55555556em}.katex .fontsize-ensurer.reset-size1.size1,.katex .sizing.reset-size1.size1{font-size:1em}.katex .fontsize-ensurer.reset-size1.size2,.katex .sizing.reset-size1.size2{font-size:1.2em}.katex .fontsize-ensurer.reset-size1.size3,.katex .sizing.reset-size1.size3{font-size:1.4em}.katex .fontsize-ensurer.reset-size1.size4,.katex .sizing.reset-size1.size4{font-size:1.6em}.katex .fontsize-ensurer.reset-size1.size5,.katex .sizing.reset-size1.size5{font-size:1.8em}.katex .fontsize-ensurer.reset-size1.size6,.katex .sizing.reset-size1.size6{font-size:2em}.katex .fontsize-ensurer.reset-size1.size7,.katex .sizing.reset-size1.size7{font-size:2.4em}.katex .fontsize-ensurer.reset-size1.size8,.katex .sizing.reset-size1.size8{font-size:2.88em}.katex .fontsize-ensurer.reset-size1.size9,.katex .sizing.reset-size1.size9{font-size:3.456em}.katex .fontsize-ensurer.reset-size1.size10,.katex .sizing.reset-size1.size10{font-size:4.148em}.katex .fontsize-ensurer.reset-size1.size11,.katex .sizing.reset-size1.size11{font-size:4.976em}.katex .fontsize-ensurer.reset-size2.size1,.katex .sizing.reset-size2.size1{font-size:.83333333em}.katex .fontsize-ensurer.reset-size2.size2,.katex .sizing.reset-size2.size2{font-size:1em}.katex .fontsize-ensurer.reset-size2.size3,.katex .sizing.reset-size2.size3{font-size:1.16666667em}.katex .fontsize-ensurer.reset-size2.size4,.katex .sizing.reset-size2.size4{font-size:1.33333333em}.katex .fontsize-ensurer.reset-size2.size5,.katex .sizing.reset-size2.size5{font-size:1.5em}.katex .fontsize-ensurer.reset-size2.size6,.katex .sizing.reset-size2.size6{font-size:1.66666667em}.katex .fontsize-ensurer.reset-size2.size7,.katex .sizing.reset-size2.size7{font-size:2em}.katex .fontsize-ensurer.reset-size2.size8,.katex .sizing.reset-size2.size8{font-size:2.4em}.katex .fontsize-ensurer.reset-size2.size9,.katex .sizing.reset-size2.size9{font-size:2.88em}.katex .fontsize-ensurer.reset-size2.size10,.katex .sizing.reset-size2.size10{font-size:3.45666667em}.katex .fontsize-ensurer.reset-size2.size11,.katex .sizing.reset-size2.size11{font-size:4.14666667em}.katex .fontsize-ensurer.reset-size3.size1,.katex .sizing.reset-size3.size1{font-size:.71428571em}.katex .fontsize-ensurer.reset-size3.size2,.katex .sizing.reset-size3.size2{font-size:.85714286em}.katex .fontsize-ensurer.reset-size3.size3,.katex .sizing.reset-size3.size3{font-size:1em}.katex .fontsize-ensurer.reset-size3.size4,.katex .sizing.reset-size3.size4{font-size:1.14285714em}.katex .fontsize-ensurer.reset-size3.size5,.katex .sizing.reset-size3.size5{font-size:1.28571429em}.katex .fontsize-ensurer.reset-size3.size6,.katex .sizing.reset-size3.size6{font-size:1.42857143em}.katex .fontsize-ensurer.reset-size3.size7,.katex .sizing.reset-size3.size7{font-size:1.71428571em}.katex .fontsize-ensurer.reset-size3.size8,.katex .sizing.reset-size3.size8{font-size:2.05714286em}.katex .fontsize-ensurer.reset-size3.size9,.katex .sizing.reset-size3.size9{font-size:2.46857143em}.katex .fontsize-ensurer.reset-size3.size10,.katex .sizing.reset-size3.size10{font-size:2.96285714em}.katex .fontsize-ensurer.reset-size3.size11,.katex .sizing.reset-size3.size11{font-size:3.55428571em}.katex .fontsize-ensurer.reset-size4.size1,.katex .sizing.reset-size4.size1{font-size:.625em}.katex .fontsize-ensurer.reset-size4.size2,.katex .sizing.reset-size4.size2{font-size:.75em}.katex .fontsize-ensurer.reset-size4.size3,.katex .sizing.reset-size4.size3{font-size:.875em}.katex .fontsize-ensurer.reset-size4.size4,.katex .sizing.reset-size4.size4{font-size:1em}.katex .fontsize-ensurer.reset-size4.size5,.katex .sizing.reset-size4.size5{font-size:1.125em}.katex .fontsize-ensurer.reset-size4.size6,.katex .sizing.reset-size4.size6{font-size:1.25em}.katex .fontsize-ensurer.reset-size4.size7,.katex .sizing.reset-size4.size7{font-size:1.5em}.katex .fontsize-ensurer.reset-size4.size8,.katex .sizing.reset-size4.size8{font-size:1.8em}.katex .fontsize-ensurer.reset-size4.size9,.katex .sizing.reset-size4.size9{font-size:2.16em}.katex .fontsize-ensurer.reset-size4.size10,.katex .sizing.reset-size4.size10{font-size:2.5925em}.katex .fontsize-ensurer.reset-size4.size11,.katex .sizing.reset-size4.size11{font-size:3.11em}.katex .fontsize-ensurer.reset-size5.size1,.katex .sizing.reset-size5.size1{font-size:.55555556em}.katex .fontsize-ensurer.reset-size5.size2,.katex .sizing.reset-size5.size2{font-size:.66666667em}.katex .fontsize-ensurer.reset-size5.size3,.katex .sizing.reset-size5.size3{font-size:.77777778em}.katex .fontsize-ensurer.reset-size5.size4,.katex .sizing.reset-size5.size4{font-size:.88888889em}.katex .fontsize-ensurer.reset-size5.size5,.katex .sizing.reset-size5.size5{font-size:1em}.katex .fontsize-ensurer.reset-size5.size6,.katex .sizing.reset-size5.size6{font-size:1.11111111em}.katex .fontsize-ensurer.reset-size5.size7,.katex .sizing.reset-size5.size7{font-size:1.33333333em}.katex .fontsize-ensurer.reset-size5.size8,.katex .sizing.reset-size5.size8{font-size:1.6em}.katex .fontsize-ensurer.reset-size5.size9,.katex .sizing.reset-size5.size9{font-size:1.92em}.katex .fontsize-ensurer.reset-size5.size10,.katex .sizing.reset-size5.size10{font-size:2.30444444em}.katex .fontsize-ensurer.reset-size5.size11,.katex .sizing.reset-size5.size11{font-size:2.76444444em}.katex .fontsize-ensurer.reset-size6.size1,.katex .sizing.reset-size6.size1{font-size:.5em}.katex .fontsize-ensurer.reset-size6.size2,.katex .sizing.reset-size6.size2{font-size:.6em}.katex .fontsize-ensurer.reset-size6.size3,.katex .sizing.reset-size6.size3{font-size:.7em}.katex .fontsize-ensurer.reset-size6.size4,.katex .sizing.reset-size6.size4{font-size:.8em}.katex .fontsize-ensurer.reset-size6.size5,.katex .sizing.reset-size6.size5{font-size:.9em}.katex .fontsize-ensurer.reset-size6.size6,.katex .sizing.reset-size6.size6{font-size:1em}.katex .fontsize-ensurer.reset-size6.size7,.katex .sizing.reset-size6.size7{font-size:1.2em}.katex .fontsize-ensurer.reset-size6.size8,.katex .sizing.reset-size6.size8{font-size:1.44em}.katex .fontsize-ensurer.reset-size6.size9,.katex .sizing.reset-size6.size9{font-size:1.728em}.katex .fontsize-ensurer.reset-size6.size10,.katex .sizing.reset-size6.size10{font-size:2.074em}.katex .fontsize-ensurer.reset-size6.size11,.katex .sizing.reset-size6.size11{font-size:2.488em}.katex .fontsize-ensurer.reset-size7.size1,.katex .sizing.reset-size7.size1{font-size:.41666667em}.katex .fontsize-ensurer.reset-size7.size2,.katex .sizing.reset-size7.size2{font-size:.5em}.katex .fontsize-ensurer.reset-size7.size3,.katex .sizing.reset-size7.size3{font-size:.58333333em}.katex .fontsize-ensurer.reset-size7.size4,.katex .sizing.reset-size7.size4{font-size:.66666667em}.katex .fontsize-ensurer.reset-size7.size5,.katex .sizing.reset-size7.size5{font-size:.75em}.katex .fontsize-ensurer.reset-size7.size6,.katex .sizing.reset-size7.size6{font-size:.83333333em}.katex .fontsize-ensurer.reset-size7.size7,.katex .sizing.reset-size7.size7{font-size:1em}.katex .fontsize-ensurer.reset-size7.size8,.katex .sizing.reset-size7.size8{font-size:1.2em}.katex .fontsize-ensurer.reset-size7.size9,.katex .sizing.reset-size7.size9{font-size:1.44em}.katex .fontsize-ensurer.reset-size7.size10,.katex .sizing.reset-size7.size10{font-size:1.72833333em}.katex .fontsize-ensurer.reset-size7.size11,.katex .sizing.reset-size7.size11{font-size:2.07333333em}.katex .fontsize-ensurer.reset-size8.size1,.katex .sizing.reset-size8.size1{font-size:.34722222em}.katex .fontsize-ensurer.reset-size8.size2,.katex .sizing.reset-size8.size2{font-size:.41666667em}.katex .fontsize-ensurer.reset-size8.size3,.katex .sizing.reset-size8.size3{font-size:.48611111em}.katex .fontsize-ensurer.reset-size8.size4,.katex .sizing.reset-size8.size4{font-size:.55555556em}.katex .fontsize-ensurer.reset-size8.size5,.katex .sizing.reset-size8.size5{font-size:.625em}.katex .fontsize-ensurer.reset-size8.size6,.katex .sizing.reset-size8.size6{font-size:.69444444em}.katex .fontsize-ensurer.reset-size8.size7,.katex .sizing.reset-size8.size7{font-size:.83333333em}.katex .fontsize-ensurer.reset-size8.size8,.katex .sizing.reset-size8.size8{font-size:1em}.katex .fontsize-ensurer.reset-size8.size9,.katex .sizing.reset-size8.size9{font-size:1.2em}.katex .fontsize-ensurer.reset-size8.size10,.katex .sizing.reset-size8.size10{font-size:1.44027778em}.katex .fontsize-ensurer.reset-size8.size11,.katex .sizing.reset-size8.size11{font-size:1.72777778em}.katex .fontsize-ensurer.reset-size9.size1,.katex .sizing.reset-size9.size1{font-size:.28935185em}.katex .fontsize-ensurer.reset-size9.size2,.katex .sizing.reset-size9.size2{font-size:.34722222em}.katex .fontsize-ensurer.reset-size9.size3,.katex .sizing.reset-size9.size3{font-size:.40509259em}.katex .fontsize-ensurer.reset-size9.size4,.katex .sizing.reset-size9.size4{font-size:.46296296em}.katex .fontsize-ensurer.reset-size9.size5,.katex .sizing.reset-size9.size5{font-size:.52083333em}.katex .fontsize-ensurer.reset-size9.size6,.katex .sizing.reset-size9.size6{font-size:.5787037em}.katex .fontsize-ensurer.reset-size9.size7,.katex .sizing.reset-size9.size7{font-size:.69444444em}.katex .fontsize-ensurer.reset-size9.size8,.katex .sizing.reset-size9.size8{font-size:.83333333em}.katex .fontsize-ensurer.reset-size9.size9,.katex .sizing.reset-size9.size9{font-size:1em}.katex .fontsize-ensurer.reset-size9.size10,.katex .sizing.reset-size9.size10{font-size:1.20023148em}.katex .fontsize-ensurer.reset-size9.size11,.katex .sizing.reset-size9.size11{font-size:1.43981481em}.katex .fontsize-ensurer.reset-size10.size1,.katex .sizing.reset-size10.size1{font-size:.24108004em}.katex .fontsize-ensurer.reset-size10.size2,.katex .sizing.reset-size10.size2{font-size:.28929605em}.katex .fontsize-ensurer.reset-size10.size3,.katex .sizing.reset-size10.size3{font-size:.33751205em}.katex .fontsize-ensurer.reset-size10.size4,.katex .sizing.reset-size10.size4{font-size:.38572806em}.katex .fontsize-ensurer.reset-size10.size5,.katex .sizing.reset-size10.size5{font-size:.43394407em}.katex .fontsize-ensurer.reset-size10.size6,.katex .sizing.reset-size10.size6{font-size:.48216008em}.katex .fontsize-ensurer.reset-size10.size7,.katex .sizing.reset-size10.size7{font-size:.57859209em}.katex .fontsize-ensurer.reset-size10.size8,.katex .sizing.reset-size10.size8{font-size:.69431051em}.katex .fontsize-ensurer.reset-size10.size9,.katex .sizing.reset-size10.size9{font-size:.83317261em}.katex .fontsize-ensurer.reset-size10.size10,.katex .sizing.reset-size10.size10{font-size:1em}.katex .fontsize-ensurer.reset-size10.size11,.katex .sizing.reset-size10.size11{font-size:1.19961427em}.katex .fontsize-ensurer.reset-size11.size1,.katex .sizing.reset-size11.size1{font-size:.20096463em}.katex .fontsize-ensurer.reset-size11.size2,.katex .sizing.reset-size11.size2{font-size:.24115756em}.katex .fontsize-ensurer.reset-size11.size3,.katex .sizing.reset-size11.size3{font-size:.28135048em}.katex .fontsize-ensurer.reset-size11.size4,.katex .sizing.reset-size11.size4{font-size:.32154341em}.katex .fontsize-ensurer.reset-size11.size5,.katex .sizing.reset-size11.size5{font-size:.36173633em}.katex .fontsize-ensurer.reset-size11.size6,.katex .sizing.reset-size11.size6{font-size:.40192926em}.katex .fontsize-ensurer.reset-size11.size7,.katex .sizing.reset-size11.size7{font-size:.48231511em}.katex .fontsize-ensurer.reset-size11.size8,.katex .sizing.reset-size11.size8{font-size:.57877814em}.katex .fontsize-ensurer.reset-size11.size9,.katex .sizing.reset-size11.size9{font-size:.69453376em}.katex .fontsize-ensurer.reset-size11.size10,.katex .sizing.reset-size11.size10{font-size:.83360129em}.katex .fontsize-ensurer.reset-size11.size11,.katex .sizing.reset-size11.size11{font-size:1em}.katex .delimsizing.size1{font-family:KaTeX_Size1}.katex .delimsizing.size2{font-family:KaTeX_Size2}.katex .delimsizing.size3{font-family:KaTeX_Size3}.katex .delimsizing.size4{font-family:KaTeX_Size4}.katex .delimsizing.mult .delim-size1>span{font-family:KaTeX_Size1}.katex .delimsizing.mult .delim-size4>span{font-family:KaTeX_Size4}.katex .nulldelimiter{display:inline-block;width:.12em}.katex .delimcenter,.katex .op-symbol{position:relative}.katex .op-symbol.small-op{font-family:KaTeX_Size1}.katex .op-symbol.large-op{font-family:KaTeX_Size2}.katex .accent>.vlist-t,.katex .op-limits>.vlist-t{text-align:center}.katex .accent .accent-body{position:relative}.katex .accent .accent-body:not(.accent-full){width:0}.katex .overlay{display:block}.katex .mtable .vertical-separator{display:inline-block;min-width:1px}.katex .mtable .arraycolsep{display:inline-block}.katex .mtable .col-align-c>.vlist-t{text-align:center}.katex .mtable .col-align-l>.vlist-t{text-align:left}.katex .mtable .col-align-r>.vlist-t{text-align:right}.katex .svg-align{text-align:left}.katex svg{fill:currentColor;stroke:currentColor;fill-rule:nonzero;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;display:block;height:inherit;position:absolute;width:100%}.katex svg path{stroke:none}.katex img{border-style:none;max-height:none;max-width:none;min-height:0;min-width:0}.katex .stretchy{display:block;overflow:hidden;position:relative;width:100%}.katex .stretchy:after,.katex .stretchy:before{content:""}.katex .hide-tail{overflow:hidden;position:relative;width:100%}.katex .halfarrow-left{left:0;overflow:hidden;position:absolute;width:50.2%}.katex .halfarrow-right{overflow:hidden;position:absolute;right:0;width:50.2%}.katex .brace-left{left:0;overflow:hidden;position:absolute;width:25.1%}.katex .brace-center{left:25%;overflow:hidden;position:absolute;width:50%}.katex .brace-right{overflow:hidden;position:absolute;right:0;width:25.1%}.katex .x-arrow-pad{padding:0 .5em}.katex .cd-arrow-pad{padding:0 .55556em 0 .27778em}.katex .mover,.katex .munder,.katex .x-arrow{text-align:center}.katex .boxpad{padding:0 .3em}.katex .fbox,.katex .fcolorbox{border:.04em solid;box-sizing:border-box}.katex .cancel-pad{padding:0 .2em}.katex .cancel-lap{margin-left:-.2em;margin-right:-.2em}.katex .sout{border-bottom-style:solid;border-bottom-width:.08em}.katex .angl{border-right:.049em solid;border-top:.049em solid;box-sizing:border-box;margin-right:.03889em}.katex .anglpad{padding:0 .03889em}.katex .eqn-num:before{content:"(" counter(katexEqnNo) ")";counter-increment:katexEqnNo}.katex .mml-eqn-num:before{content:"(" counter(mmlEqnNo) ")";counter-increment:mmlEqnNo}.katex .mtr-glue{width:50%}.katex .cd-vert-arrow{display:inline-block;position:relative}.katex .cd-label-left{display:inline-block;position:absolute;right:calc(50% + .3em);text-align:left}.katex .cd-label-right{display:inline-block;left:calc(50% + .3em);position:absolute;text-align:right}.katex-display{display:block;margin:1em 0;text-align:center}.katex-display>.katex{display:block;text-align:center;white-space:nowrap}.katex-display>.katex>.katex-html{display:block;position:relative}.katex-display>.katex>.katex-html>.tag{position:absolute;right:0}.katex-display.leqno>.katex>.katex-html>.tag{left:0;right:auto}.katex-display.fleqn>.katex{padding-left:2em;text-align:left}body{counter-reset:katexEqnNo mmlEqnNo}
+
+</style>
+
+</head>
+<body>
+    <div class="content-wrapper">
+        <h1 id="microsoft-teams-sensitivity-labels" tabindex="-1">Microsoft Teams Sensitivity Labels</h1>
+<h2 id="user-training-guide" tabindex="-1">User Training Guide</h2>
+<h3 id="leonardo-canada" tabindex="-1">Leonardo Canada</h3>
+<hr>
+<p><strong>Document Information</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Version</strong></td>
+<td>1.0</td>
+</tr>
+<tr>
+<td><strong>Date</strong></td>
+<td>November 2025</td>
+</tr>
+<tr>
+<td><strong>Classification</strong></td>
+<td>Internal Use Only</td>
+</tr>
+<tr>
+<td><strong>Audience</strong></td>
+<td>All Leonardo Canada Employees</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="table-of-contents" tabindex="-1">Table of Contents</h2>
+<ol>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#why-we-need-this">Why We Need This</a></li>
+<li><a href="#the-two-label-types">The Two Label Types</a></li>
+<li><a href="#how-to-create-a-secure-meeting">How to Create a Secure Meeting</a></li>
+<li><a href="#how-to-create-a-regular-meeting">How to Create a Regular Meeting</a></li>
+<li><a href="#decision-guide">Decision Guide: Which Label to Use</a></li>
+<li><a href="#what-youll-see">What You'll See During Meetings</a></li>
+<li><a href="#meeting-options-explained">Meeting Options Explained</a></li>
+<li><a href="#common-scenarios">Common Scenarios</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+<li><a href="#faq">Frequently Asked Questions</a></li>
+<li><a href="#best-practices">Best Practices</a></li>
+</ol>
+<hr>
+<h2 id="1.-introduction" tabindex="-1">1. Introduction</h2>
+<h3 id="what-are-sensitivity-labels%3F" tabindex="-1">What Are Sensitivity Labels?</h3>
+<p>Sensitivity labels are security tags that you apply to Teams meetings to enforce appropriate protection controls based on the content you'll be discussing.</p>
+<p>Think of them like security clearance levels for your meetings:</p>
+<ul>
+<li><strong>Protected B - Official Sensitive - NATO</strong> = Top Secret meeting room with guards and cameras</li>
+<li><strong>Unclassified</strong> = Open conference room</li>
+</ul>
+<h3 id="what-this-means-for-you" tabindex="-1">What This Means for You</h3>
+<p>Starting <strong>December 4, 2025</strong>, as we roll out the new security features in our M365 tenant, every time you create a Teams meeting, you'll be prompted to choose a label that determines:</p>
+<ul>
+<li>Who can join</li>
+<li>Who can present</li>
+<li>Whether watermarks appear</li>
+<li>Recording permissions</li>
+<li>Lobby settings</li>
+</ul>
+<hr>
+<h2 id="2.-why-we-need-this" tabindex="-1">2. Why We Need This</h2>
+<h3 id="our-security-requirements" tabindex="-1">Our Security Requirements</h3>
+<p>Leonardo Canada is a <strong>defense contractor</strong> that handles:</p>
+<ul>
+<li>
+<p>🔒 <strong>Classified Government Contracts</strong></p>
+<ul>
+<li>Discussions about defense projects</li>
+<li>Technical specifications</li>
+<li>Delivery schedules and milestones</li>
+</ul>
+</li>
+<li>
+<p>🔒 <strong>Proprietary Technology</strong></p>
+<ul>
+<li>Our innovations and R&amp;D</li>
+<li>Engineering designs</li>
+<li>Manufacturing processes</li>
+</ul>
+</li>
+<li>
+<p>🔒 <strong>Export-Controlled Information</strong></p>
+<ul>
+<li>ITAR-restricted data</li>
+<li>EAR-controlled technologies</li>
+<li>Information subject to export licenses</li>
+</ul>
+</li>
+<li>
+<p>🔒 <strong>Customer Confidential Data</strong></p>
+<ul>
+<li>Contract terms and pricing</li>
+<li>Customer requirements</li>
+<li>Project details</li>
+</ul>
+</li>
+</ul>
+<h3 id="the-threat-landscape" tabindex="-1">The Threat Landscape</h3>
+<p><strong>Real risks we face:</strong></p>
+<ol>
+<li>
+<p><strong>Unauthorized Recording</strong></p>
+<ul>
+<li>External parties recording classified discussions</li>
+<li>Competitors capturing proprietary information</li>
+<li>Foreign intelligence gathering</li>
+</ul>
+</li>
+<li>
+<p><strong>Accidental Disclosure</strong></p>
+<ul>
+<li>Wrong person joins the meeting</li>
+<li>Screen share exposes sensitive documents</li>
+<li>Recording stored in unsecured location</li>
+</ul>
+</li>
+<li>
+<p><strong>Insider Threats</strong></p>
+<ul>
+<li>Disgruntled employees</li>
+<li>Social engineering attacks</li>
+<li>Compromised accounts</li>
+</ul>
+</li>
+<li>
+<p><strong>Compliance Violations</strong></p>
+<ul>
+<li>DFARS 252.204-7012 requirements</li>
+<li>NIST 800-171 controls</li>
+<li>CMMC Level 2 certification</li>
+<li>ITAR/EAR export controls</li>
+</ul>
+</li>
+</ol>
+<h3 id="what-could-go-wrong-without-controls" tabindex="-1">What Could Go Wrong Without Controls</h3>
+<p><strong>Real-world example scenarios:</strong></p>
+<p>❌ <strong>Scenario 1:</strong> Marketing team discussing new product in regular meeting.
+Competitor joins via shared link. Records entire discussion. Product details
+leaked before launch.</p>
+<p>❌ <strong>Scenario 2:</strong> Engineering meeting about classified component. Someone shares
+screen showing technical drawings. External consultant in meeting screenshots
+the design.</p>
+<p>❌ <strong>Scenario 3:</strong> HR meeting about confidential personnel matter. Meeting recorded
+automatically. Recording stored in shared folder accessible by entire company.</p>
+<p>✅ <strong>With Sensitivity Labels:</strong> All of these scenarios are prevented. Protected B
+meetings block external users, apply watermarks, and restrict recording.</p>
+<h3 id="cloud-security%3A-shared-responsibility" tabindex="-1">Cloud Security: Shared Responsibility</h3>
+<p><strong>Microsoft's Responsibility:</strong></p>
+<ul>
+<li>Physical data center security</li>
+<li>Network infrastructure</li>
+<li>Platform availability</li>
+<li>Base encryption</li>
+</ul>
+<p><strong>OUR Responsibility:</strong></p>
+<ul>
+<li>Access controls (who can join)</li>
+<li>Data classification (what's sensitive)</li>
+<li>Meeting security (how we protect discussions)</li>
+<li>Compliance monitoring (audit and enforce)</li>
+<li>Private key management (we control the encryption keys for sovereignty purposes)</li>
+</ul>
+<p><strong>Sensitivity labels are how we fulfill OUR responsibility.</strong></p>
+<h3 id="regulatory-compliance" tabindex="-1">Regulatory Compliance</h3>
+<p>We must comply with:</p>
+<p><strong>DFARS 252.204-7012:</strong></p>
+<ul>
+<li>Safeguarding Covered Defense Information</li>
+<li>Controlled Unclassified Information (CUI)</li>
+<li>Requires documented security controls</li>
+</ul>
+<p><strong>NIST 800-171:</strong></p>
+<ul>
+<li>110 security requirements</li>
+<li>Access control (AC-3, AC-17)</li>
+<li>Audit and accountability (AU-2, AU-6)</li>
+<li>Media protection (MP-7)</li>
+</ul>
+<p><strong>CMMC Level 2:</strong></p>
+<ul>
+<li>Cybersecurity Maturity Model Certification</li>
+<li>Required for DoD contracts</li>
+<li>Mandates implementation and documentation of controls</li>
+</ul>
+<p><strong>These labels help us meet these requirements!</strong></p>
+<hr>
+<h2 id="3.-the-two-label-types" tabindex="-1">3. The Two Label Types</h2>
+<h3 id="%F0%9F%94%B4-protected-b---official-sensitive---nato" tabindex="-1">🔴 Protected B - Official Sensitive - NATO</h3>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>ANY classified or sensitive discussion</li>
+<li>Government contract details</li>
+<li>Technical specifications</li>
+<li>Proprietary information</li>
+<li>NDA-covered topics</li>
+<li>When in doubt!</li>
+</ul>
+<p><strong>What it does:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Setting</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Watermarks</strong></td>
+<td>ON (locked) 🔒</td>
+<td>Deters unauthorized recording, provides attribution</td>
+</tr>
+<tr>
+<td><strong>Lobby</strong></td>
+<td>Org only (locked) 🔒</td>
+<td>Prevents external parties from joining</td>
+</tr>
+<tr>
+<td><strong>Anonymous Users</strong></td>
+<td>Blocked (locked) 🔒</td>
+<td>No unidentified participants</td>
+</tr>
+<tr>
+<td><strong>Phone Dial-in</strong></td>
+<td>Must wait in lobby 🔒</td>
+<td>Control who joins via phone</td>
+</tr>
+<tr>
+<td><strong>Who Can Present</strong></td>
+<td>Organizer only (locked) 🔒</td>
+<td>Prevents unauthorized screen sharing</td>
+</tr>
+<tr>
+<td><strong>Give Control</strong></td>
+<td>Disabled (locked) 🔒</td>
+<td>No one can take control of your screen</td>
+</tr>
+<tr>
+<td><strong>Recording</strong></td>
+<td>Organizer controls 🔒</td>
+<td>You decide if/when to record</td>
+</tr>
+<tr>
+<td><strong>Clipboard</strong></td>
+<td>Blocked (locked) 🔒</td>
+<td>Can't copy content from meeting</td>
+</tr>
+<tr>
+<td><strong>Encryption</strong></td>
+<td>End-to-end enabled 🔒</td>
+<td>Maximum security</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Visual indicators:</strong></p>
+<ul>
+<li>🔒 Lock icons on meeting options</li>
+<li>Watermarks visible on all video</li>
+<li>"Managed by your organization" tooltips</li>
+</ul>
+<hr>
+<h3 id="%F0%9F%9F%A2-unclassified" tabindex="-1">🟢 Unclassified</h3>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>Team stand-ups (non-sensitive)</li>
+<li>Social gatherings</li>
+<li>Training on non-classified topics</li>
+<li>Public presentations</li>
+<li>Routine administrative meetings</li>
+</ul>
+<p><strong>What it does:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Setting</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Watermarks</strong></td>
+<td>OFF</td>
+<td>No watermarks for casual meetings</td>
+</tr>
+<tr>
+<td><strong>Lobby</strong></td>
+<td>You choose ✏️</td>
+<td>You control who can bypass</td>
+</tr>
+<tr>
+<td><strong>Anonymous Users</strong></td>
+<td>You choose ✏️</td>
+<td>Allow guests if needed</td>
+</tr>
+<tr>
+<td><strong>Who Can Present</strong></td>
+<td>You choose ✏️</td>
+<td>Anyone can share screen</td>
+</tr>
+<tr>
+<td><strong>Give Control</strong></td>
+<td>Enabled ✏️</td>
+<td>Can share control with others</td>
+</tr>
+<tr>
+<td><strong>Recording</strong></td>
+<td>You choose ✏️</td>
+<td>Standard Teams recording</td>
+</tr>
+<tr>
+<td><strong>Clipboard</strong></td>
+<td>Allowed ✏️</td>
+<td>Normal functionality</td>
+</tr>
+<tr>
+<td><strong>Encryption</strong></td>
+<td>Standard</td>
+<td>Teams default encryption with CMK</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Visual indicators:</strong></p>
+<ul>
+<li>✏️ All options are editable</li>
+<li>No lock icons</li>
+<li>Standard Teams interface</li>
+</ul>
+<hr>
+<h2 id="4.-how-to-create-a-secure-meeting" tabindex="-1">4. How to Create a Secure Meeting</h2>
+<h3 id="step-by-step%3A-teams-desktop" tabindex="-1">Step-by-Step: Teams Desktop</h3>
+<p><strong>Step 1: Open Teams Calendar</strong></p>
+<pre class="hljs"><code><div>Click: Calendar icon on left sidebar
+</div></code></pre>
+<p><strong>Step 2: Create New Meeting</strong></p>
+<pre class="hljs"><code><div>Click: "New meeting" button (top right) - or "New" with the new version of Outlook (which needs to be configured to comply with these new security features)
+</div></code></pre>
+<p><strong>Step 3: Notice the labels</strong></p>
+<pre class="hljs"><code><div>You'll see:
+  Sensitivity: [Protected B - Official Sensitive - NATO ▼]
+               [Unclassified]
+               
+</div></code></pre>
+<p><strong>Step 4: Fill in Meeting Details</strong></p>
+<pre class="hljs"><code><div>Title: e.g., "Q4 Defense Contract Review"
+Required: Add attendees
+Optional: Add location, description
+Date/Time: Set your schedule
+</div></code></pre>
+<p><strong>Step 5: Verify Protected B is Selected</strong></p>
+<pre class="hljs"><code><div>Check that "Protected B - Official Sensitive - NATO" is still selected
+</div></code></pre>
+<p><strong>Step 6: Send the Invite</strong></p>
+<pre class="hljs"><code><div>Click: "Send" or "Save"
+</div></code></pre>
+<p>✅ <strong>Done!</strong> Your meeting is now secure.</p>
+<h3 id="step-by-step%3A-teams-web" tabindex="-1">Step-by-Step: Teams Web</h3>
+<p><strong>Step 1: Go to Teams Web</strong></p>
+<pre class="hljs"><code><div>Browser: https://teams.microsoft.com
+</div></code></pre>
+<p><strong>Step 2: Open Calendar</strong></p>
+<pre class="hljs"><code><div>Click: Calendar (left sidebar)
+</div></code></pre>
+<p><strong>Step 3: New Meeting</strong></p>
+<pre class="hljs"><code><div>Click: "New meeting"
+</div></code></pre>
+<p><strong>Step 4: Check Sensitivity</strong></p>
+<pre class="hljs"><code><div>Look for: Sensitivity dropdown
+Should show: "Protected B - Official Sensitive - NATO"
+</div></code></pre>
+<p><strong>Step 5: Complete Details and Send</strong></p>
+<pre class="hljs"><code><div>Fill in: Title, attendees, time
+Click: "Send"
+</div></code></pre>
+<h3 id="step-by-step%3A-outlook-desktop" tabindex="-1">Step-by-Step: Outlook Desktop</h3>
+<p><strong>Step 1: Open Outlook Calendar</strong></p>
+<pre class="hljs"><code><div>Click: Calendar view
+</div></code></pre>
+<p><strong>Step 2: Create Teams Meeting</strong></p>
+<pre class="hljs"><code><div>Home tab → "Teams Meeting" button
+(or New Meeting → Teams Meeting toggle)
+</div></code></pre>
+<p><strong>Step 3: Check Sensitivity</strong></p>
+<pre class="hljs"><code><div>Look for: Sensitivity button/dropdown
+Select: "Protected B - Official Sensitive - NATO"
+</div></code></pre>
+<p><strong>Step 4: Send Invite</strong></p>
+<pre class="hljs"><code><div>Fill in details → Send
+</div></code></pre>
+<hr>
+<h2 id="5.-how-to-create-a-regular-meeting" tabindex="-1">5. How to Create a Regular Meeting</h2>
+<h3 id="when-you-need-to-change-from-default" tabindex="-1">When You Need to Change from Default</h3>
+<p>Here's how to change it for casual meetings:</p>
+<h3 id="step-by-step" tabindex="-1">Step-by-Step</h3>
+<p><strong>Step 1: Create Meeting as Normal</strong></p>
+<pre class="hljs"><code><div>Calendar → "New" (using new version of outlook)
+</div></code></pre>
+<p><strong>Step 2: Click Sensitivity Dropdown</strong></p>
+<pre class="hljs"><code><div>Click on: "Protected B - Official Sensitive - NATO ▼"
+         (the dropdown arrow)
+</div></code></pre>
+<p><strong>Step 3: Select Unclassified</strong></p>
+<pre class="hljs"><code><div>Click: "Unclassified"
+</div></code></pre>
+<p><strong>Step 4: Verify Change</strong></p>
+<pre class="hljs"><code><div>Sensitivity now shows: "Unclassified"
+</div></code></pre>
+<p><strong>Step 5: Send Invite</strong></p>
+<pre class="hljs"><code><div>Complete details → Send
+</div></code></pre>
+<h3 id="visual-guide" tabindex="-1">Visual Guide</h3>
+<p><strong>Before (Default):</strong></p>
+<pre class="hljs"><code><div>┌─────────────────────────────────────────┐
+│ Title: [Team Standup            ]     │
+│                                         │
+│ Sensitivity: [Protected B - Secure ▼] │ ← Click here
+└─────────────────────────────────────────┘
+</div></code></pre>
+<p><strong>After Clicking:</strong></p>
+<pre class="hljs"><code><div>┌─────────────────────────────────────────┐
+│ Sensitivity:                            │
+│   • Protected B - Official Sensitive - NATO        │
+│   • Unclassified     ◄──── Click this
+└─────────────────────────────────────────┘
+</div></code></pre>
+<p><strong>Result:</strong></p>
+<pre class="hljs"><code><div>┌─────────────────────────────────────────┐
+│ Title: [Team Standup            ]     │
+│                                         │
+│ Sensitivity: [Unclassified - Regular    ▼] │ ← Changed!
+└─────────────────────────────────────────┘
+</div></code></pre>
+<hr>
+<h2 id="6.-decision-guide%3A-which-label-to-use%3F" tabindex="-1">6. Decision Guide: Which Label to Use?</h2>
+<h3 id="quick-decision-tree" tabindex="-1">Quick Decision Tree</h3>
+<pre class="hljs"><code><div>Creating a meeting →
+  ↓
+Will you discuss ANY of these?
+  • Classified information
+  • Contract details/pricing
+  • Technical specifications
+  • Customer confidential data
+  • Proprietary designs
+  • NDA-covered topics
+  • Government requirements
+  ↓
+┌─ YES → Protected B - Official Sensitive - NATO 🔴
+│
+└─ NO → Ask: Is it purely social/administrative?
+         ↓
+      ┌─ YES → Unclassified 🟢
+      │
+      └─ UNSURE → Protected B - Official Sensitive - NATO 🔴
+                  (When in doubt, be secure!)
+</div></code></pre>
+<h3 id="detailed-examples" tabindex="-1">Detailed Examples</h3>
+<h4 id="%E2%9C%85-use-protected-b-for%3A" tabindex="-1">✅ USE PROTECTED B FOR:</h4>
+<p><strong>Government/Contract Work:</strong></p>
+<ul>
+<li>✅ Discussing contract deliverables</li>
+<li>✅ Reviewing government requirements</li>
+<li>✅ Technical reviews with DoD customers</li>
+<li>✅ Proposal development meetings</li>
+<li>✅ Contract negotiations</li>
+</ul>
+<p><strong>Technical Content:</strong></p>
+<ul>
+<li>✅ Engineering design reviews</li>
+<li>✅ R&amp;D discussions</li>
+<li>✅ Manufacturing process reviews</li>
+<li>✅ Quality control discussions involving proprietary methods</li>
+<li>✅ Technical problem-solving for classified projects</li>
+</ul>
+<p><strong>Business Sensitive:</strong></p>
+<ul>
+<li>✅ Financial planning and budgets</li>
+<li>✅ Strategic planning sessions</li>
+<li>✅ Merger/acquisition discussions</li>
+<li>✅ Pricing strategies</li>
+<li>✅ Customer relationship details</li>
+</ul>
+<p><strong>Personnel Matters:</strong></p>
+<ul>
+<li>✅ Disciplinary discussions</li>
+<li>✅ Salary/compensation reviews</li>
+<li>✅ Performance improvement plans</li>
+<li>✅ Reorganization planning</li>
+<li>✅ Any HR matter involving personal information</li>
+</ul>
+<p><strong>Legal/Compliance:</strong></p>
+<ul>
+<li>✅ Discussions with legal counsel</li>
+<li>✅ Regulatory compliance reviews</li>
+<li>✅ Incident investigations</li>
+<li>✅ Audit preparations involving sensitive findings</li>
+</ul>
+<h4 id="%E2%9C%85-use-unclassified-for%3A" tabindex="-1">✅ USE Unclassified FOR:</h4>
+<p><strong>Administrative:</strong></p>
+<ul>
+<li>✅ Team stand-ups (no sensitive content)</li>
+<li>✅ Status updates on non-classified work</li>
+<li>✅ Scheduling and logistics</li>
+<li>✅ Routine administrative tasks</li>
+<li>✅ Committee meetings (non-sensitive agenda)</li>
+</ul>
+<p><strong>Social/Team Building:</strong></p>
+<ul>
+<li>✅ Birthday celebrations</li>
+<li>✅ Virtual coffee breaks</li>
+<li>✅ Team lunch gatherings</li>
+<li>✅ Social hours</li>
+<li>✅ Game sessions</li>
+</ul>
+<p><strong>Training:</strong></p>
+<ul>
+<li>✅ Unclassified IT training</li>
+<li>✅ Professional development (non-classified)</li>
+<li>✅ Software tutorials</li>
+<li>✅ Onboarding for Unclassified company info</li>
+<li>✅ Safety training (non-sensitive)</li>
+</ul>
+<p><strong>Public Content:</strong></p>
+<ul>
+<li>✅ Webinars open to public</li>
+<li>✅ Marketing presentations</li>
+<li>✅ Town halls with Unclassified announcements</li>
+<li>✅ Recruiting/career fair sessions</li>
+</ul>
+<hr>
+<h2 id="7.-what-you'll-see-during-meetings" tabindex="-1">7. What You'll See During Meetings</h2>
+<h3 id="in-a-protected-b---official-sensitive---nato-meeting" tabindex="-1">In a Protected B - Official Sensitive - NATO Meeting</h3>
+<h4 id="before-the-meeting-starts" tabindex="-1">Before the Meeting Starts</h4>
+<p><strong>Meeting Options Screen:</strong></p>
+<pre class="hljs"><code><div>┌────────────────────────────────────────────┐
+│ Meeting options                            │
+├────────────────────────────────────────────┤
+│                                            │
+│ 🔒 Who can bypass the lobby?             │
+│    People in my organization              │
+│    (Managed by your organization)         │
+│                                            │
+│ 🔒 Who can present?                       │
+│    Only me                                │
+│    (Managed by your organization)         │
+│                                            │
+│ 🔒 Allow mic for attendees?              │
+│    Yes                                     │
+│                                            │
+│ 🔒 Allow camera for attendees?           │
+│    Yes                                     │
+│                                            │
+└────────────────────────────────────────────┘
+
+Notice: 🔒 Lock icons = Cannot change these settings
+</div></code></pre>
+<h4 id="during-the-meeting" tabindex="-1">During the Meeting</h4>
+<p><strong>What You'll See:</strong></p>
+<ol>
+<li>
+<p><strong>Watermarks on Screen Share</strong></p>
+<pre class="hljs"><code><div>When anyone shares screen:
+
+┌──────────────────────────────────────┐
+│ [Shared Content]                     │
+│                                      │
+│ Fred Pearson - 2025-11-18 14:23    │ ← Watermark
+│                                      │  (repeated across screen)
+└──────────────────────────────────────┘
+</div></code></pre>
+</li>
+<li>
+<p><strong>Lobby Restrictions</strong></p>
+<pre class="hljs"><code><div>If external user tries to join:
+
+┌────────────────────────────────────┐
+│ Someone is trying to join          │
+│                                    │
+│ external.user@othercompany.com     │
+│                                    │
+│ [Admit]  [Deny Entry]             │
+└────────────────────────────────────┘
+
+Note: You'll see this, but they can't actually join (unless you select them and press add as attendee or presenter)
+      (blocked by policy)
+</div></code></pre>
+</li>
+<li>
+<p><strong>Presenter Controls</strong></p>
+<pre class="hljs"><code><div>Only organizer sees:
+
+[...] (More options) →
+  Make presenter
+  Make co-organizer
+  Remove
+
+Participants don't see these options
+</div></code></pre>
+</li>
+</ol>
+<h3 id="in-a-unclassified-meeting" tabindex="-1">In a Unclassified Meeting</h3>
+<h4 id="before-the-meeting" tabindex="-1">Before the Meeting</h4>
+<p><strong>Meeting Options Screen:</strong></p>
+<pre class="hljs"><code><div>┌────────────────────────────────────────────┐
+│ Meeting options                            │
+├────────────────────────────────────────────┤
+│                                            │
+│ ✏️ Who can bypass the lobby?             │
+│    [Everyone                        ▼]    │ ← You can change
+│                                            │
+│ ✏️ Who can present?                       │
+│    [Everyone                        ▼]    │ ← You can change
+│                                            │
+│ ✏️ Allow mic for attendees?              │
+│    [Yes ▼]                                │ ← You can change
+│                                            │
+└────────────────────────────────────────────┘
+
+Notice: ✏️ No locks = You control all settings
+</div></code></pre>
+<h4 id="during-the-meeting-1" tabindex="-1">During the Meeting</h4>
+<p><strong>What You'll See:</strong></p>
+<ol>
+<li>
+<p><strong>No Watermarks</strong></p>
+<ul>
+<li>Clean screen shares</li>
+<li>Standard Teams interface</li>
+</ul>
+</li>
+<li>
+<p><strong>Flexible Lobby</strong></p>
+<ul>
+<li>External users can join (if you allowed it)</li>
+<li>Phone users can bypass lobby (if configured)</li>
+<li>You control admittance</li>
+</ul>
+</li>
+<li>
+<p><strong>Flexible Presenting</strong></p>
+<ul>
+<li>Anyone can share screen (if configured)</li>
+<li>Participants can request control</li>
+<li>You decide permissions</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="8.-meeting-options-explained" tabindex="-1">8. Meeting Options Explained</h2>
+<h3 id="accessing-meeting-options" tabindex="-1">Accessing Meeting Options</h3>
+<p><strong>Before Meeting:</strong></p>
+<pre class="hljs"><code><div>Method 1:
+  Teams Calendar → Click meeting → "Meeting options"
+
+Method 2:
+  Meeting invite → "Meeting options" link
+
+Method 3:
+  Email invite → "Meeting options" link at bottom
+</div></code></pre>
+<p><strong>During Meeting:</strong></p>
+<pre class="hljs"><code><div>[...] (More options) → "Meeting options"
+Opens in browser
+</div></code></pre>
+<h3 id="key-settings-comparison" tabindex="-1">Key Settings Comparison</h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Protected B 🔴</th>
+<th>Unclassified 🟢</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Watermarks</strong></td>
+<td>Always ON 🔒</td>
+<td>Always OFF</td>
+</tr>
+<tr>
+<td><strong>Lobby: Org members</strong></td>
+<td>Bypass 🔒</td>
+<td>You choose ✏️</td>
+</tr>
+<tr>
+<td><strong>Lobby: External</strong></td>
+<td>Must wait 🔒</td>
+<td>You choose ✏️</td>
+</tr>
+<tr>
+<td><strong>Lobby: Phone users</strong></td>
+<td>Must wait 🔒</td>
+<td>You choose ✏️</td>
+</tr>
+<tr>
+<td><strong>Who presents</strong></td>
+<td>Organizer only 🔒</td>
+<td>You choose ✏️</td>
+</tr>
+<tr>
+<td><strong>Attendee mic</strong></td>
+<td>ON</td>
+<td>You choose ✏️</td>
+</tr>
+<tr>
+<td><strong>Attendee camera</strong></td>
+<td>ON</td>
+<td>You choose ✏️</td>
+</tr>
+<tr>
+<td><strong>Chat</strong></td>
+<td>Enabled</td>
+<td>You choose ✏️</td>
+</tr>
+<tr>
+<td><strong>Reactions</strong></td>
+<td>Enabled</td>
+<td>You choose ✏️</td>
+</tr>
+<tr>
+<td><strong>Recording</strong></td>
+<td>Organizer controls 🔒</td>
+<td>You choose ✏️</td>
+</tr>
+<tr>
+<td><strong>Transcription</strong></td>
+<td>Available</td>
+<td>Available</td>
+</tr>
+</tbody>
+</table>
+<p>🔒 = Locked (you cannot change)<br>
+✏️ = Flexible (you can customize)</p>
+<hr>
+<h2 id="9.-common-scenarios" tabindex="-1">9. Common Scenarios</h2>
+<h3 id="scenario-1%3A-weekly-team-standup" tabindex="-1">Scenario 1: Weekly Team Standup</h3>
+<p><strong>Meeting:</strong> Team standup - discussing task status (no sensitive info)</p>
+<p><strong>Choose:</strong> 🟢 Unclassified</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>Create meeting</li>
+<li>Change label to "Unclassified"</li>
+<li>No special setup needed</li>
+<li>Send invite</li>
+</ol>
+<p><strong>During meeting:</strong></p>
+<ul>
+<li>No watermarks</li>
+<li>Everyone can share updates</li>
+<li>Normal Teams functionality</li>
+</ul>
+<hr>
+<h3 id="scenario-2%3A-quarterly-defense-contract-review" tabindex="-1">Scenario 2: Quarterly Defense Contract Review</h3>
+<p><strong>Meeting:</strong> Review Q4 deliverables for classified DoD contract</p>
+<p><strong>Choose:</strong> 🔴 Protected B - Official Sensitive - NATO</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>Create meeting</li>
+<li>Keep default "Protected B - Official Sensitive - NATO"</li>
+<li>Add only cleared personnel as attendees</li>
+<li>Send invite</li>
+</ol>
+<p><strong>During meeting:</strong></p>
+<ul>
+<li>Watermarks on all screen shares and transcripts</li>
+<li>Only org members can join the lobby directly</li>
+<li>External users must be explicitly allowed in by the Organizer (or co-organizer) by selecting add as attendee to the user waiting in the lobby</li>
+<li>You control presenting</li>
+<li>Recording controlled</li>
+</ul>
+<hr>
+<h3 id="scenario-3%3A-customer-demo-(non-sensitive)" tabindex="-1">Scenario 3: Customer Demo (Non-Sensitive)</h3>
+<p><strong>Meeting:</strong> Product demo for potential customer (Unclassified marketing material)</p>
+<p><strong>Choose:</strong> 🟢 Unclassified</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>Create meeting</li>
+<li>Change to "Unclassified"</li>
+<li>Add customer email addresses</li>
+<li>Configure lobby: Allow guests</li>
+<li>Send invite</li>
+</ol>
+<p><strong>During meeting:</strong></p>
+<ul>
+<li>Customer can join easily</li>
+<li>You can share marketing materials</li>
+<li>Customer can ask questions via mic/camera</li>
+<li>Standard experience</li>
+</ul>
+<hr>
+<h3 id="scenario-4%3A-engineering-design-review-(proprietary)" tabindex="-1">Scenario 4: Engineering Design Review (Proprietary)</h3>
+<p><strong>Meeting:</strong> Review new product design (company confidential)</p>
+<p><strong>Choose:</strong> 🔴 Protected B - Official Sensitive - NATO</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>Create meeting</li>
+<li>Keep "Protected B - Official Sensitive - NATO"</li>
+<li>Add only internal engineering team</li>
+<li>Send invite</li>
+</ol>
+<p><strong>During meeting:</strong></p>
+<ul>
+<li>Watermarks protect IP</li>
+<li>No external join possible</li>
+<li>Screen shares of designs are protected</li>
+<li>Controlled environment</li>
+</ul>
+<hr>
+<h3 id="scenario-5%3A-hr-discussion-(confidential)" tabindex="-1">Scenario 5: HR Discussion (Confidential)</h3>
+<p><strong>Meeting:</strong> Performance review or disciplinary matter</p>
+<p><strong>Choose:</strong> 🔴 Protected B - Official Sensitive - NATO</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>Create meeting</li>
+<li>Keep "Protected B - Official Sensitive - NATO"</li>
+<li>Add only HR and relevant manager</li>
+<li>Send invite</li>
+</ol>
+<p><strong>During meeting:</strong></p>
+<ul>
+<li>Privacy ensured</li>
+<li>No unauthorized recording</li>
+<li>Confidential discussion protected</li>
+<li>Audit trail maintained</li>
+</ul>
+<hr>
+<h3 id="scenario-6%3A-virtual-coffee-break" tabindex="-1">Scenario 6: Virtual Coffee Break</h3>
+<p><strong>Meeting:</strong> Social gathering, casual chat</p>
+<p><strong>Choose:</strong> 🟢 Unclassified</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>Create meeting</li>
+<li>Change to "Unclassified"</li>
+<li>Add team members</li>
+<li>Optional: Make it recurring</li>
+<li>Send invite</li>
+</ol>
+<p><strong>During meeting:</strong></p>
+<ul>
+<li>Relaxed atmosphere</li>
+<li>No watermarks</li>
+<li>Social interaction</li>
+<li>No security restrictions</li>
+</ul>
+<hr>
+<h2 id="10.-troubleshooting" tabindex="-1">10. Troubleshooting</h2>
+<h3 id="problem%3A-can't-see-sensitivity-dropdown" tabindex="-1">Problem: Can't See Sensitivity Dropdown</h3>
+<p><strong>Symptoms:</strong></p>
+<ul>
+<li>No "Sensitivity" option when creating meeting</li>
+<li>Option is grayed out</li>
+<li>Option missing entirely</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<p><strong>Solution 1: Wait for Propagation</strong></p>
+<pre class="hljs"><code><div>Timeline: Labels take 24-48 hours to appear after rollout
+Action: Check again tomorrow
+</div></code></pre>
+<p><strong>Solution 2: Sign Out and Back In</strong></p>
+<pre class="hljs"><code><div>1. Click your profile picture
+2. Sign out
+3. Close Teams completely
+4. Reopen Teams
+5. Sign in
+6. Try again
+</div></code></pre>
+<p><strong>Solution 3: Clear Teams Cache</strong></p>
+<pre class="hljs"><code><div>1. Close Teams
+2. Press Win+R
+3. Type: %appdata%\Microsoft\Teams
+4. Delete: Cache, blob_storage, databases folders
+5. Restart Teams
+</div></code></pre>
+<p><strong>Solution 4: Try Different Client</strong></p>
+<pre class="hljs"><code><div>Desktop not working? → Try web (teams.microsoft.com)
+Web not working? → Try desktop app
+</div></code></pre>
+<p><strong>Solution 5: Check with IT</strong></p>
+<pre class="hljs"><code><div>Still not working after 48 hours?
+Contact: itsupport@leonardocompany.ca
+Provide: Your email, when you last tried, screenshot
+</div></code></pre>
+<hr>
+<h3 id="problem%3A-label-is-locked%2Fcan't-change" tabindex="-1">Problem: Label is Locked/Can't Change</h3>
+<p><strong>Symptoms:</strong></p>
+<ul>
+<li>Created meeting with wrong label</li>
+<li>Can't change label in meeting options</li>
+<li>Want to switch from Protected B to Unclassified</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<p><strong>Before Meeting Starts:</strong></p>
+<pre class="hljs"><code><div>1. Open meeting in calendar
+2. Click "Meeting options"
+3. Look for Sensitivity dropdown
+4. Change label
+5. Save changes
+6. Update attendees if needed
+</div></code></pre>
+<p><strong>After Meeting Starts:</strong></p>
+<pre class="hljs"><code><div>Cannot change! Security controls are enforced.
+
+Workaround:
+1. End current meeting
+2. Create new meeting with correct label
+3. Start new meeting
+4. Invite participants
+</div></code></pre>
+<p><strong>Lesson:</strong> Double-check label before sending invite!</p>
+<hr>
+<h3 id="problem%3A-external-person-can't-join-protected-b-meeting" tabindex="-1">Problem: External Person Can't Join Protected B Meeting</h3>
+<p><strong>Symptoms:</strong></p>
+<ul>
+<li>External partner trying to join</li>
+<li>Stuck in lobby</li>
+<li>Cannot admit them</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<p><strong>This is BY DESIGN</strong> - Protected B blocks external users unless explicitly granted permissions by the organizer / co organizer from the invitation lobby only.</p>
+<p><strong>Options:</strong></p>
+<p><strong>Option 1: Use Unclassified Meeting (If Content Appropriate)</strong></p>
+<pre class="hljs"><code><div>If meeting content is NOT sensitive:
+1. Cancel Protected B meeting
+2. Create new Unclassified meeting
+3. External partners can join
+</div></code></pre>
+<p><strong>Option 2: Use Alternative Communication</strong></p>
+<pre class="hljs"><code><div>If content IS sensitive:
+- Use secure phone line
+- Schedule in-person meeting
+- Use approved secure collaboration tool
+- Don't compromise security!
+</div></code></pre>
+<p><strong>Option 3: Make Them Internal First</strong></p>
+<pre class="hljs"><code><div>For regular partners:
+- Request guest account creation
+- IT sets them up as guests
+- They become "internal"
+- Can join future Protected B meetings
+</div></code></pre>
+<hr>
+<h3 id="problem%3A-can't-share-screen-in-protected-b-meeting" tabindex="-1">Problem: Can't Share Screen in Protected B Meeting</h3>
+<p><strong>Symptoms:</strong></p>
+<ul>
+<li>Share screen option grayed out</li>
+<li>Not the meeting organizer</li>
+<li>Need to present</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<p><strong>Solution 1: Ask Organizer for Co-Organizer Role</strong></p>
+<pre class="hljs"><code><div>During meeting:
+1. Ask organizer in chat
+2. Organizer: [...] → People → Your name → Make co-organizer
+3. You can now share screen
+</div></code></pre>
+<p><strong>Solution 2: Organizer Shares on Your Behalf</strong></p>
+<pre class="hljs"><code><div>1. Share your content with organizer (chat/email)
+2. Organizer shares their screen
+3. Organizer shows your content
+</div></code></pre>
+<p><strong>Solution 3: Plan Ahead</strong></p>
+<pre class="hljs"><code><div>Before meeting:
+- Tell organizer you need to present
+- They make you co-organizer in advance
+- Problem prevented!
+</div></code></pre>
+<hr>
+<h3 id="watermarks-are-annoying" tabindex="-1">Watermarks Are Annoying</h3>
+<p><strong>This is BY DESIGN</strong> - Watermarks cannot be disabled in Protected B meetings.</p>
+<p><strong>Understanding:</strong></p>
+<pre class="hljs"><code><div>Purpose: Deter unauthorized recording/screenshots
+Requirement: Compliance mandate (DFARS, NIST)
+Result: Cannot be removed
+</div></code></pre>
+<p><strong>Workarounds:</strong></p>
+<p><strong>Tip 1: Design Around Watermarks</strong></p>
+<pre class="hljs"><code><div>When creating slides:
+- Avoid critical info in corners
+- Use center of screen for key points
+- Test in meeting first
+</div></code></pre>
+<p><strong>Tip 2: Use Unclassified Meeting</strong></p>
+<pre class="hljs"><code><div>If content is NOT sensitive:
+- Use Unclassified meeting instead
+- No watermarks
+- Better for presentations
+</div></code></pre>
+<p><strong>Tip 3: Accept Them</strong></p>
+<pre class="hljs"><code><div>Watermarks are:
+- Small and semi-transparent
+- Positioned to minimize obstruction
+- Required for compliance
+- Protecting our company
+</div></code></pre>
+<hr>
+<h2 id="11.-frequently-asked-questions" tabindex="-1">11. Frequently Asked Questions</h2>
+<h3 id="unclassified-questions" tabindex="-1">Unclassified Questions</h3>
+<p><strong>Q: Do I have to use labels?</strong>
+A: Yes. Label usage is mandatory for all meetings one the feature is avaialble on your machine
+containing sensitive information. It's a compliance requirement, not optional.</p>
+<p><strong>Q: What if I forget to use a label?</strong>
+A: Good news! it is mandatory to select a label.</p>
+<p><strong>Q: Can I change the label after creating the meeting?</strong>
+A: Yes, before the meeting starts. Once the meeting begins, settings are locked.</p>
+<p><strong>Q: Will this work on my phone?</strong>
+A: Yes! Labels work in Teams mobile apps (iOS and Android). The interface looks
+slightly different but functionality is the same.</p>
+<p><strong>Q: What about existing meetings?</strong>
+A: Meetings created before the rollout will continue to work as they currently do.
+Labels only apply to newly created meetings.</p>
+<hr>
+<h3 id="label-selection-questions" tabindex="-1">Label Selection Questions</h3>
+<p><strong>Q: When in doubt, which label should I use?</strong>
+A: Always use Protected B - Official Sensitive - NATO when in doubt. It's better to be
+overly cautious with sensitive information.</p>
+<p><strong>Q: Can I use Unclassified for meetings with government representatives?</strong>
+A: NO. ANY meeting with government representatives must use Protected B, even for
+seemingly routine discussions.</p>
+<p><strong>Q: What if the meeting starts casual but becomes sensitive?</strong>
+A: You cannot change labels mid-meeting. Best practice: End the meeting and restart
+with a Protected B meeting if sensitive topics arise.</p>
+<p><strong>Q: Are there penalties for using the wrong label?</strong>
+A: Using Unclassified for sensitive discussions may trigger security reviews and could
+result in:</p>
+<ul>
+<li>Additional security training</li>
+<li>Access restrictions</li>
+<li>Disciplinary action (if intentional or repeated)</li>
+<li>Impact on security clearance</li>
+</ul>
+<hr>
+<h3 id="technical-questions" tabindex="-1">Technical Questions</h3>
+<p><strong>Q: Do watermarks affect video quality?</strong>
+A: No. Watermarks are lightweight overlays and don't reduce video quality or
+increase bandwidth usage.</p>
+<p><strong>Q: Can someone remove the watermarks?</strong>
+A: No. Watermarks are embedded in the video feed at the source and cannot be
+removed by participants.</p>
+<p><strong>Q: What if I have poor internet - do watermarks use more bandwidth?</strong>
+A: No. Watermarks add negligible data overhead (less than 1%). Your internet speed
+is the same with or without watermarks.</p>
+<p><strong>Q: Can I record a Protected B meeting?</strong>
+A: As the organizer, yes. Recording permissions are controlled. As a participant,
+only if the organizer allows it. Note: All recordings are audited.</p>
+<p><strong>Q: Where are recordings stored?</strong>
+A: Teams recordings are stored in Microsoft Stream (OneDrive/SharePoint) with the
+same sensitivity label applied, inheriting the protection.</p>
+<hr>
+<h3 id="external-collaboration-questions" tabindex="-1">External Collaboration Questions</h3>
+<p><strong>Q: How do I meet with external partners on sensitive projects?</strong>
+A: Options:</p>
+<ol>
+<li>Request guest account for regular partners</li>
+<li>Use approved secure collaboration platforms</li>
+<li>Meet in person</li>
+<li>Use secure phone lines
+Do NOT downgrade to Unclassified meeting just to accommodate external access!</li>
+</ol>
+<p><strong>Q: Can I invite contractors to Protected B meetings?</strong>
+A: Only if they have:</p>
+<ul>
+<li>Signed NDAs</li>
+<li>Been granted guest accounts by IT</li>
+<li>Appropriate clearances (for classified info)
+Check with IT before inviting contractors.</li>
+</ul>
+<p><strong>Q: What about customers who need to join?</strong>
+A: For customer meetings:</p>
+<ul>
+<li>Sales/marketing discussions: Unclassified meeting ✓</li>
+<li>Technical/contract discussions: Protected B + guest account required</li>
+<li>Classified discussions: In-person or secure channels only</li>
+</ul>
+<hr>
+<h3 id="compliance-questions" tabindex="-1">Compliance Questions</h3>
+<p><strong>Q: Are my meetings monitored?</strong>
+A: Label usage is logged for compliance auditing. Meeting content is not monitored,
+but we track:</p>
+<ul>
+<li>Which label was used</li>
+<li>Meeting duration</li>
+<li>Participants</li>
+<li>Recording events
+This is required for DFARS/CMMC compliance.</li>
+</ul>
+<p><strong>Q: What happens if I misuse labels?</strong>
+A: First offense: Re-training
+Repeated issues: Manager notification
+Serious violations: Security review, possible clearance impact
+Intentional misuse: Disciplinary action</p>
+<p><strong>Q: How does this help with compliance?</strong>
+A: These labels provide:</p>
+<ul>
+<li>Documented access controls (NIST 800-171 AC-3)</li>
+<li>Audit trails (NIST 800-171 AU-2)</li>
+<li>Media protection (NIST 800-171 MP-7)</li>
+<li>Meeting attribution via watermarks</li>
+<li>Evidence of security controls for CMMC assessments</li>
+</ul>
+<hr>
+<h3 id="workflow-questions" tabindex="-1">Workflow Questions</h3>
+<p><strong>Q: Can I create a template meeting with a label?</strong>
+A: Not directly, but:</p>
+<ol>
+<li>Create a meeting with desired label</li>
+<li>Make it recurring</li>
+<li>Use that as your template</li>
+<li>Copy/modify for similar meetings</li>
+</ol>
+<p><strong>Q: What about all-hands meetings?</strong>
+A: For company-wide meetings:</p>
+<ul>
+<li>Unclassified announcements: Unclassified meeting</li>
+<li>Business results (sensitive): Protected B meeting</li>
+<li>Mixed content: Use Protected B (secure by default)</li>
+</ul>
+<p><strong>Q: I schedule meetings for my boss. What label do I use?</strong>
+A: Ask your boss about meeting content:</p>
+<ul>
+<li>Classified/sensitive: Protected B</li>
+<li>Casual/administrative: Unclassified
+When in doubt, use Protected B and let them change if needed.</li>
+</ul>
+<hr>
+<h2 id="12.-best-practices" tabindex="-1">12. Best Practices</h2>
+<h3 id="%E2%9C%85-do" tabindex="-1">✅ DO</h3>
+<p><strong>Planning:</strong></p>
+<ul>
+<li>✅ Think about meeting content BEFORE creating the invite</li>
+<li>✅ Ask yourself: "Will we discuss anything sensitive?"</li>
+<li>✅ Review participant list - anyone external?</li>
+<li>✅ Set up recurring meetings with appropriate labels</li>
+<li>✅ Test protected B meeting features before important calls</li>
+</ul>
+<p><strong>During Meetings:</strong></p>
+<ul>
+<li>✅ Remind participants about watermarks at meeting start</li>
+<li>✅ Control screen shares in Protected B meetings</li>
+<li>✅ Be mindful of what's visible on screen shares</li>
+<li>✅ Use "background blur" for sensitive locations</li>
+<li>✅ Mute when not speaking (good practice always)</li>
+</ul>
+<p><strong>After Meetings:</strong></p>
+<ul>
+<li>✅ Store meeting recordings securely</li>
+<li>✅ Share recordings only with authorized personnel</li>
+<li>✅ Delete unnecessary recordings after retention period</li>
+<li>✅ Report any security concerns immediately</li>
+</ul>
+<p><strong>Unclassified:</strong></p>
+<ul>
+<li>✅ Keep Teams client updated</li>
+<li>✅ Use company-issued devices for sensitive meetings</li>
+<li>✅ Lock your screen when away from desk</li>
+<li>✅ Use headphones for confidential meetings</li>
+<li>✅ Attend training sessions to stay current</li>
+</ul>
+<hr>
+<h3 id="%E2%9D%8C-don't" tabindex="-1">❌ DON'T</h3>
+<p><strong>Label Selection:</strong></p>
+<ul>
+<li>❌ Don't use Unclassified just because it's "easier"</li>
+<li>❌ Don't downgrade to Unclassified to bypass restrictions</li>
+<li>❌ Don't assume "quick call" means "not sensitive"</li>
+<li>❌ Don't forget that contract discussions = Protected B</li>
+<li>❌ Don't think watermarks are optional</li>
+</ul>
+<p><strong>Security:</strong></p>
+<ul>
+<li>❌ Don't share meeting links publicly</li>
+<li>❌ Don't join Protected B meetings from public WiFi</li>
+<li>❌ Don't photograph/screenshot watermarked content</li>
+<li>❌ Don't record Protected B meetings without authorization</li>
+<li>❌ Don't discuss classified info in Unclassified meetings (!)</li>
+</ul>
+<p><strong>External Collaboration:</strong></p>
+<ul>
+<li>❌ Don't create Unclassified meetings just so external can join</li>
+<li>❌ Don't share sensitive information in Unclassified meetings</li>
+<li>❌ Don't assume external partners understand our security</li>
+<li>❌ Don't bypass security controls for convenience</li>
+</ul>
+<p><strong>Common Mistakes:</strong></p>
+<ul>
+<li>❌ Don't create meeting then forget to check label</li>
+<li>❌ Don't assume someone else will fix label issues</li>
+<li>❌ Don't ignore security warnings or blocked actions</li>
+<li>❌ Don't work around security controls</li>
+<li>❌ Don't delay reporting security incidents</li>
+</ul>
+<hr>
+<h3 id="%F0%9F%8E%AF-quick-tips-for-success" tabindex="-1">🎯 Quick Tips for Success</h3>
+<p><strong>Tip 1: Create a Mental Checklist</strong></p>
+<pre class="hljs"><code><div>Before every meeting ask:
+□ Will we discuss contracts?
+□ Will we discuss technical details?
+□ Will we mention customer names?
+□ Will we show proprietary information?
+□ Is anyone external attending?
+
+Any "Yes" → Protected B - Official Sensitive - NATO
+All "No" → Can use Unclassified
+</div></code></pre>
+<p><strong>Tip 2: Use Descriptive Meeting Titles</strong></p>
+<pre class="hljs"><code><div>Good titles that help you remember label:
+✓ "Q4 Contract Review (Protected B)"
+✓ "Team Coffee Break (Unclassified)"
+✓ "Engineering Design Review - CLASSIFIED"
+✓ "Training: New Timesheet System (Unclassified)"
+</div></code></pre>
+<p><strong>Tip 3: Set Calendar Reminders</strong></p>
+<pre class="hljs"><code><div>Recurring reminders:
+- Weekly: Review my upcoming meetings for correct labels
+- Monthly: Check security compliance in my calendar
+- Quarterly: Attend refresher training
+</div></code></pre>
+<p><strong>Tip 4: Keep Reference Materials Handy</strong></p>
+<pre class="hljs"><code><div>Print and keep at desk:
+- Quick reference card
+- Decision tree
+- IT support contact info
+</div></code></pre>
+<p><strong>Tip 5: Practice During Training Period</strong></p>
+<pre class="hljs"><code><div>Create test meetings with both labels
+Experience the differences firsthand
+Learn the interface before you need it
+Build muscle memory
+</div></code></pre>
+<hr>
+<h2 id="summary-card" tabindex="-1">Summary Card</h2>
+<h3 id="%F0%9F%93%8B-quick-reference" tabindex="-1">📋 Quick Reference</h3>
+<p><strong>Two Labels:</strong></p>
+<ul>
+<li>🔴 Protected B - Official Sensitive - NATO → Classified/sensitive content</li>
+<li>🟢 Unclassified → Casual/administrative content</li>
+</ul>
+<p><strong>When in Doubt:</strong>
+→ Use Protected B - Official Sensitive - NATO</p>
+<p><strong>Key Differences:</strong></p>
+<ul>
+<li>Protected B - Official Sensitive - NATO: Watermarks ON, External blocked, Settings locked 🔒</li>
+<li>Unclassified: No watermarks, External allowed, Settings flexible ✏️</li>
+</ul>
+<hr>
+<h2 id="training-completion" tabindex="-1">Training Completion</h2>
+<p>Congratulations! You've completed the Teams Sensitivity Labels training guide.</p>
+<p><strong>Next Steps:</strong>
+□ Practice creating both types of meetings
+□ Save this guide for future reference
+□ Print the quick reference card
+□ Complete the acknowledgment form</p>
+<hr>
+<p><strong>Document Control</strong></p>
+<p>Version: 1.0
+Date: December 2025
+Classification: Internal Use Only
+Next Review: February 2026</p>
+<p>© Leonardo Canada</p>
+
+    </div>
+
+
+</body></html>
