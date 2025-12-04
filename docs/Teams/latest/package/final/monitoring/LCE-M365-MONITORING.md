@@ -161,34 +161,40 @@ Save this as `Set-DeploymentConfig.ps1` and run it at the start of your deployme
 .DESCRIPTION
     Sets all configuration variables required for the deployment.
     RUN THIS SCRIPT FIRST and keep the PowerShell session open.
+    
+    If required values are not set, the script will interactively
+    prompt you to select from available Azure resources.
 .NOTES
     Author: LCE M365 Security Team
-    Version: 1.0
+    Version: 1.1
     
     INSTRUCTIONS:
-    1. Update the values in the "USER CONFIGURATION" section below
+    1. Optionally update the values in the "USER CONFIGURATION" section below
     2. Run this script: .\Set-DeploymentConfig.ps1
-    3. Keep this PowerShell session open for all subsequent steps
+    3. If values are blank, you'll be prompted to select from available resources
+    4. Keep this PowerShell session open for all subsequent steps
 #>
 
 #Requires -Version 5.1
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║                           USER CONFIGURATION                                  ║
-# ║                    UPDATE THESE VALUES FOR YOUR ENVIRONMENT                   ║
+# ║              UPDATE THESE VALUES OR LEAVE BLANK FOR INTERACTIVE              ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 # ------------------------------------------------------------------------------
 # AZURE SUBSCRIPTION & RESOURCE GROUP
+# Leave blank to select interactively from available options
 # ------------------------------------------------------------------------------
-$Global:SubscriptionId        = "6f114bd7-c8d3-4843-b4f8-e30a644bc412"           # e.g., "12345678-1234-1234-1234-123456789012"
-$Global:ResourceGroupName     = "rg-lce-monitoring"            # e.g., "rg-m365-security"
-$Global:Location              = "canadacentral"                    # Azure region (e.g., canadacentral, eastus, westeurope)
+$Global:SubscriptionId        = ""                                 # Leave blank to select interactively
+$Global:ResourceGroupName     = ""                                 # Leave blank to select interactively
+$Global:Location              = ""                                 # Will be auto-detected from Resource Group if blank
 
 # ------------------------------------------------------------------------------
 # LOG ANALYTICS WORKSPACE
+# Leave blank to select interactively from available options
 # ------------------------------------------------------------------------------
-$Global:WorkspaceName         = "<Your-Log-Analytics-Workspace>"   # e.g., "law-m365-security"
+$Global:WorkspaceName         = ""                                 # Leave blank to select interactively
 $Global:TableName             = "TeamsPremiumLicenses"             # Custom table name (will become TeamsPremiumLicenses_CL)
 $Global:TableRetentionDays    = 90                                 # Data retention in days (30-730)
 $Global:TableTotalRetention   = 365                                # Total retention including archive (90-2555)
@@ -221,6 +227,306 @@ $Global:TeamsPremiumSkuId     = "16ddbbfc-09ea-4de2-b1d7-312db6112d70"  # Teams 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║                      DO NOT MODIFY BELOW THIS LINE                           ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
+
+Clear-Host
+Write-Host ""
+Write-Host "╔══════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║            TEAMS PREMIUM LICENSE SYNC - DEPLOYMENT CONFIGURATION             ║" -ForegroundColor Cyan
+Write-Host "╚══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host ""
+
+# ------------------------------------------------------------------------------
+# HELPER FUNCTION: Show Selection Menu
+# ------------------------------------------------------------------------------
+
+function Show-SelectionMenu {
+    <#
+    .SYNOPSIS
+        Displays an interactive selection menu
+    .PARAMETER Title
+        Menu title
+    .PARAMETER Options
+        Array of options to display
+    .PARAMETER PropertyName
+        Property to display (for objects)
+    #>
+    param(
+        [string]$Title,
+        [array]$Options,
+        [string]$PropertyName = $null
+    )
+    
+    Write-Host ""
+    Write-Host "  $Title" -ForegroundColor Yellow
+    Write-Host "  $("-" * $Title.Length)" -ForegroundColor Yellow
+    Write-Host ""
+    
+    for ($i = 0; $i -lt $Options.Count; $i++) {
+        $displayValue = if ($PropertyName) { $Options[$i].$PropertyName } else { $Options[$i] }
+        Write-Host "    [$($i + 1)] $displayValue" -ForegroundColor White
+    }
+    
+    Write-Host ""
+    
+    do {
+        $selection = Read-Host "  Enter selection (1-$($Options.Count))"
+        $index = [int]$selection - 1
+    } while ($index -lt 0 -or $index -ge $Options.Count)
+    
+    return $Options[$index]
+}
+
+# ------------------------------------------------------------------------------
+# ENSURE AZURE CONNECTION
+# ------------------------------------------------------------------------------
+
+Write-Host "Checking Azure connection..." -ForegroundColor Yellow
+
+$context = Get-AzContext -ErrorAction SilentlyContinue
+
+if ($null -eq $context) {
+    Write-Host "  Not connected to Azure. Initiating login..." -ForegroundColor Yellow
+    Write-Host ""
+    Connect-AzAccount | Out-Null
+    $context = Get-AzContext
+}
+
+Write-Host "  ✓ Connected as: $($context.Account.Id)" -ForegroundColor Green
+Write-Host ""
+
+# ------------------------------------------------------------------------------
+# SELECT SUBSCRIPTION (if not set)
+# ------------------------------------------------------------------------------
+
+if ([string]::IsNullOrWhiteSpace($Global:SubscriptionId) -or $Global:SubscriptionId -match "^<.*>$") {
+    
+    Write-Host "Retrieving available subscriptions..." -ForegroundColor Yellow
+    $subscriptions = Get-AzSubscription | Where-Object { $_.State -eq "Enabled" } | Sort-Object Name
+    
+    if ($subscriptions.Count -eq 0) {
+        Write-Error "No active subscriptions found. Please check your Azure access."
+        $Global:ConfigurationValid = $false
+        return
+    }
+    elseif ($subscriptions.Count -eq 1) {
+        $selectedSub = $subscriptions[0]
+        Write-Host "  Only one subscription available: $($selectedSub.Name)" -ForegroundColor Gray
+    }
+    else {
+        $selectedSub = Show-SelectionMenu -Title "Select Azure Subscription" -Options $subscriptions -PropertyName "Name"
+    }
+    
+    $Global:SubscriptionId = $selectedSub.Id
+    Write-Host ""
+    Write-Host "  ✓ Selected subscription: $($selectedSub.Name)" -ForegroundColor Green
+}
+
+# Set subscription context
+Set-AzContext -SubscriptionId $Global:SubscriptionId | Out-Null
+
+# ------------------------------------------------------------------------------
+# SELECT RESOURCE GROUP (if not set or doesn't exist)
+# ------------------------------------------------------------------------------
+
+$rgExists = $false
+
+if (-not [string]::IsNullOrWhiteSpace($Global:ResourceGroupName) -and $Global:ResourceGroupName -notmatch "^<.*>$") {
+    # Check if specified RG exists
+    $existingRg = Get-AzResourceGroup -Name $Global:ResourceGroupName -ErrorAction SilentlyContinue
+    if ($existingRg) {
+        $rgExists = $true
+        Write-Host "  ✓ Resource Group exists: $($Global:ResourceGroupName)" -ForegroundColor Green
+    }
+    else {
+        Write-Host "  ⚠ Resource Group '$($Global:ResourceGroupName)' not found" -ForegroundColor Yellow
+    }
+}
+
+if (-not $rgExists) {
+    Write-Host ""
+    Write-Host "Retrieving available Resource Groups..." -ForegroundColor Yellow
+    $resourceGroups = Get-AzResourceGroup | Sort-Object ResourceGroupName
+    
+    if ($resourceGroups.Count -eq 0) {
+        Write-Error "No Resource Groups found in subscription. Please create one first."
+        $Global:ConfigurationValid = $false
+        return
+    }
+    
+    # Add option to create new
+    $rgOptions = @()
+    $rgOptions += [PSCustomObject]@{ ResourceGroupName = "[CREATE NEW RESOURCE GROUP]"; Location = "" }
+    $rgOptions += $resourceGroups
+    
+    $selectedRg = Show-SelectionMenu -Title "Select Resource Group" -Options $rgOptions -PropertyName "ResourceGroupName"
+    
+    if ($selectedRg.ResourceGroupName -eq "[CREATE NEW RESOURCE GROUP]") {
+        Write-Host ""
+        $newRgName = Read-Host "  Enter new Resource Group name"
+        
+        # Get available locations
+        $locations = Get-AzLocation | Where-Object { $_.Providers -contains "Microsoft.OperationalInsights" } | Sort-Object DisplayName
+        $selectedLocation = Show-SelectionMenu -Title "Select Location for Resource Group" -Options $locations -PropertyName "DisplayName"
+        
+        Write-Host ""
+        Write-Host "  Creating Resource Group '$newRgName' in $($selectedLocation.Location)..." -ForegroundColor Yellow
+        
+        $newRg = New-AzResourceGroup -Name $newRgName -Location $selectedLocation.Location
+        $Global:ResourceGroupName = $newRg.ResourceGroupName
+        $Global:Location = $newRg.Location
+        
+        Write-Host "  ✓ Resource Group created: $($Global:ResourceGroupName)" -ForegroundColor Green
+    }
+    else {
+        $Global:ResourceGroupName = $selectedRg.ResourceGroupName
+        $Global:Location = $selectedRg.Location
+        Write-Host ""
+        Write-Host "  ✓ Selected Resource Group: $($Global:ResourceGroupName)" -ForegroundColor Green
+    }
+}
+
+# Get location from RG if not set
+if ([string]::IsNullOrWhiteSpace($Global:Location)) {
+    $rg = Get-AzResourceGroup -Name $Global:ResourceGroupName
+    $Global:Location = $rg.Location
+}
+
+# ------------------------------------------------------------------------------
+# SELECT LOG ANALYTICS WORKSPACE (if not set or doesn't exist)
+# ------------------------------------------------------------------------------
+
+Write-Host ""
+$workspaceExists = $false
+
+if (-not [string]::IsNullOrWhiteSpace($Global:WorkspaceName) -and $Global:WorkspaceName -notmatch "^<.*>$") {
+    # Check if specified workspace exists (in RG or subscription)
+    $existingWorkspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName $Global:ResourceGroupName -Name $Global:WorkspaceName -ErrorAction SilentlyContinue
+    
+    if ($null -eq $existingWorkspace) {
+        # Try to find in entire subscription
+        $existingWorkspace = Get-AzOperationalInsightsWorkspace | Where-Object { $_.Name -eq $Global:WorkspaceName } | Select-Object -First 1
+    }
+    
+    if ($existingWorkspace) {
+        $workspaceExists = $true
+        Write-Host "  ✓ Log Analytics Workspace exists: $($Global:WorkspaceName)" -ForegroundColor Green
+        
+        # Update RG if workspace is in different RG
+        if ($existingWorkspace.ResourceGroupName -ne $Global:ResourceGroupName) {
+            Write-Host "    Note: Workspace is in Resource Group '$($existingWorkspace.ResourceGroupName)'" -ForegroundColor Gray
+        }
+    }
+    else {
+        Write-Host "  ⚠ Log Analytics Workspace '$($Global:WorkspaceName)' not found" -ForegroundColor Yellow
+    }
+}
+
+if (-not $workspaceExists) {
+    Write-Host ""
+    Write-Host "Retrieving available Log Analytics Workspaces..." -ForegroundColor Yellow
+    
+    # Get all workspaces in subscription
+    $workspaces = Get-AzOperationalInsightsWorkspace | Sort-Object Name
+    
+    if ($workspaces.Count -eq 0) {
+        Write-Host "  No Log Analytics Workspaces found in subscription." -ForegroundColor Yellow
+        Write-Host ""
+        
+        $createNew = Read-Host "  Would you like to create a new workspace? (Y/N)"
+        
+        if ($createNew -eq "Y" -or $createNew -eq "y") {
+            $newWorkspaceName = Read-Host "  Enter new Log Analytics Workspace name"
+            
+            Write-Host ""
+            Write-Host "  Creating Log Analytics Workspace '$newWorkspaceName'..." -ForegroundColor Yellow
+            
+            $newWorkspace = New-AzOperationalInsightsWorkspace `
+                -ResourceGroupName $Global:ResourceGroupName `
+                -Name $newWorkspaceName `
+                -Location $Global:Location `
+                -Sku "PerGB2018"
+            
+            $Global:WorkspaceName = $newWorkspace.Name
+            Write-Host "  ✓ Log Analytics Workspace created: $($Global:WorkspaceName)" -ForegroundColor Green
+        }
+        else {
+            Write-Error "A Log Analytics Workspace is required for this deployment."
+            $Global:ConfigurationValid = $false
+            return
+        }
+    }
+    else {
+        # Add option to create new
+        $workspaceOptions = @()
+        $workspaceOptions += [PSCustomObject]@{ 
+            Name = "[CREATE NEW WORKSPACE]"
+            ResourceGroupName = ""
+            Location = ""
+        }
+        $workspaceOptions += $workspaces
+        
+        # Build display with RG info
+        Write-Host ""
+        Write-Host "  Select Log Analytics Workspace" -ForegroundColor Yellow
+        Write-Host "  -------------------------------" -ForegroundColor Yellow
+        Write-Host ""
+        
+        for ($i = 0; $i -lt $workspaceOptions.Count; $i++) {
+            if ($i -eq 0) {
+                Write-Host "    [$($i + 1)] $($workspaceOptions[$i].Name)" -ForegroundColor Cyan
+            }
+            else {
+                Write-Host "    [$($i + 1)] $($workspaceOptions[$i].Name) " -NoNewline -ForegroundColor White
+                Write-Host "(RG: $($workspaceOptions[$i].ResourceGroupName))" -ForegroundColor Gray
+            }
+        }
+        
+        Write-Host ""
+        
+        do {
+            $selection = Read-Host "  Enter selection (1-$($workspaceOptions.Count))"
+            $index = [int]$selection - 1
+        } while ($index -lt 0 -or $index -ge $workspaceOptions.Count)
+        
+        $selectedWorkspace = $workspaceOptions[$index]
+        
+        if ($selectedWorkspace.Name -eq "[CREATE NEW WORKSPACE]") {
+            Write-Host ""
+            $newWorkspaceName = Read-Host "  Enter new Log Analytics Workspace name"
+            
+            Write-Host ""
+            Write-Host "  Creating Log Analytics Workspace '$newWorkspaceName'..." -ForegroundColor Yellow
+            
+            $newWorkspace = New-AzOperationalInsightsWorkspace `
+                -ResourceGroupName $Global:ResourceGroupName `
+                -Name $newWorkspaceName `
+                -Location $Global:Location `
+                -Sku "PerGB2018"
+            
+            $Global:WorkspaceName = $newWorkspace.Name
+            Write-Host "  ✓ Log Analytics Workspace created: $($Global:WorkspaceName)" -ForegroundColor Green
+        }
+        else {
+            $Global:WorkspaceName = $selectedWorkspace.Name
+            
+            # If workspace is in different RG, ask if user wants to use that RG
+            if ($selectedWorkspace.ResourceGroupName -ne $Global:ResourceGroupName) {
+                Write-Host ""
+                Write-Host "  Note: Selected workspace is in Resource Group '$($selectedWorkspace.ResourceGroupName)'" -ForegroundColor Yellow
+                $useWorkspaceRg = Read-Host "  Deploy to workspace's Resource Group? (Y/N)"
+                
+                if ($useWorkspaceRg -eq "Y" -or $useWorkspaceRg -eq "y") {
+                    $Global:ResourceGroupName = $selectedWorkspace.ResourceGroupName
+                    $Global:Location = $selectedWorkspace.Location
+                    Write-Host "  ✓ Updated Resource Group to: $($Global:ResourceGroupName)" -ForegroundColor Green
+                }
+            }
+            
+            Write-Host ""
+            Write-Host "  ✓ Selected workspace: $($Global:WorkspaceName)" -ForegroundColor Green
+        }
+    }
+}
 
 # ------------------------------------------------------------------------------
 # DERIVED VARIABLES (automatically calculated)
@@ -272,26 +578,26 @@ $Global:Config = @{
 }
 
 # ------------------------------------------------------------------------------
-# VALIDATION
+# FINAL VALIDATION
 # ------------------------------------------------------------------------------
 
-function Test-ConfigurationValues {
+function Test-FinalConfiguration {
     $errors = @()
     
-    # Check for placeholder values
-    if ($Global:SubscriptionId -match "^<.*>$" -or [string]::IsNullOrWhiteSpace($Global:SubscriptionId)) {
-        $errors += "SubscriptionId is not set"
-    }
-    if ($Global:ResourceGroupName -match "^<.*>$" -or [string]::IsNullOrWhiteSpace($Global:ResourceGroupName)) {
-        $errors += "ResourceGroupName is not set"
-    }
-    if ($Global:WorkspaceName -match "^<.*>$" -or [string]::IsNullOrWhiteSpace($Global:WorkspaceName)) {
-        $errors += "WorkspaceName is not set"
+    # Validate subscription ID format
+    if ($Global:SubscriptionId -notmatch "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$") {
+        $errors += "SubscriptionId format is invalid"
     }
     
-    # Validate subscription ID format
-    if ($Global:SubscriptionId -notmatch "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" -and $errors -notcontains "SubscriptionId is not set") {
-        $errors += "SubscriptionId format is invalid (expected GUID format)"
+    # Validate required values are set
+    if ([string]::IsNullOrWhiteSpace($Global:ResourceGroupName)) {
+        $errors += "ResourceGroupName is not set"
+    }
+    if ([string]::IsNullOrWhiteSpace($Global:WorkspaceName)) {
+        $errors += "WorkspaceName is not set"
+    }
+    if ([string]::IsNullOrWhiteSpace($Global:Location)) {
+        $errors += "Location is not set"
     }
     
     # Validate retention values
@@ -303,18 +609,15 @@ function Test-ConfigurationValues {
 }
 
 # ------------------------------------------------------------------------------
-# DISPLAY CONFIGURATION
+# DISPLAY FINAL CONFIGURATION
 # ------------------------------------------------------------------------------
 
-Clear-Host
 Write-Host ""
-Write-Host "╔══════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║            TEAMS PREMIUM LICENSE SYNC - DEPLOYMENT CONFIGURATION             ║" -ForegroundColor Cyan
-Write-Host "╚══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host "═══════════════════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
 Write-Host ""
 
 # Validate
-$validationErrors = Test-ConfigurationValues
+$validationErrors = Test-FinalConfiguration
 
 if ($validationErrors.Count -gt 0) {
     Write-Host "⚠ CONFIGURATION ERRORS DETECTED:" -ForegroundColor Red
@@ -323,11 +626,14 @@ if ($validationErrors.Count -gt 0) {
         Write-Host "  ✗ $err" -ForegroundColor Red
     }
     Write-Host ""
-    Write-Host "Please update the configuration values in this script and run again." -ForegroundColor Yellow
+    Write-Host "Please fix the errors and run the script again." -ForegroundColor Yellow
     Write-Host ""
     $Global:ConfigurationValid = $false
 }
 else {
+    Write-Host "FINAL CONFIGURATION SUMMARY" -ForegroundColor Green
+    Write-Host ""
+    
     Write-Host "Azure Configuration:" -ForegroundColor Yellow
     Write-Host "  Subscription ID:      $Global:SubscriptionId" -ForegroundColor White
     Write-Host "  Resource Group:       $Global:ResourceGroupName" -ForegroundColor White
