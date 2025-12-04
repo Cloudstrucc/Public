@@ -1,30 +1,28 @@
-# Download the file content and upload
-$runbookPath = "/Sync-TeamsPremiumLicenses.ps1"
-
-# Create the runbook content with your values
-$runbookContent = @'
-# [Paste the content from the downloaded file here]
-'@
-
 <#
 .SYNOPSIS
-    Teams Premium License Sync Runbook
+    Teams Premium License Compliance Runbook
 .DESCRIPTION
-    Queries Microsoft Graph for Teams Premium license assignments
-    and ingests the data into Log Analytics via DCR.
+    Queries Microsoft Graph for ALL users and their Teams Premium license status.
+    Ingests data to Log Analytics to track license compliance over time.
     
-    This runbook runs in Azure Automation using a System-Assigned Managed Identity.
+    Goal: Ensure all employees have Teams Premium licenses.
+    This runbook identifies users WITHOUT licenses so they can be assigned.
 .REQUIREMENTS
     - Azure Automation Account with System-Assigned Managed Identity enabled
-    - PowerShell 7.2 Runtime (NOT PowerShell 5.1)
+    - PowerShell 7.2 Runtime
     - Az.Accounts module imported in Automation Account
     - Managed Identity requires:
       * Microsoft Graph: User.Read.All (Application permission)
       * Azure RBAC: Monitoring Metrics Publisher on the DCR
 .NOTES
     Author: LCE M365 Security Team
-    Version: 1.1
+    Version: 2.0
     Runtime: PowerShell 7.2
+    
+    CHANGE LOG:
+    v2.0 - Now tracks ALL users (licensed AND unlicensed) for compliance reporting
+    v1.1 - Added detailed troubleshooting output
+    v1.0 - Initial release (tracked licensed users only)
 #>
 
 # ============================================
@@ -34,23 +32,18 @@ $runbookContent = @'
 $DceUri = "https://dce-teamspremiumlicenses-4q1m.canadaeast-1.ingest.monitor.azure.com"
 $DcrImmutableId = "dcr-80aee557ba12478a9dff76584b61ec38"
 $StreamName = "Custom-TeamsPremiumLicenses_CL"
-$TeamsPremiumSkuId = "36a0f3b3-adb5-49ea-bf66-762134cf063a"
+$TeamsPremiumSkuId = "36a0f3b3-adb5-49ea-bf66-762134cf063a"  # Leonardo Canada Teams Premium SKU
 
 # ============================================
 # INITIALIZATION
 # ============================================
 
-Write-Output "============================================"
-Write-Output "Teams Premium License Sync Runbook"
-Write-Output "============================================"
+Write-Output "╔════════════════════════════════════════════════════════════════╗"
+Write-Output "║     TEAMS PREMIUM LICENSE COMPLIANCE SYNC                      ║"
+Write-Output "╚════════════════════════════════════════════════════════════════╝"
 Write-Output ""
 Write-Output "Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') UTC"
 Write-Output "PowerShell Version: $($PSVersionTable.PSVersion)"
-Write-Output ""
-Write-Output "Configuration:"
-Write-Output "  DCE URI: $DceUri"
-Write-Output "  DCR Immutable ID: $DcrImmutableId"
-Write-Output "  Stream: $StreamName"
 Write-Output ""
 
 # ============================================
@@ -62,76 +55,34 @@ Write-Output "Step 1: Authenticating with Managed Identity..."
 try {
     $azConnect = Connect-AzAccount -Identity -ErrorAction Stop
     
-    Write-Output "  ✓ Azure connection established"
-    Write-Output "    Account Type: $($azConnect.Context.Account.Type)"
-    Write-Output "    Account ID: $($azConnect.Context.Account.Id)"
-    Write-Output "    Tenant: $($azConnect.Context.Tenant.Id)"
-    Write-Output "    Subscription: $($azConnect.Context.Subscription.Name)"
+    Write-Output "  ✓ Connected as: $($azConnect.Context.Account.Id)"
+    Write-Output "  ✓ Tenant: $($azConnect.Context.Tenant.Id)"
 }
 catch {
-    Write-Error "Failed to authenticate with Managed Identity"
-    Write-Output ""
-    Write-Output "ERROR DETAILS: $_"
-    Write-Output ""
-    Write-Output "TROUBLESHOOTING:"
-    Write-Output "  1. Verify System-Assigned Managed Identity is ENABLED on the Automation Account"
-    Write-Output "  2. Ensure this runbook is configured to use PowerShell 7.2 runtime"
-    Write-Output "  3. Check that Az.Accounts module is imported in the Automation Account"
-    Write-Output "  4. In Azure Portal: Automation Account > Identity > System assigned = ON"
+    Write-Error "Failed to authenticate: $_"
     throw
 }
 
-# Get Microsoft Graph token
+# Get tokens
 Write-Output ""
-Write-Output "Step 2: Acquiring Microsoft Graph token..."
+Write-Output "Step 2: Acquiring API tokens..."
 
 try {
-    $graphTokenResponse = Get-AzAccessToken -ResourceUrl "https://graph.microsoft.com" -ErrorAction Stop
-    $graphToken = $graphTokenResponse.Token
-    
-    Write-Output "  ✓ Graph token acquired"
-    Write-Output "    Expires: $($graphTokenResponse.ExpiresOn)"
+    $graphToken = (Get-AzAccessToken -ResourceUrl "https://graph.microsoft.com" -ErrorAction Stop).Token
+    $monitorToken = (Get-AzAccessToken -ResourceUrl "https://monitor.azure.com" -ErrorAction Stop).Token
+    Write-Output "  ✓ Graph and Monitor tokens acquired"
 }
 catch {
-    Write-Error "Failed to acquire Microsoft Graph token"
-    Write-Output ""
-    Write-Output "ERROR DETAILS: $_"
-    Write-Output ""
-    Write-Output "TROUBLESHOOTING:"
-    Write-Output "  1. Verify User.Read.All permission is granted to the Managed Identity"
-    Write-Output "  2. In Azure Portal: Entra ID > Enterprise Apps > (your Automation Account MI)"
-    Write-Output "  3. Check Permissions > Application permissions > User.Read.All"
-    Write-Output "  4. Re-run Step 6.1 from the Build Book"
+    Write-Error "Failed to acquire tokens: $_"
     throw
 }
-
-# Get Azure Monitor token
-Write-Output ""
-Write-Output "Step 3: Acquiring Azure Monitor token..."
-
-try {
-    $monitorTokenResponse = Get-AzAccessToken -ResourceUrl "https://monitor.azure.com" -ErrorAction Stop
-    $monitorToken = $monitorTokenResponse.Token
-    
-    Write-Output "  ✓ Monitor token acquired"
-    Write-Output "    Expires: $($monitorTokenResponse.ExpiresOn)"
-}
-catch {
-    Write-Error "Failed to acquire Azure Monitor token"
-    Write-Output ""
-    Write-Output "ERROR DETAILS: $_"
-    throw
-}
-
-Write-Output ""
-Write-Output "Authentication completed successfully!"
 
 # ============================================
-# QUERY MICROSOFT GRAPH
+# QUERY ALL USERS FROM MICROSOFT GRAPH
 # ============================================
 
 Write-Output ""
-Write-Output "Step 4: Querying Microsoft Graph for users..."
+Write-Output "Step 3: Querying Microsoft Graph for all users..."
 
 $graphHeaders = @{
     "Authorization"    = "Bearer $graphToken"
@@ -139,8 +90,8 @@ $graphHeaders = @{
     "ConsistencyLevel" = "eventual"
 }
 
-$users = [System.Collections.Generic.List[object]]::new()
-$uri = "https://graph.microsoft.com/v1.0/users?`$select=id,userPrincipalName,displayName,assignedLicenses&`$top=999"
+$allUsers = [System.Collections.Generic.List[object]]::new()
+$uri = "https://graph.microsoft.com/v1.0/users?`$select=id,userPrincipalName,displayName,assignedLicenses,accountEnabled,userType&`$filter=userType eq 'Member'&`$top=999"
 $pageCount = 0
 
 try {
@@ -149,84 +100,97 @@ try {
         $response = Invoke-RestMethod -Uri $uri -Headers $graphHeaders -Method Get -ErrorAction Stop
         
         foreach ($user in $response.value) {
-            $users.Add($user)
+            # Only include enabled user accounts (exclude disabled/terminated)
+            if ($user.accountEnabled -eq $true) {
+                $allUsers.Add($user)
+            }
         }
         
         $uri = $response.'@odata.nextLink'
         
         if ($pageCount % 5 -eq 0) {
-            Write-Output "  Retrieved $($users.Count) users (page $pageCount)..."
+            Write-Output "  Retrieved $($allUsers.Count) enabled users (page $pageCount)..."
         }
     } while ($uri)
     
-    Write-Output "  ✓ Total users retrieved: $($users.Count)"
+    Write-Output "  ✓ Total enabled Member users: $($allUsers.Count)"
 }
 catch {
-    Write-Error "Failed to query Microsoft Graph"
-    Write-Output ""
-    Write-Output "ERROR DETAILS: $_"
-    
-    if ($_.ErrorDetails.Message) {
-        Write-Output "API ERROR: $($_.ErrorDetails.Message)"
-    }
+    Write-Error "Failed to query Microsoft Graph: $_"
     throw
 }
 
 # ============================================
-# FILTER TEAMS PREMIUM USERS
+# ANALYZE LICENSE STATUS
 # ============================================
 
 Write-Output ""
-Write-Output "Step 5: Filtering Teams Premium license holders..."
-
-$teamsPremiumUsers = $users | Where-Object {
-    $_.assignedLicenses.skuId -contains $TeamsPremiumSkuId
-}
-
-Write-Output "  ✓ Users with Teams Premium: $($teamsPremiumUsers.Count)"
-
-if ($teamsPremiumUsers.Count -eq 0) {
-    Write-Output ""
-    Write-Output "No Teams Premium users found. Nothing to sync."
-    Write-Output ""
-    Write-Output "NOTE: If you expect users, verify the Teams Premium SKU ID is correct."
-    Write-Output "Current SKU ID: $TeamsPremiumSkuId"
-    return
-}
-
-# ============================================
-# BUILD LOG PAYLOAD
-# ============================================
-
-Write-Output ""
-Write-Output "Step 6: Building ingestion payload..."
+Write-Output "Step 4: Analyzing Teams Premium license assignments..."
 
 $currentTime = (Get-Date).ToUniversalTime().ToString("o")
-
 $logData = [System.Collections.Generic.List[hashtable]]::new()
 
-foreach ($user in $teamsPremiumUsers) {
+$licensedUsers = [System.Collections.Generic.List[object]]::new()
+$unlicensedUsers = [System.Collections.Generic.List[object]]::new()
+
+foreach ($user in $allUsers) {
+    $hasTeamsPremium = $user.assignedLicenses.skuId -contains $TeamsPremiumSkuId
+    
+    if ($hasTeamsPremium) {
+        $licensedUsers.Add($user)
+    }
+    else {
+        $unlicensedUsers.Add($user)
+    }
+    
+    # Add to log data (tracking ALL users)
     $logData.Add(@{
         TimeGenerated     = $currentTime
         UserPrincipalName = $user.userPrincipalName
         DisplayName       = $user.displayName
-        LicenseAssigned   = $true
+        LicenseAssigned   = $hasTeamsPremium
         ObjectId          = $user.id
     })
 }
 
-Write-Output "  ✓ Payload built: $($logData.Count) records"
+# Calculate statistics
+$totalUsers = $allUsers.Count
+$licensedCount = $licensedUsers.Count
+$unlicensedCount = $unlicensedUsers.Count
+$compliancePercent = if ($totalUsers -gt 0) { [math]::Round(($licensedCount / $totalUsers) * 100, 1) } else { 0 }
+
+Write-Output ""
+Write-Output "  ╔═══════════════════════════════════════════════════════════╗"
+Write-Output "  ║            LICENSE COMPLIANCE SUMMARY                     ║"
+Write-Output "  ╠═══════════════════════════════════════════════════════════╣"
+Write-Output "  ║  Total Enabled Users:          $($totalUsers.ToString().PadLeft(6))                    ║"
+Write-Output "  ║  Users WITH Teams Premium:     $($licensedCount.ToString().PadLeft(6))  ✓              ║"
+Write-Output "  ║  Users WITHOUT Teams Premium:  $($unlicensedCount.ToString().PadLeft(6))  ⚠              ║"
+Write-Output "  ║  Compliance Rate:              $($compliancePercent.ToString().PadLeft(5))%                  ║"
+Write-Output "  ╚═══════════════════════════════════════════════════════════╝"
+Write-Output ""
+
+# Show sample of unlicensed users (first 10)
+if ($unlicensedCount -gt 0) {
+    Write-Output "  Sample of users WITHOUT Teams Premium (first 10):"
+    Write-Output "  ─────────────────────────────────────────────────────────"
+    $unlicensedUsers | Select-Object -First 10 | ForEach-Object {
+        Write-Output "    • $($_.displayName) ($($_.userPrincipalName))"
+    }
+    if ($unlicensedCount -gt 10) {
+        Write-Output "    ... and $($unlicensedCount - 10) more"
+    }
+    Write-Output ""
+}
 
 # ============================================
 # INGEST TO LOG ANALYTICS
 # ============================================
 
-Write-Output ""
-Write-Output "Step 7: Ingesting data to Log Analytics..."
+Write-Output "Step 5: Ingesting data to Log Analytics..."
+Write-Output "  Records to ingest: $($logData.Count)"
 
 $ingestUri = "$DceUri/dataCollectionRules/$DcrImmutableId/streams/$StreamName`?api-version=2023-01-01"
-
-Write-Output "  Target URI: $ingestUri"
 
 $ingestHeaders = @{
     "Authorization" = "Bearer $monitorToken"
@@ -238,16 +202,11 @@ $totalBatches = [math]::Ceiling($logData.Count / $batchSize)
 $successCount = 0
 $failCount = 0
 
-Write-Output "  Batch size: $batchSize"
-Write-Output "  Total batches: $totalBatches"
-Write-Output ""
-
 for ($i = 0; $i -lt $logData.Count; $i += $batchSize) {
     $batchNumber = [math]::Floor($i / $batchSize) + 1
     $endIndex = [math]::Min($i + $batchSize - 1, $logData.Count - 1)
     $batch = $logData[$i..$endIndex]
     
-    # Convert to JSON array
     $batchBody = ConvertTo-Json -InputObject @($batch) -Depth 10 -Compress
     
     try {
@@ -257,55 +216,51 @@ for ($i = 0; $i -lt $logData.Count; $i += $batchSize) {
     }
     catch {
         $failCount += $batch.Count
-        Write-Warning "  ✗ Batch $batchNumber/$totalBatches : FAILED"
-        Write-Warning "    Error: $_"
-        
-        if ($_.ErrorDetails.Message) {
-            Write-Warning "    Details: $($_.ErrorDetails.Message)"
-        }
+        Write-Warning "  ✗ Batch $batchNumber/$totalBatches : FAILED - $_"
     }
     
-    # Small delay between batches to avoid throttling
     if ($batchNumber -lt $totalBatches) {
         Start-Sleep -Milliseconds 500
     }
 }
 
 # ============================================
-# SUMMARY
+# FINAL SUMMARY
 # ============================================
 
 Write-Output ""
-Write-Output "============================================"
-Write-Output "SYNC COMPLETED"
-Write-Output "============================================"
-Write-Output ""
-Write-Output "Results:"
-Write-Output "  Total Teams Premium users: $($teamsPremiumUsers.Count)"
-Write-Output "  Successfully ingested:     $successCount"
-Write-Output "  Failed:                    $failCount"
-Write-Output ""
-Write-Output "Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') UTC"
-Write-Output "============================================"
+Write-Output "╔════════════════════════════════════════════════════════════════╗"
+Write-Output "║                    SYNC COMPLETED                              ║"
+Write-Output "╠════════════════════════════════════════════════════════════════╣"
+Write-Output "║                                                                ║"
+Write-Output "║  TENANT LICENSE STATUS:                                        ║"
+Write-Output "║  ────────────────────────────────────────────────────────────  ║"
+Write-Output "║    Total Users:              $($totalUsers.ToString().PadLeft(6))                          ║"
+Write-Output "║    Licensed (Teams Premium): $($licensedCount.ToString().PadLeft(6))   ($compliancePercent%)                  ║"
+Write-Output "║    Unlicensed:               $($unlicensedCount.ToString().PadLeft(6))   (need licenses)          ║"
+Write-Output "║                                                                ║"
+Write-Output "║  DATA INGESTION:                                               ║"
+Write-Output "║  ────────────────────────────────────────────────────────────  ║"
+Write-Output "║    Successfully ingested:    $($successCount.ToString().PadLeft(6))                          ║"
+Write-Output "║    Failed:                   $($failCount.ToString().PadLeft(6))                          ║"
+Write-Output "║                                                                ║"
+Write-Output "║  Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') UTC                       ║"
+Write-Output "╚════════════════════════════════════════════════════════════════╝"
+
+if ($unlicensedCount -gt 0) {
+    Write-Output ""
+    Write-Output "⚠ ACTION REQUIRED: $unlicensedCount users need Teams Premium licenses"
+    Write-Output ""
+    Write-Output "To view unlicensed users, run this KQL query in Log Analytics:"
+    Write-Output ""
+    Write-Output "  TeamsPremiumLicenses_CL"
+    Write-Output "  | where TimeGenerated > ago(1d)"
+    Write-Output "  | where LicenseAssigned == false"
+    Write-Output "  | distinct UserPrincipalName, DisplayName"
+    Write-Output "  | order by DisplayName asc"
+    Write-Output ""
+}
 
 if ($failCount -gt 0) {
     Write-Warning "Some records failed to ingest. Check the errors above."
 }
-
-$runbookContent | Out-File -FilePath $runbookPath -Encoding UTF8
-
-# Import and publish
-Import-AzAutomationRunbook `
-    -ResourceGroupName $Global:ResourceGroupName `
-    -AutomationAccountName $Global:AutomationAccountName `
-    -Name "Sync-TeamsPremiumLicenses" `
-    -Type "PowerShell72" `
-    -Path $runbookPath `
-    -Force
-
-Publish-AzAutomationRunbook `
-    -ResourceGroupName $Global:ResourceGroupName `
-    -AutomationAccountName $Global:AutomationAccountName `
-    -Name "Sync-TeamsPremiumLicenses"
-
-Write-Host "Runbook deployed!" -ForegroundColor Green
