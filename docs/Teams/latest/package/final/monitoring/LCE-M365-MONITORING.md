@@ -1033,13 +1033,27 @@ Write-Host ""
 
 ```powershell
 # ============================================
-# Authenticate to Azure
+# Authenticate to Azure (if not already done in Step 0)
 # ============================================
-Connect-AzAccount
 
-# Select the correct subscription if you have multiple
-Get-AzSubscription | Format-Table Name, Id, State
-Set-AzContext -SubscriptionId "<Your-Subscription-Id>"
+# Check if already connected
+$context = Get-AzContext
+if ($null -eq $context) {
+    Connect-AzAccount
+}
+
+# Verify correct subscription is selected
+if ($context.Subscription.Id -ne $Global:SubscriptionId) {
+    Write-Host "Switching to configured subscription..." -ForegroundColor Yellow
+    Set-AzContext -SubscriptionId $Global:SubscriptionId | Out-Null
+}
+
+# Display current context
+$context = Get-AzContext
+Write-Host "Connected to Azure:" -ForegroundColor Green
+Write-Host "  Account:      $($context.Account.Id)" -ForegroundColor White
+Write-Host "  Subscription: $($context.Subscription.Name)" -ForegroundColor White
+Write-Host "  Tenant:       $($context.Tenant.Id)" -ForegroundColor White
 
 # ============================================
 # Authenticate to Microsoft Graph
@@ -1051,10 +1065,14 @@ $GraphScopes = @(
     "AppRoleAssignment.ReadWrite.All"
 )
 
-Connect-MgGraph -Scopes $GraphScopes
+Connect-MgGraph -Scopes $GraphScopes -NoWelcome
 
 # Verify connection
-Get-MgContext | Format-List Account, TenantId, Scopes
+$mgContext = Get-MgContext
+Write-Host ""
+Write-Host "Connected to Microsoft Graph:" -ForegroundColor Green
+Write-Host "  Account:  $($mgContext.Account)" -ForegroundColor White
+Write-Host "  Tenant:   $($mgContext.TenantId)" -ForegroundColor White
 ```
 
 ---
