@@ -1139,6 +1139,40 @@ Set-RuntimeVariable -Name "WorkspaceResourceId" -Value $workspace.ResourceId
 Set-RuntimeVariable -Name "WorkspaceId" -Value $workspace.CustomerId
 
 # ============================================
+# Refresh Azure Token (prevents expired token errors)
+# ============================================
+
+Write-Host ""
+Write-Host "Refreshing Azure authentication..." -ForegroundColor Yellow
+
+# Force token refresh by re-authenticating
+$azContext = Get-AzContext
+if ($null -eq $azContext) {
+    Connect-AzAccount | Out-Null
+}
+
+# Get a fresh token explicitly
+try {
+    $tokenResponse = Get-AzAccessToken -ResourceUrl "https://management.azure.com" -ErrorAction Stop
+    $headers = @{
+        "Authorization" = "Bearer $($tokenResponse.Token)"
+        "Content-Type"  = "application/json"
+    }
+    Write-Host "  ✓ Token refreshed successfully" -ForegroundColor Green
+    Write-Host "  Token expires: $($tokenResponse.ExpiresOn)" -ForegroundColor Gray
+}
+catch {
+    Write-Host "  Token refresh failed. Re-authenticating..." -ForegroundColor Yellow
+    Connect-AzAccount -Subscription $Global:SubscriptionId | Out-Null
+    $tokenResponse = Get-AzAccessToken -ResourceUrl "https://management.azure.com"
+    $headers = @{
+        "Authorization" = "Bearer $($tokenResponse.Token)"
+        "Content-Type"  = "application/json"
+    }
+    Write-Host "  ✓ Re-authenticated successfully" -ForegroundColor Green
+}
+
+# ============================================
 # Create Custom Table using REST API
 # ============================================
 
@@ -1148,9 +1182,6 @@ $tableResourceId = "$($workspace.ResourceId)/tables/$($Global:FullTableName)"
 Write-Host ""
 Write-Host "Building table request..." -ForegroundColor Yellow
 Write-Host "  Table Resource ID: $tableResourceId" -ForegroundColor Gray
-
-# Get fresh headers
-$headers = Get-AzureHeaders
 
 $tableDefinition = @{
     properties = @{
@@ -1200,17 +1231,13 @@ catch {
         Write-Host ""
         Write-Host "ERROR: Failed to create table" -ForegroundColor Red
         Write-Host "  Status Code: $statusCode" -ForegroundColor Red
-        Write-Host "  Error: $_" -ForegroundColor Red
-        
-        if ($errorMessage) {
-            Write-Host "  Details: $errorMessage" -ForegroundColor Red
-        }
+        Write-Host "  Error: $errorMessage" -ForegroundColor Red
         
         Write-Host ""
         Write-Host "Troubleshooting tips:" -ForegroundColor Yellow
         Write-Host "  1. Verify you have 'Log Analytics Contributor' role on the workspace" -ForegroundColor White
         Write-Host "  2. Check that the workspace is not in a restricted state" -ForegroundColor White
-        Write-Host "  3. Ensure your Azure token hasn't expired (re-run Connect-AzAccount)" -ForegroundColor White
+        Write-Host "  3. Try running: Connect-AzAccount -Subscription '$($Global:SubscriptionId)'" -ForegroundColor White
         Write-Host ""
         
         # Don't exit - let user investigate
