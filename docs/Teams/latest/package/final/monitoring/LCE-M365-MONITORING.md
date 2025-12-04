@@ -936,7 +936,7 @@ Write-LogMessage "Execution Policy (CurrentUser): $execPolicy" -Level Info
 if ($execPolicy -eq "Restricted") {
     Write-LogMessage "Execution policy is Restricted. Please run:" -Level Warning
     Write-LogMessage "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser" -Level Warning
-    exit 1
+    return
 }
 
 # Set TLS 1.2 for PowerShell Gallery
@@ -1094,7 +1094,7 @@ Write-Host "  Tenant:   $($mgContext.TenantId)" -ForegroundColor White
 # Verify configuration is loaded
 if ($null -eq $Global:Config -or $Global:ConfigurationValid -ne $true) {
     Write-Error "Configuration not loaded. Please run Set-DeploymentConfig.ps1 first."
-    exit 1
+    return
 }
 
 # Verify Azure connection
@@ -1121,11 +1121,13 @@ Write-Host "Connected to subscription: $($context.Subscription.Name)" -Foregroun
 
 $workspace = Get-AzOperationalInsightsWorkspace `
     -ResourceGroupName $Global:ResourceGroupName `
-    -Name $Global:WorkspaceName
+    -Name $Global:WorkspaceName `
+    -ErrorAction SilentlyContinue
 
 if ($null -eq $workspace) {
-    Write-Error "Workspace '$($Global:WorkspaceName)' not found in resource group '$($Global:ResourceGroupName)'"
-    exit 1
+    Write-Host "ERROR: Workspace '$($Global:WorkspaceName)' not found in resource group '$($Global:ResourceGroupName)'" -ForegroundColor Red
+    Write-Host "Please verify the workspace name and resource group in Step 0 configuration." -ForegroundColor Yellow
+    return  # Use return instead of exit to not kill VS Code session
 }
 
 Write-Host "Found workspace: $($workspace.Name)" -ForegroundColor Green
@@ -1140,7 +1142,14 @@ Set-RuntimeVariable -Name "WorkspaceId" -Value $workspace.CustomerId
 # Create Custom Table using REST API
 # ============================================
 
-$tableResourceId = "$($Global:WorkspaceResourceId)/tables/$($Global:FullTableName)"
+# Use $workspace.ResourceId directly (not the global variable which may not be set yet)
+$tableResourceId = "$($workspace.ResourceId)/tables/$($Global:FullTableName)"
+
+Write-Host ""
+Write-Host "Building table request..." -ForegroundColor Yellow
+Write-Host "  Table Resource ID: $tableResourceId" -ForegroundColor Gray
+
+# Get fresh headers
 $headers = Get-AzureHeaders
 
 $tableDefinition = @{
@@ -1166,22 +1175,46 @@ $tableBody = $tableDefinition | ConvertTo-Json -Depth 10
 $apiVersion = "2022-10-01"
 $uri = "https://management.azure.com$($tableResourceId)?api-version=$apiVersion"
 
+Write-Host "  API URI: $uri" -ForegroundColor Gray
+Write-Host ""
+
 try {
     Write-Host "Creating custom table: $($Global:FullTableName)..." -ForegroundColor Yellow
     
-    $response = Invoke-RestMethod -Uri $uri -Method Put -Headers $headers -Body $tableBody
+    $response = Invoke-RestMethod -Uri $uri -Method Put -Headers $headers -Body $tableBody -ErrorAction Stop
     
+    Write-Host ""
     Write-Host "Custom table created successfully!" -ForegroundColor Green
     Write-Host "  Table Name: $($response.name)" -ForegroundColor Gray
     Write-Host "  Retention: $($response.properties.retentionInDays) days" -ForegroundColor Gray
 }
 catch {
-    if ($_.Exception.Response.StatusCode -eq "Conflict") {
+    $statusCode = $_.Exception.Response.StatusCode
+    $errorMessage = $_.ErrorDetails.Message
+    
+    if ($statusCode -eq "Conflict" -or $_.Exception.Message -like "*Conflict*") {
+        Write-Host ""
         Write-Host "Table already exists - continuing..." -ForegroundColor Yellow
     }
     else {
-        Write-Error "Failed to create table: $_"
-        exit 1
+        Write-Host ""
+        Write-Host "ERROR: Failed to create table" -ForegroundColor Red
+        Write-Host "  Status Code: $statusCode" -ForegroundColor Red
+        Write-Host "  Error: $_" -ForegroundColor Red
+        
+        if ($errorMessage) {
+            Write-Host "  Details: $errorMessage" -ForegroundColor Red
+        }
+        
+        Write-Host ""
+        Write-Host "Troubleshooting tips:" -ForegroundColor Yellow
+        Write-Host "  1. Verify you have 'Log Analytics Contributor' role on the workspace" -ForegroundColor White
+        Write-Host "  2. Check that the workspace is not in a restricted state" -ForegroundColor White
+        Write-Host "  3. Ensure your Azure token hasn't expired (re-run Connect-AzAccount)" -ForegroundColor White
+        Write-Host ""
+        
+        # Don't exit - let user investigate
+        return
     }
 }
 ```
@@ -1203,7 +1236,7 @@ catch {
 # Verify configuration
 if ($null -eq $Global:WorkspaceResourceId) {
     Write-Error "WorkspaceResourceId not set. Please complete Step 2 first."
-    exit 1
+    return
 }
 
 # ============================================
@@ -1250,7 +1283,7 @@ catch {
     }
     else {
         Write-Error "Failed to create DCE: $_"
-        exit 1
+        return
     }
 }
 
@@ -1277,7 +1310,7 @@ Write-Host "========================================" -ForegroundColor Magenta
 # Verify prerequisites
 if ($null -eq $Global:DceResourceId) {
     Write-Error "DceResourceId not set. Please complete Step 3 first."
-    exit 1
+    return
 }
 
 # ============================================
@@ -1349,7 +1382,7 @@ catch {
     }
     else {
         Write-Error "Failed to create DCR: $_"
-        exit 1
+        return
     }
 }
 
@@ -1431,7 +1464,7 @@ try {
 }
 catch {
     Write-Error "Failed to create Automation Account: $_"
-    exit 1
+    return
 }
 
 Write-Host ""
@@ -1460,7 +1493,7 @@ Write-Host "========================================" -ForegroundColor Magenta
 # Verify prerequisites
 if ($null -eq $Global:AutomationAccountPrincipalId) {
     Write-Error "AutomationAccountPrincipalId not set. Please complete Step 5 first."
-    exit 1
+    return
 }
 
 # Ensure connected to Microsoft Graph with required scopes
@@ -1480,7 +1513,7 @@ $graphSP = Get-MgServicePrincipal -Filter "appId eq '$GraphAppId'"
 
 if ($null -eq $graphSP) {
     Write-Error "Microsoft Graph service principal not found"
-    exit 1
+    return
 }
 
 # Define required permissions
@@ -1542,7 +1575,7 @@ Write-Host "Graph API permissions configured!" -ForegroundColor Green
 # Verify prerequisites
 if ($null -eq $Global:DcrResourceId) {
     Write-Error "DcrResourceId not set. Please complete Step 4 first."
-    exit 1
+    return
 }
 
 Write-Host "Assigning Azure RBAC permissions..." -ForegroundColor Yellow
@@ -1571,7 +1604,7 @@ try {
 }
 catch {
     Write-Error "Failed to assign RBAC role: $_"
-    exit 1
+    return
 }
 
 Write-Host "Azure RBAC permissions configured!" -ForegroundColor Green
@@ -1769,7 +1802,7 @@ Write-Output "========================================="
 # Verify prerequisites
 if ($null -eq $Global:DceLogsIngestionUri -or $null -eq $Global:DcrImmutableId) {
     Write-Error "DCE or DCR not configured. Please complete Steps 3 and 4 first."
-    exit 1
+    return
 }
 
 # ============================================
@@ -1987,7 +2020,7 @@ try {
 }
 catch {
     Write-Error "Failed to create runbook: $_"
-    exit 1
+    return
 }
 finally {
     # Cleanup temp file
