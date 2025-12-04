@@ -14,19 +14,20 @@
 1. [Overview](#1-overview)
 2. [Architecture](#2-architecture)
 3. [Prerequisites](#3-prerequisites)
-4. [Step 1: Environment Preparation](#step-1-environment-preparation)
-5. [Step 2: Create Log Analytics Custom Table](#step-2-create-log-analytics-custom-table)
-6. [Step 3: Create Data Collection Endpoint (DCE)](#step-3-create-data-collection-endpoint-dce)
-7. [Step 4: Create Data Collection Rule (DCR)](#step-4-create-data-collection-rule-dcr)
-8. [Step 5: Create Azure Automation Account](#step-5-create-azure-automation-account)
-9. [Step 6: Configure Managed Identity Permissions](#step-6-configure-managed-identity-permissions)
-10. [Step 7: Create and Configure the Runbook](#step-7-create-and-configure-the-runbook)
-11. [Step 8: Schedule the Runbook](#step-8-schedule-the-runbook)
-12. [Step 9: Validation and Testing](#step-9-validation-and-testing)
-13. [KQL Queries](#kql-queries)
-14. [Troubleshooting](#troubleshooting)
-15. [Maintenance](#maintenance)
-16. [Appendix](#appendix)
+4. [Step 0: Configuration Variables](#step-0-configuration-variables)
+5. [Step 1: Environment Preparation](#step-1-environment-preparation)
+6. [Step 2: Create Log Analytics Custom Table](#step-2-create-log-analytics-custom-table)
+7. [Step 3: Create Data Collection Endpoint (DCE)](#step-3-create-data-collection-endpoint-dce)
+8. [Step 4: Create Data Collection Rule (DCR)](#step-4-create-data-collection-rule-dcr)
+9. [Step 5: Create Azure Automation Account](#step-5-create-azure-automation-account)
+10. [Step 6: Configure Managed Identity Permissions](#step-6-configure-managed-identity-permissions)
+11. [Step 7: Create and Configure the Runbook](#step-7-create-and-configure-the-runbook)
+12. [Step 8: Schedule the Runbook](#step-8-schedule-the-runbook)
+13. [Step 9: Validation and Testing](#step-9-validation-and-testing)
+14. [KQL Queries](#kql-queries)
+15. [Troubleshooting](#troubleshooting)
+16. [Maintenance](#maintenance)
+17. [Appendix](#appendix)
 
 ---
 
@@ -142,6 +143,335 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine -Force
 - `RemoteSigned` - Local scripts run freely; downloaded scripts require signature
 - `Unrestricted` - All scripts run with warnings for downloaded scripts
 - `Bypass` - No restrictions (not recommended for production)
+
+---
+
+## Step 0: Configuration Variables
+
+> **IMPORTANT:** Run this script FIRST before any other steps. This sets all the configuration variables used throughout the deployment. Keep this PowerShell session open for all subsequent steps.
+
+### 0.1 Save Configuration Script
+
+Save this as `Set-DeploymentConfig.ps1` and run it at the start of your deployment session:
+
+```powershell
+<#
+.SYNOPSIS
+    Teams Premium License Sync - Configuration Variables
+.DESCRIPTION
+    Sets all configuration variables required for the deployment.
+    RUN THIS SCRIPT FIRST and keep the PowerShell session open.
+.NOTES
+    Author: LCE M365 Security Team
+    Version: 1.0
+    
+    INSTRUCTIONS:
+    1. Update the values in the "USER CONFIGURATION" section below
+    2. Run this script: .\Set-DeploymentConfig.ps1
+    3. Keep this PowerShell session open for all subsequent steps
+#>
+
+#Requires -Version 5.1
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                           USER CONFIGURATION                                  ║
+# ║                    UPDATE THESE VALUES FOR YOUR ENVIRONMENT                   ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+# ------------------------------------------------------------------------------
+# AZURE SUBSCRIPTION & RESOURCE GROUP
+# ------------------------------------------------------------------------------
+$Global:SubscriptionId        = "6f114bd7-c8d3-4843-b4f8-e30a644bc412"           # e.g., "12345678-1234-1234-1234-123456789012"
+$Global:ResourceGroupName     = "rg-lce-monitoring"            # e.g., "rg-m365-security"
+$Global:Location              = "canadacentral"                    # Azure region (e.g., canadacentral, eastus, westeurope)
+
+# ------------------------------------------------------------------------------
+# LOG ANALYTICS WORKSPACE
+# ------------------------------------------------------------------------------
+$Global:WorkspaceName         = "<Your-Log-Analytics-Workspace>"   # e.g., "law-m365-security"
+$Global:TableName             = "TeamsPremiumLicenses"             # Custom table name (will become TeamsPremiumLicenses_CL)
+$Global:TableRetentionDays    = 90                                 # Data retention in days (30-730)
+$Global:TableTotalRetention   = 365                                # Total retention including archive (90-2555)
+
+# ------------------------------------------------------------------------------
+# DATA COLLECTION ENDPOINT (DCE)
+# ------------------------------------------------------------------------------
+$Global:DceName               = "DCE-TeamsPremiumLicenses"         # Data Collection Endpoint name
+
+# ------------------------------------------------------------------------------
+# DATA COLLECTION RULE (DCR)
+# ------------------------------------------------------------------------------
+$Global:DcrName               = "DCR-TeamsPremiumLicenses"         # Data Collection Rule name
+$Global:StreamName            = "Custom-TeamsPremiumLicenses_CL"   # Stream name (must match table)
+
+# ------------------------------------------------------------------------------
+# AZURE AUTOMATION
+# ------------------------------------------------------------------------------
+$Global:AutomationAccountName = "AA-TeamsPremiumLicenseSync"       # Automation Account name
+$Global:RunbookName           = "Sync-TeamsPremiumLicenses"        # Runbook name
+$Global:ScheduleName          = "Daily-TeamsPremiumSync"           # Schedule name
+$Global:ScheduleTimeZone      = "Eastern Standard Time"            # Time zone for schedule
+$Global:ScheduleStartHour     = 2                                  # Hour to run (24-hour format, e.g., 2 = 2:00 AM)
+
+# ------------------------------------------------------------------------------
+# MICROSOFT 365 LICENSE
+# ------------------------------------------------------------------------------
+$Global:TeamsPremiumSkuId     = "16ddbbfc-09ea-4de2-b1d7-312db6112d70"  # Teams Premium SKU ID (usually don't change)
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                      DO NOT MODIFY BELOW THIS LINE                           ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+# ------------------------------------------------------------------------------
+# DERIVED VARIABLES (automatically calculated)
+# ------------------------------------------------------------------------------
+$Global:FullTableName         = "$($Global:TableName)_CL"
+$Global:ScheduleStartTime     = (Get-Date).AddDays(1).Date.AddHours($Global:ScheduleStartHour)
+
+# These will be populated during deployment
+$Global:WorkspaceResourceId   = $null
+$Global:WorkspaceId           = $null
+$Global:DceResourceId         = $null
+$Global:DceLogsIngestionUri   = $null
+$Global:DcrResourceId         = $null
+$Global:DcrImmutableId        = $null
+$Global:AutomationAccountPrincipalId = $null
+
+# ------------------------------------------------------------------------------
+# CONFIGURATION OBJECT (for easy reference)
+# ------------------------------------------------------------------------------
+$Global:Config = @{
+    # Azure
+    SubscriptionId        = $Global:SubscriptionId
+    ResourceGroupName     = $Global:ResourceGroupName
+    Location              = $Global:Location
+    
+    # Log Analytics
+    WorkspaceName         = $Global:WorkspaceName
+    TableName             = $Global:TableName
+    FullTableName         = $Global:FullTableName
+    TableRetentionDays    = $Global:TableRetentionDays
+    TableTotalRetention   = $Global:TableTotalRetention
+    
+    # DCE
+    DceName               = $Global:DceName
+    
+    # DCR
+    DcrName               = $Global:DcrName
+    StreamName            = $Global:StreamName
+    
+    # Automation
+    AutomationAccountName = $Global:AutomationAccountName
+    RunbookName           = $Global:RunbookName
+    ScheduleName          = $Global:ScheduleName
+    ScheduleTimeZone      = $Global:ScheduleTimeZone
+    ScheduleStartTime     = $Global:ScheduleStartTime
+    
+    # License
+    TeamsPremiumSkuId     = $Global:TeamsPremiumSkuId
+}
+
+# ------------------------------------------------------------------------------
+# VALIDATION
+# ------------------------------------------------------------------------------
+
+function Test-ConfigurationValues {
+    $errors = @()
+    
+    # Check for placeholder values
+    if ($Global:SubscriptionId -match "^<.*>$" -or [string]::IsNullOrWhiteSpace($Global:SubscriptionId)) {
+        $errors += "SubscriptionId is not set"
+    }
+    if ($Global:ResourceGroupName -match "^<.*>$" -or [string]::IsNullOrWhiteSpace($Global:ResourceGroupName)) {
+        $errors += "ResourceGroupName is not set"
+    }
+    if ($Global:WorkspaceName -match "^<.*>$" -or [string]::IsNullOrWhiteSpace($Global:WorkspaceName)) {
+        $errors += "WorkspaceName is not set"
+    }
+    
+    # Validate subscription ID format
+    if ($Global:SubscriptionId -notmatch "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" -and $errors -notcontains "SubscriptionId is not set") {
+        $errors += "SubscriptionId format is invalid (expected GUID format)"
+    }
+    
+    # Validate retention values
+    if ($Global:TableRetentionDays -lt 30 -or $Global:TableRetentionDays -gt 730) {
+        $errors += "TableRetentionDays must be between 30 and 730"
+    }
+    
+    return $errors
+}
+
+# ------------------------------------------------------------------------------
+# DISPLAY CONFIGURATION
+# ------------------------------------------------------------------------------
+
+Clear-Host
+Write-Host ""
+Write-Host "╔══════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║            TEAMS PREMIUM LICENSE SYNC - DEPLOYMENT CONFIGURATION             ║" -ForegroundColor Cyan
+Write-Host "╚══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host ""
+
+# Validate
+$validationErrors = Test-ConfigurationValues
+
+if ($validationErrors.Count -gt 0) {
+    Write-Host "⚠ CONFIGURATION ERRORS DETECTED:" -ForegroundColor Red
+    Write-Host ""
+    foreach ($err in $validationErrors) {
+        Write-Host "  ✗ $err" -ForegroundColor Red
+    }
+    Write-Host ""
+    Write-Host "Please update the configuration values in this script and run again." -ForegroundColor Yellow
+    Write-Host ""
+    $Global:ConfigurationValid = $false
+}
+else {
+    Write-Host "Azure Configuration:" -ForegroundColor Yellow
+    Write-Host "  Subscription ID:      $Global:SubscriptionId" -ForegroundColor White
+    Write-Host "  Resource Group:       $Global:ResourceGroupName" -ForegroundColor White
+    Write-Host "  Location:             $Global:Location" -ForegroundColor White
+    Write-Host ""
+    
+    Write-Host "Log Analytics:" -ForegroundColor Yellow
+    Write-Host "  Workspace:            $Global:WorkspaceName" -ForegroundColor White
+    Write-Host "  Custom Table:         $Global:FullTableName" -ForegroundColor White
+    Write-Host "  Retention:            $Global:TableRetentionDays days" -ForegroundColor White
+    Write-Host ""
+    
+    Write-Host "Data Collection:" -ForegroundColor Yellow
+    Write-Host "  DCE Name:             $Global:DceName" -ForegroundColor White
+    Write-Host "  DCR Name:             $Global:DcrName" -ForegroundColor White
+    Write-Host "  Stream:               $Global:StreamName" -ForegroundColor White
+    Write-Host ""
+    
+    Write-Host "Automation:" -ForegroundColor Yellow
+    Write-Host "  Account Name:         $Global:AutomationAccountName" -ForegroundColor White
+    Write-Host "  Runbook:              $Global:RunbookName" -ForegroundColor White
+    Write-Host "  Schedule:             $Global:ScheduleName" -ForegroundColor White
+    Write-Host "  Run Time:             Daily at $($Global:ScheduleStartHour):00 ($Global:ScheduleTimeZone)" -ForegroundColor White
+    Write-Host ""
+    
+    Write-Host "License SKU:" -ForegroundColor Yellow
+    Write-Host "  Teams Premium:        $Global:TeamsPremiumSkuId" -ForegroundColor White
+    Write-Host ""
+    
+    Write-Host "═══════════════════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "✓ Configuration loaded successfully!" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "NEXT STEPS:" -ForegroundColor Yellow
+    Write-Host "  1. Keep this PowerShell session open" -ForegroundColor White
+    Write-Host "  2. Proceed to Step 1: Environment Preparation" -ForegroundColor White
+    Write-Host ""
+    
+    $Global:ConfigurationValid = $true
+}
+
+# ------------------------------------------------------------------------------
+# HELPER FUNCTION: Get Azure REST API Headers
+# ------------------------------------------------------------------------------
+
+function Get-AzureHeaders {
+    <#
+    .SYNOPSIS
+        Gets authorization headers for Azure REST API calls
+    .DESCRIPTION
+        Returns headers with current access token for Azure management API
+    #>
+    
+    $token = Get-AzAccessToken -ResourceUrl "https://management.azure.com"
+    return @{
+        "Authorization" = "Bearer $($token.Token)"
+        "Content-Type"  = "application/json"
+    }
+}
+
+# Export for use in subsequent steps
+$Global:GetAzureHeaders = ${function:Get-AzureHeaders}
+
+# ------------------------------------------------------------------------------
+# HELPER FUNCTION: Update Runtime Variables
+# ------------------------------------------------------------------------------
+
+function Set-RuntimeVariable {
+    <#
+    .SYNOPSIS
+        Updates runtime variables during deployment
+    .PARAMETER Name
+        Variable name (e.g., "DceLogsIngestionUri")
+    .PARAMETER Value
+        Variable value
+    #>
+    param(
+        [string]$Name,
+        [string]$Value
+    )
+    
+    Set-Variable -Name $Name -Value $Value -Scope Global
+    
+    # Also update Config hashtable
+    if ($Global:Config.ContainsKey($Name)) {
+        $Global:Config[$Name] = $Value
+    }
+    else {
+        $Global:Config.Add($Name, $Value)
+    }
+}
+
+$Global:SetRuntimeVariable = ${function:Set-RuntimeVariable}
+
+Write-Host "Helper functions loaded: Get-AzureHeaders, Set-RuntimeVariable" -ForegroundColor Gray
+Write-Host ""
+```
+
+### 0.2 Run the Configuration Script
+
+```powershell
+# Navigate to your scripts directory
+cd C:\Scripts\TeamsPremiumLicenseSync
+
+# Run the configuration script
+.\Set-DeploymentConfig.ps1
+
+# Verify configuration is valid
+if ($Global:ConfigurationValid -eq $true) {
+    Write-Host "Ready to proceed with deployment!" -ForegroundColor Green
+}
+else {
+    Write-Host "Please fix configuration errors before proceeding." -ForegroundColor Red
+}
+```
+
+### 0.3 Quick Reference: Configuration Variables
+
+After running the configuration script, these global variables are available in your session:
+
+| Variable | Description | Example Value |
+|----------|-------------|---------------|
+| `$Global:SubscriptionId` | Azure Subscription ID | `12345678-1234-1234-1234-123456789012` |
+| `$Global:ResourceGroupName` | Resource Group name | `rg-m365-security` |
+| `$Global:Location` | Azure region | `canadacentral` |
+| `$Global:WorkspaceName` | Log Analytics Workspace | `law-m365-security` |
+| `$Global:FullTableName` | Custom table name | `TeamsPremiumLicenses_CL` |
+| `$Global:DceName` | Data Collection Endpoint | `DCE-TeamsPremiumLicenses` |
+| `$Global:DcrName` | Data Collection Rule | `DCR-TeamsPremiumLicenses` |
+| `$Global:StreamName` | DCR stream name | `Custom-TeamsPremiumLicenses_CL` |
+| `$Global:AutomationAccountName` | Automation Account | `AA-TeamsPremiumLicenseSync` |
+| `$Global:RunbookName` | Runbook name | `Sync-TeamsPremiumLicenses` |
+| `$Global:TeamsPremiumSkuId` | Teams Premium SKU ID | `16ddbbfc-09ea-4de2-b1d7-312db6112d70` |
+
+**Runtime Variables** (populated during deployment):
+
+| Variable | Populated In | Description |
+|----------|--------------|-------------|
+| `$Global:WorkspaceResourceId` | Step 2 | Full ARM resource ID of workspace |
+| `$Global:DceResourceId` | Step 3 | Full ARM resource ID of DCE |
+| `$Global:DceLogsIngestionUri` | Step 3 | Logs ingestion endpoint URL |
+| `$Global:DcrResourceId` | Step 4 | Full ARM resource ID of DCR |
+| `$Global:DcrImmutableId` | Step 4 | Immutable ID for DCR (used in runbook) |
+| `$Global:AutomationAccountPrincipalId` | Step 5 | Managed Identity Object ID |
 
 ---
 
@@ -425,7 +755,7 @@ Get-MgContext | Format-List Account, TenantId, Scopes
 
 ## Step 2: Create Log Analytics Custom Table
 
-### 2.1 Define Variables
+### 2.1 Verify Configuration and Connect
 
 ```powershell
 <#
@@ -433,25 +763,26 @@ Get-MgContext | Format-List Account, TenantId, Scopes
     Step 2: Create Log Analytics Custom Table
 .DESCRIPTION
     Creates the TeamsPremiumLicenses_CL custom table in Log Analytics
+.NOTES
+    Requires: Step 0 configuration loaded, Azure authentication
 #>
 
-# ============================================
-# CONFIGURATION - UPDATE THESE VALUES
-# ============================================
-
-$Config = @{
-    SubscriptionId        = "<Your-Subscription-Id>"
-    ResourceGroupName     = "<Your-Resource-Group>"
-    WorkspaceName         = "<Your-Log-Analytics-Workspace>"
-    Location              = "canadacentral"  # Update to your region
-    TableName             = "TeamsPremiumLicenses"
+# Verify configuration is loaded
+if ($null -eq $Global:Config -or $Global:ConfigurationValid -ne $true) {
+    Write-Error "Configuration not loaded. Please run Set-DeploymentConfig.ps1 first."
+    exit 1
 }
 
-# Verify connection
+# Verify Azure connection
 $context = Get-AzContext
 if ($null -eq $context) {
-    Write-Error "Not connected to Azure. Run Connect-AzAccount first."
-    exit 1
+    Write-Host "Not connected to Azure. Connecting now..." -ForegroundColor Yellow
+    Connect-AzAccount
+    Set-AzContext -SubscriptionId $Global:SubscriptionId
+}
+elseif ($context.Subscription.Id -ne $Global:SubscriptionId) {
+    Write-Host "Switching to configured subscription..." -ForegroundColor Yellow
+    Set-AzContext -SubscriptionId $Global:SubscriptionId
 }
 
 Write-Host "Connected to subscription: $($context.Subscription.Name)" -ForegroundColor Green
@@ -465,11 +796,11 @@ Write-Host "Connected to subscription: $($context.Subscription.Name)" -Foregroun
 # ============================================
 
 $workspace = Get-AzOperationalInsightsWorkspace `
-    -ResourceGroupName $Config.ResourceGroupName `
-    -Name $Config.WorkspaceName
+    -ResourceGroupName $Global:ResourceGroupName `
+    -Name $Global:WorkspaceName
 
 if ($null -eq $workspace) {
-    Write-Error "Workspace '$($Config.WorkspaceName)' not found in resource group '$($Config.ResourceGroupName)'"
+    Write-Error "Workspace '$($Global:WorkspaceName)' not found in resource group '$($Global:ResourceGroupName)'"
     exit 1
 }
 
@@ -477,16 +808,21 @@ Write-Host "Found workspace: $($workspace.Name)" -ForegroundColor Green
 Write-Host "  Resource ID: $($workspace.ResourceId)" -ForegroundColor Gray
 Write-Host "  Location: $($workspace.Location)" -ForegroundColor Gray
 
+# Store for later steps
+Set-RuntimeVariable -Name "WorkspaceResourceId" -Value $workspace.ResourceId
+Set-RuntimeVariable -Name "WorkspaceId" -Value $workspace.CustomerId
+
 # ============================================
 # Create Custom Table using REST API
 # ============================================
 
-$tableResourceId = "$($workspace.ResourceId)/tables/$($Config.TableName)_CL"
+$tableResourceId = "$($Global:WorkspaceResourceId)/tables/$($Global:FullTableName)"
+$headers = Get-AzureHeaders
 
 $tableDefinition = @{
     properties = @{
         schema = @{
-            name    = "$($Config.TableName)_CL"
+            name    = $Global:FullTableName
             columns = @(
                 @{ name = "TimeGenerated"; type = "datetime"; description = "Timestamp of the sync" }
                 @{ name = "UserPrincipalName"; type = "string"; description = "User's UPN" }
@@ -495,26 +831,19 @@ $tableDefinition = @{
                 @{ name = "ObjectId"; type = "string"; description = "User's Entra Object ID" }
             )
         }
-        retentionInDays      = 90
-        totalRetentionInDays = 365
+        retentionInDays      = $Global:TableRetentionDays
+        totalRetentionInDays = $Global:TableTotalRetention
     }
 }
 
 $tableBody = $tableDefinition | ConvertTo-Json -Depth 10
-
-# Get access token
-$token = Get-AzAccessToken -ResourceUrl "https://management.azure.com"
-$headers = @{
-    "Authorization" = "Bearer $($token.Token)"
-    "Content-Type"  = "application/json"
-}
 
 # Create table
 $apiVersion = "2022-10-01"
 $uri = "https://management.azure.com$($tableResourceId)?api-version=$apiVersion"
 
 try {
-    Write-Host "Creating custom table: $($Config.TableName)_CL..." -ForegroundColor Yellow
+    Write-Host "Creating custom table: $($Global:FullTableName)..." -ForegroundColor Yellow
     
     $response = Invoke-RestMethod -Uri $uri -Method Put -Headers $headers -Body $tableBody
     
@@ -531,10 +860,6 @@ catch {
         exit 1
     }
 }
-
-# Store for later steps
-$Script:WorkspaceResourceId = $workspace.ResourceId
-$Script:WorkspaceId = $workspace.CustomerId
 ```
 
 ---
@@ -547,16 +872,14 @@ $Script:WorkspaceId = $workspace.CustomerId
     Step 3: Create Data Collection Endpoint
 .DESCRIPTION
     Creates the DCE for log ingestion
+.NOTES
+    Requires: Step 0 configuration loaded, Step 2 completed
 #>
 
-# ============================================
-# CONFIGURATION
-# ============================================
-
-$DceConfig = @{
-    Name              = "DCE-TeamsPremiumLicenses"
-    ResourceGroupName = $Config.ResourceGroupName
-    Location          = $Config.Location
+# Verify configuration
+if ($null -eq $Global:WorkspaceResourceId) {
+    Write-Error "WorkspaceResourceId not set. Please complete Step 2 first."
+    exit 1
 }
 
 # ============================================
@@ -565,10 +888,11 @@ $DceConfig = @{
 
 Write-Host "Creating Data Collection Endpoint..." -ForegroundColor Yellow
 
-$dceResourceId = "/subscriptions/$($Config.SubscriptionId)/resourceGroups/$($Config.ResourceGroupName)/providers/Microsoft.Insights/dataCollectionEndpoints/$($DceConfig.Name)"
+$dceResourceId = "/subscriptions/$($Global:SubscriptionId)/resourceGroups/$($Global:ResourceGroupName)/providers/Microsoft.Insights/dataCollectionEndpoints/$($Global:DceName)"
+$headers = Get-AzureHeaders
 
 $dceDefinition = @{
-    location   = $DceConfig.Location
+    location   = $Global:Location
     properties = @{
         description           = "DCE for Teams Premium License data ingestion"
         networkAcls           = @{
@@ -589,16 +913,16 @@ try {
     Write-Host "  Logs Ingestion URI: $($dceResponse.properties.logsIngestion.endpoint)" -ForegroundColor Cyan
     
     # Store for later
-    $Script:DceLogsIngestionUri = $dceResponse.properties.logsIngestion.endpoint
-    $Script:DceResourceId = $dceResponse.id
+    Set-RuntimeVariable -Name "DceLogsIngestionUri" -Value $dceResponse.properties.logsIngestion.endpoint
+    Set-RuntimeVariable -Name "DceResourceId" -Value $dceResponse.id
 }
 catch {
     if ($_.Exception.Response.StatusCode -eq "Conflict") {
         Write-Host "DCE already exists - retrieving details..." -ForegroundColor Yellow
         $dceResponse = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers
-        $Script:DceLogsIngestionUri = $dceResponse.properties.logsIngestion.endpoint
-        $Script:DceResourceId = $dceResponse.id
-        Write-Host "  Logs Ingestion URI: $($Script:DceLogsIngestionUri)" -ForegroundColor Cyan
+        Set-RuntimeVariable -Name "DceLogsIngestionUri" -Value $dceResponse.properties.logsIngestion.endpoint
+        Set-RuntimeVariable -Name "DceResourceId" -Value $dceResponse.id
+        Write-Host "  Logs Ingestion URI: $($Global:DceLogsIngestionUri)" -ForegroundColor Cyan
     }
     else {
         Write-Error "Failed to create DCE: $_"
@@ -607,9 +931,9 @@ catch {
 }
 
 Write-Host ""
-Write-Host "=== IMPORTANT: Save this value ===" -ForegroundColor Magenta
-Write-Host "DCE Logs Ingestion URI: $Script:DceLogsIngestionUri" -ForegroundColor White
-Write-Host "=================================" -ForegroundColor Magenta
+Write-Host "=== IMPORTANT: Runtime Variable Set ===" -ForegroundColor Magenta
+Write-Host "DCE Logs Ingestion URI: $Global:DceLogsIngestionUri" -ForegroundColor White
+Write-Host "========================================" -ForegroundColor Magenta
 ```
 
 ---
@@ -622,17 +946,14 @@ Write-Host "=================================" -ForegroundColor Magenta
     Step 4: Create Data Collection Rule
 .DESCRIPTION
     Creates the DCR that defines data transformation and routing
+.NOTES
+    Requires: Step 0 configuration loaded, Steps 2-3 completed
 #>
 
-# ============================================
-# CONFIGURATION
-# ============================================
-
-$DcrConfig = @{
-    Name              = "DCR-TeamsPremiumLicenses"
-    ResourceGroupName = $Config.ResourceGroupName
-    Location          = $Config.Location
-    StreamName        = "Custom-TeamsPremiumLicenses_CL"
+# Verify prerequisites
+if ($null -eq $Global:DceResourceId) {
+    Write-Error "DceResourceId not set. Please complete Step 3 first."
+    exit 1
 }
 
 # ============================================
@@ -641,15 +962,16 @@ $DcrConfig = @{
 
 Write-Host "Creating Data Collection Rule..." -ForegroundColor Yellow
 
-$dcrResourceId = "/subscriptions/$($Config.SubscriptionId)/resourceGroups/$($Config.ResourceGroupName)/providers/Microsoft.Insights/dataCollectionRules/$($DcrConfig.Name)"
+$dcrResourceId = "/subscriptions/$($Global:SubscriptionId)/resourceGroups/$($Global:ResourceGroupName)/providers/Microsoft.Insights/dataCollectionRules/$($Global:DcrName)"
+$headers = Get-AzureHeaders
 
 $dcrDefinition = @{
-    location   = $DcrConfig.Location
+    location   = $Global:Location
     properties = @{
         description              = "DCR for Teams Premium License sync"
-        dataCollectionEndpointId = $Script:DceResourceId
+        dataCollectionEndpointId = $Global:DceResourceId
         streamDeclarations       = @{
-            "$($DcrConfig.StreamName)" = @{
+            "$($Global:StreamName)" = @{
                 columns = @(
                     @{ name = "TimeGenerated"; type = "datetime" }
                     @{ name = "UserPrincipalName"; type = "string" }
@@ -662,17 +984,17 @@ $dcrDefinition = @{
         destinations             = @{
             logAnalytics = @(
                 @{
-                    workspaceResourceId = $Script:WorkspaceResourceId
+                    workspaceResourceId = $Global:WorkspaceResourceId
                     name                = "LogAnalyticsDestination"
                 }
             )
         }
         dataFlows                = @(
             @{
-                streams      = @($DcrConfig.StreamName)
+                streams      = @($Global:StreamName)
                 destinations = @("LogAnalyticsDestination")
                 transformKql = "source"
-                outputStream = $DcrConfig.StreamName
+                outputStream = $Global:StreamName
             }
         )
     }
@@ -690,16 +1012,16 @@ try {
     Write-Host "  Immutable ID: $($dcrResponse.properties.immutableId)" -ForegroundColor Cyan
     
     # Store for later
-    $Script:DcrImmutableId = $dcrResponse.properties.immutableId
-    $Script:DcrResourceId = $dcrResponse.id
+    Set-RuntimeVariable -Name "DcrImmutableId" -Value $dcrResponse.properties.immutableId
+    Set-RuntimeVariable -Name "DcrResourceId" -Value $dcrResponse.id
 }
 catch {
     if ($_.Exception.Response.StatusCode -eq "Conflict") {
         Write-Host "DCR already exists - retrieving details..." -ForegroundColor Yellow
         $dcrResponse = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers
-        $Script:DcrImmutableId = $dcrResponse.properties.immutableId
-        $Script:DcrResourceId = $dcrResponse.id
-        Write-Host "  Immutable ID: $($Script:DcrImmutableId)" -ForegroundColor Cyan
+        Set-RuntimeVariable -Name "DcrImmutableId" -Value $dcrResponse.properties.immutableId
+        Set-RuntimeVariable -Name "DcrResourceId" -Value $dcrResponse.id
+        Write-Host "  Immutable ID: $($Global:DcrImmutableId)" -ForegroundColor Cyan
     }
     else {
         Write-Error "Failed to create DCR: $_"
@@ -708,10 +1030,10 @@ catch {
 }
 
 Write-Host ""
-Write-Host "=== IMPORTANT: Save these values ===" -ForegroundColor Magenta
-Write-Host "DCR Immutable ID: $Script:DcrImmutableId" -ForegroundColor White
-Write-Host "Stream Name: $($DcrConfig.StreamName)" -ForegroundColor White
-Write-Host "====================================" -ForegroundColor Magenta
+Write-Host "=== IMPORTANT: Runtime Variables Set ===" -ForegroundColor Magenta
+Write-Host "DCR Immutable ID: $Global:DcrImmutableId" -ForegroundColor White
+Write-Host "Stream Name: $($Global:StreamName)" -ForegroundColor White
+Write-Host "=========================================" -ForegroundColor Magenta
 ```
 
 ---
@@ -724,17 +1046,9 @@ Write-Host "====================================" -ForegroundColor Magenta
     Step 5: Create Azure Automation Account
 .DESCRIPTION
     Creates an Automation Account with System-Assigned Managed Identity
+.NOTES
+    Requires: Step 0 configuration loaded
 #>
-
-# ============================================
-# CONFIGURATION
-# ============================================
-
-$AutomationConfig = @{
-    Name              = "AA-TeamsPremiumLicenseSync"
-    ResourceGroupName = $Config.ResourceGroupName
-    Location          = $Config.Location
-}
 
 # ============================================
 # Create Automation Account
@@ -744,8 +1058,8 @@ Write-Host "Creating Azure Automation Account..." -ForegroundColor Yellow
 
 try {
     $automationAccount = Get-AzAutomationAccount `
-        -ResourceGroupName $AutomationConfig.ResourceGroupName `
-        -Name $AutomationConfig.Name `
+        -ResourceGroupName $Global:ResourceGroupName `
+        -Name $Global:AutomationAccountName `
         -ErrorAction SilentlyContinue
     
     if ($automationAccount) {
@@ -753,16 +1067,17 @@ try {
     }
     else {
         $automationAccount = New-AzAutomationAccount `
-            -ResourceGroupName $AutomationConfig.ResourceGroupName `
-            -Name $AutomationConfig.Name `
-            -Location $AutomationConfig.Location `
+            -ResourceGroupName $Global:ResourceGroupName `
+            -Name $Global:AutomationAccountName `
+            -Location $Global:Location `
             -AssignSystemIdentity
         
         Write-Host "Automation Account created successfully!" -ForegroundColor Green
     }
     
     # Ensure System-Assigned Managed Identity is enabled
-    $aaResourceId = "/subscriptions/$($Config.SubscriptionId)/resourceGroups/$($AutomationConfig.ResourceGroupName)/providers/Microsoft.Automation/automationAccounts/$($AutomationConfig.Name)"
+    $aaResourceId = "/subscriptions/$($Global:SubscriptionId)/resourceGroups/$($Global:ResourceGroupName)/providers/Microsoft.Automation/automationAccounts/$($Global:AutomationAccountName)"
+    $headers = Get-AzureHeaders
     
     $aaResponse = Invoke-RestMethod `
         -Uri "https://management.azure.com$($aaResourceId)?api-version=2023-11-01" `
@@ -785,10 +1100,10 @@ try {
             -Body $identityBody
     }
     
-    $Script:AutomationAccountPrincipalId = $aaResponse.identity.principalId
+    Set-RuntimeVariable -Name "AutomationAccountPrincipalId" -Value $aaResponse.identity.principalId
     
-    Write-Host "  Name: $($AutomationConfig.Name)" -ForegroundColor Gray
-    Write-Host "  Managed Identity Object ID: $Script:AutomationAccountPrincipalId" -ForegroundColor Cyan
+    Write-Host "  Name: $($Global:AutomationAccountName)" -ForegroundColor Gray
+    Write-Host "  Managed Identity Object ID: $Global:AutomationAccountPrincipalId" -ForegroundColor Cyan
 }
 catch {
     Write-Error "Failed to create Automation Account: $_"
@@ -796,9 +1111,9 @@ catch {
 }
 
 Write-Host ""
-Write-Host "=== IMPORTANT: Save this value ===" -ForegroundColor Magenta
-Write-Host "Managed Identity Object ID: $Script:AutomationAccountPrincipalId" -ForegroundColor White
-Write-Host "==================================" -ForegroundColor Magenta
+Write-Host "=== IMPORTANT: Runtime Variable Set ===" -ForegroundColor Magenta
+Write-Host "Managed Identity Object ID: $Global:AutomationAccountPrincipalId" -ForegroundColor White
+Write-Host "========================================" -ForegroundColor Magenta
 ```
 
 ---
@@ -814,12 +1129,20 @@ Write-Host "==================================" -ForegroundColor Magenta
 .DESCRIPTION
     Grants User.Read.All permission to the Automation Account's Managed Identity
 .NOTES
-    Requires Global Administrator or Privileged Role Administrator
+    Requires: Global Administrator or Privileged Role Administrator
+    Requires: Step 5 completed (AutomationAccountPrincipalId set)
 #>
+
+# Verify prerequisites
+if ($null -eq $Global:AutomationAccountPrincipalId) {
+    Write-Error "AutomationAccountPrincipalId not set. Please complete Step 5 first."
+    exit 1
+}
 
 # Ensure connected to Microsoft Graph with required scopes
 $mgContext = Get-MgContext
 if ($null -eq $mgContext) {
+    Write-Host "Connecting to Microsoft Graph..." -ForegroundColor Yellow
     Connect-MgGraph -Scopes "Application.ReadWrite.All", "AppRoleAssignment.ReadWrite.All"
 }
 
@@ -854,7 +1177,7 @@ foreach ($permission in $requiredPermissions) {
     
     # Check if already assigned
     $existingAssignment = Get-MgServicePrincipalAppRoleAssignment `
-        -ServicePrincipalId $Script:AutomationAccountPrincipalId `
+        -ServicePrincipalId $Global:AutomationAccountPrincipalId `
         -ErrorAction SilentlyContinue | 
         Where-Object { $_.AppRoleId -eq $appRole.Id }
     
@@ -864,8 +1187,8 @@ foreach ($permission in $requiredPermissions) {
     else {
         try {
             New-MgServicePrincipalAppRoleAssignment `
-                -ServicePrincipalId $Script:AutomationAccountPrincipalId `
-                -PrincipalId $Script:AutomationAccountPrincipalId `
+                -ServicePrincipalId $Global:AutomationAccountPrincipalId `
+                -PrincipalId $Global:AutomationAccountPrincipalId `
                 -ResourceId $graphSP.Id `
                 -AppRoleId $appRole.Id | Out-Null
             
@@ -888,7 +1211,15 @@ Write-Host "Graph API permissions configured!" -ForegroundColor Green
     Step 6.2: Assign Azure RBAC Permissions
 .DESCRIPTION
     Grants Monitoring Metrics Publisher role on the DCR to the Managed Identity
+.NOTES
+    Requires: Steps 4 and 5 completed
 #>
+
+# Verify prerequisites
+if ($null -eq $Global:DcrResourceId) {
+    Write-Error "DcrResourceId not set. Please complete Step 4 first."
+    exit 1
+}
 
 Write-Host "Assigning Azure RBAC permissions..." -ForegroundColor Yellow
 
@@ -897,8 +1228,8 @@ $roleDefinitionName = "Monitoring Metrics Publisher"
 
 try {
     $existingAssignment = Get-AzRoleAssignment `
-        -ObjectId $Script:AutomationAccountPrincipalId `
-        -Scope $Script:DcrResourceId `
+        -ObjectId $Global:AutomationAccountPrincipalId `
+        -Scope $Global:DcrResourceId `
         -RoleDefinitionName $roleDefinitionName `
         -ErrorAction SilentlyContinue
     
@@ -907,8 +1238,8 @@ try {
     }
     else {
         New-AzRoleAssignment `
-            -ObjectId $Script:AutomationAccountPrincipalId `
-            -Scope $Script:DcrResourceId `
+            -ObjectId $Global:AutomationAccountPrincipalId `
+            -Scope $Global:DcrResourceId `
             -RoleDefinitionName $roleDefinitionName | Out-Null
         
         Write-Host "  $roleDefinitionName on DCR - Assigned successfully" -ForegroundColor Green
@@ -1106,28 +1437,23 @@ Write-Output "========================================="
 .SYNOPSIS
     Step 7.2: Deploy the Runbook to Azure Automation
 .DESCRIPTION
-    Creates the runbook and imports the script
+    Creates the runbook and imports the script with configuration values
+.NOTES
+    Requires: Steps 3-5 completed (DCE, DCR, Automation Account created)
 #>
 
-# ============================================
-# CONFIGURATION
-# ============================================
-
-$RunbookConfig = @{
-    Name                  = "Sync-TeamsPremiumLicenses"
-    AutomationAccountName = "AA-TeamsPremiumLicenseSync"
-    ResourceGroupName     = $Config.ResourceGroupName
-    Type                  = "PowerShell72"
-    Description           = "Syncs Teams Premium license data to Log Analytics"
+# Verify prerequisites
+if ($null -eq $Global:DceLogsIngestionUri -or $null -eq $Global:DcrImmutableId) {
+    Write-Error "DCE or DCR not configured. Please complete Steps 3 and 4 first."
+    exit 1
 }
 
 # ============================================
-# Update Runbook Script with Actual Values
+# Prepare Runbook Script with Configuration
 # ============================================
 
 Write-Host "Preparing runbook script with configuration values..." -ForegroundColor Yellow
 
-# Read the template (or use the content above)
 $runbookContent = @"
 <#
 .SYNOPSIS
@@ -1144,10 +1470,10 @@ $runbookContent = @"
 # CONFIGURATION
 # ============================================
 
-`$DceUri = "$Script:DceLogsIngestionUri"
-`$DcrImmutableId = "$Script:DcrImmutableId"
-`$StreamName = "Custom-TeamsPremiumLicenses_CL"
-`$TeamsPremiumSkuId = "16ddbbfc-09ea-4de2-b1d7-312db6112d70"
+`$DceUri = "$($Global:DceLogsIngestionUri)"
+`$DcrImmutableId = "$($Global:DcrImmutableId)"
+`$StreamName = "$($Global:StreamName)"
+`$TeamsPremiumSkuId = "$($Global:TeamsPremiumSkuId)"
 
 # ============================================
 # AUTHENTICATION
@@ -1292,7 +1618,7 @@ Write-Output "========================================="
 "@
 
 # Save to temp file
-$tempFile = Join-Path $env:TEMP "Sync-TeamsPremiumLicenses.ps1"
+$tempFile = Join-Path $env:TEMP "$($Global:RunbookName).ps1"
 $runbookContent | Out-File -FilePath $tempFile -Encoding UTF8 -Force
 
 # ============================================
@@ -1304,9 +1630,9 @@ Write-Host "Creating runbook in Azure Automation..." -ForegroundColor Yellow
 try {
     # Check if runbook exists
     $existingRunbook = Get-AzAutomationRunbook `
-        -ResourceGroupName $RunbookConfig.ResourceGroupName `
-        -AutomationAccountName $RunbookConfig.AutomationAccountName `
-        -Name $RunbookConfig.Name `
+        -ResourceGroupName $Global:ResourceGroupName `
+        -AutomationAccountName $Global:AutomationAccountName `
+        -Name $Global:RunbookName `
         -ErrorAction SilentlyContinue
     
     if ($existingRunbook) {
@@ -1315,11 +1641,11 @@ try {
     
     # Import runbook
     Import-AzAutomationRunbook `
-        -ResourceGroupName $RunbookConfig.ResourceGroupName `
-        -AutomationAccountName $RunbookConfig.AutomationAccountName `
-        -Name $RunbookConfig.Name `
-        -Type $RunbookConfig.Type `
-        -Description $RunbookConfig.Description `
+        -ResourceGroupName $Global:ResourceGroupName `
+        -AutomationAccountName $Global:AutomationAccountName `
+        -Name $Global:RunbookName `
+        -Type "PowerShell72" `
+        -Description "Syncs Teams Premium license data to Log Analytics" `
         -Path $tempFile `
         -Force | Out-Null
     
@@ -1329,9 +1655,9 @@ try {
     Write-Host "Publishing runbook..." -ForegroundColor Yellow
     
     Publish-AzAutomationRunbook `
-        -ResourceGroupName $RunbookConfig.ResourceGroupName `
-        -AutomationAccountName $RunbookConfig.AutomationAccountName `
-        -Name $RunbookConfig.Name | Out-Null
+        -ResourceGroupName $Global:ResourceGroupName `
+        -AutomationAccountName $Global:AutomationAccountName `
+        -Name $Global:RunbookName | Out-Null
     
     Write-Host "Runbook published successfully!" -ForegroundColor Green
 }
@@ -1357,20 +1683,9 @@ finally {
     Step 8: Create Schedule for the Runbook
 .DESCRIPTION
     Creates a daily schedule for the license sync runbook
+.NOTES
+    Requires: Step 7 completed (Runbook created)
 #>
-
-# ============================================
-# CONFIGURATION
-# ============================================
-
-$ScheduleConfig = @{
-    Name                  = "Daily-TeamsPremiumSync"
-    AutomationAccountName = "AA-TeamsPremiumLicenseSync"
-    ResourceGroupName     = $Config.ResourceGroupName
-    StartTime             = (Get-Date).AddDays(1).Date.AddHours(2)  # Tomorrow at 2 AM
-    TimeZone              = "Eastern Standard Time"
-    Description           = "Daily sync of Teams Premium license data"
-}
 
 # ============================================
 # Create Schedule
@@ -1381,9 +1696,9 @@ Write-Host "Creating schedule..." -ForegroundColor Yellow
 try {
     # Check if schedule exists
     $existingSchedule = Get-AzAutomationSchedule `
-        -ResourceGroupName $ScheduleConfig.ResourceGroupName `
-        -AutomationAccountName $ScheduleConfig.AutomationAccountName `
-        -Name $ScheduleConfig.Name `
+        -ResourceGroupName $Global:ResourceGroupName `
+        -AutomationAccountName $Global:AutomationAccountName `
+        -Name $Global:ScheduleName `
         -ErrorAction SilentlyContinue
     
     if ($existingSchedule) {
@@ -1391,13 +1706,13 @@ try {
     }
     else {
         New-AzAutomationSchedule `
-            -ResourceGroupName $ScheduleConfig.ResourceGroupName `
-            -AutomationAccountName $ScheduleConfig.AutomationAccountName `
-            -Name $ScheduleConfig.Name `
-            -StartTime $ScheduleConfig.StartTime `
+            -ResourceGroupName $Global:ResourceGroupName `
+            -AutomationAccountName $Global:AutomationAccountName `
+            -Name $Global:ScheduleName `
+            -StartTime $Global:ScheduleStartTime `
             -DayInterval 1 `
-            -TimeZone $ScheduleConfig.TimeZone `
-            -Description $ScheduleConfig.Description | Out-Null
+            -TimeZone $Global:ScheduleTimeZone `
+            -Description "Daily sync of Teams Premium license data" | Out-Null
         
         Write-Host "Schedule created successfully" -ForegroundColor Green
     }
@@ -1406,14 +1721,16 @@ try {
     Write-Host "Linking schedule to runbook..." -ForegroundColor Yellow
     
     Register-AzAutomationScheduledRunbook `
-        -ResourceGroupName $ScheduleConfig.ResourceGroupName `
-        -AutomationAccountName $ScheduleConfig.AutomationAccountName `
-        -RunbookName "Sync-TeamsPremiumLicenses" `
-        -ScheduleName $ScheduleConfig.Name `
+        -ResourceGroupName $Global:ResourceGroupName `
+        -AutomationAccountName $Global:AutomationAccountName `
+        -RunbookName $Global:RunbookName `
+        -ScheduleName $Global:ScheduleName `
         -ErrorAction SilentlyContinue | Out-Null
     
     Write-Host "Schedule linked to runbook!" -ForegroundColor Green
-    Write-Host "  Next run: $($ScheduleConfig.StartTime)" -ForegroundColor Cyan
+    Write-Host "  Schedule: $($Global:ScheduleName)" -ForegroundColor Cyan
+    Write-Host "  Next run: $($Global:ScheduleStartTime)" -ForegroundColor Cyan
+    Write-Host "  Time Zone: $($Global:ScheduleTimeZone)" -ForegroundColor Cyan
 }
 catch {
     if ($_.Exception.Message -like "*already registered*") {
@@ -1437,14 +1754,16 @@ catch {
     Step 9.1: Manually test the runbook
 .DESCRIPTION
     Triggers a test run of the runbook and monitors output
+.NOTES
+    Requires: Steps 1-8 completed
 #>
 
 Write-Host "Starting manual test run..." -ForegroundColor Yellow
 
 $job = Start-AzAutomationRunbook `
-    -ResourceGroupName $Config.ResourceGroupName `
-    -AutomationAccountName "AA-TeamsPremiumLicenseSync" `
-    -Name "Sync-TeamsPremiumLicenses"
+    -ResourceGroupName $Global:ResourceGroupName `
+    -AutomationAccountName $Global:AutomationAccountName `
+    -Name $Global:RunbookName
 
 Write-Host "Job started: $($job.JobId)" -ForegroundColor Cyan
 
@@ -1454,8 +1773,8 @@ Write-Host "Waiting for job to complete..." -ForegroundColor Yellow
 do {
     Start-Sleep -Seconds 10
     $jobStatus = Get-AzAutomationJob `
-        -ResourceGroupName $Config.ResourceGroupName `
-        -AutomationAccountName "AA-TeamsPremiumLicenseSync" `
+        -ResourceGroupName $Global:ResourceGroupName `
+        -AutomationAccountName $Global:AutomationAccountName `
         -Id $job.JobId
     
     Write-Host "  Status: $($jobStatus.Status)" -ForegroundColor Gray
@@ -1467,8 +1786,8 @@ Write-Host "Job Output:" -ForegroundColor Cyan
 Write-Host "==========" -ForegroundColor Cyan
 
 $output = Get-AzAutomationJobOutput `
-    -ResourceGroupName $Config.ResourceGroupName `
-    -AutomationAccountName "AA-TeamsPremiumLicenseSync" `
+    -ResourceGroupName $Global:ResourceGroupName `
+    -AutomationAccountName $Global:AutomationAccountName `
     -Id $job.JobId `
     -Stream Any
 
@@ -1492,8 +1811,8 @@ else {
     
     # Get error details
     $errors = Get-AzAutomationJobOutput `
-        -ResourceGroupName $Config.ResourceGroupName `
-        -AutomationAccountName "AA-TeamsPremiumLicenseSync" `
+        -ResourceGroupName $Global:ResourceGroupName `
+        -AutomationAccountName $Global:AutomationAccountName `
         -Id $job.JobId `
         -Stream Error
     
@@ -1519,7 +1838,7 @@ Write-Host "Run this query in Log Analytics (Azure Portal):" -ForegroundColor Cy
 Write-Host ""
 
 $verifyQuery = @"
-TeamsPremiumLicenses_CL
+$($Global:FullTableName)
 | where TimeGenerated > ago(1h)
 | summarize 
     RecordCount = count(),
@@ -1538,8 +1857,8 @@ Write-Host ""
 # Attempt to query via API
 try {
     $workspaceId = (Get-AzOperationalInsightsWorkspace `
-        -ResourceGroupName $Config.ResourceGroupName `
-        -Name $Config.WorkspaceName).CustomerId
+        -ResourceGroupName $Global:ResourceGroupName `
+        -Name $Global:WorkspaceName).CustomerId
 
     $queryResult = Invoke-AzOperationalInsightsQuery `
         -WorkspaceId $workspaceId `
@@ -1553,6 +1872,44 @@ catch {
     Write-Host "Could not query via API. Please run the query manually in the Azure Portal." -ForegroundColor Yellow
     Write-Host "Navigate to: Log Analytics workspace > Logs" -ForegroundColor Gray
 }
+```
+
+### 9.3 Deployment Summary
+
+```powershell
+<#
+.SYNOPSIS
+    Step 9.3: Display deployment summary
+.DESCRIPTION
+    Shows all deployed resources and their configurations
+#>
+
+Write-Host ""
+Write-Host "╔══════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
+Write-Host "║                    DEPLOYMENT COMPLETED SUCCESSFULLY                         ║" -ForegroundColor Green
+Write-Host "╚══════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor Green
+Write-Host ""
+
+Write-Host "Deployed Resources:" -ForegroundColor Yellow
+Write-Host "  Custom Table:        $($Global:FullTableName)" -ForegroundColor White
+Write-Host "  DCE:                 $($Global:DceName)" -ForegroundColor White
+Write-Host "  DCR:                 $($Global:DcrName)" -ForegroundColor White
+Write-Host "  Automation Account:  $($Global:AutomationAccountName)" -ForegroundColor White
+Write-Host "  Runbook:             $($Global:RunbookName)" -ForegroundColor White
+Write-Host "  Schedule:            $($Global:ScheduleName)" -ForegroundColor White
+Write-Host ""
+
+Write-Host "Runtime Values (save these for reference):" -ForegroundColor Yellow
+Write-Host "  DCE Ingestion URI:   $($Global:DceLogsIngestionUri)" -ForegroundColor Cyan
+Write-Host "  DCR Immutable ID:    $($Global:DcrImmutableId)" -ForegroundColor Cyan
+Write-Host "  Managed Identity ID: $($Global:AutomationAccountPrincipalId)" -ForegroundColor Cyan
+Write-Host ""
+
+Write-Host "Next Steps:" -ForegroundColor Yellow
+Write-Host "  1. Verify first sync completed (Step 9.1)" -ForegroundColor White
+Write-Host "  2. Query data in Log Analytics (Step 9.2)" -ForegroundColor White
+Write-Host "  3. Use KQL queries from the 'KQL Queries' section" -ForegroundColor White
+Write-Host ""
 ```
 
 ---
@@ -1795,5 +2152,3 @@ Write-Host ""
 | 1.0 | December 2025 | LCE M365 Security Team | Initial release |
 
 ---
-
-*End of Build Book*
