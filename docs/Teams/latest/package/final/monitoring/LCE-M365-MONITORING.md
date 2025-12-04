@@ -1127,7 +1127,7 @@ $workspace = Get-AzOperationalInsightsWorkspace `
 if ($null -eq $workspace) {
     Write-Host "ERROR: Workspace '$($Global:WorkspaceName)' not found in resource group '$($Global:ResourceGroupName)'" -ForegroundColor Red
     Write-Host "Please verify the workspace name and resource group in Step 0 configuration." -ForegroundColor Yellow
-    return  # Use return instead of exit to not kill VS Code session
+    return
 }
 
 Write-Host "Found workspace: $($workspace.Name)" -ForegroundColor Green
@@ -1139,49 +1139,56 @@ Set-RuntimeVariable -Name "WorkspaceResourceId" -Value $workspace.ResourceId
 Set-RuntimeVariable -Name "WorkspaceId" -Value $workspace.CustomerId
 
 # ============================================
-# Refresh Azure Token (prevents expired token errors)
+# Force Fresh Azure Authentication
 # ============================================
 
 Write-Host ""
-Write-Host "Refreshing Azure authentication..." -ForegroundColor Yellow
+Write-Host "Ensuring fresh Azure authentication..." -ForegroundColor Yellow
 
-# Force token refresh by re-authenticating
-$azContext = Get-AzContext
-if ($null -eq $azContext) {
-    Connect-AzAccount | Out-Null
-}
+# Show current context
+$currentContext = Get-AzContext
+Write-Host "  Current Account: $($currentContext.Account.Id)" -ForegroundColor Gray
+Write-Host "  Current Subscription: $($currentContext.Subscription.Name)" -ForegroundColor Gray
+Write-Host "  Current Tenant: $($currentContext.Tenant.Id)" -ForegroundColor Gray
 
-# Get a fresh token explicitly
+# Clear token cache and re-authenticate
+Write-Host ""
+Write-Host "  Clearing token cache and re-authenticating..." -ForegroundColor Yellow
+
 try {
-    $tokenResponse = Get-AzAccessToken -ResourceUrl "https://management.azure.com" -ErrorAction Stop
-    $headers = @{
-        "Authorization" = "Bearer $($tokenResponse.Token)"
-        "Content-Type"  = "application/json"
-    }
-    Write-Host "  ✓ Token refreshed successfully" -ForegroundColor Green
-    Write-Host "  Token expires: $($tokenResponse.ExpiresOn)" -ForegroundColor Gray
+    # Disconnect and reconnect to force fresh tokens
+    Disconnect-AzAccount -ErrorAction SilentlyContinue | Out-Null
+    
+    # Reconnect with explicit subscription
+    $reconnectResult = Connect-AzAccount -Subscription $Global:SubscriptionId -ErrorAction Stop
+    
+    Write-Host "  ✓ Re-authenticated as: $($reconnectResult.Context.Account.Id)" -ForegroundColor Green
 }
 catch {
-    Write-Host "  Token refresh failed. Re-authenticating..." -ForegroundColor Yellow
-    Connect-AzAccount -Subscription $Global:SubscriptionId | Out-Null
-    $tokenResponse = Get-AzAccessToken -ResourceUrl "https://management.azure.com"
-    $headers = @{
-        "Authorization" = "Bearer $($tokenResponse.Token)"
-        "Content-Type"  = "application/json"
-    }
-    Write-Host "  ✓ Re-authenticated successfully" -ForegroundColor Green
+    Write-Host "  Auto-reconnect failed. Please authenticate manually:" -ForegroundColor Yellow
+    Connect-AzAccount
+    Set-AzContext -SubscriptionId $Global:SubscriptionId | Out-Null
+}
+
+# Get fresh token
+$tokenResponse = Get-AzAccessToken -ResourceUrl "https://management.azure.com"
+Write-Host "  ✓ Token acquired, expires: $($tokenResponse.ExpiresOn)" -ForegroundColor Green
+
+# Build headers with fresh token
+$headers = @{
+    "Authorization" = "Bearer $($tokenResponse.Token)"
+    "Content-Type"  = "application/json"
 }
 
 # ============================================
 # Create Custom Table using REST API
 # ============================================
 
-# Use $workspace.ResourceId directly (not the global variable which may not be set yet)
 $tableResourceId = "$($workspace.ResourceId)/tables/$($Global:FullTableName)"
 
 Write-Host ""
 Write-Host "Building table request..." -ForegroundColor Yellow
-Write-Host "  Table Resource ID: $tableResourceId" -ForegroundColor Gray
+Write-Host "  Table: $($Global:FullTableName)" -ForegroundColor Gray
 
 $tableDefinition = @{
     properties = @{
@@ -1201,46 +1208,67 @@ $tableDefinition = @{
 }
 
 $tableBody = $tableDefinition | ConvertTo-Json -Depth 10
-
-# Create table
 $apiVersion = "2022-10-01"
 $uri = "https://management.azure.com$($tableResourceId)?api-version=$apiVersion"
 
-Write-Host "  API URI: $uri" -ForegroundColor Gray
 Write-Host ""
+Write-Host "Creating custom table: $($Global:FullTableName)..." -ForegroundColor Yellow
 
 try {
-    Write-Host "Creating custom table: $($Global:FullTableName)..." -ForegroundColor Yellow
+    # Method 1: Try using Invoke-AzRestMethod (uses Az module's built-in auth)
+    Write-Host "  Attempting with Invoke-AzRestMethod..." -ForegroundColor Gray
     
-    $response = Invoke-RestMethod -Uri $uri -Method Put -Headers $headers -Body $tableBody -ErrorAction Stop
+    $restResult = Invoke-AzRestMethod `
+        -Path "$($tableResourceId)?api-version=$apiVersion" `
+        -Method PUT `
+        -Payload $tableBody `
+        -ErrorAction Stop
     
-    Write-Host ""
-    Write-Host "Custom table created successfully!" -ForegroundColor Green
-    Write-Host "  Table Name: $($response.name)" -ForegroundColor Gray
-    Write-Host "  Retention: $($response.properties.retentionInDays) days" -ForegroundColor Gray
+    if ($restResult.StatusCode -in @(200, 201)) {
+        $response = $restResult.Content | ConvertFrom-Json
+        Write-Host ""
+        Write-Host "Custom table created successfully!" -ForegroundColor Green
+        Write-Host "  Table Name: $($response.name)" -ForegroundColor Gray
+        Write-Host "  Retention: $($response.properties.retentionInDays) days" -ForegroundColor Gray
+    }
+    elseif ($restResult.StatusCode -eq 409) {
+        Write-Host ""
+        Write-Host "Table already exists - continuing..." -ForegroundColor Yellow
+    }
+    else {
+        Write-Host ""
+        Write-Host "Unexpected response: $($restResult.StatusCode)" -ForegroundColor Yellow
+        Write-Host $restResult.Content -ForegroundColor Gray
+    }
 }
 catch {
-    $statusCode = $_.Exception.Response.StatusCode
-    $errorMessage = $_.ErrorDetails.Message
+    $errorMsg = $_.Exception.Message
     
-    if ($statusCode -eq "Conflict" -or $_.Exception.Message -like "*Conflict*") {
+    if ($errorMsg -like "*Conflict*" -or $errorMsg -like "*409*") {
         Write-Host ""
         Write-Host "Table already exists - continuing..." -ForegroundColor Yellow
     }
     else {
         Write-Host ""
         Write-Host "ERROR: Failed to create table" -ForegroundColor Red
-        Write-Host "  Status Code: $statusCode" -ForegroundColor Red
-        Write-Host "  Error: $errorMessage" -ForegroundColor Red
+        Write-Host "  Error: $errorMsg" -ForegroundColor Red
+        
+        # Try to get more details
+        if ($_.ErrorDetails.Message) {
+            Write-Host "  Details: $($_.ErrorDetails.Message)" -ForegroundColor Red
+        }
         
         Write-Host ""
-        Write-Host "Troubleshooting tips:" -ForegroundColor Yellow
-        Write-Host "  1. Verify you have 'Log Analytics Contributor' role on the workspace" -ForegroundColor White
-        Write-Host "  2. Check that the workspace is not in a restricted state" -ForegroundColor White
-        Write-Host "  3. Try running: Connect-AzAccount -Subscription '$($Global:SubscriptionId)'" -ForegroundColor White
+        Write-Host "Manual Alternative - Run this in Azure Cloud Shell:" -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "az monitor log-analytics workspace table create \" -ForegroundColor Cyan
+        Write-Host "  --resource-group `"$($Global:ResourceGroupName)`" \" -ForegroundColor Cyan
+        Write-Host "  --workspace-name `"$($Global:WorkspaceName)`" \" -ForegroundColor Cyan
+        Write-Host "  --name `"$($Global:FullTableName)`" \" -ForegroundColor Cyan
+        Write-Host "  --retention-time $($Global:TableRetentionDays) \" -ForegroundColor Cyan
+        Write-Host "  --columns TimeGenerated=datetime UserPrincipalName=string DisplayName=string LicenseAssigned=boolean ObjectId=string" -ForegroundColor Cyan
         Write-Host ""
         
-        # Don't exit - let user investigate
         return
     }
 }
