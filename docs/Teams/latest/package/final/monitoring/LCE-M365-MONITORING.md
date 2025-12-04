@@ -222,7 +222,7 @@ $Global:ScheduleStartHour     = 2                                  # Hour to run
 # ------------------------------------------------------------------------------
 # MICROSOFT 365 LICENSE
 # ------------------------------------------------------------------------------
-$Global:TeamsPremiumSkuId     = "16ddbbfc-09ea-4de2-b1d7-312db6112d70"  # Teams Premium SKU ID (usually don't change)
+$Global:TeamsPremiumSkuId     = "36a0f3b3-adb5-49ea-bf66-762134cf063a"  # Teams Premium SKU ID - VERIFY for your tenant
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║                      DO NOT MODIFY BELOW THIS LINE                           ║
@@ -766,7 +766,7 @@ After running the configuration script, these global variables are available in 
 | `$Global:StreamName` | DCR stream name | `Custom-TeamsPremiumLicenses_CL` |
 | `$Global:AutomationAccountName` | Automation Account | `AA-TeamsPremiumLicenseSync` |
 | `$Global:RunbookName` | Runbook name | `Sync-TeamsPremiumLicenses` |
-| `$Global:TeamsPremiumSkuId` | Teams Premium SKU ID | `16ddbbfc-09ea-4de2-b1d7-312db6112d70` |
+| `$Global:TeamsPremiumSkuId` | Teams Premium SKU ID | `36a0f3b3-adb5-49ea-bf66-762134cf063a` |
 
 **Runtime Variables** (populated during deployment):
 
@@ -1793,7 +1793,7 @@ Save this as `Sync-TeamsPremiumLicenses.ps1`:
 $DceUri = "<Your-DCE-Logs-Ingestion-URI>"          # e.g., https://dce-xxx.canadacentral-1.ingest.monitor.azure.com
 $DcrImmutableId = "<Your-DCR-Immutable-ID>"        # e.g., dcr-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 $StreamName = "Custom-TeamsPremiumLicenses_CL"
-$TeamsPremiumSkuId = "16ddbbfc-09ea-4de2-b1d7-312db6112d70"  # Teams Premium SKU ID
+$TeamsPremiumSkuId = "36a0f3b3-adb5-49ea-bf66-762134cf063a"  # Teams Premium SKU ID
 
 # ============================================
 # AUTHENTICATION
@@ -2512,41 +2512,171 @@ TeamsPremiumLicenses_CL
 | No data in custom table | DCR stream name mismatch | Verify StreamName matches in DCR and runbook |
 | Table not found error | Table not created | Re-run Step 2 to create the table |
 | Empty results from Graph | Managed Identity not working | Verify MI is enabled in Automation Account |
+| "0 Teams Premium users found" | Wrong SKU ID | Run SKU verification script below |
+| "ManagedIdentityCredential authentication failed" | Running locally instead of in Azure | Runbook must run IN Azure Automation, not locally |
+| "InvalidAuthenticationToken" when running locally | Local PC has no Managed Identity | Use Start-AzAutomationRunbook to run in Azure |
+| Token expires during deployment | Session timeout | Use Invoke-AzRestMethod instead of manual tokens |
+| "exit 1" kills VS Code terminal | Script termination issue | Scripts updated to use "return" instead |
+
+### Critical: Runbook Must Run IN Azure Automation
+
+The runbook uses `Connect-AzAccount -Identity` which ONLY works inside Azure services (Automation, VMs, Functions). 
+
+**Where the runbook CAN run:**
+- ✅ Azure Automation (scheduled or manual via Start-AzAutomationRunbook)
+- ✅ Azure VM with Managed Identity
+- ✅ Azure Functions with Managed Identity
+
+**Where the runbook CANNOT run:**
+- ❌ Your local PC / VS Code terminal
+- ❌ Azure Cloud Shell (no MI by default)
+- ❌ Any machine outside Azure
+
+**If you see this error locally:**
+```
+ManagedIdentityCredential authentication failed: Retry failed after 5 tries.
+(169.254.169.254:80) connection failed
+```
+
+**Solution:** Run the runbook FROM Azure, not locally:
+```powershell
+# Start runbook in Azure Automation (run this locally)
+$job = Start-AzAutomationRunbook `
+    -ResourceGroupName "rg-lce-monitoring" `
+    -AutomationAccountName "AA-TeamsPremiumLicenseSync" `
+    -Name "Sync-TeamsPremiumLicenses"
+
+# Monitor job status
+do {
+    Start-Sleep -Seconds 5
+    $jobStatus = Get-AzAutomationJob `
+        -ResourceGroupName "rg-lce-monitoring" `
+        -AutomationAccountName "AA-TeamsPremiumLicenseSync" `
+        -Id $job.JobId
+    Write-Host "Status: $($jobStatus.Status)"
+} while ($jobStatus.Status -notin @("Completed", "Failed", "Stopped", "Suspended"))
+
+# Get output
+Get-AzAutomationJobOutput `
+    -ResourceGroupName "rg-lce-monitoring" `
+    -AutomationAccountName "AA-TeamsPremiumLicenseSync" `
+    -Id $job.JobId -Stream Any | 
+    ForEach-Object { Write-Host $_.Summary }
+```
+
+### Verify Teams Premium SKU ID
+
+The Teams Premium SKU ID varies by tenant. Run this to find yours:
+
+```powershell
+# Connect to Graph
+Connect-MgGraph -Scopes "Organization.Read.All" -NoWelcome
+
+# Find Teams-related SKUs
+Get-MgSubscribedSku | 
+    Where-Object { $_.SkuPartNumber -like "*Teams*" -or $_.SkuPartNumber -like "*PREMIUM*" } | 
+    Select-Object SkuPartNumber, SkuId, 
+        @{N="Assigned";E={$_.ConsumedUnits}},
+        @{N="Available";E={$_.PrepaidUnits.Enabled}} |
+    Format-Table -AutoSize
+
+# Show ALL SKUs if Teams Premium not obvious
+Write-Host "`nAll SKUs in tenant:" -ForegroundColor Yellow
+Get-MgSubscribedSku | 
+    Select-Object SkuPartNumber, SkuId | 
+    Sort-Object SkuPartNumber | 
+    Format-Table -AutoSize
+```
+
+**Known Teams Premium SKU IDs:**
+| SKU Part Number | SKU ID |
+|-----------------|--------|
+| Microsoft_Teams_Premium | `36a0f3b3-adb5-49ea-bf66-762134cf063a` |
+| Teams_Premium | `36a0f3b3-adb5-49ea-bf66-762134cf063a` |
+| Teams Premium (Trial) | `f5fa4fa8-8bec-4d38-b1e1-e5d3c23f7f23` |
+
+> **Note:** Your tenant uses SKU ID `36a0f3b3-adb5-49ea-bf66-762134cf063a`
 
 ### Debug Commands
 
 ```powershell
 # Check Automation Account Managed Identity
-$aa = Get-AzAutomationAccount -ResourceGroupName "<RG>" -Name "<AA-Name>"
-$aa.Identity
+$aaResourcePath = "/subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.Automation/automationAccounts/<aa-name>"
+$result = Invoke-AzRestMethod -Path "$aaResourcePath`?api-version=2023-11-01" -Method GET
+($result.Content | ConvertFrom-Json).identity
 
 # Check Graph permissions on Managed Identity
-Get-MgServicePrincipalAppRoleAssignment -ServicePrincipalId "<MI-Object-ID>"
+$miObjectId = "<Managed-Identity-Object-ID>"
+Get-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $miObjectId | 
+    Select-Object AppRoleId, ResourceDisplayName
 
 # Check RBAC on DCR
-Get-AzRoleAssignment -Scope "<DCR-Resource-ID>"
+Get-AzRoleAssignment -ObjectId $miObjectId -Scope "<DCR-Resource-ID>"
 
-# Get recent job failures
-Get-AzAutomationJob -ResourceGroupName "<RG>" -AutomationAccountName "<AA-Name>" -Status Failed | 
-    Select-Object -First 5 | 
+# Get recent job failures with full error output
+Get-AzAutomationJob `
+    -ResourceGroupName "<RG>" `
+    -AutomationAccountName "<AA-Name>" `
+    -Status Failed | 
+    Select-Object -First 3 | 
     ForEach-Object { 
-        Get-AzAutomationJobOutput -Id $_.JobId -ResourceGroupName "<RG>" -AutomationAccountName "<AA-Name>" -Stream Error 
+        Write-Host "Job: $($_.JobId)" -ForegroundColor Cyan
+        Get-AzAutomationJobOutput `
+            -ResourceGroupName "<RG>" `
+            -AutomationAccountName "<AA-Name>" `
+            -Id $_.JobId -Stream Error |
+            ForEach-Object { Write-Host $_.Summary -ForegroundColor Red }
     }
+
+# Verify runbook exists and is published
+Get-AzAutomationRunbook `
+    -ResourceGroupName "<RG>" `
+    -AutomationAccountName "<AA-Name>" |
+    Select-Object Name, RunbookType, State |
+    Format-Table
 ```
 
-### Teams Premium SKU ID Reference
+### Token/Authentication Issues During Deployment
+
+If you get "InvalidAuthenticationToken" errors when running deployment scripts:
+
+**Problem:** Azure tokens expire (usually after 1 hour), causing REST API calls to fail.
+
+**Solution 1:** Use `Invoke-AzRestMethod` instead of `Invoke-RestMethod` with manual headers:
+```powershell
+# Instead of this (can fail with expired tokens):
+$headers = @{ "Authorization" = "Bearer $token" }
+Invoke-RestMethod -Uri $uri -Headers $headers -Method Put -Body $body
+
+# Use this (handles auth automatically):
+Invoke-AzRestMethod -Path $resourcePath -Method PUT -Payload $body
+```
+
+**Solution 2:** Re-authenticate before critical operations:
+```powershell
+Disconnect-AzAccount -ErrorAction SilentlyContinue
+Connect-AzAccount -Subscription $Global:SubscriptionId
+```
+
+### Az Modules in Automation Account
+
+The runbook requires Az.Accounts module. Verify it's imported:
 
 ```powershell
-# If you need to verify the Teams Premium SKU ID in your tenant:
-Connect-MgGraph -Scopes "Organization.Read.All"
+# Check modules in Automation Account
+Get-AzAutomationModule `
+    -ResourceGroupName "rg-lce-monitoring" `
+    -AutomationAccountName "AA-TeamsPremiumLicenseSync" |
+    Where-Object { $_.Name -like "Az.*" } |
+    Select-Object Name, ProvisioningState |
+    Format-Table
 
-Get-MgSubscribedSku | 
-    Where-Object { $_.SkuPartNumber -like "*Teams*" } | 
-    Select-Object SkuPartNumber, SkuId, ConsumedUnits
-
-# Common SKU IDs:
-# Teams Premium: 16ddbbfc-09ea-4de2-b1d7-312db6112d70
-# Teams Premium (trial): f5fa4fa8-8bec-4d38-b1e1-e5d3c23f7f23
+# Import Az.Accounts if missing
+Import-AzAutomationModule `
+    -ResourceGroupName "rg-lce-monitoring" `
+    -AutomationAccountName "AA-TeamsPremiumLicenseSync" `
+    -Name "Az.Accounts" `
+    -ContentLinkUri "https://www.powershellgallery.com/api/v2/package/Az.Accounts"
 ```
 
 ---
@@ -2657,309 +2787,6 @@ Write-Host ""
 | **Total** | **~$3-6/month** |
 
 ---
-
-## Troubleshooting with different version of Runbooks from 5 to 7.1 / vice versa
-
-```powershell
-<#
-.SYNOPSIS
-    Teams Premium License Sync Runbook
-.DESCRIPTION
-    Queries Microsoft Graph for Teams Premium license assignments
-    and ingests the data into Log Analytics via DCR.
-    
-    This runbook runs in Azure Automation using a System-Assigned Managed Identity.
-.REQUIREMENTS
-    - Azure Automation Account with System-Assigned Managed Identity enabled
-    - PowerShell 7.2 Runtime (NOT PowerShell 5.1)
-    - Az.Accounts module imported in Automation Account
-    - Managed Identity requires:
-      * Microsoft Graph: User.Read.All (Application permission)
-      * Azure RBAC: Monitoring Metrics Publisher on the DCR
-.NOTES
-    Author: LCE M365 Security Team
-    Version: 1.1
-    Runtime: PowerShell 7.2
-    
-    BEFORE RUNNING:
-    1. Update the CONFIGURATION section below with your values
-    2. Ensure Az.Accounts module is imported in your Automation Account
-    3. Verify Managed Identity has required permissions (Step 6 of Build Book)
-#>
-
-# ============================================
-# CONFIGURATION - UPDATE THESE VALUES
-# ============================================
-
-$DceUri = "https://dce-teamspremiumlicenses-4q1m.canadaeast-1.ingest.monitor.azure.com"  # e.g., https://dce-teamspremiumlicenses.canadaeast-1.ingest.monitor.azure.com
-$DcrImmutableId = "dcr-80aee557ba12478a9dff76584b61ec38"                           # e.g., dcr-1234567890abcdef1234567890abcdef
-$StreamName = "Custom-TeamsPremiumLicenses_CL"                          # Usually don't change this
-$TeamsPremiumSkuId = "16ddbbfc-09ea-4de2-b1d7-312db6112d70"            # Teams Premium SKU ID
-
-# ============================================
-# VALIDATION
-# ============================================
-
-Write-Output "============================================"
-Write-Output "Teams Premium License Sync Runbook"
-Write-Output "============================================"
-Write-Output ""
-Write-Output "Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') UTC"
-Write-Output "PowerShell Version: $($PSVersionTable.PSVersion)"
-Write-Output ""
-
-# Validate configuration
-if ($DceUri -like "*dce-teamspremiumlicenses-4q1m*" -or $DcrImmutableId -like "*80aee557ba12478a9dff76584b61ec38*") {
-    Write-Error "Configuration not updated! Please edit this runbook and update the CONFIGURATION section with your actual values."
-    throw "Configuration not set"
-}
-
-Write-Output "Configuration:"
-Write-Output "  DCE URI: $DceUri"
-Write-Output "  DCR Immutable ID: $DcrImmutableId"
-Write-Output "  Stream: $StreamName"
-Write-Output ""
-
-# ============================================
-# AUTHENTICATION
-# ============================================
-
-Write-Output "Step 1: Authenticating with Managed Identity..."
-
-try {
-    # Connect to Azure using the Automation Account's Managed Identity
-    $azConnect = Connect-AzAccount -Identity -ErrorAction Stop
-    
-    Write-Output "  ✓ Azure connection established"
-    Write-Output "    Account Type: $($azConnect.Context.Account.Type)"
-    Write-Output "    Account ID: $($azConnect.Context.Account.Id)"
-    Write-Output "    Tenant: $($azConnect.Context.Tenant.Id)"
-    Write-Output "    Subscription: $($azConnect.Context.Subscription.Name)"
-}
-catch {
-    Write-Error "Failed to authenticate with Managed Identity"
-    Write-Output ""
-    Write-Output "ERROR DETAILS: $_"
-    Write-Output ""
-    Write-Output "TROUBLESHOOTING:"
-    Write-Output "  1. Verify System-Assigned Managed Identity is ENABLED on the Automation Account"
-    Write-Output "  2. Ensure this runbook is configured to use PowerShell 7.2 runtime"
-    Write-Output "  3. Check that Az.Accounts module is imported in the Automation Account"
-    Write-Output "  4. In Azure Portal: Automation Account > Identity > System assigned = ON"
-    throw
-}
-
-# Get Microsoft Graph token
-Write-Output ""
-Write-Output "Step 2: Acquiring Microsoft Graph token..."
-
-try {
-    $graphTokenResponse = Get-AzAccessToken -ResourceUrl "https://graph.microsoft.com" -ErrorAction Stop
-    $graphToken = $graphTokenResponse.Token
-    
-    Write-Output "  ✓ Graph token acquired"
-    Write-Output "    Expires: $($graphTokenResponse.ExpiresOn)"
-}
-catch {
-    Write-Error "Failed to acquire Microsoft Graph token"
-    Write-Output ""
-    Write-Output "ERROR DETAILS: $_"
-    Write-Output ""
-    Write-Output "TROUBLESHOOTING:"
-    Write-Output "  1. Verify User.Read.All permission is granted to the Managed Identity"
-    Write-Output "  2. In Azure Portal: Entra ID > Enterprise Apps > (your Automation Account MI)"
-    Write-Output "  3. Check Permissions > Application permissions > User.Read.All"
-    Write-Output "  4. Re-run Step 6.1 from the Build Book"
-    throw
-}
-
-# Get Azure Monitor token
-Write-Output ""
-Write-Output "Step 3: Acquiring Azure Monitor token..."
-
-try {
-    $monitorTokenResponse = Get-AzAccessToken -ResourceUrl "https://monitor.azure.com" -ErrorAction Stop
-    $monitorToken = $monitorTokenResponse.Token
-    
-    Write-Output "  ✓ Monitor token acquired"
-    Write-Output "    Expires: $($monitorTokenResponse.ExpiresOn)"
-}
-catch {
-    Write-Error "Failed to acquire Azure Monitor token"
-    Write-Output ""
-    Write-Output "ERROR DETAILS: $_"
-    throw
-}
-
-Write-Output ""
-Write-Output "Authentication completed successfully!"
-
-# ============================================
-# QUERY MICROSOFT GRAPH
-# ============================================
-
-Write-Output ""
-Write-Output "Step 4: Querying Microsoft Graph for users..."
-
-$graphHeaders = @{
-    "Authorization"    = "Bearer $graphToken"
-    "Content-Type"     = "application/json"
-    "ConsistencyLevel" = "eventual"
-}
-
-$users = [System.Collections.Generic.List[object]]::new()
-$uri = "https://graph.microsoft.com/v1.0/users?`$select=id,userPrincipalName,displayName,assignedLicenses&`$top=999"
-$pageCount = 0
-
-try {
-    do {
-        $pageCount++
-        $response = Invoke-RestMethod -Uri $uri -Headers $graphHeaders -Method Get -ErrorAction Stop
-        
-        foreach ($user in $response.value) {
-            $users.Add($user)
-        }
-        
-        $uri = $response.'@odata.nextLink'
-        
-        if ($pageCount % 5 -eq 0) {
-            Write-Output "  Retrieved $($users.Count) users (page $pageCount)..."
-        }
-    } while ($uri)
-    
-    Write-Output "  ✓ Total users retrieved: $($users.Count)"
-}
-catch {
-    Write-Error "Failed to query Microsoft Graph"
-    Write-Output ""
-    Write-Output "ERROR DETAILS: $_"
-    
-    if ($_.ErrorDetails.Message) {
-        Write-Output "API ERROR: $($_.ErrorDetails.Message)"
-    }
-    throw
-}
-
-# ============================================
-# FILTER TEAMS PREMIUM USERS
-# ============================================
-
-Write-Output ""
-Write-Output "Step 5: Filtering Teams Premium license holders..."
-
-$teamsPremiumUsers = $users | Where-Object {
-    $_.assignedLicenses.skuId -contains $TeamsPremiumSkuId
-}
-
-Write-Output "  ✓ Users with Teams Premium: $($teamsPremiumUsers.Count)"
-
-if ($teamsPremiumUsers.Count -eq 0) {
-    Write-Output ""
-    Write-Output "No Teams Premium users found. Nothing to sync."
-    Write-Output ""
-    Write-Output "NOTE: If you expect users, verify the Teams Premium SKU ID is correct."
-    Write-Output "Current SKU ID: $TeamsPremiumSkuId"
-    return
-}
-
-# ============================================
-# BUILD LOG PAYLOAD
-# ============================================
-
-Write-Output ""
-Write-Output "Step 6: Building ingestion payload..."
-
-$currentTime = (Get-Date).ToUniversalTime().ToString("o")
-
-$logData = [System.Collections.Generic.List[hashtable]]::new()
-
-foreach ($user in $teamsPremiumUsers) {
-    $logData.Add(@{
-        TimeGenerated     = $currentTime
-        UserPrincipalName = $user.userPrincipalName
-        DisplayName       = $user.displayName
-        LicenseAssigned   = $true
-        ObjectId          = $user.id
-    })
-}
-
-Write-Output "  ✓ Payload built: $($logData.Count) records"
-
-# ============================================
-# INGEST TO LOG ANALYTICS
-# ============================================
-
-Write-Output ""
-Write-Output "Step 7: Ingesting data to Log Analytics..."
-
-$ingestUri = "$DceUri/dataCollectionRules/$DcrImmutableId/streams/$StreamName`?api-version=2023-01-01"
-
-Write-Output "  Target URI: $ingestUri"
-
-$ingestHeaders = @{
-    "Authorization" = "Bearer $monitorToken"
-    "Content-Type"  = "application/json"
-}
-
-$batchSize = 500
-$totalBatches = [math]::Ceiling($logData.Count / $batchSize)
-$successCount = 0
-$failCount = 0
-
-Write-Output "  Batch size: $batchSize"
-Write-Output "  Total batches: $totalBatches"
-Write-Output ""
-
-for ($i = 0; $i -lt $logData.Count; $i += $batchSize) {
-    $batchNumber = [math]::Floor($i / $batchSize) + 1
-    $endIndex = [math]::Min($i + $batchSize - 1, $logData.Count - 1)
-    $batch = $logData[$i..$endIndex]
-    
-    # Convert to JSON array
-    $batchBody = ConvertTo-Json -InputObject @($batch) -Depth 10 -Compress
-    
-    try {
-        $null = Invoke-RestMethod -Uri $ingestUri -Headers $ingestHeaders -Method Post -Body $batchBody -ErrorAction Stop
-        $successCount += $batch.Count
-        Write-Output "  ✓ Batch $batchNumber/$totalBatches : $($batch.Count) records ingested"
-    }
-    catch {
-        $failCount += $batch.Count
-        Write-Warning "  ✗ Batch $batchNumber/$totalBatches : FAILED"
-        Write-Warning "    Error: $_"
-        
-        if ($_.ErrorDetails.Message) {
-            Write-Warning "    Details: $($_.ErrorDetails.Message)"
-        }
-    }
-    
-    # Small delay between batches to avoid throttling
-    if ($batchNumber -lt $totalBatches) {
-        Start-Sleep -Milliseconds 500
-    }
-}
-
-# ============================================
-# SUMMARY
-# ============================================
-
-Write-Output ""
-Write-Output "============================================"
-Write-Output "SYNC COMPLETED"
-Write-Output "============================================"
-Write-Output ""
-Write-Output "Results:"
-Write-Output "  Total Teams Premium users: $($teamsPremiumUsers.Count)"
-Write-Output "  Successfully ingested:     $successCount"
-Write-Output "  Failed:                    $failCount"
-Write-Output ""
-Write-Output "Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') UTC"
-Write-Output "============================================"
-
-if ($failCount -gt 0) {
-    Write-Warning "Some records failed to ingest. Check the errors above."
-}
-```
 
 ## Document Control
 
