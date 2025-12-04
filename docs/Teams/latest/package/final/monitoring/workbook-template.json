@@ -1,0 +1,264 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# Teams Premium & CMK Compliance Dashboard\n---\nThis workbook tracks user compliance for Teams Premium licensing and Customer Managed Key (CMK) enablement across your tenant.\n\n**Last Refreshed:** {TimeRange:label}"
+      },
+      "name": "header"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "time-range",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "type": 4,
+            "isRequired": true,
+            "value": {
+              "durationMs": 604800000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                { "durationMs": 86400000 },
+                { "durationMs": 604800000 },
+                { "durationMs": 2592000000 },
+                { "durationMs": 7776000000 }
+              ]
+            },
+            "label": "Time Range"
+          },
+          {
+            "id": "target-group",
+            "version": "KqlParameterItem/1.0",
+            "name": "TargetSecurityGroup",
+            "type": 1,
+            "isRequired": false,
+            "value": "",
+            "label": "Target Security Group (ObjectId)",
+            "description": "Optional: Filter to users who should have Teams Premium"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 📊 Compliance Overview"
+      },
+      "name": "overview-header"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "// Teams Premium License Compliance Summary\n// Teams Premium SKU Part Number: Microsoft_Teams_Premium\nlet TeamsPremiumSKU = \"Microsoft_Teams_Premium\";\nlet lookbackDays = 30;\nSigninLogs\n| where TimeGenerated > ago(lookbackDays * 1d)\n| summarize LastSignIn = max(TimeGenerated) by UserPrincipalName, UserId\n| join kind=leftouter (\n    AuditLogs\n    | where TimeGenerated > ago(90d)\n    | where OperationName == \"Add member to group\" or OperationName == \"Change user license\"\n    | where Result == \"success\"\n    | extend ModifiedProps = parse_json(tostring(TargetResources[0].modifiedProperties))\n    | extend AssignedLicenses = tostring(ModifiedProps[0].newValue)\n    | where AssignedLicenses contains TeamsPremiumSKU or AssignedLicenses contains \"Teams Premium\"\n    | extend TargetUser = tostring(TargetResources[0].userPrincipalName)\n    | summarize HasTeamsPremium = true by TargetUser\n) on $left.UserPrincipalName == $right.TargetUser\n| extend ComplianceStatus = iff(isnotempty(HasTeamsPremium) and HasTeamsPremium == true, \"Compliant\", \"Non-Compliant\")\n| summarize \n    TotalUsers = dcount(UserPrincipalName),\n    CompliantUsers = dcountif(UserPrincipalName, ComplianceStatus == \"Compliant\"),\n    NonCompliantUsers = dcountif(UserPrincipalName, ComplianceStatus == \"Non-Compliant\")\n| extend ComplianceRate = round(todouble(CompliantUsers) / todouble(TotalUsers) * 100, 1)",
+        "size": 4,
+        "title": "Teams Premium License Summary",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "tiles",
+        "tileSettings": {
+          "titleContent": {
+            "columnMatch": "Column1",
+            "formatter": 1
+          },
+          "showBorder": true
+        }
+      },
+      "customWidth": "50",
+      "name": "teams-premium-summary"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "// CMK-Protected Meeting Policy Compliance\n// Tracks users assigned to meeting policies with CMK protection\nAuditLogs\n| where TimeGenerated > ago(90d)\n| where OperationName contains \"meeting policy\" or OperationName contains \"MeetingPolicy\"\n| where Result == \"success\"\n| extend PolicyDetails = parse_json(tostring(TargetResources[0].modifiedProperties))\n| extend PolicyName = tostring(PolicyDetails[0].newValue)\n| extend TargetUser = tostring(TargetResources[0].userPrincipalName)\n| where PolicyName contains \"CMK\" or PolicyName contains \"Protected\" or PolicyName contains \"Secure\"\n| summarize \n    CMKPolicyUsers = dcount(TargetUser),\n    LastPolicyAssignment = max(TimeGenerated)\n| extend Status = iff(CMKPolicyUsers > 0, \"CMK Policies Active\", \"No CMK Policies Found\")",
+        "size": 4,
+        "title": "CMK Meeting Policy Summary",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "tiles",
+        "tileSettings": {
+          "showBorder": true
+        }
+      },
+      "customWidth": "50",
+      "name": "cmk-policy-summary"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 👥 User Compliance Details"
+      },
+      "name": "details-header"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "// Detailed User Compliance Status\n// Shows each user's Teams Premium and CMK status\nlet TeamsPremiumSKU = \"Microsoft_Teams_Premium\";\nlet ActiveUsers = SigninLogs\n| where TimeGenerated > ago(30d)\n| summarize LastSignIn = max(TimeGenerated) by UserPrincipalName, UserId, UserDisplayName\n| where isnotempty(UserPrincipalName);\nlet TeamsPremiumUsers = AuditLogs\n| where TimeGenerated > ago(90d)\n| where OperationName == \"Change user license\" and Result == \"success\"\n| extend ModifiedProps = parse_json(tostring(TargetResources[0].modifiedProperties))\n| extend AssignedLicenses = tostring(ModifiedProps)\n| where AssignedLicenses contains TeamsPremiumSKU or AssignedLicenses contains \"Teams Premium\"\n| extend TargetUser = tostring(TargetResources[0].userPrincipalName)\n| summarize TeamsPremiumAssigned = true, LicenseAssignedDate = max(TimeGenerated) by TargetUser;\nlet CMKPolicyUsers = AuditLogs\n| where TimeGenerated > ago(90d)\n| where OperationName contains \"meeting policy\" or OperationName contains \"MeetingPolicy\"\n| where Result == \"success\"\n| extend PolicyDetails = parse_json(tostring(TargetResources[0].modifiedProperties))\n| extend PolicyName = tostring(PolicyDetails)\n| extend TargetUser = tostring(TargetResources[0].userPrincipalName)\n| where PolicyName contains \"CMK\" or PolicyName contains \"Protected\" or PolicyName contains \"Secure\"\n| summarize CMKPolicyAssigned = true, PolicyAssignedDate = max(TimeGenerated) by TargetUser;\nActiveUsers\n| join kind=leftouter TeamsPremiumUsers on $left.UserPrincipalName == $right.TargetUser\n| join kind=leftouter CMKPolicyUsers on $left.UserPrincipalName == $right.TargetUser1\n| extend \n    TeamsPremiumStatus = iff(TeamsPremiumAssigned == true, \"✅ Licensed\", \"❌ Not Licensed\"),\n    CMKPolicyStatus = iff(CMKPolicyAssigned == true, \"✅ Assigned\", \"⚠️ Not Assigned\"),\n    OverallCompliance = iff(TeamsPremiumAssigned == true and CMKPolicyAssigned == true, \"Fully Compliant\", \n                        iff(TeamsPremiumAssigned == true, \"Partial - Missing CMK Policy\", \"Non-Compliant\"))\n| project \n    UserPrincipalName,\n    UserDisplayName,\n    LastSignIn,\n    TeamsPremiumStatus,\n    LicenseAssignedDate,\n    CMKPolicyStatus,\n    PolicyAssignedDate,\n    OverallCompliance\n| order by OverallCompliance asc, UserDisplayName asc",
+        "size": 0,
+        "title": "User Compliance Status",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "OverallCompliance",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Fully Compliant",
+                    "representation": "green",
+                    "text": "{0}"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Partial - Missing CMK Policy",
+                    "representation": "yellow",
+                    "text": "{0}"
+                  },
+                  {
+                    "operator": "Default",
+                    "representation": "red",
+                    "text": "{0}"
+                  }
+                ]
+              }
+            }
+          ],
+          "filter": true,
+          "sortBy": [
+            {
+              "itemKey": "OverallCompliance",
+              "sortOrder": 1
+            }
+          ]
+        }
+      },
+      "name": "user-compliance-details"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## ⚠️ Non-Compliant Users Requiring Action"
+      },
+      "name": "action-header"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "// Non-Compliant Users - For Alert Integration\nlet TeamsPremiumSKU = \"Microsoft_Teams_Premium\";\nlet ActiveUsers = SigninLogs\n| where TimeGenerated > ago(30d)\n| summarize LastSignIn = max(TimeGenerated) by UserPrincipalName, UserId, UserDisplayName\n| where isnotempty(UserPrincipalName);\nlet TeamsPremiumUsers = AuditLogs\n| where TimeGenerated > ago(90d)\n| where OperationName == \"Change user license\" and Result == \"success\"\n| extend ModifiedProps = parse_json(tostring(TargetResources[0].modifiedProperties))\n| extend AssignedLicenses = tostring(ModifiedProps)\n| where AssignedLicenses contains TeamsPremiumSKU or AssignedLicenses contains \"Teams Premium\"\n| extend TargetUser = tostring(TargetResources[0].userPrincipalName)\n| summarize TeamsPremiumAssigned = true by TargetUser;\nlet CMKPolicyUsers = AuditLogs\n| where TimeGenerated > ago(90d)\n| where OperationName contains \"meeting policy\" or OperationName contains \"MeetingPolicy\"\n| extend PolicyDetails = parse_json(tostring(TargetResources[0].modifiedProperties))\n| extend PolicyName = tostring(PolicyDetails)\n| extend TargetUser = tostring(TargetResources[0].userPrincipalName)\n| where PolicyName contains \"CMK\" or PolicyName contains \"Protected\" or PolicyName contains \"Secure\"\n| summarize CMKPolicyAssigned = true by TargetUser;\nActiveUsers\n| join kind=leftouter TeamsPremiumUsers on $left.UserPrincipalName == $right.TargetUser\n| join kind=leftouter CMKPolicyUsers on $left.UserPrincipalName == $right.TargetUser1\n| where TeamsPremiumAssigned != true or CMKPolicyAssigned != true\n| extend \n    MissingItems = strcat(\n        iff(TeamsPremiumAssigned != true, \"Teams Premium License\", \"\"),\n        iff(TeamsPremiumAssigned != true and CMKPolicyAssigned != true, \", \", \"\"),\n        iff(CMKPolicyAssigned != true, \"CMK Meeting Policy\", \"\")\n    )\n| project \n    UserPrincipalName,\n    UserDisplayName,\n    LastSignIn,\n    MissingItems,\n    ActionRequired = \"Assign missing items to user\"\n| order by UserDisplayName asc",
+        "size": 0,
+        "title": "Users Requiring Remediation",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "ActionRequired",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "representation": "orange",
+                    "text": "{0}"
+                  }
+                ]
+              }
+            }
+          ],
+          "filter": true
+        }
+      },
+      "name": "non-compliant-users"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 📈 License Assignment Trends"
+      },
+      "name": "trends-header"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "// Teams Premium License Assignment Trend\nAuditLogs\n| where TimeGenerated {TimeRange}\n| where OperationName == \"Change user license\" and Result == \"success\"\n| extend ModifiedProps = parse_json(tostring(TargetResources[0].modifiedProperties))\n| extend AssignedLicenses = tostring(ModifiedProps)\n| where AssignedLicenses contains \"Teams Premium\" or AssignedLicenses contains \"Microsoft_Teams_Premium\"\n| summarize LicenseAssignments = count() by bin(TimeGenerated, 1d)\n| order by TimeGenerated asc",
+        "size": 0,
+        "title": "Teams Premium License Assignments Over Time",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "linechart",
+        "chartSettings": {
+          "xAxis": "TimeGenerated",
+          "yAxis": ["LicenseAssignments"],
+          "showLegend": true
+        }
+      },
+      "customWidth": "50",
+      "name": "license-trend"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "// Meeting Policy Assignment Trend\nAuditLogs\n| where TimeGenerated {TimeRange}\n| where OperationName contains \"meeting policy\" or OperationName contains \"MeetingPolicy\"\n| where Result == \"success\"\n| summarize PolicyAssignments = count() by bin(TimeGenerated, 1d)\n| order by TimeGenerated asc",
+        "size": 0,
+        "title": "Meeting Policy Assignments Over Time",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "linechart",
+        "chartSettings": {
+          "xAxis": "TimeGenerated",
+          "yAxis": ["PolicyAssignments"],
+          "showLegend": true
+        }
+      },
+      "customWidth": "50",
+      "name": "policy-trend"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 🔍 Audit Trail"
+      },
+      "name": "audit-header"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "// Recent License and Policy Changes\nAuditLogs\n| where TimeGenerated {TimeRange}\n| where OperationName == \"Change user license\" \n    or OperationName contains \"meeting policy\" \n    or OperationName contains \"MeetingPolicy\"\n| where Result == \"success\"\n| extend \n    TargetUser = tostring(TargetResources[0].userPrincipalName),\n    InitiatedBy = tostring(InitiatedBy.user.userPrincipalName),\n    ChangeType = case(\n        OperationName == \"Change user license\", \"License Change\",\n        OperationName contains \"meeting policy\", \"Meeting Policy Change\",\n        \"Other\"\n    )\n| project \n    TimeGenerated,\n    ChangeType,\n    TargetUser,\n    InitiatedBy,\n    OperationName,\n    Result\n| order by TimeGenerated desc\n| take 100",
+        "size": 0,
+        "title": "Recent Changes (Last 100)",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "filter": true
+        }
+      },
+      "name": "audit-trail"
+    }
+  ],
+  "fallbackResourceIds": [],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}

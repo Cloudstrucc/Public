@@ -1,0 +1,124 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Log Analytics workspace"
+      }
+    },
+    "workspaceResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource group containing the Log Analytics workspace"
+      }
+    },
+    "actionGroupName": {
+      "type": "string",
+      "defaultValue": "LCE-M365-Security-Admins",
+      "metadata": {
+        "description": "Name of the Action Group for notifications"
+      }
+    },
+    "actionGroupEmail": {
+      "type": "string",
+      "metadata": {
+        "description": "Email address for admin notifications"
+      }
+    },
+    "alertFrequencyMinutes": {
+      "type": "int",
+      "defaultValue": 1440,
+      "metadata": {
+        "description": "How often to run the alert (default: daily = 1440 minutes)"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for alert resources"
+      }
+    }
+  },
+  "variables": {
+    "workspaceId": "[resourceId(parameters('workspaceResourceGroup'), 'Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]",
+    "alertRuleName": "Teams-Premium-CMK-NonCompliance-Alert",
+    "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/actionGroups",
+      "apiVersion": "2023-01-01",
+      "name": "[parameters('actionGroupName')]",
+      "location": "Global",
+      "properties": {
+        "groupShortName": "M365SecAdmin",
+        "enabled": true,
+        "emailReceivers": [
+          {
+            "name": "M365SecurityTeam",
+            "emailAddress": "[parameters('actionGroupEmail')]",
+            "useCommonAlertSchema": true
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Insights/scheduledQueryRules",
+      "apiVersion": "2023-03-15-preview",
+      "name": "[variables('alertRuleName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[variables('actionGroupId')]"
+      ],
+      "properties": {
+        "displayName": "Teams Premium / CMK Non-Compliance Alert",
+        "description": "Alerts when active users are found without Teams Premium license",
+        "severity": 2,
+        "enabled": true,
+        "evaluationFrequency": "[concat('PT', string(parameters('alertFrequencyMinutes')), 'M')]",
+        "windowSize": "P1D",
+        "scopes": [
+          "[variables('workspaceId')]"
+        ],
+        "criteria": {
+          "allOf": [
+            {
+              "query": "SigninLogs | where TimeGenerated > ago(30d) | summarize LastSignIn = max(TimeGenerated) by UserPrincipalName | join kind=leftanti (AuditLogs | where TimeGenerated > ago(90d) | where OperationName == 'Change user license' | where tostring(TargetResources) contains 'Teams Premium' | extend UPN = tostring(TargetResources[0].userPrincipalName) | summarize LastLicense = max(TimeGenerated) by UPN) on $left.UserPrincipalName == $right.UPN",
+              "timeAggregation": "Count",
+              "operator": "GreaterThan",
+              "threshold": 0,
+              "failingPeriods": {
+                "numberOfEvaluationPeriods": 1,
+                "minFailingPeriodsToAlert": 1
+              }
+            }
+          ]
+        },
+        "actions": {
+          "actionGroups": [
+            "[variables('actionGroupId')]"
+          ],
+          "customProperties": {
+            "AlertType": "Compliance",
+            "System": "Teams Premium",
+            "Team": "LCE M365 Security"
+          }
+        },
+        "autoMitigate": false
+      }
+    }
+  ],
+  "outputs": {
+    "alertRuleId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Insights/scheduledQueryRules', variables('alertRuleName'))]"
+    },
+    "actionGroupId": {
+      "type": "string",
+      "value": "[variables('actionGroupId')]"
+    }
+  }
+}
