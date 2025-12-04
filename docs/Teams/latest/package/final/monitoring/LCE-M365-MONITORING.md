@@ -1290,7 +1290,7 @@ catch {
 
 # Verify configuration
 if ($null -eq $Global:WorkspaceResourceId) {
-    Write-Error "WorkspaceResourceId not set. Please complete Step 2 first."
+    Write-Host "ERROR: WorkspaceResourceId not set. Please complete Step 2 first." -ForegroundColor Red
     return
 }
 
@@ -1299,9 +1299,10 @@ if ($null -eq $Global:WorkspaceResourceId) {
 # ============================================
 
 Write-Host "Creating Data Collection Endpoint..." -ForegroundColor Yellow
+Write-Host "  Name: $($Global:DceName)" -ForegroundColor Gray
+Write-Host "  Location: $($Global:Location)" -ForegroundColor Gray
 
-$dceResourceId = "/subscriptions/$($Global:SubscriptionId)/resourceGroups/$($Global:ResourceGroupName)/providers/Microsoft.Insights/dataCollectionEndpoints/$($Global:DceName)"
-$headers = Get-AzureHeaders
+$dceResourcePath = "/subscriptions/$($Global:SubscriptionId)/resourceGroups/$($Global:ResourceGroupName)/providers/Microsoft.Insights/dataCollectionEndpoints/$($Global:DceName)"
 
 $dceDefinition = @{
     location   = $Global:Location
@@ -1315,29 +1316,71 @@ $dceDefinition = @{
 
 $dceBody = $dceDefinition | ConvertTo-Json -Depth 10
 
-$uri = "https://management.azure.com$($dceResourceId)?api-version=2022-06-01"
-
 try {
-    $dceResponse = Invoke-RestMethod -Uri $uri -Method Put -Headers $headers -Body $dceBody
+    Write-Host ""
+    Write-Host "  Sending request..." -ForegroundColor Gray
     
-    Write-Host "Data Collection Endpoint created successfully!" -ForegroundColor Green
-    Write-Host "  Name: $($dceResponse.name)" -ForegroundColor Gray
-    Write-Host "  Logs Ingestion URI: $($dceResponse.properties.logsIngestion.endpoint)" -ForegroundColor Cyan
+    $restResult = Invoke-AzRestMethod `
+        -Path "$($dceResourcePath)?api-version=2022-06-01" `
+        -Method PUT `
+        -Payload $dceBody `
+        -ErrorAction Stop
     
-    # Store for later
-    Set-RuntimeVariable -Name "DceLogsIngestionUri" -Value $dceResponse.properties.logsIngestion.endpoint
-    Set-RuntimeVariable -Name "DceResourceId" -Value $dceResponse.id
-}
-catch {
-    if ($_.Exception.Response.StatusCode -eq "Conflict") {
+    if ($restResult.StatusCode -in @(200, 201)) {
+        $dceResponse = $restResult.Content | ConvertFrom-Json
+        
+        Write-Host ""
+        Write-Host "Data Collection Endpoint created successfully!" -ForegroundColor Green
+        Write-Host "  Name: $($dceResponse.name)" -ForegroundColor Gray
+        Write-Host "  Logs Ingestion URI: $($dceResponse.properties.logsIngestion.endpoint)" -ForegroundColor Cyan
+        
+        # Store for later
+        Set-RuntimeVariable -Name "DceLogsIngestionUri" -Value $dceResponse.properties.logsIngestion.endpoint
+        Set-RuntimeVariable -Name "DceResourceId" -Value $dceResponse.id
+    }
+    elseif ($restResult.StatusCode -eq 409) {
+        Write-Host ""
         Write-Host "DCE already exists - retrieving details..." -ForegroundColor Yellow
-        $dceResponse = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers
+        
+        # Get existing DCE
+        $getResult = Invoke-AzRestMethod `
+            -Path "$($dceResourcePath)?api-version=2022-06-01" `
+            -Method GET
+        
+        $dceResponse = $getResult.Content | ConvertFrom-Json
         Set-RuntimeVariable -Name "DceLogsIngestionUri" -Value $dceResponse.properties.logsIngestion.endpoint
         Set-RuntimeVariable -Name "DceResourceId" -Value $dceResponse.id
         Write-Host "  Logs Ingestion URI: $($Global:DceLogsIngestionUri)" -ForegroundColor Cyan
     }
     else {
-        Write-Error "Failed to create DCE: $_"
+        Write-Host ""
+        Write-Host "ERROR: Unexpected response: $($restResult.StatusCode)" -ForegroundColor Red
+        Write-Host $restResult.Content -ForegroundColor Red
+        return
+    }
+}
+catch {
+    if ($_.Exception.Message -like "*Conflict*" -or $_.Exception.Message -like "*409*") {
+        Write-Host ""
+        Write-Host "DCE already exists - retrieving details..." -ForegroundColor Yellow
+        
+        $getResult = Invoke-AzRestMethod `
+            -Path "$($dceResourcePath)?api-version=2022-06-01" `
+            -Method GET
+        
+        $dceResponse = $getResult.Content | ConvertFrom-Json
+        Set-RuntimeVariable -Name "DceLogsIngestionUri" -Value $dceResponse.properties.logsIngestion.endpoint
+        Set-RuntimeVariable -Name "DceResourceId" -Value $dceResponse.id
+        Write-Host "  Logs Ingestion URI: $($Global:DceLogsIngestionUri)" -ForegroundColor Cyan
+    }
+    else {
+        Write-Host ""
+        Write-Host "ERROR: Failed to create DCE" -ForegroundColor Red
+        Write-Host "  Error: $($_.Exception.Message)" -ForegroundColor Red
+        
+        if ($_.ErrorDetails.Message) {
+            Write-Host "  Details: $($_.ErrorDetails.Message)" -ForegroundColor Red
+        }
         return
     }
 }
@@ -1364,7 +1407,7 @@ Write-Host "========================================" -ForegroundColor Magenta
 
 # Verify prerequisites
 if ($null -eq $Global:DceResourceId) {
-    Write-Error "DceResourceId not set. Please complete Step 3 first."
+    Write-Host "ERROR: DceResourceId not set. Please complete Step 3 first." -ForegroundColor Red
     return
 }
 
@@ -1373,9 +1416,10 @@ if ($null -eq $Global:DceResourceId) {
 # ============================================
 
 Write-Host "Creating Data Collection Rule..." -ForegroundColor Yellow
+Write-Host "  Name: $($Global:DcrName)" -ForegroundColor Gray
+Write-Host "  Stream: $($Global:StreamName)" -ForegroundColor Gray
 
-$dcrResourceId = "/subscriptions/$($Global:SubscriptionId)/resourceGroups/$($Global:ResourceGroupName)/providers/Microsoft.Insights/dataCollectionRules/$($Global:DcrName)"
-$headers = Get-AzureHeaders
+$dcrResourcePath = "/subscriptions/$($Global:SubscriptionId)/resourceGroups/$($Global:ResourceGroupName)/providers/Microsoft.Insights/dataCollectionRules/$($Global:DcrName)"
 
 $dcrDefinition = @{
     location   = $Global:Location
@@ -1414,29 +1458,70 @@ $dcrDefinition = @{
 
 $dcrBody = $dcrDefinition | ConvertTo-Json -Depth 10
 
-$uri = "https://management.azure.com$($dcrResourceId)?api-version=2022-06-01"
-
 try {
-    $dcrResponse = Invoke-RestMethod -Uri $uri -Method Put -Headers $headers -Body $dcrBody
+    Write-Host ""
+    Write-Host "  Sending request..." -ForegroundColor Gray
     
-    Write-Host "Data Collection Rule created successfully!" -ForegroundColor Green
-    Write-Host "  Name: $($dcrResponse.name)" -ForegroundColor Gray
-    Write-Host "  Immutable ID: $($dcrResponse.properties.immutableId)" -ForegroundColor Cyan
+    $restResult = Invoke-AzRestMethod `
+        -Path "$($dcrResourcePath)?api-version=2022-06-01" `
+        -Method PUT `
+        -Payload $dcrBody `
+        -ErrorAction Stop
     
-    # Store for later
-    Set-RuntimeVariable -Name "DcrImmutableId" -Value $dcrResponse.properties.immutableId
-    Set-RuntimeVariable -Name "DcrResourceId" -Value $dcrResponse.id
-}
-catch {
-    if ($_.Exception.Response.StatusCode -eq "Conflict") {
+    if ($restResult.StatusCode -in @(200, 201)) {
+        $dcrResponse = $restResult.Content | ConvertFrom-Json
+        
+        Write-Host ""
+        Write-Host "Data Collection Rule created successfully!" -ForegroundColor Green
+        Write-Host "  Name: $($dcrResponse.name)" -ForegroundColor Gray
+        Write-Host "  Immutable ID: $($dcrResponse.properties.immutableId)" -ForegroundColor Cyan
+        
+        # Store for later
+        Set-RuntimeVariable -Name "DcrImmutableId" -Value $dcrResponse.properties.immutableId
+        Set-RuntimeVariable -Name "DcrResourceId" -Value $dcrResponse.id
+    }
+    elseif ($restResult.StatusCode -eq 409) {
+        Write-Host ""
         Write-Host "DCR already exists - retrieving details..." -ForegroundColor Yellow
-        $dcrResponse = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers
+        
+        $getResult = Invoke-AzRestMethod `
+            -Path "$($dcrResourcePath)?api-version=2022-06-01" `
+            -Method GET
+        
+        $dcrResponse = $getResult.Content | ConvertFrom-Json
         Set-RuntimeVariable -Name "DcrImmutableId" -Value $dcrResponse.properties.immutableId
         Set-RuntimeVariable -Name "DcrResourceId" -Value $dcrResponse.id
         Write-Host "  Immutable ID: $($Global:DcrImmutableId)" -ForegroundColor Cyan
     }
     else {
-        Write-Error "Failed to create DCR: $_"
+        Write-Host ""
+        Write-Host "ERROR: Unexpected response: $($restResult.StatusCode)" -ForegroundColor Red
+        Write-Host $restResult.Content -ForegroundColor Red
+        return
+    }
+}
+catch {
+    if ($_.Exception.Message -like "*Conflict*" -or $_.Exception.Message -like "*409*") {
+        Write-Host ""
+        Write-Host "DCR already exists - retrieving details..." -ForegroundColor Yellow
+        
+        $getResult = Invoke-AzRestMethod `
+            -Path "$($dcrResourcePath)?api-version=2022-06-01" `
+            -Method GET
+        
+        $dcrResponse = $getResult.Content | ConvertFrom-Json
+        Set-RuntimeVariable -Name "DcrImmutableId" -Value $dcrResponse.properties.immutableId
+        Set-RuntimeVariable -Name "DcrResourceId" -Value $dcrResponse.id
+        Write-Host "  Immutable ID: $($Global:DcrImmutableId)" -ForegroundColor Cyan
+    }
+    else {
+        Write-Host ""
+        Write-Host "ERROR: Failed to create DCR" -ForegroundColor Red
+        Write-Host "  Error: $($_.Exception.Message)" -ForegroundColor Red
+        
+        if ($_.ErrorDetails.Message) {
+            Write-Host "  Details: $($_.ErrorDetails.Message)" -ForegroundColor Red
+        }
         return
     }
 }
@@ -1467,6 +1552,8 @@ Write-Host "=========================================" -ForegroundColor Magenta
 # ============================================
 
 Write-Host "Creating Azure Automation Account..." -ForegroundColor Yellow
+Write-Host "  Name: $($Global:AutomationAccountName)" -ForegroundColor Gray
+Write-Host "  Location: $($Global:Location)" -ForegroundColor Gray
 
 try {
     $automationAccount = Get-AzAutomationAccount `
@@ -1475,50 +1562,64 @@ try {
         -ErrorAction SilentlyContinue
     
     if ($automationAccount) {
-        Write-Host "Automation Account already exists" -ForegroundColor Yellow
+        Write-Host "  Automation Account already exists" -ForegroundColor Yellow
     }
     else {
+        Write-Host "  Creating new Automation Account..." -ForegroundColor Gray
+        
         $automationAccount = New-AzAutomationAccount `
             -ResourceGroupName $Global:ResourceGroupName `
             -Name $Global:AutomationAccountName `
             -Location $Global:Location `
             -AssignSystemIdentity
         
-        Write-Host "Automation Account created successfully!" -ForegroundColor Green
+        Write-Host "  ✓ Automation Account created" -ForegroundColor Green
     }
     
-    # Ensure System-Assigned Managed Identity is enabled
-    $aaResourceId = "/subscriptions/$($Global:SubscriptionId)/resourceGroups/$($Global:ResourceGroupName)/providers/Microsoft.Automation/automationAccounts/$($Global:AutomationAccountName)"
-    $headers = Get-AzureHeaders
+    # Ensure System-Assigned Managed Identity is enabled using Invoke-AzRestMethod
+    Write-Host ""
+    Write-Host "  Ensuring System-Assigned Managed Identity is enabled..." -ForegroundColor Yellow
     
-    $aaResponse = Invoke-RestMethod `
-        -Uri "https://management.azure.com$($aaResourceId)?api-version=2023-11-01" `
-        -Method Get `
-        -Headers $headers
+    $aaResourcePath = "/subscriptions/$($Global:SubscriptionId)/resourceGroups/$($Global:ResourceGroupName)/providers/Microsoft.Automation/automationAccounts/$($Global:AutomationAccountName)"
+    
+    # Get current state
+    $getResult = Invoke-AzRestMethod `
+        -Path "$($aaResourcePath)?api-version=2023-11-01" `
+        -Method GET
+    
+    $aaResponse = $getResult.Content | ConvertFrom-Json
     
     if ($null -eq $aaResponse.identity -or $aaResponse.identity.type -ne "SystemAssigned") {
-        Write-Host "Enabling System-Assigned Managed Identity..." -ForegroundColor Yellow
+        Write-Host "  Enabling System-Assigned Managed Identity..." -ForegroundColor Yellow
         
-        $identityBody = @{
+        $identityPayload = @{
             identity = @{
                 type = "SystemAssigned"
             }
         } | ConvertTo-Json
         
-        $aaResponse = Invoke-RestMethod `
-            -Uri "https://management.azure.com$($aaResourceId)?api-version=2023-11-01" `
-            -Method Patch `
-            -Headers $headers `
-            -Body $identityBody
+        $patchResult = Invoke-AzRestMethod `
+            -Path "$($aaResourcePath)?api-version=2023-11-01" `
+            -Method PATCH `
+            -Payload $identityPayload
+        
+        $aaResponse = $patchResult.Content | ConvertFrom-Json
+        Write-Host "  ✓ Managed Identity enabled" -ForegroundColor Green
+    }
+    else {
+        Write-Host "  ✓ Managed Identity already enabled" -ForegroundColor Green
     }
     
     Set-RuntimeVariable -Name "AutomationAccountPrincipalId" -Value $aaResponse.identity.principalId
     
+    Write-Host ""
     Write-Host "  Name: $($Global:AutomationAccountName)" -ForegroundColor Gray
     Write-Host "  Managed Identity Object ID: $Global:AutomationAccountPrincipalId" -ForegroundColor Cyan
 }
 catch {
-    Write-Error "Failed to create Automation Account: $_"
+    Write-Host ""
+    Write-Host "ERROR: Failed to create Automation Account" -ForegroundColor Red
+    Write-Host "  Error: $($_.Exception.Message)" -ForegroundColor Red
     return
 }
 
