@@ -51,7 +51,7 @@ Install-Module Az.Resources -Force
 Connect-AzAccount
 
 # Deploy the solution
-.\Deploy-ComplianceMonitoring.ps1 `
+.\05-Deploy-ComplianceMonitoring.ps1 `
     -SubscriptionId "your-subscription-id" `
     -ResourceGroupName "rg-lce-monitoring" `
     -WorkspaceName "law-lce-sentinel" `
@@ -66,7 +66,7 @@ Connect-AzAccount
 1. Navigate to **Azure Monitor** > **Workbooks**
 2. Click **+ New**
 3. Click the **Advanced Editor** button (`</>`)
-4. Replace the contents with `workbook-template.json`
+4. Replace the contents with `10-workbook-template.json`
 5. Click **Apply** then **Done Editing**
 6. Click **Save** and choose your resource group
 
@@ -76,7 +76,7 @@ Connect-AzAccount
 # Deploy using ARM template
 New-AzResourceGroupDeployment `
     -ResourceGroupName "rg-lce-monitoring" `
-    -TemplateFile "alert-rule-template.json" `
+    -TemplateFile "11-alert-rule-template.json" `
     -workspaceName "law-lce-sentinel" `
     -workspaceResourceGroup "rg-lce-monitoring" `
     -actionGroupEmail "m365security@leonardo.com"
@@ -179,10 +179,17 @@ AuditLogs
 
 | File | Purpose |
 |------|---------|
-| `workbook-template.json` | Azure Monitor Workbook definition |
-| `alert-rule-template.json` | ARM template for alert rule and action group |
-| `Deploy-ComplianceMonitoring.ps1` | PowerShell deployment script |
-| `README.md` | This documentation |
+| `01-README.md` | This documentation |
+| `02-SOP.md` | Standard Operating Procedures for M365 Security Compliance |
+| `03-LCE-M365-MONITORING.md` | Detailed build book for monitoring infrastructure setup |
+| `04-create-exo-key.ps1` | CMK infrastructure setup (Key Vaults, Keys, DEP) |
+| `05-Deploy-ComplianceMonitoring.ps1` | PowerShell deployment script for monitoring |
+| `06-deploy-runbook.ps1` | Import runbook to Azure Automation |
+| `07-Sync-TeamsPremiumLicenses.ps1` | License compliance sync runbook |
+| `08-Sync-CMKCompliance.ps1` | CMK compliance runbook with auto-apply |
+| `09-verify-data-in-analytics.ps1` | Verify data ingestion to Log Analytics |
+| `10-workbook-template.json` | Azure Monitor Workbook definition |
+| `11-alert-rule-template.json` | ARM template for alert rule and action group |
 
 ## Support
 
