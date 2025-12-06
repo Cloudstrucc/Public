@@ -3,7 +3,7 @@
     Teams Premium License Compliance Runbook with Email Notification
 .DESCRIPTION
     Queries Microsoft Graph for ALL users and their Teams Premium license status.
-    Ingests data to Log Analytics and sends a compliance report email to Global Admins.
+    Ingests data to Log Analytics and sends a compliance report email to Compliance Administrators.
     
     Goal: Ensure all employees have Teams Premium licenses.
 .REQUIREMENTS
@@ -12,7 +12,7 @@
     - Az.Accounts module imported
     - Managed Identity requires:
       * Microsoft Graph: User.Read.All (Application permission)
-      * Microsoft Graph: Mail.Send (Application permission) - for email
+      * Microsoft Graph: Mail.Send (Application permission)
       * Azure RBAC: Monitoring Metrics Publisher on the DCR
 .NOTES
     Author: LCE M365 Security Team
@@ -20,7 +20,7 @@
     Runtime: PowerShell 7.2
     
     CHANGE LOG:
-    v3.0 - Added email notification to Global Admins
+    v3.0 - Added email notification to Compliance Administrators
     v2.0 - Tracks ALL users for compliance reporting
     v1.0 - Initial release
 #>
@@ -35,14 +35,9 @@ $StreamName = "Custom-TeamsPremiumLicenses_CL"
 $TeamsPremiumSkuId = "36a0f3b3-adb5-49ea-bf66-762134cf063a"
 
 # Email Configuration
-$SendEmail = $true                                              # Set to $false to disable email
-$EmailFrom = "noreply@leonardocompany.ca"                       # Sender address (must be valid in your tenant)
-$EmailTo = @(
-    "fred.pearson@leonardocompany.ca",                           # Add Global Admin emails here
-    "george.zarif@leonardocompany.ca"
- 
-)
-$EmailSubject = "Teams Premium License Compliance Report"
+$SendEmail = $true
+$EmailFrom = "m365reports@leonardocompany.ca"                    # Shared mailbox to send FROM
+$EmailTo = "Compliance-Administrators@leonardocompany.ca"        # Group to send TO
 
 # ============================================
 # INITIALIZATION
@@ -54,7 +49,7 @@ Write-Output "╚═════════════════════
 Write-Output ""
 Write-Output "Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') UTC"
 Write-Output "PowerShell Version: $($PSVersionTable.PSVersion)"
-Write-Output "Email Notifications: $(if($SendEmail){'Enabled'}else{'Disabled'})"
+Write-Output "Email Notifications: $(if($SendEmail){'Enabled - ' + $EmailTo}else{'Disabled'})"
 Write-Output ""
 
 # ============================================
@@ -220,9 +215,11 @@ for ($i = 0; $i -lt $logData.Count; $i += $batchSize) {
 # SEND EMAIL NOTIFICATION
 # ============================================
 
-if ($SendEmail -and $EmailTo.Count -gt 0) {
+if ($SendEmail) {
     Write-Output ""
     Write-Output "Step 6: Sending email notification..."
+    Write-Output "  From: $EmailFrom"
+    Write-Output "  To:   $EmailTo"
     
     # Determine status color/icon for email
     $statusColor = if ($compliancePercent -ge 90) { "#28a745" } 
@@ -233,9 +230,14 @@ if ($SendEmail -and $EmailTo.Count -gt 0) {
                   elseif ($compliancePercent -ge 50) { "⚠️" } 
                   else { "🚨" }
     
+    $statusText = if ($compliancePercent -ge 90) { "Excellent" } 
+                  elseif ($compliancePercent -ge 50) { "Needs Attention" } 
+                  else { "Critical" }
+    
     # Build unlicensed users table (first 25)
     $unlicensedTableRows = ""
-    $unlicensedUsers | Select-Object -First 25 | ForEach-Object {
+    $sortedUnlicensed = $unlicensedUsers | Sort-Object { $_.displayName }
+    $sortedUnlicensed | Select-Object -First 25 | ForEach-Object {
         $unlicensedTableRows += "<tr><td style='padding: 8px; border-bottom: 1px solid #ddd;'>$($_.displayName)</td><td style='padding: 8px; border-bottom: 1px solid #ddd;'>$($_.userPrincipalName)</td></tr>"
     }
     
@@ -266,6 +268,7 @@ if ($SendEmail -and $EmailTo.Count -gt 0) {
         th { background-color: #f8f9fa; padding: 12px 8px; text-align: left; border-bottom: 2px solid #ddd; }
         .footer { background-color: #f8f9fa; padding: 15px 20px; border-radius: 0 0 8px 8px; font-size: 12px; color: #666; }
         .action-required { background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 15px; margin: 20px 0; }
+        .full-compliance { background-color: #d4edda; border: 1px solid #28a745; border-radius: 8px; padding: 15px; margin: 20px 0; }
     </style>
 </head>
 <body>
@@ -278,7 +281,7 @@ if ($SendEmail -and $EmailTo.Count -gt 0) {
         <div class="content">
             <div class="compliance-box">
                 <div class="compliance-percent">$compliancePercent%</div>
-                <div>License Compliance Rate</div>
+                <div>License Compliance Rate - $statusText</div>
             </div>
             
             <div class="stats-grid">
@@ -288,7 +291,7 @@ if ($SendEmail -and $EmailTo.Count -gt 0) {
                 </div>
                 <div class="stat-box">
                     <div class="stat-number" style="color: #28a745;">$licensedCount</div>
-                    <div class="stat-label">Users WITH Teams Premium</div>
+                    <div class="stat-label">Users WITH Teams Premium ✓</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-number" style="color: #dc3545;">$unlicensedCount</div>
@@ -302,8 +305,9 @@ if ($SendEmail -and $EmailTo.Count -gt 0) {
             
             $(if ($unlicensedCount -gt 0) {
 @"
+
             <div class="action-required">
-                <strong>⚠️ Action Required:</strong> $unlicensedCount users need Teams Premium licenses assigned.
+                <strong>⚠️ Action Required:</strong> $unlicensedCount users need Teams Premium licenses assigned to achieve full compliance.
             </div>
             
             <div class="table-container">
@@ -324,55 +328,63 @@ if ($SendEmail -and $EmailTo.Count -gt 0) {
 "@
             } else {
 @"
-            <div style="background-color: #d4edda; border: 1px solid #28a745; border-radius: 8px; padding: 15px; margin: 20px 0;">
-                <strong>✅ Full Compliance:</strong> All users have Teams Premium licenses assigned!
+
+            <div class="full-compliance">
+                <strong>✅ Full Compliance Achieved!</strong> All $totalUsers users have Teams Premium licenses assigned. Great work!
             </div>
 "@
             })
             
-            <h3>How to View Full Details</h3>
-            <p>Run this query in <strong>Log Analytics</strong> to see all unlicensed users:</p>
-            <pre style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto;">TeamsPremiumLicenses_CL
+            <h3>📊 How to View Full Details</h3>
+            <p>Run this KQL query in <strong>Log Analytics</strong> to see all unlicensed users:</p>
+            <pre style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; font-family: Consolas, monospace; font-size: 13px;">TeamsPremiumLicenses_CL
 | where TimeGenerated > ago(1d)
 | where LicenseAssigned == false
 | distinct UserPrincipalName, DisplayName
 | order by DisplayName asc</pre>
+            
+            <h3>📈 View Compliance Trend</h3>
+            <pre style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; font-family: Consolas, monospace; font-size: 13px;">TeamsPremiumLicenses_CL
+| summarize 
+    Licensed = dcountif(UserPrincipalName, LicenseAssigned == true),
+    Unlicensed = dcountif(UserPrincipalName, LicenseAssigned == false)
+    by bin(TimeGenerated, 1d)
+| extend CompliancePercent = round(100.0 * Licensed / (Licensed + Unlicensed), 1)
+| order by TimeGenerated asc</pre>
         </div>
         
         <div class="footer">
-            <p>This is an automated report from Azure Automation. Data is synced daily and stored in Log Analytics workspace.</p>
-            <p>Automation Account: AA-TeamsPremiumLicenseSync | Runbook: Sync-TeamsPremiumLicenses</p>
+            <p><strong>Leonardo Company</strong> - LCE M365 Security Team</p>
+            <p>This is an automated daily report from Azure Automation. Data is synced at midnight EST and stored in Log Analytics.</p>
+            <p style="margin-top: 10px; color: #999;">Automation Account: AA-TeamsPremiumLicenseSync | Runbook: Sync-TeamsPremiumLicenses | Workspace: rg-lce-m365-security-group-monnitor</p>
         </div>
     </div>
 </body>
 </html>
 "@
 
-    # Build recipient list
-    $toRecipients = $EmailTo | ForEach-Object {
-        @{
-            emailAddress = @{
-                address = $_
-            }
-        }
-    }
-    
     # Build email message
     $emailMessage = @{
         message = @{
-            subject = "$statusIcon $EmailSubject - $compliancePercent% Compliance ($unlicensedCount users need licenses)"
+            subject = "$statusIcon Teams Premium License Report - $compliancePercent% Compliance ($unlicensedCount need licenses)"
             body = @{
                 contentType = "HTML"
                 content = $emailBody
             }
-            toRecipients = @($toRecipients)
+            toRecipients = @(
+                @{
+                    emailAddress = @{
+                        address = $EmailTo
+                    }
+                }
+            )
         }
         saveToSentItems = $false
     }
     
     $emailJson = $emailMessage | ConvertTo-Json -Depth 10
     
-    # Send email via Microsoft Graph
+    # Send email via Microsoft Graph (from shared mailbox to group)
     try {
         $sendMailUri = "https://graph.microsoft.com/v1.0/users/$EmailFrom/sendMail"
         
@@ -384,16 +396,19 @@ if ($SendEmail -and $EmailTo.Count -gt 0) {
             -ContentType "application/json" `
             -ErrorAction Stop
         
-        Write-Output "  ✓ Email sent successfully to:"
-        $EmailTo | ForEach-Object { Write-Output "    • $_" }
+        Write-Output "  ✓ Email sent successfully!"
+        Write-Output "    From: $EmailFrom"
+        Write-Output "    To:   $EmailTo"
     }
     catch {
-        Write-Warning "  ✗ Failed to send email: $_"
+        $errorMsg = $_.Exception.Message
+        Write-Warning "  ✗ Failed to send email: $errorMsg"
         Write-Output ""
-        Write-Output "  Troubleshooting:"
-        Write-Output "  1. Verify Mail.Send permission is assigned to the Managed Identity"
-        Write-Output "  2. Verify '$EmailFrom' is a valid mailbox in your tenant"
-        Write-Output "  3. Check if the Managed Identity has permission to send as that user"
+        Write-Output "  TROUBLESHOOTING:"
+        Write-Output "  1. Ensure shared mailbox '$EmailFrom' exists"
+        Write-Output "  2. Verify Mail.Send permission is assigned to Managed Identity"
+        Write-Output "  3. The compliance data has been logged to Log Analytics successfully"
+        Write-Output "  4. You can view the report using the KQL queries in the runbook output"
     }
 }
 else {
@@ -415,3 +430,8 @@ Write-Output "║  Unlicensed:               $($unlicensedCount.ToString().PadLe
 Write-Output "║  Records Ingested:         $($successCount.ToString().PadLeft(6))                              ║"
 Write-Output "║  Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') UTC                         ║"
 Write-Output "╚════════════════════════════════════════════════════════════════╝"
+
+if ($unlicensedCount -gt 0) {
+    Write-Output ""
+    Write-Output "⚠ ACTION REQUIRED: $unlicensedCount users need Teams Premium licenses"
+}
