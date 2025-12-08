@@ -3,10 +3,15 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+      
+        <script type="text/javascript">
+          window.MathJax = ({"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"options":{},"loader":{}});
+        </script>
+        <script type="text/javascript" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        
       
       
-      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.min.js"></script>
       
       
       <style>
@@ -24,12 +29,19 @@
     
       <div class="crossnote markdown-preview  ">
       
-<h1 id="microsoft-365-sensitivity-label-decision-tree">Microsoft 365 Sensitivity Label Decision Tree </h1>
-<h2 id="visual-guide-for-choosing-the-right-labels-across-all-applications">Visual Guide for Choosing the Right Labels Across All Applications </h2>
+<h1 id="microsoft-365-sensitivity-label-decision-tree">Microsoft 365
+Sensitivity Label Decision Tree</h1>
+<h2 id="visual-guide-for-choosing-the-right-labels-across-all-applications">Visual
+Guide for Choosing the Right Labels Across All Applications</h2>
 <hr>
-<h2 id="scope-of-this-guide">Scope of This Guide </h2>
+<h2 id="scope-of-this-guide">Scope of This Guide</h2>
 <p>This guide covers mandatory sensitivity labeling across:</p>
 <table>
+<colgroup>
+<col style="width: 19%">
+<col style="width: 48%">
+<col style="width: 31%">
+</colgroup>
 <thead>
 <tr>
 <th>Application</th>
@@ -40,7 +52,8 @@
 <tbody>
 <tr>
 <td><strong>Teams Meetings</strong></td>
-<td>Protected B - Official Sensitive - NATO - Secure Meeting / General - Regular Meeting</td>
+<td>Protected B - Official Sensitive - NATO - Secure Meeting / General -
+Regular Meeting</td>
 <td>Protected B - Official Sensitive - NATO</td>
 </tr>
 <tr>
@@ -76,8 +89,8 @@
 </tbody>
 </table>
 <hr>
-<h2 id="part-1-teams-meetings">PART 1: TEAMS MEETINGS </h2>
-<h3 id="meeting-decision-flow">Meeting Decision Flow </h3>
+<h2 id="part-1-teams-meetings">PART 1: TEAMS MEETINGS</h2>
+<h3 id="meeting-decision-flow">Meeting Decision Flow</h3>
 <div class="mermaid">flowchart TD
     Start([Creating a Teams Meeting]) --&gt; Q1{Will you discuss&lt;br/&gt;ANYTHING on the&lt;br/&gt;sensitive list?}
     Q1 --&gt;|YES| Secure[🔴 Protected B -&lt;br/&gt;Official Sensitive - NATO&lt;br/&gt;Secure Meeting]
@@ -96,9 +109,9 @@
     style Secure fill:#ff6b6b,color:#fff
     style Regular fill:#107c10,color:#fff
     style Result1 fill:#ff6b6b,color:#fff
-    style Result2 fill:#107c10,color:#fff
-</div><h3 id="meeting-label-comparison">Meeting Label Comparison </h3>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+    style Result2 fill:#107c10,color:#fff</div>
+<h3 id="meeting-label-comparison">Meeting Label Comparison</h3>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  🔴 PROTECTED B - OFFICIAL SENSITIVE - NATO - SECURE MEETING                   ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -131,10 +144,10 @@
 ║  Use for: Social, casual, admin, public, training                              ║
 ║           ONLY when content is NOT sensitive                                   ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><hr>
-<h2 id="part-2-email-outlook">PART 2: EMAIL (OUTLOOK) </h2>
-<h3 id="email-decision-flow">Email Decision Flow </h3>
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<hr>
+<h2 id="part-2-email-outlook">PART 2: EMAIL (OUTLOOK)</h2>
+<h3 id="email-decision-flow">Email Decision Flow</h3>
 <div class="mermaid">flowchart TD
     Start([Composing an Email]) --&gt; Q1{Does the email contain&lt;br/&gt;sensitive information?}
   
@@ -152,9 +165,9 @@
   
     style Start fill:#0078d4,color:#fff
     style ProtB fill:#ff6b6b,color:#fff
-    style Unclass fill:#107c10,color:#fff
-</div><h3 id="label-inheritance-rule">Label Inheritance Rule </h3>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+    style Unclass fill:#107c10,color:#fff</div>
+<h3 id="label-inheritance-rule">Label Inheritance Rule</h3>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  ⚠️  IMPORTANT: LABEL INHERITANCE                                              ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -177,51 +190,57 @@
 ║    → Email = Protected B - Official Sensitive - NATO                           ║
 ║  • Attach Unclassified doc → You choose email label                            ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><h3 id="email-label-comparison">Email Label Comparison </h3>
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<h3 id="email-label-comparison">Email Label Comparison</h3>
 <table>
+<colgroup>
+<col style="width: 39%">
+<col style="width: 46%">
+<col style="width: 14%">
+</colgroup>
 <thead>
 <tr>
 <th>Feature</th>
-<th style="text-align:center">Protected B - Official Sensitive - NATO</th>
-<th style="text-align:center">Unclassified</th>
+<th style="text-align: center;">Protected B - Official Sensitive -
+NATO</th>
+<th style="text-align: center;">Unclassified</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Encryption</strong></td>
-<td style="text-align:center">✅ Yes</td>
-<td style="text-align:center">❌ No</td>
+<td style="text-align: center;">✅ Yes</td>
+<td style="text-align: center;">❌ No</td>
 </tr>
 <tr>
 <td><strong>Forward restrictions</strong></td>
-<td style="text-align:center">✅ Yes</td>
-<td style="text-align:center">❌ No</td>
+<td style="text-align: center;">✅ Yes</td>
+<td style="text-align: center;">❌ No</td>
 </tr>
 <tr>
 <td><strong>Copy/paste restrictions</strong></td>
-<td style="text-align:center">✅ Yes</td>
-<td style="text-align:center">❌ No</td>
+<td style="text-align: center;">✅ Yes</td>
+<td style="text-align: center;">❌ No</td>
 </tr>
 <tr>
 <td><strong>Recipient verification</strong></td>
-<td style="text-align:center">✅ Yes</td>
-<td style="text-align:center">❌ No</td>
+<td style="text-align: center;">✅ Yes</td>
+<td style="text-align: center;">❌ No</td>
 </tr>
 <tr>
 <td><strong>External recipients</strong></td>
-<td style="text-align:center">⚠️ Limited</td>
-<td style="text-align:center">✅ Allowed</td>
+<td style="text-align: center;">⚠️ Limited</td>
+<td style="text-align: center;">✅ Allowed</td>
 </tr>
 <tr>
 <td><strong>Audit trail</strong></td>
-<td style="text-align:center">✅ Full</td>
-<td style="text-align:center">✅ Standard</td>
+<td style="text-align: center;">✅ Full</td>
+<td style="text-align: center;">✅ Standard</td>
 </tr>
 </tbody>
 </table>
-<h3 id="how-to-apply-email-labels">How to Apply Email Labels </h3>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+<h3 id="how-to-apply-email-labels">How to Apply Email Labels</h3>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  OUTLOOK - APPLYING SENSITIVITY LABELS                                         ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -240,10 +259,11 @@
 ║                                                                                ║
 ║  ⚠️  You Protected B - Official Sensitive - NATO OR Unclassified a label before sending!                                   ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><hr>
-<h2 id="part-3-documents-word-excel-powerpoint">PART 3: DOCUMENTS (WORD, EXCEL, POWERPOINT) </h2>
-<h3 id="document-decision-flow">Document Decision Flow </h3>
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<hr>
+<h2 id="part-3-documents-word-excel-powerpoint">PART 3: DOCUMENTS (WORD,
+EXCEL, POWERPOINT)</h2>
+<h3 id="document-decision-flow">Document Decision Flow</h3>
 <div class="mermaid">flowchart TD
     Start([Creating/Editing a Document]) --&gt; Q1{Does this document contain&lt;br/&gt;sensitive information?}
   
@@ -258,56 +278,62 @@
   
     style Start fill:#0078d4,color:#fff
     style ProtB fill:#ff6b6b,color:#fff
-    style Unclass fill:#107c10,color:#fff
-</div><h3 id="document-label-comparison">Document Label Comparison </h3>
+    style Unclass fill:#107c10,color:#fff</div>
+<h3 id="document-label-comparison">Document Label Comparison</h3>
 <table>
+<colgroup>
+<col style="width: 35%">
+<col style="width: 49%">
+<col style="width: 15%">
+</colgroup>
 <thead>
 <tr>
 <th>Feature</th>
-<th style="text-align:center">Protected B - Official Sensitive - NATO</th>
-<th style="text-align:center">Unclassified</th>
+<th style="text-align: center;">Protected B - Official Sensitive -
+NATO</th>
+<th style="text-align: center;">Unclassified</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Encryption</strong></td>
-<td style="text-align:center">✅ Yes</td>
-<td style="text-align:center">❌ No</td>
+<td style="text-align: center;">✅ Yes</td>
+<td style="text-align: center;">❌ No</td>
 </tr>
 <tr>
 <td><strong>Watermarks</strong></td>
-<td style="text-align:center">✅ Visual marking</td>
-<td style="text-align:center">❌ No</td>
+<td style="text-align: center;">✅ Visual marking</td>
+<td style="text-align: center;">❌ No</td>
 </tr>
 <tr>
 <td><strong>Headers/Footers</strong></td>
-<td style="text-align:center">✅ Classification shown</td>
-<td style="text-align:center">❌ No</td>
+<td style="text-align: center;">✅ Classification shown</td>
+<td style="text-align: center;">❌ No</td>
 </tr>
 <tr>
 <td><strong>Copy restrictions</strong></td>
-<td style="text-align:center">✅ Yes</td>
-<td style="text-align:center">❌ No</td>
+<td style="text-align: center;">✅ Yes</td>
+<td style="text-align: center;">❌ No</td>
 </tr>
 <tr>
 <td><strong>Print restrictions</strong></td>
-<td style="text-align:center">⚠️ Tracked</td>
-<td style="text-align:center">❌ No</td>
+<td style="text-align: center;">⚠️ Tracked</td>
+<td style="text-align: center;">❌ No</td>
 </tr>
 <tr>
 <td><strong>External sharing</strong></td>
-<td style="text-align:center">⚠️ Restricted</td>
-<td style="text-align:center">✅ Allowed</td>
+<td style="text-align: center;">⚠️ Restricted</td>
+<td style="text-align: center;">✅ Allowed</td>
 </tr>
 <tr>
 <td><strong>Audit trail</strong></td>
-<td style="text-align:center">✅ Full</td>
-<td style="text-align:center">✅ Standard</td>
+<td style="text-align: center;">✅ Full</td>
+<td style="text-align: center;">✅ Standard</td>
 </tr>
 </tbody>
 </table>
-<h3 id="how-to-apply-document-labels">How to Apply Document Labels </h3>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+<h3 id="how-to-apply-document-labels">How to Apply Document Labels</h3>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  WORD/EXCEL/POWERPOINT - APPLYING LABELS                                       ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -329,9 +355,15 @@
 ║  💡 TIP: Label early! Apply the label when you                                 ║
 ║     create the document, not just before sharing.                              ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><h3 id="document-type-quick-reference">Document Type Quick Reference </h3>
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<h3 id="document-type-quick-reference">Document Type Quick
+Reference</h3>
 <table>
+<colgroup>
+<col style="width: 35%">
+<col style="width: 36%">
+<col style="width: 27%">
+</colgroup>
 <thead>
 <tr>
 <th>Document Type</th>
@@ -393,10 +425,13 @@
 </tbody>
 </table>
 <hr>
-<h2 id="part-4-teams-chat-dlp-monitoring">PART 4: TEAMS CHAT (DLP MONITORING) </h2>
-<h3 id="what-gets-monitored">What Gets Monitored </h3>
-<p>Teams chat is automatically monitored for <strong>44 sensitive information types</strong>. You don't select a label for chat—the system monitors in real-time.</p>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+<h2 id="part-4-teams-chat-dlp-monitoring">PART 4: TEAMS CHAT (DLP
+MONITORING)</h2>
+<h3 id="what-gets-monitored">What Gets Monitored</h3>
+<p>Teams chat is automatically monitored for <strong>44 sensitive
+information types</strong>. You don’t select a label for chat—the system
+monitors in real-time.</p>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  🔍 TEAMS CHAT - DLP MONITORING (ALWAYS ACTIVE)                                ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -460,9 +495,10 @@
 ║  • User Login Credentials                                                      ║
 ║  • X.509 Certificate Private Key                                               ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><h3 id="what-happens-when-dlp-triggers">What Happens When DLP Triggers </h3>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<h3 id="what-happens-when-dlp-triggers">What Happens When DLP
+Triggers</h3>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  ⚠️  DLP POLICY TIP - WHAT YOU'LL SEE                                          ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -490,8 +526,8 @@
 ║  → Share via email                                               ║
 ║  → Chat is for quick communications, not PII                                   ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><h3 id="teams-chat-decision-flow">Teams Chat Decision Flow </h3>
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<h3 id="teams-chat-decision-flow">Teams Chat Decision Flow</h3>
 <div class="mermaid">flowchart TD
     Start([Sending a Teams Chat]) --&gt; Q1{Does your message contain&lt;br/&gt;sensitive information?}
   
@@ -507,11 +543,11 @@
     style Start fill:#0078d4,color:#fff
     style Send fill:#107c10,color:#fff
     style Alt fill:#ff6b6b,color:#fff
-    style Secure fill:#107c10,color:#fff
-</div><hr>
-<h2 id="part-5-sharepoint-sites">PART 5: SHAREPOINT SITES </h2>
-<h3 id="site-level-labels">Site-Level Labels </h3>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+    style Secure fill:#107c10,color:#fff</div>
+<hr>
+<h2 id="part-5-sharepoint-sites">PART 5: SHAREPOINT SITES</h2>
+<h3 id="site-level-labels">Site-Level Labels</h3>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  📁 SHAREPOINT SITE LABELS                                                     ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -533,11 +569,12 @@
 ║  Site labels protect the container, document labels                            ║
 ║  protect the content.                                                          ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><hr>
-<h2 id="part-6-customer-managed-keys-cmk">PART 6: CUSTOMER MANAGED KEYS (CMK) </h2>
-<h3 id="whats-protected">What's Protected </h3>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<hr>
+<h2 id="part-6-customer-managed-keys-cmk">PART 6: CUSTOMER MANAGED KEYS
+(CMK)</h2>
+<h3 id="whats-protected">What’s Protected</h3>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  🔐 ENHANCED ENCRYPTION - CUSTOMER MANAGED KEYS                                ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -561,11 +598,13 @@
 ║                                                                                ║
 ║  ℹ️  No action required from you - this is automatic!                          ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><hr>
-<h2 id="universal-sensitive-content-checklist">UNIVERSAL SENSITIVE CONTENT CHECKLIST </h2>
-<p>Use <strong>Protected B - Official Sensitive - NATO</strong> across ALL applications if content includes ANY of these:</p>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<hr>
+<h2 id="universal-sensitive-content-checklist">UNIVERSAL SENSITIVE
+CONTENT CHECKLIST</h2>
+<p>Use <strong>Protected B - Official Sensitive - NATO</strong> across
+ALL applications if content includes ANY of these:</p>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  SENSITIVE CONTENT INDICATORS (ALL APPLICATIONS)                               ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -614,11 +653,13 @@
 ║                                                                                ║
 ╚════════════════════════════════════════════════════════════════════════════════╝
 
-ANY of these = 🔴 Protected B - Official Sensitive - NATO (meetings, email, documents)
-</code></pre><hr>
-<h2 id="quick-reference-keywords-that-trigger-protected-b">QUICK REFERENCE: KEYWORDS THAT TRIGGER PROTECTED B </h2>
-<p>If title, subject, or content contains these words, use Protected B - Official Sensitive - NATO:</p>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+ANY of these = 🔴 Protected B - Official Sensitive - NATO (meetings, email, documents)</code></pre>
+<hr>
+<h2 id="quick-reference-keywords-that-trigger-protected-b">QUICK
+REFERENCE: KEYWORDS THAT TRIGGER PROTECTED B</h2>
+<p>If title, subject, or content contains these words, use Protected B -
+Official Sensitive - NATO:</p>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  AUTOMATIC TRIGGERS (ALL APPLICATIONS):                                        ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -638,82 +679,91 @@ ANY of these = 🔴 Protected B - Official Sensitive - NATO (meetings, email, do
 ║                                                                                ║
 ╚════════════════════════════════════════════════════════════════════════════════╝
 
-If you see ANY of these keywords = 🔴 Protected B - Official Sensitive - NATO
-</code></pre><hr>
-<h2 id="application-quick-reference-matrix">APPLICATION QUICK REFERENCE MATRIX </h2>
-<table>
+If you see ANY of these keywords = 🔴 Protected B - Official Sensitive - NATO</code></pre>
+<hr>
+<h2 id="application-quick-reference-matrix">APPLICATION QUICK REFERENCE
+MATRIX</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 34%">
+<col style="width: 19%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 21%">
+</colgroup>
 <thead>
 <tr>
 <th>Scenario</th>
-<th style="text-align:center">Teams Meeting</th>
-<th style="text-align:center">Email</th>
-<th style="text-align:center">Document</th>
-<th style="text-align:center">Teams Chat</th>
+<th style="text-align: center;">Teams Meeting</th>
+<th style="text-align: center;">Email</th>
+<th style="text-align: center;">Document</th>
+<th style="text-align: center;">Teams Chat</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Contract discussion</strong></td>
-<td style="text-align:center">Protected B-Secure</td>
-<td style="text-align:center">Protected B</td>
-<td style="text-align:center">Protected B</td>
-<td style="text-align:center">⚠️ Use document</td>
+<td style="text-align: center;">Protected B-Secure</td>
+<td style="text-align: center;">Protected B</td>
+<td style="text-align: center;">Protected B</td>
+<td style="text-align: center;">⚠️ Use document</td>
 </tr>
 <tr>
 <td><strong>Technical specs</strong></td>
-<td style="text-align:center">Protected B-Secure</td>
-<td style="text-align:center">Protected B</td>
-<td style="text-align:center">Protected B</td>
-<td style="text-align:center">⚠️ Use document</td>
+<td style="text-align: center;">Protected B-Secure</td>
+<td style="text-align: center;">Protected B</td>
+<td style="text-align: center;">Protected B</td>
+<td style="text-align: center;">⚠️ Use document</td>
 </tr>
 <tr>
 <td><strong>Sharing a SIN</strong></td>
-<td style="text-align:center">N/A</td>
-<td style="text-align:center">Protected B</td>
-<td style="text-align:center">Protected B</td>
-<td style="text-align:center">⚠️ Warning appears</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">Protected B</td>
+<td style="text-align: center;">Protected B</td>
+<td style="text-align: center;">⚠️ Warning appears</td>
 </tr>
 <tr>
 <td><strong>Team standup (general)</strong></td>
-<td style="text-align:center">General</td>
-<td style="text-align:center">Unclassified</td>
-<td style="text-align:center">N/A</td>
-<td style="text-align:center">✅ OK</td>
+<td style="text-align: center;">General</td>
+<td style="text-align: center;">Unclassified</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">✅ OK</td>
 </tr>
 <tr>
 <td><strong>Birthday party</strong></td>
-<td style="text-align:center">General</td>
-<td style="text-align:center">Unclassified</td>
-<td style="text-align:center">N/A</td>
-<td style="text-align:center">✅ OK</td>
+<td style="text-align: center;">General</td>
+<td style="text-align: center;">Unclassified</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">✅ OK</td>
 </tr>
 <tr>
 <td><strong>Customer proposal</strong></td>
-<td style="text-align:center">Protected B-Secure</td>
-<td style="text-align:center">Protected B</td>
-<td style="text-align:center">Protected B</td>
-<td style="text-align:center">⚠️ Use document</td>
+<td style="text-align: center;">Protected B-Secure</td>
+<td style="text-align: center;">Protected B</td>
+<td style="text-align: center;">Protected B</td>
+<td style="text-align: center;">⚠️ Use document</td>
 </tr>
 <tr>
 <td><strong>Public announcement</strong></td>
-<td style="text-align:center">General</td>
-<td style="text-align:center">Unclassified</td>
-<td style="text-align:center">Unclassified</td>
-<td style="text-align:center">✅ OK</td>
+<td style="text-align: center;">General</td>
+<td style="text-align: center;">Unclassified</td>
+<td style="text-align: center;">Unclassified</td>
+<td style="text-align: center;">✅ OK</td>
 </tr>
 <tr>
 <td><strong>HR discussion</strong></td>
-<td style="text-align:center">Protected B-Secure</td>
-<td style="text-align:center">Protected B</td>
-<td style="text-align:center">Protected B</td>
-<td style="text-align:center">⚠️ Use document</td>
+<td style="text-align: center;">Protected B-Secure</td>
+<td style="text-align: center;">Protected B</td>
+<td style="text-align: center;">Protected B</td>
+<td style="text-align: center;">⚠️ Use document</td>
 </tr>
 </tbody>
 </table>
-<p><em>Note: "Protected B" in this table refers to "Protected B - Official Sensitive - NATO"</em></p>
+<p><em>Note: “Protected B” in this table refers to “Protected B -
+Official Sensitive - NATO”</em></p>
 <hr>
-<h2 id="common-mistakes-to-avoid">COMMON MISTAKES TO AVOID </h2>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+<h2 id="common-mistakes-to-avoid">COMMON MISTAKES TO AVOID</h2>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  ❌ WRONG THINKING:                                                            ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -758,10 +808,10 @@ If you see ANY of these keywords = 🔴 Protected B - Official Sensitive - NATO
 ║  "Sensitive data in chat?"                                                     ║
 ║    → Use Protected B - Official Sensitive - NATO document instead              ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><hr>
-<h2 id="the-golden-rules">THE GOLDEN RULES </h2>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<hr>
+<h2 id="the-golden-rules">THE GOLDEN RULES</h2>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  THE 10 GOLDEN RULES                                                           ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -776,10 +826,10 @@ If you see ANY of these keywords = 🔴 Protected B - Official Sensitive - NATO
 ║  RULE 9:  Attachments inherit → Protected B doc = Protected B email            ║
 ║  RULE 10: Security is everyone's job → Label correctly!                        ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><hr>
-<h2 id="workflow-summary">WORKFLOW SUMMARY </h2>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<hr>
+<h2 id="workflow-summary">WORKFLOW SUMMARY</h2>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  📋 DAILY WORKFLOW CHECKLIST                                                   ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -803,10 +853,10 @@ If you see ANY of these keywords = 🔴 Protected B - Official Sensitive - NATO
 ║  □ If warning appears, consider alternatives                                   ║
 ║  □ Use Protected B - Official Sensitive - NATO documents for sensitive info    ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><hr>
-<h2 id="support--resources">SUPPORT &amp; RESOURCES </h2>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<hr>
+<h2 id="support--resources">SUPPORT &amp; RESOURCES</h2>
+<pre class="text language-text" data-role="codeBlock" data-info="text"><code>╔════════════════════════════════════════════════════════════════════════════════╗
 ║  📞 NEED HELP?                                                                 ║
 ╠════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                ║
@@ -823,16 +873,18 @@ If you see ANY of these keywords = 🔴 Protected B - Official Sensitive - NATO
 ║  • DLP warning in chat? → Use document instead                                 ║
 ║  • Unsure which label? → Choose Protected B - Official Sensitive - NATO        ║
 ║                                                                                ║
-╚════════════════════════════════════════════════════════════════════════════════╝
-</code></pre><hr>
-<p><strong>Remember: Protected B - Official Sensitive - NATO is the SAFE choice!</strong></p>
-<p><strong>When unsure → Protected B - Official Sensitive - NATO (meetings, email, documents)</strong></p>
-<p><strong>Sensitive data in chat → Use a Protected B - Official Sensitive - NATO document instead</strong></p>
+╚════════════════════════════════════════════════════════════════════════════════╝</code></pre>
+<hr>
+<p><strong>Remember: Protected B - Official Sensitive - NATO is the SAFE
+choice!</strong></p>
+<p><strong>When unsure → Protected B - Official Sensitive - NATO
+(meetings, email, documents)</strong></p>
+<p><strong>Sensitive data in chat → Use a Protected B - Official
+Sensitive - NATO document instead</strong></p>
 <p><strong>Label early, label correctly, stay secure!</strong></p>
 <hr>
-<p><strong>Leonardo Canada</strong><br>
-<strong>Classification: Internal Use Only</strong><br>
-<strong>Version 2.0 - December 2025</strong></p>
+<p><strong>Leonardo Canada</strong> <strong>Classification: Internal Use
+Only</strong> <strong>Version 2.0 - December 2025</strong></p>
 
       </div>
       
