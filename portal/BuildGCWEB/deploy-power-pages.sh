@@ -216,10 +216,10 @@ get_page_template_id() {
 }
 
 get_publishing_state_id() {
-    local filter="mspp_name eq 'Published'"
+    local filter="_mspp_websiteid_value eq '$WEBSITE_ID' and mspp_name eq 'Published'"
     local query="${API_URL}mspp_publishingstates?\$filter=$filter"
     
-    echo "Query: $query"
+    >&2 echo "Query: $query"
     local response
     response=$(get_record_api "$query")
     PUBLISHING_STATE_ID=$(echo "$response" | jq -r '.value[0].mspp_publishingstateid')
@@ -227,10 +227,10 @@ get_publishing_state_id() {
 }
 
 get_english_language_id() {
-    local filter="mspp_lcid eq $ENGLISH_LANGUAGE_CODE"
+    local filter="_mspp_websiteid_value eq '$WEBSITE_ID' and mspp_lcid eq $ENGLISH_LANGUAGE_CODE"
     local query="${API_URL}mspp_websitelanguages?\$filter=$filter"
     
-    echo "Query: $query"
+    >&2 echo "Query: $query"
     local response
     response=$(get_record_api "$query")
     ENGLISH_LANGUAGE_ID=$(echo "$response" | jq -r '.value[0].mspp_websitelanguageid')
@@ -238,7 +238,7 @@ get_english_language_id() {
 }
 
 get_french_language_id() {
-    local filter="mspp_lcid eq $FRENCH_LANGUAGE_CODE"
+    local filter="_mspp_websiteid_value eq '$WEBSITE_ID' and mspp_lcid eq $FRENCH_LANGUAGE_CODE"
     local query="${API_URL}mspp_websitelanguages?\$filter=$filter"
     
     local response
@@ -263,6 +263,11 @@ get_root_home_page_id() {
     >&2 echo "DEBUG: Extracted HOME_PAGE_ID: $HOME_PAGE_ID"
     >&2 echo "Home Web Page ID: $HOME_PAGE_ID"
 }
+
+# get_root_home_page_id() {
+#     HOME_PAGE_ID="e3ac7a40-e299-ee11-be37-0022483c04c3"
+#     >&2 echo "Home Web Page ID: $HOME_PAGE_ID"
+# }
 
 get_english_home_page_id() {
     local filter="_mspp_websiteid_value eq '$WEBSITE_ID' and mspp_name eq 'Home' and _mspp_webpagelanguageid_value eq '$ENGLISH_LANGUAGE_ID'"
@@ -511,6 +516,55 @@ create_web_file() {
 }
 
 # Write hierarchy
+# write_hierarchy() {
+#     local path="$1"
+#     local parent_page_id="$2"
+    
+#     # If parent_page_id is empty and this is the root theme folder, use HOME_PAGE_ID
+#     if [[ -z "$parent_page_id" ]]; then
+#         >&2 echo "WARNING: parent_page_id is empty, using HOME_PAGE_ID"
+#         parent_page_id="$HOME_PAGE_ID"
+#     fi
+    
+#     # Validate HOME_PAGE_ID is set
+#     if [[ -z "$HOME_PAGE_ID" || "$HOME_PAGE_ID" == "null" ]]; then
+#         >&2 echo "ERROR: HOME_PAGE_ID is not set! Cannot continue."
+#         return 1
+#     fi
+    
+#     for item in "$path"/*; do
+#         # Skip if glob doesn't match any files
+#         [[ -e "$item" ]] || continue
+        
+#         if [[ -f "$item" ]]; then
+#             >&2 echo "Processing file: $(basename "$item") with parent: $parent_page_id"
+#             create_web_file "$item" "$parent_page_id"
+#         elif [[ -d "$item" ]]; then
+#             local folder_name=$(basename "$item")
+            
+#             # Skip the root theme folder itself
+#             if [[ "$folder_name" == "$THEME_ROOT_FOLDER_NAME" ]]; then
+#                 >&2 echo "ROOT FOLDER detected: $folder_name - recursing with HOME_PAGE_ID"
+#                 write_hierarchy "$item" "$HOME_PAGE_ID"
+#             else
+#                 >&2 echo "Processing folder: $folder_name with parent: $parent_page_id"
+#                 local new_page_id
+#                 new_page_id=$(create_web_page "$folder_name" "$parent_page_id")
+                
+#                 # Only recurse if we got a valid page ID
+#                 if [[ -n "$new_page_id" && "$new_page_id" != "null" ]]; then
+#                     >&2 echo "Successfully created page for $folder_name (ID: $new_page_id)"
+#                     write_hierarchy "$item" "$new_page_id"
+#                 else
+#                     >&2 echo "WARNING: Failed to create page for $folder_name, using parent ID ($parent_page_id) for children"
+#                     write_hierarchy "$item" "$parent_page_id"
+#                 fi
+#             fi
+#         fi
+#     done
+# }
+
+# Write hierarchy
 write_hierarchy() {
     local path="$1"
     local parent_page_id="$2"
@@ -548,16 +602,18 @@ write_hierarchy() {
                 
                 # Only recurse if we got a valid page ID
                 if [[ -n "$new_page_id" && "$new_page_id" != "null" ]]; then
-                    >&2 echo "Successfully created page for $folder_name (ID: $new_page_id)"
+                    >&2 echo "Successfully got/created page for $folder_name (ID: $new_page_id)"
                     write_hierarchy "$item" "$new_page_id"
                 else
-                    >&2 echo "WARNING: Failed to create page for $folder_name, using parent ID ($parent_page_id) for children"
-                    write_hierarchy "$item" "$parent_page_id"
+                    >&2 echo "ERROR: Failed to get/create page for $folder_name, skipping folder contents"
+                    # Don't use parent_page_id as fallback - this could cause duplicates
+                    continue
                 fi
             fi
         fi
     done
 }
+
 
 # Create web template
 create_web_template() {
@@ -828,25 +884,25 @@ run_portal_template_install() {
 # STEP 1: EXTRACT GCWEB FILES
 #####################################
     echo "Extracting theme files..."
-    # unzip -o "$ZIP_FILE_PATH" -d "$EXTRACTION_PATH"
+    unzip -o "$ZIP_FILE_PATH" -d "$EXTRACTION_PATH"
 
 #####################################
 # STEP 2: CREATE SNIPPETS
 #####################################
     echo "Creating snippets..."
-    # create_snippets
+    create_snippets
 
 #####################################
 # STEP 3: CREATE TEMPLATES
 #####################################
     echo "Writing templates..."
-    # write_templates "$BASE_PATH_TEMPLATES"
+    write_templates "$BASE_PATH_TEMPLATES"
 
 #####################################
 # STEP 4: UPDATE HOME PAGE COPY
 #####################################
     echo "Updating home page..."
-    # update_home_page "$PAGE_TEMPLATE_NAME_NEW_HOME"
+    update_home_page "$PAGE_TEMPLATE_NAME_NEW_HOME"
     
 #####################################
 # STEP 5: CREATE WEB PAGES & WEB FILES
@@ -855,7 +911,7 @@ run_portal_template_install() {
     >&2 echo "DEBUG: HOME_PAGE_ID before write_hierarchy: $HOME_PAGE_ID"
     >&2 echo "DEBUG: Calling write_hierarchy with path: ${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}"
     
-    # write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
+    write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
 
 #####################################
 # STEP 6: UPSERT THE BASELINE STYLES REQUIRED BY POWER PAGES
