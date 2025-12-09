@@ -409,7 +409,6 @@ create_web_file() {
     local file_name=$(basename "$file_path")
     local partial_url=$(echo "$file_name" | tr -d ' ' | tr '[:upper:]' '[:lower:]')
     local mime_type=$(get_mime_type "$file_path")
-    local file_content=$(base64 -i "$file_path")
     local relative_path=$(get_relative_path "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$file_path")
     
     local blob_url="${BLOB_ADDRESS}${relative_path}${partial_url}"
@@ -490,25 +489,23 @@ create_web_file() {
         return 0
     fi
     
-    local component_name
-    component_name=$(echo "$existing_row" | jq -r '.name // empty')
+    # Upload file content directly via Web API (binary upload)
+    local upload_response
+    upload_response=$(curl -s -X PATCH "${API_URL}powerpagecomponents($component_id)/filecontent" \
+        -H "Authorization: Bearer $TOKEN" \
+        -H "Content-Type: application/octet-stream" \
+        -H "x-ms-file-name: $file_name" \
+        --data-binary "@$file_path")
     
-    local flow_body
-    flow_body=$(jq -n \
-        --arg id "$component_id" \
-        --arg name "$component_name" \
-        --arg content "$file_content" \
-        '{
-            "powerpagecomponentid": $id,
-            "name": $name,
-            "filecontent": $content
-        }')
+    # Check for errors in response
+    local error_code
+    error_code=$(echo "$upload_response" | jq -r '.error.code // empty' 2>/dev/null)
     
-    # Send to Flow
-    local flow_response
-    flow_response=$(curl -s -X POST "$FLOW_URL" \
-        -H "Content-Type: application/json; charset=utf-8" \
-        -d "$flow_body" 2>&1)
+    if [[ -n "$error_code" ]]; then
+        >&2 echo "ERROR: Failed to upload file content for $file_name"
+        >&2 echo "Response: $upload_response"
+        return 1
+    fi
     
     >&2 echo "Uploaded file content for: $file_name"
 }
