@@ -884,13 +884,13 @@ run_portal_template_install() {
 # STEP 1: EXTRACT GCWEB FILES
 #####################################
     echo "Extracting theme files..."
-    unzip -o "$ZIP_FILE_PATH" -d "$EXTRACTION_PATH"
+    # unzip -o "$ZIP_FILE_PATH" -d "$EXTRACTION_PATH"
 
 #####################################
 # STEP 2: CREATE SNIPPETS
 #####################################
     echo "Creating snippets..."
-    create_snippets
+    # create_snippets
 
 #####################################
 # STEP 3: CREATE TEMPLATES
@@ -911,13 +911,13 @@ run_portal_template_install() {
     >&2 echo "DEBUG: HOME_PAGE_ID before write_hierarchy: $HOME_PAGE_ID"
     >&2 echo "DEBUG: Calling write_hierarchy with path: ${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}"
     
-    write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
+    # write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
 
 #####################################
 # STEP 6: UPSERT THE BASELINE STYLES REQUIRED BY POWER PAGES
 #####################################
     echo "Updating baseline styles..."
-    update_baseline_styles
+    # update_baseline_styles
     
     echo "Portal template installation complete!"
 }

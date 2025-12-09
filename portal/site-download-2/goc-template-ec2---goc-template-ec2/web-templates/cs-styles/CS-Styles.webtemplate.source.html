@@ -1,0 +1,420 @@
+<style>
+.bg-primary {
+    --bs-bg-opacity: 1;
+    background-color: #284162;
+}
+
+.gc-main-footer {
+  margin-top:1em;
+}
+
+.application-bar {
+  background-color: #38414d;
+  color: #fff;
+  margin-top: 15px;
+}
+.application-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.application-bar h2 a {
+  color: #fff;
+  text-decoration: none;
+}
+.application-bar h2 a:hover {
+  text-decoration: underline;
+}
+.application-bar h2 {
+  border: none;
+  margin: 10px 0 8px;
+}
+
+.logout-link {
+    margin-left: auto; /* This will push the Logout link to the right side */
+}
+
+.logout-link a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.logout-link a:hover {
+    text-decoration: underline;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: auto;
+}
+
+.dropbtn {
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #38414d;
+    min-width: 160px;
+    z-index: 1;
+    top: 100%;
+    right: 0;
+}
+
+/* Dropdown links */
+.dropdown-content a {
+    color: #fff;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Show the dropdown on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Style the profile favicon */
+.profile-favicon {
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+.container {
+  
+    max-width: 1200px;  
+    margin: auto;
+}
+
+.sidebar {
+    width: 250px;  
+    background-color: #f5f5f5;  
+    padding: 1em;
+    box-sizing: border-box;
+    height: 100vh;  
+    overflow-y: auto;  
+}
+
+.content {
+    flex-grow: 1;
+    padding: 1em;
+    box-sizing: border-box;
+}
+
+.form-control {
+    width:60%;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu > li > a {
+    display: block;
+    padding: 0.5em 1em;
+    text-decoration: none;
+    color: #333;  
+}
+
+.menu > li > a:hover {
+    background-color: #ddd;  
+}
+
+.submenu {
+    list-style: none;
+    padding: 0;
+    padding-left: 1em;
+    display: none;  
+}
+
+.menu > li:hover .submenu {
+    display: block;  
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .content {
+        flex-basis: auto;
+    }
+}
+.bg-primary {
+  --bs-bg-opacity: 1;
+  background-color: #284162;
+}
+
+button, input, optgroup, select, textarea {
+  color: inherit;
+  font: inherit;
+  margin-bottom: 16px;
+}
+
+<!-- EC STYLES -->
+
+:root {
+  --fip-red: #26374a;
+  --ec-yellow: #FAD714;
+  --ec-blue: #005A9B;
+  --ec-green: #008750;
+  --ec-light-gray: #C8C8C8;
+  --ec-dark-gray: #4B4B4B;
+  --ec-border-gray: #E0E0E0;
+  --pewter-grey: #969696;
+}
+ 
+.bg-primary-ec {
+  background-color: var(--ec-blue) !important;
+  color: white;
+}
+ 
+.ec-header {
+  background-color: white;
+  padding: 40px 0;
+  border-top: 4px solid var(--fip-red);
+  border-bottom: 1px solid var(--ec-border-gray);
+}
+ 
+.ec-header h1 {
+  border-bottom: 3px solid var(--fip-red);
+  display: inline-block;
+  padding-bottom: 10px;
+  color: #000;
+  margin-top: 0;
+}
+ 
+.ec-header .lead {
+  font-size: 1.5rem;
+  color: var(--ec-dark-gray);
+  margin-top: 20px;
+}
+ 
+.ec-header p {
+  color: var(--ec-dark-gray);
+  font-size: 1.1rem;
+}
+ 
+.btn-ec-primary {
+  background-color: var(--fip-red);
+  color: white;
+  border: 2px solid var(--fip-red);
+  border-radius: 0;
+  padding: 12px 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+ 
+.btn-ec-primary:hover,
+.btn-ec-primary:focus {
+  background-color: #26374a;
+  color: white;
+  border-color: #26374a;
+  text-decoration: none;
+}
+ 
+.btn-ec-outline {
+  background-color: transparent;
+  color: var(--fip-red);
+  border: 2px solid var(--fip-red);
+  border-radius: 0;
+  padding: 12px 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+ 
+.btn-ec-outline:hover,
+.btn-ec-outline:focus {
+  background-color: var(--fip-red);
+  color: white;
+  text-decoration: none;
+}
+ 
+.home-most-requested {
+  background-color: var(--ec-yellow);
+  border: none;
+  padding: 30px 0;
+}
+ 
+.home-most-requested h2 {
+  color: #000;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+ 
+.home-most-requested a {
+  color: #000;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+ 
+.home-most-requested a:hover,
+.home-most-requested a:focus {
+  color: var(--fip-red);
+  text-decoration: underline;
+}
+ 
+.gc-srvinfo h2 {
+  color: #000;
+  font-weight: 600;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--ec-border-gray);
+}
+ 
+.gc-srvinfo h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+ 
+.gc-srvinfo h3 a {
+  color: var(--ec-blue);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+ 
+.gc-srvinfo h3 a:hover,
+.gc-srvinfo h3 a:focus {
+  color: var(--fip-red);
+  text-decoration: underline;
+}
+ 
+.gc-srvinfo p {
+  color: #424242;
+  line-height: 1.6;
+}
+ 
+.home-your-gov {
+  background-color: var(--ec-dark-gray);
+  color: white;
+  border: none;
+  padding: 30px 0;
+}
+ 
+.home-your-gov h2 {
+  color: white;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+ 
+.home-your-gov a {
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+ 
+.home-your-gov a:hover,
+.home-your-gov a:focus {
+  color: var(--ec-yellow);
+  text-decoration: underline;
+}
+ 
+.gc-features h2 {
+  color: #000;
+  font-weight: 600;
+  margin: 40px 0 30px 0;
+}
+ 
+.gc-features .well {
+  border: 2px solid var(--ec-border-gray);
+  transition: box-shadow 0.3s ease;
+}
+ 
+.gc-features .well:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+ 
+.gc-features h3 a {
+  color: var(--ec-blue);
+  font-weight: 600;
+}
+ 
+.gc-features h3 a:hover,
+.gc-features h3 a:focus {
+  color: var(--fip-red);
+}
+ 
+.stretched-link::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  content: "";
+}
+ 
+.position-relative {
+  position: relative;
+}
+ 
+.pagedetails {
+  margin-top: 40px;
+  padding: 20px 0;
+  border-top: 1px solid var(--ec-border-gray);
+}
+ 
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ec-header {
+    padding: 20px 0;
+  }
+  
+  .ec-header .lead {
+    font-size: 1.2rem;
+  }
+  
+  .btn-ec-primary,
+  .btn-ec-outline {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+ 
+/* Fallback for browsers that don't support CSS variables */
+.btn-ec-primary {
+  background-color: #26374a;
+  border-color: #26374a;
+}
+ 
+.btn-ec-outline {
+  color: #26374a;
+  border-color: #26374a;
+}
+ 
+.home-most-requested {
+  background-color: #FAD714;
+}
+ 
+.gc-srvinfo h3 a {
+  color: #005A9B;
+}
+ 
+.home-your-gov {
+  background-color: #4B4B4B;
+}
+ 
+
+
+
+
+</style>

@@ -1,0 +1,199 @@
+{% comment %}
+  Political Entities Service Centre (PEPP) - Header Template
+  Minimalist application header
+{% endcomment %}
+
+{% if user %}
+
+<style>
+.application-bar {
+  background-color: #38414d;
+  color: #fff;
+  margin-top: 0;
+}
+.application-bar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.application-bar h2 a {
+  color: #fff;
+  text-decoration: none;
+}
+.application-bar h2 a:hover {
+  text-decoration: underline;
+}
+.application-bar h2 {
+  border: none;
+  margin: 10px 0 8px;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+  margin-left: auto;
+}
+.dropbtn {
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #38414d;
+  min-width: 160px;
+  z-index: 1000;
+  top: 100%;
+  right: 0;
+}
+.dropdown-content a {
+  color: #fff;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.dropdown-content a:hover {
+  background-color: #4a5568;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+.profile-favicon {
+  font-size: 18px;
+  vertical-align: middle;
+}
+</style>
+
+<nav>
+  <ul id="wb-tphp" class="wb-init wb-disable-inited">
+    <li class="wb-slc"><a class="wb-sl" href="#wb-cont">Skip to main content</a></li>
+    <li class="wb-slc visible-sm visible-md visible-lg"><a class="wb-sl" href="#wb-info">Skip to About this site</a></li>
+    <li class="wb-slc"><a class="wb-sl" href="?wbdisable=true" rel="alternate">Switch to basic HTML version</a></li>
+  </ul>
+</nav>
+
+<header>
+  <div id="wb-bnr" class="container">
+    <div class="row">
+      <section id="wb-lng" class="col-xs-3 col-sm-12 pull-right text-right">
+        <h2 class="wb-inv">Language selection</h2>
+        <ul class="list-inline mrgn-bttm-0">
+          <li>
+            <a lang="fr" hreflang="fr" href="{{ page.adx_partialurl }}-fr">
+              <span class="hidden-xs" translate="no">Français</span>
+              <abbr title="Français" translate="no" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">fr</abbr>
+            </a>
+          </li>
+        </ul>
+      </section>
+      <div class="brand col-xs-9 col-sm-5 col-md-4" property="publisher" typeof="GovernmentOrganization">
+        <a href="/" property="url">
+          <img src="https://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/sig-blk-en.svg" alt="Government of Canada" property="logo">
+          <span class="wb-inv"> / <span lang="fr">Gouvernement du Canada</span></span>
+        </a>
+        <meta property="name" content="Government of Canada">
+        <meta property="areaServed" typeof="Country" content="Canada">
+        <link property="logo" href="https://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/wmms-blk.svg">
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="application-bar">
+  <div class="container">
+    <div class="application-bar-content">
+      <h2><a href="/">{{ snippets['PEPP/APP/TITLE'] | default: 'Political Entities Service Centre' }}</a></h2>
+      <div class="dropdown">
+        <a class="btn dropbtn dropdown-toggle" type="button" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-user"></i> {{ user.fullname }}
+        </a>
+        <div class="dropdown-menu dropdown-content" aria-labelledby="profileDropdown">
+          {% assign weblink_set = weblinks["Profile Navigation"] %}
+          {% for link in weblink_set.weblinks %}
+            <a href="{{ link.url | h }}{{ request.query }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a>
+          {% endfor %}
+          <a href="/Account/Login/LogOff?returnUrl=/" title="logout">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav id="wb-bc" property="breadcrumb">
+  <h2 class="wb-inv">You are here:</h2>
+  <div class="container">
+    <ol class="breadcrumb" typeof="BreadcrumbList">
+      <li property="itemListElement" typeof="ListItem">
+        <a property="item" typeof="WebPage" href="/">
+          <span property="name">Home</span>
+        </a>
+        <meta property="position" content="1">
+      </li>
+      {% if page.title != 'Home' and page.adx_partialurl != '/' %}
+      <li property="itemListElement" typeof="ListItem">
+        <span property="name">{{ page.title }}</span>
+        <meta property="position" content="2">
+      </li>
+      {% endif %}
+    </ol>
+  </div>
+</nav>
+
+{% else %}
+
+{% comment %} Anonymous user - minimal header, no menu, no breadcrumb {% endcomment %}
+
+<style>
+.pepp-anon-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 15px 0;
+}
+.pepp-anon-header .brand img {
+  filter: brightness(0) invert(1);
+  height: 28px;
+}
+.pepp-anon-header .lang-link {
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+}
+.pepp-anon-header .lang-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+</style>
+
+<nav>
+  <ul id="wb-tphp" class="wb-init wb-disable-inited">
+    <li class="wb-slc"><a class="wb-sl" href="#wb-cont">Skip to main content</a></li>
+    <li class="wb-slc"><a class="wb-sl" href="?wbdisable=true" rel="alternate">Switch to basic HTML version</a></li>
+  </ul>
+</nav>
+
+<header class="pepp-anon-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-6">
+        <a href="/" class="brand">
+          <img src="https://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/sig-blk-en.svg" alt="Government of Canada">
+        </a>
+      </div>
+      <div class="col-xs-6 text-right">
+        <a lang="fr" hreflang="fr" href="{{ page.adx_partialurl }}-fr" class="lang-link">
+          <span class="hidden-xs" translate="no">Français</span>
+          <abbr title="Français" translate="no" class="visible-xs">FR</abbr>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% endif %}

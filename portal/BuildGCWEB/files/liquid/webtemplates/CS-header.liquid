@@ -1,302 +1,199 @@
+{% comment %}
+  Political Entities Service Centre (PEPP) - Header Template
+  Minimalist application header
+{% endcomment %}
+
+{% if user %}
+
 <style>
-/* Application Bar Content - Match body font size */
-.application-bar-content h2 {
-  font-size: 1rem !important;
-  font-weight: 600;
-  margin: 0;
+.application-bar {
+  background-color: #38414d;
+  color: #fff;
+  margin-top: 0;
 }
-
-.application-bar-content h2 a {
-  font-size: 1rem !important;
-  color: white;
+.application-bar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.application-bar h2 a {
+  color: #fff;
   text-decoration: none;
-  font-weight: 600;
 }
-
-.application-bar-content h2 a:hover,
-.application-bar-content h2 a:focus {
-  color: var(--ec-yellow);
+.application-bar h2 a:hover {
   text-decoration: underline;
 }
-
+.application-bar h2 {
+  border: none;
+  margin: 10px 0 8px;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+  margin-left: auto;
+}
+.dropbtn {
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #38414d;
+  min-width: 160px;
+  z-index: 1000;
+  top: 100%;
+  right: 0;
+}
+.dropdown-content a {
+  color: #fff;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.dropdown-content a:hover {
+  background-color: #4a5568;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+.profile-favicon {
+  font-size: 18px;
+  vertical-align: middle;
+}
 </style>
-{% if user %}  
-<nav>
-   <ul id="wb-tphp" class="wb-init wb-disable-inited">
-      <li class="wb-slc"><a class="wb-sl" href="#wb-cont">Skip to main content</a></li>
-      <li class="wb-slc visible-sm visible-md visible-lg"><a class="wb-sl" href="#wb-info">Skip to About this site</a></li>
-      <li class="wb-slc"><a class="wb-sl" href="?wbdisable=true" rel="alternate">Switch to basic HTML version</a></li>
-   </ul>
-</nav>
-<header>
-   <div id="wb-bnr" class="container">
-      <div class="row">
-         <section id="wb-lng" class="col-xs-3 col-sm-12 pull-right text-right">
-            <h2 class="wb-inv">Language selection</h2>
-            <ul class="list-inline mrgn-bttm-0">
-               <li>
-                  <a lang="fr" hreflang="fr" href="default-application-fr.html">
-                     <span class="hidden-xs" translate="no">Français</span>
-                     <abbr title="Français" translate="no" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">fr</abbr>
-                  </a>
-               </li>
-            </ul>
-         </section>
-         <div class="brand col-xs-9 col-sm-5 col-md-4" property="publisher" typeof="GovernmentOrganization">
-            <a href="/" property="url">
-               <img src="/GCWeb/assets/sig-blk-en.svg" alt="Elections Canada" property="logo">
-               <span class="wb-inv"> / <span lang="fr">Élections Canada</span></span>
-            </a>
-            <meta property="name" content="Elections Canada">
-            <meta property="areaServed" typeof="Country" content="Canada">
-            <link property="logo" href="/GCWeb/assets/sig-blk-en.svg">
-         </div>
-      </div>
-   </div>
-</header>
-<section class="application-bar ec-app-bar">
-   <div class="container">
-      <div class="application-bar-content">
-         <h2><a href="/">Elections Canada Portal</a></h2>
-         <div class="dropdown">
-            <a class="btn dropbtn dropdown-toggle" type="button" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-               <i class="fa fa-user"></i> {{ user.fullname }}
-            </a>
-            <div class="dropdown-menu dropdown-content" aria-labelledby="profileDropdown">
-               {% assign weblink_set = weblinks["Profile Navigation"] %}
-               {% for link in weblink_set.weblinks %}
-                  <a href="{{ link.url | h}}{{request.query}}" title="{{link.tooltip | h}}">{{ link.name | h }}</a>
-               {% endfor %}
-            </div>
-         </div>
-      </div>
-   </div>
-</section>
-<div class="container"> 
-   {% comment %}{% include 'Breadcrumbs' %}{% endcomment %} 
-</div>
 
-{% else %}  
 <nav>
-   <ul id="wb-tphp" class="wb-init wb-disable-inited">
-      <li class="wb-slc"><a class="wb-sl" href="#wb-cont">Skip to main content</a></li>
-      <li class="wb-slc visible-sm visible-md visible-lg"><a class="wb-sl" href="#wb-info">Skip to About this site</a></li>
-      <li class="wb-slc"><a class="wb-sl" href="?wbdisable=true" rel="alternate">Switch to basic HTML version</a></li>
-   </ul>
+  <ul id="wb-tphp" class="wb-init wb-disable-inited">
+    <li class="wb-slc"><a class="wb-sl" href="#wb-cont">Skip to main content</a></li>
+    <li class="wb-slc visible-sm visible-md visible-lg"><a class="wb-sl" href="#wb-info">Skip to About this site</a></li>
+    <li class="wb-slc"><a class="wb-sl" href="?wbdisable=true" rel="alternate">Switch to basic HTML version</a></li>
+  </ul>
 </nav>
-<header class="ec-header-main">
-   <div id="wb-bnr" class="container">
-      <div class="row">
-         <section id="wb-lng" class="col-xs-3 col-sm-12 pull-right text-right">
-            <h2 class="wb-inv">Language selection</h2>
-            <ul class="list-inline mrgn-bttm-0">
-               <li>
-                  <a lang="fr" hreflang="fr" href="content-fr.html">
-                     <span class="hidden-xs" translate="no">Français</span>
-                     <abbr title="Français" translate="no" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">fr</abbr>
-                  </a>
-               </li>
-            </ul>
-         </section>
-         <div class="brand col-xs-9 col-sm-5 col-md-4" property="publisher" typeof="GovernmentOrganization">
-            <a href="/" property="url">
-               <img src="/GCWeb/assets/sig-blk-en.svg" alt="Elections Canada" property="logo" class="ec-logo">
-               <span class="wb-inv"> / <span lang="fr">Élections Canada</span></span>
+
+<header>
+  <div id="wb-bnr" class="container">
+    <div class="row">
+      <section id="wb-lng" class="col-xs-3 col-sm-12 pull-right text-right">
+        <h2 class="wb-inv">Language selection</h2>
+        <ul class="list-inline mrgn-bttm-0">
+          <li>
+            <a lang="fr" hreflang="fr" href="{{ page.adx_partialurl }}-fr">
+              <span class="hidden-xs" translate="no">Français</span>
+              <abbr title="Français" translate="no" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">fr</abbr>
             </a>
-            <meta property="name" content="Elections Canada">
-            <meta property="areaServed" typeof="Country" content="Canada">
-            <link property="logo" href="/GCWeb/assets/sig-blk-en.svg">
-         </div>
-         <section id="wb-srch" class="col-lg-offset-4 col-md-offset-4 col-sm-offset-2 col-xs-12 col-sm-5 col-md-4">
-            <h2>Search</h2>
-            <form action="#" method="post" name="cse-search-box" role="search">
-               <div class="form-group wb-srch-qry">
-                  <label for="wb-srch-q" class="wb-inv">Search Elections Canada</label>
-                  <input id="wb-srch-q" list="wb-srch-q-ac" class="wb-srch-q form-control" name="q" type="search" value="" size="34" maxlength="170" placeholder="Search Elections Canada">
-                  <datalist id="wb-srch-q-ac"></datalist>
-               </div>
-               <div class="form-group submit">
-                  <button type="submit" id="wb-srch-sub" class="btn btn-primary btn-small" name="wb-srch-sub">
-                     <span class="glyphicon-search glyphicon"></span>
-                     <span class="wb-inv">Search</span>
-                  </button>
-               </div>
-            </form>
-         </section>
+          </li>
+        </ul>
+      </section>
+      <div class="brand col-xs-9 col-sm-5 col-md-4" property="publisher" typeof="GovernmentOrganization">
+        <a href="/" property="url">
+          <img src="https://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/sig-blk-en.svg" alt="Government of Canada" property="logo">
+          <span class="wb-inv"> / <span lang="fr">Gouvernement du Canada</span></span>
+        </a>
+        <meta property="name" content="Government of Canada">
+        <meta property="areaServed" typeof="Country" content="Canada">
+        <link property="logo" href="https://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/wmms-blk.svg">
       </div>
-   </div>
+    </div>
+  </div>
 </header>
+
+<section class="application-bar">
+  <div class="container">
+    <div class="application-bar-content">
+      <h2><a href="/">{{ snippets['PEPP/APP/TITLE'] | default: 'Political Entities Service Centre' }}</a></h2>
+      <div class="dropdown">
+        <a class="btn dropbtn dropdown-toggle" type="button" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-user"></i> {{ user.fullname }}
+        </a>
+        <div class="dropdown-menu dropdown-content" aria-labelledby="profileDropdown">
+          {% assign weblink_set = weblinks["Profile Navigation"] %}
+          {% for link in weblink_set.weblinks %}
+            <a href="{{ link.url | h }}{{ request.query }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a>
+          {% endfor %}
+          <a href="/Account/Login/LogOff?returnUrl=/" title="logout">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <nav id="wb-bc" property="breadcrumb">
-   <h2>You are here:</h2>
-   <div class="container">
-      <ol class="breadcrumb" typeof="BreadcrumbList">
-         <li property="itemListElement" typeof="ListItem">
-            <a property="item" typeof="WebPage" href="/">
-               <span property="name">Home</span>
-            </a>
-            <meta property="position" content="1">
-         </li>
-      </ol>
-   </div>
+  <h2 class="wb-inv">You are here:</h2>
+  <div class="container">
+    <ol class="breadcrumb" typeof="BreadcrumbList">
+      <li property="itemListElement" typeof="ListItem">
+        <a property="item" typeof="WebPage" href="/">
+          <span property="name">Home</span>
+        </a>
+        <meta property="position" content="1">
+      </li>
+      {% if page.title != 'Home' and page.adx_partialurl != '/' %}
+      <li property="itemListElement" typeof="ListItem">
+        <span property="name">{{ page.title }}</span>
+        <meta property="position" content="2">
+      </li>
+      {% endif %}
+    </ol>
+  </div>
 </nav>
-{% endif %}
+
+{% else %}
+
+{% comment %} Anonymous user - minimal header, no menu, no breadcrumb {% endcomment %}
 
 <style>
-/* Elections Canada Header Styles */
-.ec-header-main {
-   border-top: 4px solid #EB2D37; /* FIP Red */
-   border-bottom: 1px solid #E0E0E0;
-   background-color: white;
+.pepp-anon-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 15px 0;
 }
-
-.ec-logo {
-   max-height: 40px;
-   width: auto;
+.pepp-anon-header .brand img {
+  filter: brightness(0) invert(1);
+  height: 28px;
 }
-
-.ec-app-bar {
-   background-color: #005A9B; /* EC Blue */
-   color: white;
-   padding: 10px 0;
+.pepp-anon-header .lang-link {
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
 }
-
-.ec-app-bar h2 {
-   margin: 0;
-   display: inline-block;
-}
-
-.ec-app-bar h2 a {
-   color: white;
-   text-decoration: none;
-   font-size: 1.2rem;
-   font-weight: 600;
-}
-
-.ec-app-bar h2 a:hover {
-   color: #FAD714; /* EC Yellow */
-   text-decoration: underline;
-}
-
-.ec-app-bar .application-bar-content {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-}
-
-.ec-app-bar .dropdown {
-   position: relative;
-}
-
-.ec-app-bar .dropbtn {
-   background-color: transparent;
-   color: white;
-   border: 2px solid white;
-   padding: 8px 16px;
-   font-size: 14px;
-   cursor: pointer;
-   border-radius: 4px;
-   transition: all 0.3s ease;
-}
-
-.ec-app-bar .dropbtn:hover {
-   background-color: white;
-   color: #005A9B;
-}
-
-.ec-app-bar .dropdown-content {
-   display: none;
-   position: absolute;
-   right: 0;
-   background-color: white;
-   min-width: 200px;
-   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-   z-index: 1;
-   border: 1px solid #E0E0E0;
-   border-radius: 4px;
-   margin-top: 5px;
-}
-
-.ec-app-bar .dropdown-content a {
-   color: #005A9B;
-   padding: 12px 16px;
-   text-decoration: none;
-   display: block;
-   border-bottom: 1px solid #E0E0E0;
-   transition: background-color 0.3s ease;
-}
-
-.ec-app-bar .dropdown-content a:last-child {
-   border-bottom: none;
-}
-
-.ec-app-bar .dropdown-content a:hover {
-   background-color: #F5F5F5;
-   color: #EB2D37;
-}
-
-.ec-app-bar .dropdown:hover .dropdown-content,
-.ec-app-bar .dropdown-content.show {
-   display: block;
-}
-
-/* Language toggle styling */
-#wb-lng a {
-   color: #005A9B;
-   font-weight: 600;
-   text-decoration: none;
-   transition: color 0.3s ease;
-}
-
-#wb-lng a:hover {
-   color: #EB2D37;
-   text-decoration: underline;
-}
-
-/* Search button styling */
-#wb-srch .btn-primary {
-   background-color: #EB2D37;
-   border-color: #EB2D37;
-}
-
-#wb-srch .btn-primary:hover {
-   background-color: #C71F2D;
-   border-color: #C71F2D;
-}
-
-/* Breadcrumb styling */
-#wb-bc {
-   background-color: #F8F8F8;
-}
-
-#wb-bc .breadcrumb {
-   background-color: transparent;
-}
-
-#wb-bc .breadcrumb a {
-   color: #005A9B;
-}
-
-#wb-bc .breadcrumb a:hover {
-   color: #EB2D37;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-   .ec-app-bar .application-bar-content {
-      flex-direction: column;
-      align-items: flex-start;
-   }
-   
-   .ec-app-bar .dropdown {
-      margin-top: 10px;
-      width: 100%;
-   }
-   
-   .ec-app-bar .dropbtn {
-      width: 100%;
-   }
+.pepp-anon-header .lang-link:hover {
+  color: #fff;
+  text-decoration: underline;
 }
 </style>
 
-{% include "CS-Styles" %}
+<nav>
+  <ul id="wb-tphp" class="wb-init wb-disable-inited">
+    <li class="wb-slc"><a class="wb-sl" href="#wb-cont">Skip to main content</a></li>
+    <li class="wb-slc"><a class="wb-sl" href="?wbdisable=true" rel="alternate">Switch to basic HTML version</a></li>
+  </ul>
+</nav>
+
+<header class="pepp-anon-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-6">
+        <a href="/" class="brand">
+          <img src="https://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/sig-blk-en.svg" alt="Government of Canada">
+        </a>
+      </div>
+      <div class="col-xs-6 text-right">
+        <a lang="fr" hreflang="fr" href="{{ page.adx_partialurl }}-fr" class="lang-link">
+          <span class="hidden-xs" translate="no">Français</span>
+          <abbr title="Français" translate="no" class="visible-xs">FR</abbr>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% endif %}
