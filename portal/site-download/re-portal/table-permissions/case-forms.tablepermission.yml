@@ -1,0 +1,17 @@
+adx_accountrelationship: 
+adx_append: true
+adx_appendto: true
+adx_childTablePermissions: []
+adx_contactrelationship: incident_customer_contacts
+adx_create: true
+adx_delete: false
+adx_entitylogicalname: incident
+adx_entityname: case forms
+adx_entitypermission_webrole:
+- 13ad7a40-e299-ee11-be37-0022483c04c3
+adx_entitypermissionid: a218bcc9-3831-4924-af6c-a28ee31ebadc
+adx_parententitypermission: 
+adx_parentrelationship: 
+adx_read: true
+adx_scope: 756150001
+adx_write: true

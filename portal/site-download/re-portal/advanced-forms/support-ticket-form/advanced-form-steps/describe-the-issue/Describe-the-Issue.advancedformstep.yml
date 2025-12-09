@@ -1,0 +1,12 @@
+adx_entityAttributesInfo:
+- attributes: []
+adx_formname: Describe the Issue
+adx_mode: 100000001
+adx_name: Describe the Issue
+adx_nextstep: 6cdbfcbf-26d1-41e6-b632-d40531f62ba7
+adx_systemForm: 84e5285a-132a-4515-9a2a-aa479c265f8f
+adx_targetentitylogicalname: incident
+adx_type: 100000001
+adx_webform: d9e1fe82-bb7d-4be0-974b-15e75478cca0
+adx_webFormMetadatas: []
+adx_webformstepid: 4dbe3848-b6de-427a-b162-2816fbf4e83c

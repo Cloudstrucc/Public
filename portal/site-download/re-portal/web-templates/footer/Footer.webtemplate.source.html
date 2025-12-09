@@ -1,0 +1,66 @@
+<footer id="wb-info">
+	<h2 class="wb-inv">About this site</h2>
+
+
+	<div class="gc-main-footer">
+		<div class="container">
+		
+		</div>
+	</div>
+
+	
+</footer>
+
+
+<script src="/wet-boew/js/i18n/en.min.js"></script><script src="/wet-boew/js/deps/jquery.magnific-popup.min.js"></script><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha384-rY/jv8mMhqDabXSo+UCggqKtdmBfd3qC2/KvyTDNQ6PcUJXaxK1tMepoQda4g5vB" crossorigin="anonymous"></script>
+<script src="/wet-boew/js/wet-boew.min.js"></script><span id="wb-rsz" class="wb-init">&nbsp;</span>
+<script src="/GCWeb/js/theme.min.js"></script>
+
+{% comment %}
+footer role='contentinfo' class='footer'>
+  <div class='footer-bottom hidden-print'>
+    <div class='container'>
+      <div class='row'>
+        <div class='col-md-9 col-sm-9 col-xs-9 text-left'>
+          {% editable snippets 'Footer' type: 'html' %}
+        </div>
+        <div id='accessibilityLinkContainer' class='col-md-3 col-sm-3 col-xs-3 text-right'></div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type='text/javascript'>
+  window.onload = function () {
+    const accessibilityLinkContainer = document.getElementById('accessibilityLinkContainer');
+    switch (window.navigator.language) {
+      case 'fr':
+        if (accessibilityLinkContainer != null) {
+          const accessibilityText = 'Accessibilité : partiellement conforme';
+          const frenchAccessibilityAnchor = document.createElement('a');
+          frenchAccessibilityAnchor.id = 'frenchAccesssibleLink';
+          frenchAccessibilityAnchor.target = '_blank';
+          frenchAccessibilityAnchor.href = 'https://go.microsoft.com/fwlink/?linkid=2163806';
+          frenchAccessibilityAnchor.title = accessibilityText;
+          frenchAccessibilityAnchor.innerText = accessibilityText;
+          accessibilityLinkContainer.appendChild(frenchAccessibilityAnchor);
+        }
+        break;
+      case 'it':
+        if (accessibilityLinkContainer != null) {
+          const accessibilityText = 'Accessibilità: parzialmente conforme';
+          const italianAccessibilityAnchor = document.createElement('a');
+          italianAccessibilityAnchor.id = 'italianAccesssibleLink';
+          italianAccessibilityAnchor.target = '_blank';
+          italianAccessibilityAnchor.href = 'https://go.microsoft.com/fwlink/?linkid=2208177';
+          italianAccessibilityAnchor.title = accessibilityText;
+          italianAccessibilityAnchor.innerText = accessibilityText;
+          accessibilityLinkContainer.appendChild(italianAccessibilityAnchor);
+        }
+        break;
+      default:
+        accessibilityLinkContainer.remove();
+    }
+  };
+</script>
+{% endcomment %}

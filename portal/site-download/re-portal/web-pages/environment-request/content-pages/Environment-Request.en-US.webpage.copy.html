@@ -1,0 +1,284 @@
+{% if user %}
+
+  <main class="container" property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
+    <h1 id="wb-cont" property="name">New Dataverse Environment Request</h1>
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="You are here:" role="navigation">
+      <ol class="breadcrumb">
+        <li><a href="/">Power Platform CEO Kit</a></li>
+        <li>New Environment Request</li>
+      </ol>
+    </nav>
+    
+    <!-- Page Introduction -->
+    <section class="row mrgn-tp-md mrgn-bttm-md">
+      <div class="col-md-12">
+        <div class="panel panel-default" style="border-left: 4px solid #d83b01;">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-xs-2 text-center">
+                <span class="fa fa-database" style="font-size: 3.5em; color: #d83b01;"></span>
+              </div>
+              <div class="col-xs-10">
+                <h2 class="mrgn-tp-sm">Request a New Dataverse Environment</h2>
+                <p>Complete this form to request a new Dataverse environment for your project or department. All requests will be reviewed and approved by the Power Platform administration team.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Environment Request Form -->
+    <section class="row">
+      <div class="col-md-8">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Environment Details</h3>
+          </div>
+          <div class="panel-body">
+            <form>
+              <fieldset>
+                <legend class="wb-inv">Basic Information</legend>
+                
+                <div class="form-group">
+                  <label for="env-name" class="required"><span class="field-name">Environment Name</span> <strong class="required">(required)</strong></label>
+                  <input type="text" class="form-control" id="env-name" name="environmentName" placeholder="e.g., Sales-Development, HR-Production" required>
+                  <p class="help-block">Choose a descriptive name that indicates the purpose and type of environment</p>
+                </div>
+
+                <div class="form-group">
+                  <label for="env-type" class="required"><span class="field-name">Environment Type</span> <strong class="required">(required)</strong></label>
+                  <select class="form-control" id="env-type" name="environmentType" required>
+                    <option value="">Select environment type...</option>
+                    <option value="development">Development</option>
+                    <option value="test">Test</option>
+                    <option value="production">Production</option>
+                    <option value="sandbox">Sandbox</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="business-justification" class="required"><span class="field-name">Business Justification</span> <strong class="required">(required)</strong></label>
+                  <textarea class="form-control" id="business-justification" name="businessJustification" rows="4" placeholder="Describe the business need and how this environment will be used..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="department" class="required"><span class="field-name">Department/Division</span> <strong class="required">(required)</strong></label>
+                  <select class="form-control" id="department" name="department" required>
+                    <option value="">Select your department...</option>
+                    <option value="hr">Human Resources</option>
+                    <option value="finance">Finance</option>
+                    <option value="it">Information Technology</option>
+                    <option value="sales">Sales</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="operations">Operations</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="project-name">Project Name</label>
+                  <input type="text" class="form-control" id="project-name" name="projectName" placeholder="Associated project or initiative name">
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <legend>Technical Requirements</legend>
+                
+                <div class="form-group">
+                  <label for="region" class="required"><span class="field-name">Preferred Region</span> <strong class="required">(required)</strong></label>
+                  <select class="form-control" id="region" name="region" required>
+                    <option value="">Select region...</option>
+                    <option value="canada">Canada</option>
+                    <option value="unitedstates">United States</option>
+                    <option value="europe">Europe</option>
+                    <option value="asia">Asia Pacific</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="security-group">Security Group</label>
+                  <input type="text" class="form-control" id="security-group" name="securityGroup" placeholder="Azure AD Security Group (if applicable)">
+                  <p class="help-block">Specify the Azure AD security group that should have access to this environment</p>
+                </div>
+
+                <div class="form-group">
+                  <fieldset>
+                    <legend>Required Features</legend>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="features[]" value="dynamics365"> 
+                        Enable Dynamics 365 apps
+                      </label>
+                    </div>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="features[]" value="teams"> 
+                        Microsoft Teams integration
+                      </label>
+                    </div>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="features[]" value="sharepoint"> 
+                        SharePoint integration
+                      </label>
+                    </div>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="features[]" value="aibuilder"> 
+                        AI Builder
+                      </label>
+                    </div>
+                  </fieldset>
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <legend>Access and Permissions</legend>
+
+                <div class="form-group">
+                  <label for="admin-users" class="required"><span class="field-name">Environment Administrators</span> <strong class="required">(required)</strong></label>
+                  <textarea class="form-control" id="admin-users" name="adminUsers" rows="3" placeholder="Enter email addresses of users who should have admin access (one per line)" required></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="maker-users">Maker Users</label>
+                  <textarea class="form-control" id="maker-users" name="makerUsers" rows="3" placeholder="Enter email addresses of users who should have maker access (one per line)"></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="estimated-users">Estimated Number of Users</label>
+                  <select class="form-control" id="estimated-users" name="estimatedUsers">
+                    <option value="">Select user count...</option>
+                    <option value="1-10">1-10 users</option>
+                    <option value="11-50">11-50 users</option>
+                    <option value="51-100">51-100 users</option>
+                    <option value="101-500">101-500 users</option>
+                    <option value="500+">500+ users</option>
+                  </select>
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <legend>Timeline and Additional Information</legend>
+
+                <div class="form-group">
+                  <label for="needed-date" class="required"><span class="field-name">Date Needed</span> <strong class="required">(required)</strong></label>
+                  <input type="date" class="form-control" id="needed-date" name="neededDate" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="additional-notes">Additional Notes</label>
+                  <textarea class="form-control" id="additional-notes" name="additionalNotes" rows="3" placeholder="Any additional requirements, constraints, or information..."></textarea>
+                </div>
+
+                <div class="form-group">
+                  <fieldset>
+                    <legend>Compliance Requirements</legend>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="compliance[]" value="gdpr"> 
+                        GDPR compliance required
+                      </label>
+                    </div>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="compliance[]" value="hipaa"> 
+                        HIPAA compliance required
+                      </label>
+                    </div>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="compliance[]" value="pci"> 
+                        PCI DSS compliance required
+                      </label>
+                    </div>
+                  </fieldset>
+                </div>
+              </fieldset>
+
+              <div class="form-group mrgn-tp-lg">
+                <button type="submit" class="btn btn-primary">Submit Environment Request</button>
+                <a href="/" class="btn btn-default mrgn-lft-sm">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side Information Panel -->
+      <div class="col-md-4">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title">Request Process</h3>
+          </div>
+          <div class="panel-body">
+            <ol class="lst-spcd">
+              <li>Submit your request using this form</li>
+              <li>Admin team reviews your request (1-2 business days)</li>
+              <li>Environment is provisioned and configured</li>
+              <li>You receive access credentials and setup instructions</li>
+            </ol>
+            <hr>
+            <h4 class="h5">Need Help?</h4>
+            <p class="small">Contact the Power Platform team:</p>
+            <p class="small">
+              <span class="fa fa-envelope"></span> <a href="mailto:powerplatform-coe@elections.ca">powerplatform-coe@elections.ca</a><br>
+              <span class="fa fa-phone"></span> 1-800-POWER-PP
+            </p>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Environment Types</h3>
+          </div>
+          <div class="panel-body">
+            <dl>
+              <dt>Development</dt>
+              <dd class="small">For building and testing applications</dd>
+              <dt>Test</dt>
+              <dd class="small">For user acceptance testing and validation</dd>
+              <dt>Production</dt>
+              <dd class="small">For live business applications</dd>
+              <dt>Sandbox</dt>
+              <dd class="small">For experimentation and learning</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pagedetails">
+      <h2 class="wb-inv">Page details</h2>
+      <dl id="wb-dtmd">
+        <dt>Date modified:</dt>
+        <dd><time property="dateModified">{{ page.adx_contentmodifiedon | date: "%Y-%m-%d" }}</time></dd>
+      </dl>
+    </section>
+  </main>
+
+{% else %}
+
+<script>
+  // Redirect to home page if not authenticated
+  window.location.href = '/';
+</script>
+
+<main property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="alert alert-warning">
+          <h2>Access Restricted</h2>
+          <p>You must be signed in to access this page. You will be redirected to the home page.</p>
+          <p><a href="/" class="btn btn-primary">Return to Home</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endif %}

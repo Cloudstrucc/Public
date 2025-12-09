@@ -1,0 +1,315 @@
+{% if user %}
+
+<main class="container" property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
+  <h1 id="wb-cont" property="name">Data Loss Prevention Policy Request</h1>
+
+  <!-- Breadcrumb -->
+  <nav aria-label="You are here:" role="navigation">
+    <ol class="breadcrumb">
+      <li><a href="/">Power Platform CEO Kit</a></li>
+      <li>DLP Policy Request</li>
+    </ol>
+  </nav>
+
+  <!-- Page Introduction -->
+  <section class="row mrgn-tp-md mrgn-bttm-md">
+    <div class="col-md-12">
+      <div class="panel panel-default" style="border-left: 4px solid #005a70;">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-xs-2 text-center">
+              <span class="fa fa-shield" style="font-size: 3.5em; color: #005a70;"></span>
+            </div>
+            <div class="col-xs-10">
+              <h2 class="mrgn-tp-sm">Data Loss Prevention Policy Request</h2>
+              <p>Submit a request to create, modify, or review Data Loss Prevention (DLP) policies for your Power Platform environments. DLP policies help prevent sensitive data from being inadvertently shared.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DLP Policy Request Form -->
+  <section class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Policy Request Details</h3>
+        </div>
+        <div class="panel-body">
+          <form>
+            <fieldset>
+              <legend class="wb-inv">Request Type</legend>
+
+              <div class="form-group">
+                <fieldset>
+                  <legend class="required"><span class="field-name">Request Type</span> <strong class="required">(required)</strong></legend>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="requestType" value="new" required />
+                      Create new DLP policy
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="requestType" value="modify" required />
+                      Modify existing DLP policy
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="requestType" value="review" required />
+                      Review/audit existing policy
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="requestType" value="exemption" required />
+                      Request policy exemption
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+
+              <div class="form-group">
+                <label for="policy-name" class="required"><span class="field-name">Policy Name</span> <strong class="required">(required)</strong></label>
+                <input type="text" class="form-control" id="policy-name" name="policyName" placeholder="e.g., HR-Sensitive-Data-Policy, Finance-PCI-Compliance" required />
+              </div>
+
+              <div class="form-group">
+                <label for="environments" class="required"><span class="field-name">Target Environments</span> <strong class="required">(required)</strong></label>
+                <select class="form-control" id="environments" name="environments" multiple size="5" required>
+                  <option value="sales-prod">Sales-Production</option>
+                  <option value="hr-prod">HR-Production</option>
+                  <option value="finance-prod">Finance-Production</option>
+                  <option value="it-dev">IT-Development</option>
+                  <option value="marketing-test">Marketing-Test</option>
+                  <option value="operations-sandbox">Operations-Sandbox</option>
+                </select>
+                <p class="help-block">Hold Ctrl (Windows) or Cmd (Mac) to select multiple environments</p>
+              </div>
+            </fieldset>
+
+           <!-- Outer fieldset is OK -->
+<fieldset>
+  <legend>Data Classification</legend>
+
+  <div class="form-group">
+    <label class="required d-block">
+      <span class="field-name">Data Sensitivity Level</span> <strong class="required">(required)</strong>
+    </label>
+
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" name="dataTypes[]" value="public" />
+        Public - No restrictions
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" name="dataTypes[]" value="internal" />
+        Internal - Company confidential
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" name="dataTypes[]" value="confidential" />
+        Confidential - Restricted access
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" name="dataTypes[]" value="restricted" />
+        Restricted - Highly sensitive
+      </label>
+    </div>
+  </div>
+
+  <!-- Specific Data Types section stays the same -->
+  ...
+</fieldset>
+
+
+            <fieldset>
+              <legend>Connector Management</legend>
+
+              <div class="form-group">
+                <label for="blocked-connectors">Connectors to Block</label>
+                <textarea class="form-control" id="blocked-connectors" name="blockedConnectors" rows="4" placeholder="List connectors that should be blocked (e.g., Twitter, Facebook, Public SharePoint sites)"></textarea>
+                <p class="help-block">Specify connectors that should not be allowed to handle sensitive data</p>
+              </div>
+
+              <div class="form-group">
+                <label for="business-connectors">Business Data Connectors</label>
+                <textarea class="form-control" id="business-connectors" name="businessConnectors" rows="4" placeholder="List approved business connectors (e.g., SharePoint, Dynamics 365, SQL Server)"></textarea>
+                <p class="help-block">Connectors approved for business data use</p>
+              </div>
+
+              <div class="form-group">
+                <label for="non-business-connectors">Non-Business Data Connectors</label>
+                <textarea class="form-control" id="non-business-connectors" name="nonBusinessConnectors" rows="4" placeholder="List connectors for non-business data only (e.g., Weather services, Public APIs)"></textarea>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Policy Rules and Exceptions</legend>
+
+              <div class="form-group">
+                <label for="business-justification" class="required"><span class="field-name">Business Justification</span> <strong class="required">(required)</strong></label>
+                <textarea class="form-control" id="business-justification" name="businessJustification" rows="4" placeholder="Explain the business need for this DLP policy and how it will protect organizational data..." required></textarea>
+              </div>
+
+              <div class="form-group">
+                <fieldset>
+                  <legend>Policy Enforcement Level</legend>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="enforcementLevel" value="warn" required />
+                      Warn - Show warning but allow action
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="enforcementLevel" value="block" required />
+                      Block - Prevent the action entirely
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+
+              <div class="form-group">
+                <label for="exceptions">Requested Exceptions</label>
+                <textarea class="form-control" id="exceptions" name="exceptions" rows="3" placeholder="Describe any specific exceptions or special cases needed for this policy..."></textarea>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Approval and Timeline</legend>
+
+              <div class="form-group">
+                <label for="stakeholders" class="required"><span class="field-name">Business Stakeholders</span> <strong class="required">(required)</strong></label>
+                <textarea class="form-control" id="stakeholders" name="stakeholders" rows="3" placeholder="List email addresses of business stakeholders who should approve this policy (one per line)" required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="implementation-date">Requested Implementation Date</label>
+                <input type="date" class="form-control" id="implementation-date" name="implementationDate" />
+              </div>
+
+              <div class="form-group">
+                <label for="review-frequency">Policy Review Frequency</label>
+                <select class="form-control" id="review-frequency" name="reviewFrequency">
+                  <option value="">Select review frequency...</option>
+                  <option value="quarterly">Quarterly</option>
+                  <option value="biannually">Bi-annually</option>
+                  <option value="annually">Annually</option>
+                  <option value="custom">Custom schedule</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="additional-notes">Additional Notes</label>
+                <textarea class="form-control" id="additional-notes" name="additionalNotes" rows="3" placeholder="Any additional requirements, constraints, or information..."></textarea>
+              </div>
+            </fieldset>
+
+            <div class="form-group mrgn-tp-lg">
+              <button type="submit" class="btn btn-primary">Submit DLP Policy Request</button>
+              <a href="/" class="btn btn-default mrgn-lft-sm">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side Information Panel -->
+    <div class="col-md-4">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">DLP Policy Process</h3>
+        </div>
+        <div class="panel-body">
+          <ol class="lst-spcd">
+            <li>Submit policy request</li>
+            <li>Security team reviews requirements</li>
+            <li>Business stakeholders approve</li>
+            <li>Policy is configured and tested</li>
+            <li>Policy goes live in target environments</li>
+          </ol>
+          <hr />
+          <h4 class="h5">Review Timeline</h4>
+          <ul class="list-unstyled small">
+            <li><strong>New Policy:</strong> 5-7 business days</li>
+            <li><strong>Modification:</strong> 3-5 business days</li>
+            <li><strong>Review:</strong> 2-3 business days</li>
+            <li><strong>Exemption:</strong> 1-2 weeks</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Connector Categories</h3>
+        </div>
+        <div class="panel-body">
+          <dl class="small">
+            <dt>Business Data</dt>
+            <dd>Connectors that can access organizational data (SharePoint, Dynamics, SQL)</dd>
+            <dt>Non-Business Data</dt>
+            <dd>Connectors for public data only (Weather, News, RSS feeds)</dd>
+            <dt>Blocked</dt>
+            <dd>Connectors not allowed in the organization (Social media, Consumer services)</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="panel panel-warning">
+        <div class="panel-heading">
+          <h3 class="panel-title">Important Notes</h3>
+        </div>
+        <div class="panel-body">
+          <ul class="list-unstyled small">
+            <li><span class="fa fa-exclamation-triangle"></span> DLP policies affect all apps and flows in selected environments</li>
+            <li><span class="fa fa-info-circle"></span> Test policies in development environments first</li>
+            <li><span class="fa fa-shield"></span> Policies help ensure compliance with data protection regulations</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pagedetails">
+    <h2 class="wb-inv">Page details</h2>
+    <dl id="wb-dtmd">
+      <dt>Date modified:</dt>
+      <dd><time property="dateModified">{{ page.adx_contentmodifiedon | date: "%Y-%m-%d" }}</time></dd>
+    </dl>
+  </section>
+</main>
+
+{% else %}
+
+<script>
+  // Redirect to home page if not authenticated
+  window.location.href = '/';
+</script>
+
+<main property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="alert alert-warning">
+          <h2>Access Restricted</h2>
+          <p>You must be signed in to access this page. You will be redirected to the home page.</p>
+          <p><a href="/" class="btn btn-primary">Return to Home</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endif %}
+<div class="row sectionBlockLayout text-left" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;">
+  <div class="container" style="padding: 0px; display: flex; flex-wrap: wrap;"><div class="col-md-12 columnBlockLayout" style="flex-grow: 1; display: flex; flex-direction: column; min-width: 250px;"></div></div>
+</div>

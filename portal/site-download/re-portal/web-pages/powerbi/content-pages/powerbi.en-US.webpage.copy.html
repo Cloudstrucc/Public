@@ -1,0 +1,612 @@
+ {% if user %}
+
+  <main class="container" property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
+    <h1 id="wb-cont" property="name">Power BI</h1>
+    
+    <!-- Breadcrumb -->
+    <nav aria-label="You are here:" role="navigation">
+      <ol class="breadcrumb">
+        <li><a href="/">Power Platform CEO Kit</a></li>
+        <li>Power BI</li>
+      </ol>
+    </nav>
+    
+    <!-- Page Introduction -->
+    <section class="row mrgn-tp-md mrgn-bttm-md">
+      <div class="col-md-12">
+        <div class="panel panel-default" style="border-left: 4px solid #f2c811;">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-xs-2 text-center">
+                <span class="fa fa-bar-chart" style="font-size: 3.5em; color: #f2c811;"></span>
+              </div>
+              <div class="col-xs-10">
+                <h2 class="mrgn-tp-sm">Business Intelligence & Analytics</h2>
+                <p>Transform your data into actionable insights with interactive dashboards and reports. Connect to multiple data sources and share analytics across your organization.</p>
+                <div class="mrgn-tp-md">
+                  <a href="https://app.powerbi.com" class="btn btn-primary" target="_blank">
+                    <span class="fa fa-external-link"></span> Launch Power BI Service
+                  </a>
+                  <a href="#new-report" class="btn btn-default mrgn-lft-sm">Create New Report</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="row">
+      <div class="col-md-12">
+        <h2 class="mrgn-tp-md">Quick Actions</h2>
+      </div>
+      
+      <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
+        <div class="panel panel-default hght-inhrt" style="border-top: 4px solid #f2c811;">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-xs-3 text-center">
+                <span class="fa fa-plus-circle" style="font-size: 2.5em; color: #f2c811;"></span>
+              </div>
+              <div class="col-xs-9">
+                <h3 class="mrgn-tp-0 h5"><a href="#new-report">Create Report</a></h3>
+                <p class="small text-muted">Build interactive dashboards</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
+        <div class="panel panel-default hght-inhrt" style="border-top: 4px solid #0078d4;">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-xs-3 text-center">
+                <span class="fa fa-folder-open" style="font-size: 2.5em; color: #0078d4;"></span>
+              </div>
+              <div class="col-xs-9">
+                <h3 class="mrgn-tp-0 h5"><a href="#my-reports">My Reports</a></h3>
+                <p class="small text-muted">Access your analytics content</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
+        <div class="panel panel-default hght-inhrt" style="border-top: 4px solid #742774;">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-xs-3 text-center">
+                <span class="fa fa-share-alt" style="font-size: 2.5em; color: #742774;"></span>
+              </div>
+              <div class="col-xs-9">
+                <h3 class="mrgn-tp-0 h5"><a href="#shared-reports">Shared with Me</a></h3>
+                <p class="small text-muted">Reports from other analysts</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
+        <div class="panel panel-default hght-inhrt" style="border-top: 4px solid #107c10;">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-xs-3 text-center">
+                <span class="fa fa-database" style="font-size: 2.5em; color: #107c10;"></span>
+              </div>
+              <div class="col-xs-9">
+                <h3 class="mrgn-tp-0 h5"><a href="#data-sources">Data Sources</a></h3>
+                <p class="small text-muted">Manage data connections</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Create New Report Section -->
+    <section class="row" id="new-report">
+      <div class="col-md-12">
+        <h2 class="mrgn-tp-md">Create New Report</h2>
+      </div>
+      <div class="col-md-8">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Report Configuration</h3>
+          </div>
+          <div class="panel-body">
+            <form>
+              <div class="form-group">
+                <label for="report-name" class="required"><span class="field-name">Report Name</span> <strong class="required">(required)</strong></label>
+                <input type="text" class="form-control" id="report-name" name="reportName" placeholder="e.g., Sales Dashboard, Financial Overview" required>
+              </div>
+
+              <div class="form-group">
+                <fieldset>
+                  <legend class="required"><span class="field-name">Report Type</span> <strong class="required">(required)</strong></legend>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="reportType" value="dashboard" required>
+                      <strong>Dashboard</strong> - High-level overview with key metrics and KPIs
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="reportType" value="detailed" required>
+                      <strong>Detailed Report</strong> - In-depth analysis with drill-down capabilities
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="reportType" value="paginated" required>
+                      <strong>Paginated Report</strong> - Formatted for printing and export (SQL Server Reporting Services style)
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="reportType" value="scorecard" required>
+                      <strong>Scorecard</strong> - Goal tracking and performance monitoring
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+
+              <div class="form-group">
+                <label for="primary-data-source" class="required"><span class="field-name">Primary Data Source</span> <strong class="required">(required)</strong></label>
+                <select class="form-control" id="primary-data-source" name="primaryDataSource" required>
+                  <option value="">Select data source...</option>
+                  <option value="dataverse">Dataverse</option>
+                  <option value="sql-server">SQL Server</option>
+                  <option value="azure-sql">Azure SQL Database</option>
+                  <option value="sharepoint">SharePoint Lists</option>
+                  <option value="excel">Excel Files</option>
+                  <option value="dynamics365">Dynamics 365</option>
+                  <option value="odata">OData Feed</option>
+                  <option value="web-api">Web API</option>
+                  <option value="csv">CSV Files</option>
+                  <option value="multiple">Multiple Sources</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="report-category">Report Category</label>
+                <select class="form-control" id="report-category" name="reportCategory">
+                  <option value="">Select category...</option>
+                  <option value="sales">Sales & Marketing</option>
+                  <option value="finance">Finance & Accounting</option>
+                  <option value="hr">Human Resources</option>
+                  <option value="operations">Operations</option>
+                  <option value="customer">Customer Service</option>
+                  <option value="executive">Executive</option>
+                  <option value="compliance">Compliance & Risk</option>
+                  <option value="it">IT & Technology</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <fieldset>
+                  <legend>Key Metrics to Include</legend>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="metrics[]" value="revenue">
+                          Revenue & Sales
+                        </label>
+                      </div>
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="metrics[]" value="customer">
+                          Customer Metrics
+                        </label>
+                      </div>
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="metrics[]" value="performance">
+                          Performance KPIs
+                        </label>
+                      </div>
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="metrics[]" value="financial">
+                          Financial Ratios
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="metrics[]" value="operational">
+                          Operational Metrics
+                        </label>
+                      </div>
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="metrics[]" value="employee">
+                          Employee Analytics
+                        </label>
+                      </div>
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="metrics[]" value="trends">
+                          Trend Analysis
+                        </label>
+                      </div>
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="metrics[]" value="forecasting">
+                          Forecasting
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+
+              <div class="form-group">
+                <label for="refresh-frequency">Data Refresh Frequency</label>
+                <select class="form-control" id="refresh-frequency" name="refreshFrequency">
+                  <option value="">Select refresh frequency...</option>
+                  <option value="real-time">Real-time (DirectQuery)</option>
+                  <option value="hourly">Every hour</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="manual">Manual only</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="target-audience">Target Audience</label>
+                <textarea class="form-control" id="target-audience" name="targetAudience" rows="2" placeholder="Who will be using this report? (e.g., Sales team, Executives, Department managers)"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="description">Report Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Describe the purpose and key insights this report will provide..."></textarea>
+              </div>
+
+              <div class="form-group mrgn-tp-lg">
+                <button type="submit" class="btn btn-primary">Create Report</button>
+                <button type="button" class="btn btn-default mrgn-lft-sm">Use Template</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title">Report Design Tips</h3>
+          </div>
+          <div class="panel-body">
+            <ul class="list-unstyled small">
+              <li class="mrgn-bttm-sm"><span class="fa fa-eye text-warning"></span> Design for your audience - consider their data literacy</li>
+              <li class="mrgn-bttm-sm"><span class="fa fa-mobile text-info"></span> Ensure mobile-friendly layouts</li>
+              <li class="mrgn-bttm-sm"><span class="fa fa-palette text-success"></span> Use consistent colors and branding</li>
+              <li class="mrgn-bttm-sm"><span class="fa fa-rocket text-primary"></span> Focus on key insights, avoid clutter</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- My Reports Section -->
+    <section class="row mrgn-tp-md" id="my-reports">
+      <div class="col-md-12">
+        <h2>My Reports & Dashboards</h2>
+      </div>
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Recent Reports</h3>
+          </div>
+          <div class="panel-body">
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Report Name</th>
+                    <th>Type</th>
+                    <th>Data Source</th>
+                    <th>Last Refresh</th>
+                    <th>Views (30 days)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Sales Performance Dashboard</strong></td>
+                    <td>Dashboard</td>
+                    <td>Dynamics 365</td>
+                    <td>2 hours ago</td>
+                    <td>248</td>
+                    <td>
+                      <a href="#" class="btn btn-xs btn-primary">View</a>
+                      <a href="#" class="btn btn-xs btn-default">Edit</a>
+                      <a href="#" class="btn btn-xs btn-success">Share</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Financial Summary Report</strong></td>
+                    <td>Detailed Report</td>
+                    <td>SQL Server</td>
+                    <td>1 day ago</td>
+                    <td>156</td>
+                    <td>
+                      <a href="#" class="btn btn-xs btn-primary">View</a>
+                      <a href="#" class="btn btn-xs btn-default">Edit</a>
+                      <a href="#" class="btn btn-xs btn-info">Export</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>HR Analytics Scorecard</strong></td>
+                    <td>Scorecard</td>
+                    <td>Dataverse</td>
+                    <td>6 hours ago</td>
+                    <td>89</td>
+                    <td>
+                      <a href="#" class="btn btn-xs btn-primary">View</a>
+                      <a href="#" class="btn btn-xs btn-default">Edit</a>
+                      <a href="#" class="btn btn-xs btn-warning">Refresh</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Customer Service Metrics</strong></td>
+                    <td>Dashboard</td>
+                    <td>SharePoint</td>
+                    <td>4 hours ago</td>
+                    <td>134</td>
+                    <td>
+                      <a href="#" class="btn btn-xs btn-primary">View</a>
+                      <a href="#" class="btn btn-xs btn-default">Edit</a>
+                      <a href="#" class="btn btn-xs btn-success">Share</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="text-right">
+              <a href="#" class="btn btn-default">View All Reports</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Sources Section -->
+    <section class="row mrgn-tp-md" id="data-sources">
+      <div class="col-md-12">
+        <h2>Data Sources & Connections</h2>
+      </div>
+      <div class="col-md-8">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Available Data Sources</h3>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-sm-6 col-xs-12 mrgn-bttm-md">
+                <div class="well well-sm">
+                  <h5><span class="fa fa-database text-primary"></span> Dataverse</h5>
+                  <p class="small">Primary business data platform</p>
+                  <span class="label label-success">Connected</span>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xs-12 mrgn-bttm-md">
+                <div class="well well-sm">
+                  <h5><span class="fa fa-server text-info"></span> SQL Server</h5>
+                  <p class="small">Enterprise database systems</p>
+                  <span class="label label-success">Connected</span>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xs-12 mrgn-bttm-md">
+                <div class="well well-sm">
+                  <h5><span class="fa fa-share-alt text-warning"></span> SharePoint</h5>
+                  <p class="small">Document and list data</p>
+                  <span class="label label-success">Connected</span>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xs-12 mrgn-bttm-md">
+                <div class="well well-sm">
+                  <h5><span class="fa fa-table text-success"></span> Excel Online</h5>
+                  <p class="small">Spreadsheet data sources</p>
+                  <span class="label label-warning">Configure</span>
+                </div>
+              </div>
+            </div>
+            <div class="text-center">
+              <a href="#" class="btn btn-primary">Add New Data Source</a>
+              <a href="#" class="btn btn-default">Manage Connections</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title">Data Connection Tips</h3>
+          </div>
+          <div class="panel-body">
+            <ul class="list-unstyled small">
+              <li class="mrgn-bttm-sm"><span class="fa fa-shield text-success"></span> Use service accounts for shared reports</li>
+              <li class="mrgn-bttm-sm"><span class="fa fa-refresh text-info"></span> Configure appropriate refresh schedules</li>
+              <li class="mrgn-bttm-sm"><span class="fa fa-lock text-warning"></span> Ensure proper data security settings</li>
+              <li class="mrgn-bttm-sm"><span class="fa fa-tachometer text-primary"></span> Monitor data source performance</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Report Templates Section -->
+    <section class="row mrgn-tp-md">
+      <div class="col-md-12">
+        <h2>Popular Report Templates</h2>
+      </div>
+      
+      <div class="col-lg-4 col-md-6 mrgn-bttm-md">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4 class="h5">Executive Dashboard</h4>
+            <p class="small">High-level KPIs and metrics for leadership team with drill-down capabilities.</p>
+            <div class="mrgn-tp-md">
+              <button class="btn btn-sm btn-primary">Use Template</button>
+              <a href="#" class="btn btn-sm btn-default">Preview</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6 mrgn-bttm-md">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4 class="h5">Sales Analytics</h4>
+            <p class="small">Track sales performance, pipeline, and forecasting with interactive visualizations.</p>
+            <div class="mrgn-tp-md">
+              <button class="btn btn-sm btn-primary">Use Template</button>
+              <a href="#" class="btn btn-sm btn-default">Preview</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6 mrgn-bttm-md">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4 class="h5">Financial Reporting</h4>
+            <p class="small">Comprehensive financial analysis with P&L, balance sheet, and cash flow views.</p>
+            <div class="mrgn-tp-md">
+              <button class="btn btn-sm btn-primary">Use Template</button>
+              <a href="#" class="btn btn-sm btn-default">Preview</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 mrgn-bttm-md">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4 class="h5">HR Analytics</h4>
+            <p class="small">Employee metrics, retention analysis, and workforce planning insights.</p>
+            <div class="mrgn-tp-md">
+              <button class="btn btn-sm btn-primary">Use Template</button>
+              <a href="#" class="btn btn-sm btn-default">Preview</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 mrgn-bttm-md">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4 class="h5">Customer Analytics</h4>
+            <p class="small">Customer segmentation, satisfaction scores, and customer journey analysis.</p>
+            <div class="mrgn-tp-md">
+              <button class="btn btn-sm btn-primary">Use Template</button>
+              <a href="#" class="btn btn-sm btn-default">Preview</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 mrgn-bttm-md">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4 class="h5">Operations Dashboard</h4>
+            <p class="small">Operational efficiency metrics, process monitoring, and performance tracking.</p>
+            <div class="mrgn-tp-md">
+              <button class="btn btn-sm btn-primary">Use Template</button>
+              <a href="#" class="btn btn-sm btn-default">Preview</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section class="row mrgn-tp-md">
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Learning Resources</h3>
+          </div>
+          <div class="panel-body">
+            <ul class="list-unstyled">
+              <li class="mrgn-bttm-sm">
+                <a href="#"><span class="fa fa-video-camera"></span> Power BI Fundamentals</a>
+                <p class="small text-muted">Learn the basics of data visualization</p>
+              </li>
+              <li class="mrgn-bttm-sm">
+                <a href="#"><span class="fa fa-chart-line"></span> Advanced Analytics</a>
+                <p class="small text-muted">DAX formulas and complex calculations</p>
+              </li>
+              <li>
+                <a href="#"><span class="fa fa-graduation-cap"></span> Data Analyst Certification</a>
+                <p class="small text-muted">Microsoft Power BI certification path</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Advanced Features</h3>
+          </div>
+          <div class="panel-body">
+            <ul class="list-unstyled">
+              <li class="mrgn-bttm-sm">
+                <a href="#"><span class="fa fa-cogs"></span> Power BI Premium</a>
+                <p class="small text-muted">Enterprise features and capacities</p>
+              </li>
+              <li class="mrgn-bttm-sm">
+                <a href="#"><span class="fa fa-mobile"></span> Mobile Apps</a>
+                <p class="small text-muted">Access reports on mobile devices</p>
+              </li>
+              <li>
+                <a href="#"><span class="fa fa-code"></span> Embedded Analytics</a>
+                <p class="small text-muted">Integrate BI into applications</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pagedetails">
+      <h2 class="wb-inv">Page details</h2>
+      <dl id="wb-dtmd">
+        <dt>Date modified:</dt>
+        <dd><time property="dateModified">{{ page.adx_contentmodifiedon | date: "%Y-%m-%d" }}</time></dd>
+      </dl>
+    </section>
+  </main>
+
+{% else %}
+
+<script>
+  // Redirect to home page if not authenticated
+  window.location.href = '/';
+</script>
+
+<main property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="alert alert-warning">
+          <h2>Access Restricted</h2>
+          <p>You must be signed in to access this page. You will be redirected to the home page.</p>
+          <p><a href="/" class="btn btn-primary">Return to Home</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endif %}

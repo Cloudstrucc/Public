@@ -1,0 +1,909 @@
+<!-- 
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f8f9fa;
+    }
+    
+    .header {
+        background: linear-gradient(135deg, #742774 0%, #8B2F8B 100%);
+        color: white;
+        padding: 2rem 0;
+        text-align: center;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+    
+    .main-content {
+        background: white;
+        margin: -50px auto 0;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .content-section {
+        padding: 3rem;
+    }
+    
+    .form-info-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .form-code {
+        background: #742774;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+    
+    .form-title {
+        font-size: 2rem;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .form-subtitle {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+        margin-bottom: 2rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+    
+    .info-card {
+        background: #f8f9fa;
+        border-left: 4px solid #742774;
+        padding: 2rem;
+        border-radius: 8px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .info-card h3 {
+        color: #742774;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .info-card h3 i {
+        margin-right: 0.5rem;
+        font-size: 1.5rem;
+    }
+    
+    .info-card ul {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .info-card li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e9ecef;
+        position: relative;
+        padding-left: 1.5rem;
+    }
+    
+    .info-card li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #28a745;
+        font-weight: bold;
+    }
+    
+    .info-card li:last-child {
+        border-bottom: none;
+    }
+    
+    .requirement-section {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        padding: 2rem;
+        border-radius: 12px;
+        margin: 3rem 0;
+    }
+    
+    .requirement-section h3 {
+        color: #1976d2;
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .requirement-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .requirement-item {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .requirement-item .icon {
+        font-size: 2.5rem;
+        color: #742774;
+        margin-bottom: 1rem;
+    }
+    
+    .requirement-item h4 {
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .requirement-item p {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .esignature-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 2.5rem;
+        border-radius: 12px;
+        margin: 3rem 0;
+        border: 2px solid #742774;
+    }
+    
+    .esignature-section h3 {
+        color: #742774;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .esignature-section h3 i {
+        margin-right: 0.5rem;
+        font-size: 1.8rem;
+    }
+    
+    .esignature-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+    
+    .esignature-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #28a745;
+    }
+    
+    .esignature-card h4 {
+        color: #28a745;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .esignature-card h4 i {
+        margin-right: 0.5rem;
+    }
+    
+    .contact-section {
+        background: #2c3e50;
+        color: white;
+        padding: 2.5rem;
+        text-align: center;
+    }
+    
+    .contact-section h3 {
+        margin-bottom: 1.5rem;
+        font-size: 1.4rem;
+    }
+    
+    .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .contact-item i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: #742774;
+    }
+    
+    .contact-item strong {
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #742774 0%, #8B2F8B 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 1rem 0;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(116, 39, 116, 0.3);
+    }
+    
+    .alert {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-left: 4px solid #f39c12;
+    }
+    
+    .alert h4 {
+        color: #856404;
+        margin-bottom: 0.5rem;
+    }
+    
+    .alert p {
+        color: #856404;
+        margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .header h1 {
+            font-size: 2rem;
+        }
+        
+        .content-section {
+            padding: 2rem;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+
+<div class="container">
+  <div class="main-content">
+    <div class="content-section">
+      <div class="form-info-header">
+        <div class="form-code">EC 20252</div>
+        <h2 class="form-title">Appointment of Candidate's Auditor / Update of Auditor's Information</h2>
+        <p class="form-subtitle">This form allows candidates to appoint an auditor or update existing auditor information as required under the Canada Elections Act</p>
+      </div>
+      <div class="alert">
+        <h4><i class="fas fa-exclamation-triangle"></i> Important Notice</h4>
+        <p>A candidate must appoint an auditor without delay after contributions totalling $10,000 or more are accepted, electoral campaign expenses totalling $10,000 or more are incurred, or the candidate receives 10% or more of the valid votes cast in their electoral district.</p>
+      </div>
+      <div class="requirement-section">
+        <h3><i class="fas fa-clipboard-check"></i> When This Form is Required</h3>
+        <div class="requirement-grid">
+          <div class="requirement-item">
+            <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+            <h4>Contributions</h4>
+            <p>$10,000 or more in total contributions received</p>
+          </div>
+          <div class="requirement-item">
+            <div class="icon"><i class="fas fa-receipt"></i></div>
+            <h4>Campaign Expenses</h4>
+            <p>$10,000 or more in electoral campaign expenses incurred</p>
+          </div>
+          <div class="requirement-item">
+            <div class="icon"><i class="fas fa-vote-yea"></i></div>
+            <h4>Vote Threshold</h4>
+            <p>Candidate receives 10% or more of valid votes in their district</p>
+          </div>
+        </div>
+      </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3><i class="fas fa-user-check"></i> Form Purpose</h3>
+          <ul>
+            <li>Appoint a new auditor for your campaign</li>
+            <li>Update existing auditor information</li>
+            <li>Ensure compliance with Canada Elections Act</li>
+            <li>Establish auditor contact and payment details</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3><i class="fas fa-file-alt"></i> Information Required</h3>
+          <ul>
+            <li>Candidate information and electoral district</li>
+            <li>Auditor's professional designation and contact details</li>
+            <li>Payment information (direct deposit or cheque)</li>
+            <li>Required signatures from both parties</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3><i class="fas fa-users"></i> Auditor Types</h3>
+          <ul>
+            <li>Individual professional auditor</li>
+            <li>Partnership with authorized signatory</li>
+            <li>Must be qualified under Canada Elections Act</li>
+            <li>Professional designation required</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3><i class="fas fa-calendar-alt"></i> Important Deadlines</h3>
+          <ul>
+            <li>Appointment required "without delay" once thresholds met</li>
+            <li>Form must be submitted promptly</li>
+            <li>Both candidate and auditor signatures required</li>
+            <li>Updates can be made as needed</li>
+          </ul>
+        </div>
+      </div>
+      <div class="esignature-section">
+        <h3><i class="fas fa-signature"></i> Electronic Signature Process</h3>
+        <div class="esignature-info">
+          <div class="esignature-card">
+            <h4><i class="fas fa-shield-alt"></i> Secure Digital Submission</h4>
+            <p>When you submit this form electronically, you are providing your legal electronic signature. This carries the same legal weight as a handwritten signature and confirms your consent and agreement to the appointment or information update.</p>
+          </div>
+          <div class="esignature-card">
+            <h4><i class="fas fa-check-circle"></i> Signature Requirements</h4>
+            <p>Both the candidate and auditor must provide their electronic signatures. By clicking "Submit," each party confirms their consent to the appointment and acknowledges their responsibilities under the Canada Elections Act.</p>
+          </div>
+          <div class="esignature-card">
+            <h4><i class="fas fa-clock"></i> Immediate Processing</h4>
+            <p>Electronic submissions are processed immediately upon receipt. You will receive a confirmation email once your form has been successfully submitted to Elections Canada's Political Financing division.</p>
+          </div>
+        </div>
+      </div>
+      <div class="contact-section">
+        <h3><i class="fas fa-headset"></i> Need Assistance?</h3>
+        <p>If you have questions about completing this form or the auditor appointment process, our Political Entities Support Network is here to help.</p>
+        <div class="contact-grid">
+          <div class="contact-item"><i class="fas fa-phone"></i><strong>Phone Support</strong><span>1-800-486-6563</span></div>
+          <div class="contact-item"><i class="fas fa-envelope"></i><strong>Email</strong><span>political.financing@elections.ca</span></div>
+          <div class="contact-item"><i class="fas fa-fax"></i><strong>Fax</strong><span>1-888-523-9333</span></div>
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i><strong>Mail</strong><span>30 Victoria Street<br />Gatineau, QC K1A 0M6</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br /><br /><br />
+<div class="row sectionBlockLayout text-left" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;">
+  <div class="container" style="padding: 0px; display: flex; flex-wrap: wrap;"><div class="col-md-12 columnBlockLayout" style="flex-grow: 1; display: flex; flex-direction: column; min-width: 250px;"></div></div>
+</div> -->
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f8f9fa;
+    }
+    
+    .content-section {
+        padding: 3rem;
+    }
+    
+    .form-info-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .form-code {
+        background: #742774;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 2rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+    
+    .form-title {
+        font-size: 3rem;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .form-subtitle {
+        font-size: 1.5rem;
+        color: #7f8c8d;
+        margin-bottom: 2rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+    
+    .info-card {
+        background: #f8f9fa;
+        border-left: 4px solid #742774;
+        padding: 2rem;
+        border-radius: 8px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .info-card h3 {
+        color: #742774;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .info-card h3 i {
+        margin-right: 0.5rem;
+        font-size: 1.5rem;
+    }
+    
+    .info-card ul {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .info-card li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e9ecef;
+        position: relative;
+        padding-left: 1.5rem;
+    }
+    
+    .info-card li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #28a745;
+        font-weight: bold;
+    }
+    
+    .info-card li:last-child {
+        border-bottom: none;
+    }
+    
+    .requirement-section {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        padding: 2rem;
+        border-radius: 12px;
+        margin: 3rem 0;
+    }
+    
+    .requirement-section h3 {
+        color: #1976d2;
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .requirement-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .requirement-item {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .requirement-item .icon {
+        font-size: 2.5rem;
+        color: #742774;
+        margin-bottom: 1rem;
+    }
+    
+    .requirement-item h4 {
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .requirement-item p {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .esignature-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 2.5rem;
+        border-radius: 12px;
+        margin: 3rem 0;
+        border: 2px solid #742774;
+    }
+    
+    .esignature-section h3 {
+        color: #742774;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .esignature-section h3 i {
+        margin-right: 0.5rem;
+        font-size: 1.8rem;
+    }
+    
+    .esignature-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+    
+    .esignature-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #28a745;
+    }
+    
+    .esignature-card h4 {
+        color: #28a745;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .esignature-card h4 i {
+        margin-right: 0.5rem;
+    }
+    
+    .contact-section {
+        background: #2c3e50;
+        color: white;
+        padding: 2.5rem;
+        text-align: center;
+    }
+    
+    .contact-section h3 {
+        margin-bottom: 1.5rem;
+        font-size: 1.4rem;
+    }
+    
+    .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .contact-item i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: #742774;
+    }
+    
+    .contact-item strong {
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #742774 0%, #8B2F8B 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 1rem 0;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(116, 39, 116, 0.3);
+    }
+    
+    .alert {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-left: 4px solid #f39c12;
+    }
+    
+    .alert h4 {
+        color: #856404;
+        margin-bottom: 0.5rem;
+    }
+    
+    .alert p {
+        color: #856404;
+        margin: 0;
+    }
+    
+    .sections-section {
+        background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%);
+        padding: 2rem;
+        border-radius: 12px;
+        margin: 3rem 0;
+    }
+    
+    .sections-section h3 {
+        color: #1976d2;
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .sections-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .section-item {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #1976d2;
+    }
+    
+    .section-item h4 {
+        color: #1976d2;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .section-item .mandatory {
+        background: #d32f2f;
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+    
+    .section-item .optional {
+        background: #388e3c;
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .content-section {
+            padding: 2rem;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="content-section">
+    <div class="form-info-header">
+        <div class="form-code">EC 20010</div>
+        <h2 class="form-title">Nomination Paper of a Candidate at a Federal General Election or By-election</h2>
+        <p class="form-subtitle">Official candidate nomination form as required under section 66 of the Canada Elections Act for federal elections</p>
+    </div>
+    
+    <div class="alert">
+        <h4><i class="fa fa-exclamation-triangle"></i> Nomination Requirements</h4>
+        <p>This nomination paper must be filed after the issue of the Notice of Election and before the nomination deadline, which is 21 days before election day at 2:00 p.m. local time. The candidate must be a Canadian citizen aged 18 or older on election day.</p>
+    </div>
+    
+    <div class="requirement-section">
+        <h3><i class="fa fa-clipboard"></i> Key Nomination Requirements</h3>
+        <div class="requirement-grid">
+            <div class="requirement-item">
+                <div class="icon"><i class="fa fa-users"></i></div>
+                <h4>Elector Signatures</h4>
+                <p>100 qualified electors must consent to candidacy (50 in remote districts listed in Schedule 3)</p>
+            </div>
+            <div class="requirement-item">
+                <div class="icon"><i class="fa fa-credit-card"></i></div>
+                <h4>Proof of Identity</h4>
+                <p>Valid identification documents must be provided to the returning officer</p>
+            </div>
+            <div class="requirement-item">
+                <div class="icon"><i class="fa fa-certificate"></i></div>
+                <h4>Solemn Declaration</h4>
+                <p>Candidate must make a witnessed declaration before an authorized person</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="sections-section">
+        <h3><i class="fa fa-list"></i> Nomination Paper Sections</h3>
+        <div class="sections-grid">
+            <div class="section-item">
+                <h4>Section A - Candidate Information <span class="mandatory">MANDATORY</span></h4>
+                <p>Personal details, electoral district, political affiliation, contact information, occupation, and privacy authorizations.</p>
+            </div>
+            <div class="section-item">
+                <h4>Section B - Campaign Delegate <span class="optional">OPTIONAL</span></h4>
+                <p>Authorized individual who can submit the nomination paper and supporting documents on behalf of the candidate.</p>
+            </div>
+            <div class="section-item">
+                <h4>Section C - Official Agent <span class="mandatory">MANDATORY</span></h4>
+                <p>Person responsible for managing campaign finances and reporting financial transactions to Elections Canada.</p>
+            </div>
+            <div class="section-item">
+                <h4>Section D - Auditor <span class="optional">OPTIONAL</span></h4>
+                <p>Professional accountant required if campaign contributions or expenses exceed $10,000, or candidate receives 10% of votes.</p>
+            </div>
+            <div class="section-item">
+                <h4>Section E - Campaign Office <span class="optional">OPTIONAL</span></h4>
+                <p>Campaign contact information and website details to be published on Elections Canada's website.</p>
+            </div>
+            <div class="section-item">
+                <h4>Section F - Electors Consenting <span class="mandatory">MANDATORY</span></h4>
+                <p>Signatures and information from qualified electors who consent to the candidate's nomination.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="info-grid">
+        <div class="info-card">
+            <h3><i class="fa fa-user-check"></i> Candidate Eligibility</h3>
+            <ul>
+                <li>Canadian citizen aged 18+ on election day</li>
+                <li>Qualified as an elector on nomination filing date</li>
+                <li>Not disqualified under section 65 of the Canada Elections Act</li>
+                <li>Can run in only one electoral district at a time</li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h3><i class="fa fa-file-text"></i> Required Documentation</h3>
+            <ul>
+                <li>Completed nomination paper with all mandatory sections</li>
+                <li>Proof of identity documents</li>
+                <li>At least 100 elector signatures (150 recommended)</li>
+                <li>Political party endorsement (if applicable)</li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h3><i class="fa fa-calendar"></i> Important Deadlines</h3>
+            <ul>
+                <li>File after Notice of Election is issued</li>
+                <li>Submit 21 days before election day by 2:00 p.m.</li>
+                <li>Party endorsement required 24 hours before nomination close</li>
+                <li>Make appointment with returning officer early</li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h3><i class="fa fa-shield"></i> Alternative Options</h3>
+            <ul>
+                <li>Submit physical paper form to returning officer</li>
+                <li>Complete online nomination via PESC portal</li>
+                <li>Use campaign delegate for submission</li>
+                <li>Schedule appointment to ensure timely processing</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="esignature-section">
+        <h3><i class="fa fa-edit"></i> Electronic Signature & Digital Submission</h3>
+        <div class="esignature-info">
+            <div class="esignature-card">
+                <h4><i class="fa fa-shield"></i> Legal Electronic Signatures</h4>
+                <p>When you submit this nomination form electronically, you are providing your legal electronic signature. Multiple parties must sign including the candidate, official agent, and auditor (if applicable). These digital signatures carry the same legal weight as handwritten signatures.</p>
+            </div>
+            <div class="esignature-card">
+                <h4><i class="fa fa-check-circle"></i> Solemn Declaration Process</h4>
+                <p>The candidate's electronic signature constitutes their solemn declaration as required under the Canada Elections Act. This declaration confirms eligibility, consent to nomination, and acknowledgment of responsibilities under federal election law.</p>
+            </div>
+            <div class="esignature-card">
+                <h4><i class="fa fa-clock-o"></i> Digital Processing</h4>
+                <p>Electronic nominations are processed immediately upon receipt by the returning officer. Confirmation of nomination status will be provided electronically, and all campaign materials can be accessed through the PESC portal.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="contact-section">
+        <h3><i class="fa fa-headphones"></i> Political Entities Support Network</h3>
+        <p>For assistance with the nomination process, candidate requirements, or form completion, contact our specialized support team.</p>
+        
+        <div class="contact-grid">
+            <div class="contact-item">
+                <i class="fa fa-phone"></i>
+                <strong>Phone Support</strong>
+                <span>1-800-486-6563</span>
+            </div>
+            <div class="contact-item">
+                <i class="fa fa-envelope"></i>
+                <strong>Email</strong>
+                <span>CSEP-PESC@elections.ca</span>
+            </div>
+            <div class="contact-item">
+                <i class="fa fa-tty"></i>
+                <strong>TTY</strong>
+                <span>1-800-361-8935</span>
+            </div>
+            <div class="contact-item">
+                <i class="fa fa-map-marker"></i>
+                <strong>Mail</strong>
+                <span>Elections Canada<br>30 Victoria Street<br>Gatineau, QC K1A 0M6</span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+adx_append: true
+adx_appendto: true
+adx_create: false
+adx_delete: false
+adx_entitylogicalname: contact
+adx_entityname: Profile
+adx_entitypermission_webrole:
+- 13ad7a40-e299-ee11-be37-0022483c04c3
+- 1bad7a40-e299-ee11-be37-0022483c04c3
+- 1fad7a40-e299-ee11-be37-0022483c04c3
+adx_entitypermissionid: e1bd3608-fb11-f011-998a-002248b08a8e
+adx_read: true
+adx_scope: 756150004
+adx_write: true

@@ -1,0 +1,253 @@
+{% comment %}
+  Political Entities Service Centre (PEPP) - Home Page Template
+  Minimalist web application portal design
+{% endcomment %}
+
+{% if user %}
+
+<main class="pepp-app" property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
+  <div class="container mrgn-tp-lg mrgn-bttm-lg">
+    
+    <!-- Quick Actions -->
+    <section class="row mrgn-bttm-lg">
+      <div class="col-md-12">
+        <h2 class="mrgn-tp-0 mrgn-bttm-md">{{ snippets['PEPP/SERVICES/TITLE'] | default: 'Services' }}</h2>
+      </div>
+      
+      <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
+        <a href="{{ sitemarkers['NewFiling'].url }}" class="pepp-card" style="display: block; text-decoration: none;">
+          <div class="panel panel-default" style="border-left: 4px solid #26374A; transition: box-shadow 0.2s;">
+            <div class="panel-body text-center" style="padding: 30px 20px;">
+              <span class="fa fa-file-text-o" style="font-size: 2.5rem; color: #26374A; margin-bottom: 15px; display: block;"></span>
+              <h3 class="h5 mrgn-tp-0" style="color: #333;">{{ snippets['PEPP/CARD1/TITLE'] | default: 'New Filing' }}</h3>
+              <p class="small text-muted mrgn-bttm-0">{{ snippets['PEPP/CARD1/DESC'] | default: 'Submit a new filing or report' }}</p>
+            </div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
+        <a href="{{ sitemarkers['MyFilings'].url }}" class="pepp-card" style="display: block; text-decoration: none;">
+          <div class="panel panel-default" style="border-left: 4px solid #005a70; transition: box-shadow 0.2s;">
+            <div class="panel-body text-center" style="padding: 30px 20px;">
+              <span class="fa fa-folder-open-o" style="font-size: 2.5rem; color: #005a70; margin-bottom: 15px; display: block;"></span>
+              <h3 class="h5 mrgn-tp-0" style="color: #333;">{{ snippets['PEPP/CARD2/TITLE'] | default: 'My Filings' }}</h3>
+              <p class="small text-muted mrgn-bttm-0">{{ snippets['PEPP/CARD2/DESC'] | default: 'View and manage submissions' }}</p>
+            </div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
+        <a href="{{ sitemarkers['EntityProfile'].url }}" class="pepp-card" style="display: block; text-decoration: none;">
+          <div class="panel panel-default" style="border-left: 4px solid #d83b01; transition: box-shadow 0.2s;">
+            <div class="panel-body text-center" style="padding: 30px 20px;">
+              <span class="fa fa-building-o" style="font-size: 2.5rem; color: #d83b01; margin-bottom: 15px; display: block;"></span>
+              <h3 class="h5 mrgn-tp-0" style="color: #333;">{{ snippets['PEPP/CARD3/TITLE'] | default: 'Entity Profile' }}</h3>
+              <p class="small text-muted mrgn-bttm-0">{{ snippets['PEPP/CARD3/DESC'] | default: 'Update entity information' }}</p>
+            </div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
+        <a href="{{ sitemarkers['Support'].url }}" class="pepp-card" style="display: block; text-decoration: none;">
+          <div class="panel panel-default" style="border-left: 4px solid #1a5336; transition: box-shadow 0.2s;">
+            <div class="panel-body text-center" style="padding: 30px 20px;">
+              <span class="fa fa-life-ring" style="font-size: 2.5rem; color: #1a5336; margin-bottom: 15px; display: block;"></span>
+              <h3 class="h5 mrgn-tp-0" style="color: #333;">{{ snippets['PEPP/CARD4/TITLE'] | default: 'Support' }}</h3>
+              <p class="small text-muted mrgn-bttm-0">{{ snippets['PEPP/CARD4/DESC'] | default: 'Get help and resources' }}</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Status & Notifications -->
+    <section class="row">
+      <div class="col-md-8 mrgn-bttm-md">
+        <div class="panel panel-default">
+          <div class="panel-heading" style="background: #f5f5f5; border-bottom: 1px solid #ddd;">
+            <h3 class="panel-title" style="font-weight: 600;">Recent Activity</h3>
+          </div>
+          <div class="panel-body">
+            {% assign activities = entities['pepp_activities'] | where: 'pepp_contactid', user.id | order_by: 'createdon', 'desc' | take: 5 %}
+            {% if activities.size > 0 %}
+              <ul class="list-unstyled mrgn-bttm-0">
+                {% for activity in activities %}
+                <li class="mrgn-bttm-sm" style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                  <span class="fa fa-circle text-{{ activity.pepp_statuscolor | default: 'muted' }}" style="font-size: 0.6rem; vertical-align: middle;"></span>
+                  <span style="margin-left: 10px;">{{ activity.pepp_description }}</span>
+                  <span class="pull-right small text-muted">{{ activity.createdon | date: "%b %d, %Y" }}</span>
+                </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-muted mrgn-bttm-0"><em>No recent activity</em></p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 mrgn-bttm-md">
+        <div class="panel panel-default">
+          <div class="panel-heading" style="background: #f5f5f5; border-bottom: 1px solid #ddd;">
+            <h3 class="panel-title" style="font-weight: 600;">Quick Links</h3>
+          </div>
+          <div class="panel-body">
+            <ul class="list-unstyled mrgn-bttm-0">
+              <li class="mrgn-bttm-sm"><a href="{{ sitemarkers['QuickLink1'].url }}"><span class="fa fa-angle-right mrgn-rght-sm"></span>{{ snippets['PEPP/QUICKLINK1'] | default: 'Filing Guidelines' }}</a></li>
+              <li class="mrgn-bttm-sm"><a href="{{ sitemarkers['QuickLink2'].url }}"><span class="fa fa-angle-right mrgn-rght-sm"></span>{{ snippets['PEPP/QUICKLINK2'] | default: 'Compliance Calendar' }}</a></li>
+              <li class="mrgn-bttm-sm"><a href="{{ sitemarkers['QuickLink3'].url }}"><span class="fa fa-angle-right mrgn-rght-sm"></span>{{ snippets['PEPP/QUICKLINK3'] | default: 'Contact Support' }}</a></li>
+              <li><a href="{{ sitemarkers['QuickLink4'].url }}"><span class="fa fa-angle-right mrgn-rght-sm"></span>{{ snippets['PEPP/QUICKLINK4'] | default: 'FAQs' }}</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+{% else %}
+
+<!-- Anonymous User View -->
+<main class="pepp-app pepp-anon" property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
+  
+  <!-- Hero Banner with Background Image - extends to top for overlay header -->
+  <div class="pepp-hero" style="background-image: url('/landscape.png'); background-size: 400px auto; background-repeat: repeat; background-position: center; padding: 120px 0 80px 0;">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8">
+          <h1 style="color: #fff; border-bottom: 3px solid #fff; display: inline-block; padding-bottom: 10px; margin-bottom: 15px;">{{ snippets['PEPP/HOME/TITLE'] | default: 'Political Entities Service Centre' }}</h1>
+          <p class="lead" style="color: #fff; font-size: 1.8rem; margin-bottom: 15px;">{{ snippets['PEPP/HOME/SUBTITLE'] | default: 'PEPP Portal' }}</p>
+          <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem; margin-bottom: 25px;">{{ snippets['PEPP/HOME/DESC'] | default: 'Securely manage your political entity filings, financial reports, and compliance requirements online.' }}</p>
+          <a href="/Account/Login" class="btn btn-light" style="background-color: #fff; color: #26374A; border-radius: 0; padding: 10px 25px; margin-right: 10px; font-weight: 600;">Register</a>
+          <a href="/Account/SignIn" class="btn btn-outline-light" style="color: #fff; border-color: #fff; border-radius: 0; padding: 10px 25px;">Sign In</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mrgn-tp-lg mrgn-bttm-lg">
+    
+    <!-- Getting Started -->
+    <section class="row">
+      <div class="col-md-8">
+        <h2 class="mrgn-tp-0">{{ snippets['PEPP/ANON/TITLE'] | default: 'Getting Started' }}</h2>
+        <p>{{ snippets['PEPP/ANON/DESC'] | default: 'The Political Entities Service Centre (PEPP) provides a secure platform for political entities to submit required filings and manage compliance obligations.' }}</p>
+        
+        <div class="row mrgn-tp-lg">
+          <div class="col-sm-6 mrgn-bttm-md">
+            <div style="border-left: 3px solid #26374A; padding-left: 15px;">
+              <h3 class="h5 mrgn-tp-0">{{ snippets['PEPP/FEATURE1/TITLE'] | default: 'Online Filing' }}</h3>
+              <p class="small text-muted">{{ snippets['PEPP/FEATURE1/DESC'] | default: 'Submit filings and reports electronically with guided forms.' }}</p>
+            </div>
+          </div>
+          <div class="col-sm-6 mrgn-bttm-md">
+            <div style="border-left: 3px solid #005a70; padding-left: 15px;">
+              <h3 class="h5 mrgn-tp-0">{{ snippets['PEPP/FEATURE2/TITLE'] | default: 'Status Tracking' }}</h3>
+              <p class="small text-muted">{{ snippets['PEPP/FEATURE2/DESC'] | default: 'Track the status of your submissions in real-time.' }}</p>
+            </div>
+          </div>
+          <div class="col-sm-6 mrgn-bttm-md">
+            <div style="border-left: 3px solid #d83b01; padding-left: 15px;">
+              <h3 class="h5 mrgn-tp-0">{{ snippets['PEPP/FEATURE3/TITLE'] | default: 'Document Management' }}</h3>
+              <p class="small text-muted">{{ snippets['PEPP/FEATURE3/DESC'] | default: 'Securely store and access your documents online.' }}</p>
+            </div>
+          </div>
+          <div class="col-sm-6 mrgn-bttm-md">
+            <div style="border-left: 3px solid #1a5336; padding-left: 15px;">
+              <h3 class="h5 mrgn-tp-0">{{ snippets['PEPP/FEATURE4/TITLE'] | default: 'Notifications' }}</h3>
+              <p class="small text-muted">{{ snippets['PEPP/FEATURE4/DESC'] | default: 'Receive alerts for deadlines and submission confirmations.' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="panel panel-default" style="border-top: 4px solid #26374A;">
+          <div class="panel-body">
+            <h3 class="h5 mrgn-tp-0">Need Assistance?</h3>
+            <p class="small">{{ snippets['PEPP/SUPPORT/DESC'] | default: 'Contact our support team for help with registration or technical issues.' }}</p>
+            <hr>
+            <p class="small mrgn-bttm-0">
+              <span class="fa fa-envelope mrgn-rght-sm"></span> {{ snippets['PEPP/SUPPORT/EMAIL'] | default: 'support@elections.ca' }}<br>
+              <span class="fa fa-phone mrgn-rght-sm"></span> {{ snippets['PEPP/SUPPORT/PHONE'] | default: '1-800-XXX-XXXX' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- <section class="pagedetails container">
+    <h2 class="wb-inv">Page details</h2>
+    <dl id="wb-dtmd">
+      <dt>Date modified:</dt>
+      <dd><time property="dateModified">{{ page.adx_contentmodifiedon | date: "%Y-%m-%d" }}</time></dd>
+    </dl>
+  </section> -->
+</main>
+
+{% endif %}
+
+<!-- Minimal Footer -->
+<footer id="wb-info" style="background: #26374A; padding: 20px 0;">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-8">
+        <ul class="list-inline mrgn-bttm-0">
+          {% if sitemarkers['FooterLink1'] %}<li><a href="{{ sitemarkers['FooterLink1'].url }}" style="color: rgba(255,255,255,0.8);">{{ snippets['PEPP/FOOTER/LINK1'] | default: 'Terms & Conditions' }}</a></li>{% endif %}
+          {% if sitemarkers['FooterLink2'] %}<li><a href="{{ sitemarkers['FooterLink2'].url }}" style="color: rgba(255,255,255,0.8);">{{ snippets['PEPP/FOOTER/LINK2'] | default: 'Privacy' }}</a></li>{% endif %}
+          {% if sitemarkers['FooterLink3'] %}<li><a href="{{ sitemarkers['FooterLink3'].url }}" style="color: rgba(255,255,255,0.8);">{{ snippets['PEPP/FOOTER/LINK3'] | default: 'Accessibility' }}</a></li>{% endif %}
+          {% if sitemarkers['FooterLink4'] %}<li><a href="{{ sitemarkers['FooterLink4'].url }}" style="color: rgba(255,255,255,0.8);">{{ snippets['PEPP/FOOTER/LINK4'] | default: 'Contact' }}</a></li>{% endif %}
+        </ul>
+      </div>
+      <div class="col-sm-4 text-right">
+        <img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/wmms-blk.svg" alt="Symbol of the Government of Canada" style="height: 24px; filter: brightness(0) invert(1);">
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* PEPP App Styles */
+  .pepp-app {
+    background: #f9f9f9;
+    min-height: calc(100vh - 200px);
+  }
+  
+  .pepp-app.pepp-anon {
+    min-height: 100vh;
+  }
+  
+  .pepp-hero {
+    position: relative;
+  }
+  
+  .pepp-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(38, 55, 74, 0.6);
+  }
+  
+  .pepp-hero .container {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .pepp-card .panel:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  .panel {
+    border-radius: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+</style>
