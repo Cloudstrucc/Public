@@ -1104,4 +1104,4 @@ Key endpoints you'll need:
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0 | December 2024 | LCE M365 Security Team | Initial document |
+| 1.0 | December 2025 | Platform Engineering Team | Initial document |
