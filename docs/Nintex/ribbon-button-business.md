@@ -17,14 +17,14 @@
 
 ## Office Add-in with Dataverse Broker Service
 
-| Field | Value |
-|-------|-------|
-| Document Type | Business Case & Solution Overview |
-| Version | 1.0 |
-| Date | December 2025 |
-| Author | Platform Engineering Team |
-| Classification | Unclassified |
-| Status | Draft for Review |
+| Field          | Value                             |
+| -------------- | --------------------------------- |
+| Document Type  | Business Case & Solution Overview |
+| Version        | 1.0                               |
+| Date           | December 2025                     |
+| Author         | Platform Engineering Team         |
+| Classification | Unclassified                      |
+| Status         | Draft for Review                  |
 
 ---
 
@@ -57,21 +57,21 @@ flowchart LR
         H --> I[Configure\nRecipients]
         I --> J[Send Envelope]
     end
-    
+  
     style PortalOnly fill:#fff4e6,stroke:#e8590c
 ```
 
 ### 1.2 Why Portal-Only Deployment Is Insufficient
 
-| Concern | Risk to Elections Canada |
-|---------|--------------------------|
-| **Context switching** | Staff would need to leave their document to access a separate portal, breaking workflow continuity and reducing productivity |
-| **Duplicate effort** | Documents created in Office would need to be re-uploaded and configured in Nintex—redundant steps that slow operations |
-| **Training overhead** | Staff would need to learn both Office applications and the Nintex portal interface, increasing onboarding time |
-| **No cost visibility** | Managers would have limited visibility into envelope usage and associated costs until invoicing arrives |
-| **No approval workflow** | Any authorized user could send envelopes without oversight, risking budget overruns and inappropriate use |
-| **Template sprawl** | Templates would be created ad-hoc in Nintex with no centralized governance or standardization |
-| **No audit integration** | Signature activity would be siloed in Nintex, disconnected from Elections Canada's compliance and reporting systems |
+| Concern                        | Risk to Elections Canada                                                                                                     |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Context switching**    | Staff would need to leave their document to access a separate portal, breaking workflow continuity and reducing productivity |
+| **Duplicate effort**     | Documents created in Office would need to be re-uploaded and configured in Nintex—redundant steps that slow operations      |
+| **Training overhead**    | Staff would need to learn both Office applications and the Nintex portal interface, increasing onboarding time               |
+| **No cost visibility**   | Managers would have limited visibility into envelope usage and associated costs until invoicing arrives                      |
+| **No approval workflow** | Any authorized user could send envelopes without oversight, risking budget overruns and inappropriate use                    |
+| **Template sprawl**      | Templates would be created ad-hoc in Nintex with no centralized governance or standardization                                |
+| **No audit integration** | Signature activity would be siloed in Nintex, disconnected from Elections Canada's compliance and reporting systems          |
 
 **The proposed solution addresses all of these concerns** by embedding Nintex functionality directly into Office applications and routing all API calls through a governed Dataverse broker layer.
 
@@ -96,41 +96,41 @@ flowchart TB
         E --> RB
         P --> RB
     end
-    
+  
     subgraph AddIn["Office Add-in Layer"]
         UI[Task Pane UI]
         Modal[Send Modal\nConfiguration]
         RB --> UI
         RB --> Modal
     end
-    
+  
     subgraph Dataverse["Dataverse Broker Service\n(All API Calls Governed Here)"]
         API[OData API\nEndpoints]
         BL[Business Logic\n& Validation]
         AW[Approval\nWorkflows]
         CQ[Cost & Quota\nManagement]
         AL[Audit Logging]
-        
+  
         API --> BL
         BL --> AW
         BL --> CQ
         BL --> AL
     end
-    
+  
     subgraph Nintex["Nintex AssureSign"]
         NAPI[Nintex REST API]
         Templates[Templates]
         Envelopes[Envelopes]
         Signing[Signing Service]
     end
-    
+  
     UI --> API
     Modal --> API
     API --> NAPI
     NAPI --> Templates
     NAPI --> Envelopes
     NAPI --> Signing
-    
+  
     style Office fill:#e7f5ff,stroke:#1c7ed6
     style Dataverse fill:#e6fcf5,stroke:#0ca678
     style Nintex fill:#fff4e6,stroke:#e8590c
@@ -140,12 +140,12 @@ flowchart TB
 
 ### 2.2 Component Summary
 
-| Component | Purpose |
-|-----------|---------|
-| **Office Add-in** | Ribbon button with dropdown menu providing direct access to Nintex functionality within Word, Excel, and PDF documents. All actions call the Dataverse Broker—never Nintex directly. |
-| **Dataverse Broker** | The single gateway for all Nintex API interactions. Enforces business rules, approvals, cost controls, and audit logging before forwarding requests to Nintex. |
-| **Approval Workflows** | Power Automate flows triggered when envelope requests exceed thresholds or require management authorization |
-| **Cost Management** | Real-time tracking of envelope usage with budget alerts and approver visibility |
+| Component                    | Purpose                                                                                                                                                                               |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Office Add-in**      | Ribbon button with dropdown menu providing direct access to Nintex functionality within Word, Excel, and PDF documents. All actions call the Dataverse Broker—never Nintex directly. |
+| **Dataverse Broker**   | The single gateway for all Nintex API interactions. Enforces business rules, approvals, cost controls, and audit logging before forwarding requests to Nintex.                        |
+| **Approval Workflows** | Power Automate flows triggered when envelope requests exceed thresholds or require management authorization                                                                           |
+| **Cost Management**    | Real-time tracking of envelope usage with budget alerts and approver visibility                                                                                                       |
 
 ---
 
@@ -161,7 +161,7 @@ flowchart TB
         direction LR
         NB["🖊️ Nintex\n[Dropdown Button]"]
     end
-    
+  
     subgraph Dropdown["Dropdown Menu Options"]
         direction TB
         D1["📤 Send for Signature"]
@@ -171,23 +171,23 @@ flowchart TB
         D5["📁 View Signed Documents"]
         D6["⚙️ Settings"]
     end
-    
+  
     NB --> Dropdown
-    
+  
     style Ribbon fill:#f8f9fa,stroke:#495057
     style Dropdown fill:#ffffff,stroke:#dee2e6
 ```
 
 ### 3.2 Dropdown Menu Functions
 
-| Menu Item | Description | Action Type |
-|-----------|-------------|-------------|
-| **Send for Signature** | Opens configuration modal to set recipients, signing order, and options before sending the current document | Modal Dialog |
-| **Add Signature Fields** | Opens task pane with field palette to insert signature, initials, date, and text fields at cursor position | Task Pane |
-| **Manage Templates** | View, edit, or create reusable templates stored in Dataverse | Task Pane |
-| **Check Status** | View real-time status of envelopes sent from this document or by the current user | Task Pane |
-| **View Signed Documents** | Browse and download completed, signed documents | Task Pane |
-| **Settings** | Configure default options, notification preferences, and view usage statistics | Task Pane |
+| Menu Item                       | Description                                                                                                 | Action Type  |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------ |
+| **Send for Signature**    | Opens configuration modal to set recipients, signing order, and options before sending the current document | Modal Dialog |
+| **Add Signature Fields**  | Opens task pane with field palette to insert signature, initials, date, and text fields at cursor position  | Task Pane    |
+| **Manage Templates**      | View, edit, or create reusable templates stored in Dataverse                                                | Task Pane    |
+| **Check Status**          | View real-time status of envelopes sent from this document or by the current user                           | Task Pane    |
+| **View Signed Documents** | Browse and download completed, signed documents                                                             | Task Pane    |
+| **Settings**              | Configure default options, notification preferences, and view usage statistics                              | Task Pane    |
 
 ### 3.3 Send for Signature Modal
 
@@ -200,19 +200,19 @@ sequenceDiagram
     participant D as Dataverse Broker
     participant A as Approver
     participant N as Nintex API
-    
+  
     U->>M: Click "Send for Signature"
     M->>M: Display configuration form
-    
+  
     Note over M: User configures:<br/>• Recipients<br/>• Signing sequence<br/>• Expiry date<br/>• Reminder schedule
-    
+  
     U->>M: Click "Send"
     M->>D: POST /api/envelopes
-    
+  
     D->>D: Validate request
     D->>D: Calculate cost
     D->>D: Check quota/threshold
-    
+  
     alt Within Auto-Approve Limit
         D->>N: POST /v1/envelopes
         N-->>D: Envelope created
@@ -223,7 +223,7 @@ sequenceDiagram
         D->>A: Notification: Approval required
         D-->>M: "Pending approval"
         M-->>U: "Sent for manager approval"
-        
+  
         A->>D: Approve request
         D->>N: POST /v1/envelopes
         N-->>D: Envelope created
@@ -237,20 +237,20 @@ The send modal captures all necessary information in a single, user-friendly int
 
 **Recipient Configuration:**
 
-| Field | Description | Options |
-|-------|-------------|---------|
-| Recipients | Email addresses of signers | Manual entry, Outlook contacts, or saved groups |
+| Field            | Description                    | Options                                                           |
+| ---------------- | ------------------------------ | ----------------------------------------------------------------- |
+| Recipients       | Email addresses of signers     | Manual entry, Outlook contacts, or saved groups                   |
 | Signing Sequence | Order in which recipients sign | **In Order** (sequential) or **Any Order** (parallel) |
-| Role Assignment | What each recipient does | Signer, Approver, CC Only, In-Person Signer |
+| Role Assignment  | What each recipient does       | Signer, Approver, CC Only, In-Person Signer                       |
 
 **Document Options:**
 
-| Field | Description | Default |
-|-------|-------------|---------|
-| Envelope Name | Display name for tracking | Document filename |
-| Message to Recipients | Email body text | Organization default template |
-| Expiry | Days until envelope expires | 30 days |
-| Reminders | Automatic reminder schedule | 3, 7, 14 days |
+| Field                 | Description                 | Default                       |
+| --------------------- | --------------------------- | ----------------------------- |
+| Envelope Name         | Display name for tracking   | Document filename             |
+| Message to Recipients | Email body text             | Organization default template |
+| Expiry                | Days until envelope expires | 30 days                       |
+| Reminders             | Automatic reminder schedule | 3, 7, 14 days                 |
 
 **Signing Sequence Visualization:**
 
@@ -260,14 +260,14 @@ flowchart LR
         direction LR
         S1A[Signer 1] --> S2A[Signer 2] --> S3A[Signer 3]
     end
-    
+  
     subgraph AnyOrder["Any Order (Parallel)"]
         direction LR
         S1B[Signer 1]
         S2B[Signer 2]
         S3B[Signer 3]
     end
-    
+  
     style InOrder fill:#e7f5ff,stroke:#1c7ed6
     style AnyOrder fill:#e6fcf5,stroke:#0ca678
 ```
@@ -291,7 +291,7 @@ flowchart TB
         B5["📝 Audit Trail\nComplete logging for\ncompliance"]
         B6["🎛️ Guardrails\nEnforce templates,\nrestrict recipients"]
     end
-    
+  
     style Benefits fill:#f8f9fa,stroke:#495057
 ```
 
@@ -312,7 +312,7 @@ flowchart LR
         R4[Check Status]
         R5[View Signed Documents]
     end
-    
+  
     subgraph Dataverse["Dataverse Broker"]
         subgraph Tables["Custom Tables"]
             T1[(ec_envelopes)]
@@ -321,7 +321,7 @@ flowchart LR
             T4[(ec_approvals)]
             T5[(ec_usage_log)]
         end
-        
+  
         subgraph Actions["Custom Actions / Plugins"]
             A1[CreateEnvelope]
             A2[GetEnvelopeStatus]
@@ -329,19 +329,19 @@ flowchart LR
             A4[CalculateCost]
         end
     end
-    
+  
     subgraph Nintex["Nintex API v3.7"]
         N1["POST /submit"]
         N2["GET/POST /templates"]
         N3["GET /envelopes"]
     end
-    
+  
     R1 --> A1
     R2 --> A3
     R3 --> A3
     R4 --> A2
     R5 --> A2
-    
+  
     A1 --> T1
     A1 --> T5
     A1 --> A4
@@ -349,7 +349,7 @@ flowchart LR
     A1 --> N1
     A2 --> N1
     A3 --> N2
-    
+  
     style Dataverse fill:#e6fcf5,stroke:#0ca678
     style Ribbon fill:#e7f5ff,stroke:#1c7ed6
 ```
@@ -362,62 +362,62 @@ The following table documents the Nintex AssureSign REST API v3.7 endpoints that
 
 #### Authentication Endpoints
 
-| Endpoint | Method | Description | Request Payload |
-|----------|--------|-------------|-----------------|
-| `/authentication/apiUser` | POST | Obtain authentication token for API access | `{ "request": { "apiUsername": "string", "key": "string", "contextUsername": "string", "sessionLengthInMinutes": integer } }` |
-| `/authentication/sso` | POST | Generate SSO token for web UI access (valid 30 seconds) | Requires Bearer token and X-AS-UserContext header |
+| Endpoint                    | Method | Description                                             | Request Payload                                                                                                                 |
+| --------------------------- | ------ | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `/authentication/apiUser` | POST   | Obtain authentication token for API access              | `{ "request": { "apiUsername": "string", "key": "string", "contextUsername": "string", "sessionLengthInMinutes": integer } }` |
+| `/authentication/sso`     | POST   | Generate SSO token for web UI access (valid 30 seconds) | Requires Bearer token and X-AS-UserContext header                                                                               |
 
 #### Submit / Envelope Creation Endpoints
 
-| Endpoint | Method | Description | Request Payload |
-|----------|--------|-------------|-----------------|
-| `/submit` | POST | Submit envelope using template or ad-hoc content | See detailed payload below |
-| `/submit/prepare` | POST | Prepare envelope without sending (for preview/edit) | Same as /submit |
-| `/submit/{preparedEnvelopeID}` | POST | Send a previously prepared envelope | Empty body or minimal config |
+| Endpoint                         | Method | Description                                         | Request Payload              |
+| -------------------------------- | ------ | --------------------------------------------------- | ---------------------------- |
+| `/submit`                      | POST   | Submit envelope using template or ad-hoc content    | See detailed payload below   |
+| `/submit/prepare`              | POST   | Prepare envelope without sending (for preview/edit) | Same as /submit              |
+| `/submit/{preparedEnvelopeID}` | POST   | Send a previously prepared envelope                 | Empty body or minimal config |
 
 #### Envelope Management Endpoints
 
-| Endpoint | Method | Description | Request Payload |
-|----------|--------|-------------|-----------------|
-| `/envelopes/{envelopeID}` | GET | Retrieve envelope details and status | N/A (Query params: includeFinalDocumentDownloadLink) |
-| `/envelopes/{envelopeID}/signingLinks` | GET | Get signing URLs for all signatories | Query params: redirectUrl |
-| `/envelopes/{envelopeID}/cancel` | POST | Cancel an in-progress envelope | `{ "reason": "string" }` |
-| `/envelopes/{envelopeID}/remind` | POST | Send reminder to pending signers | `{ "signerEmail": "string" }` |
-| `/envelopes/{envelopeID}/documents` | GET | List all documents in an envelope | N/A |
-| `/envelopes/{envelopeID}/documents/{documentID}` | GET | Download specific document | Query params: type (original, interim, completed) |
-| `/envelopes/{envelopeID}/history` | GET | Get envelope activity/audit history | N/A |
+| Endpoint                                           | Method | Description                          | Request Payload                                      |
+| -------------------------------------------------- | ------ | ------------------------------------ | ---------------------------------------------------- |
+| `/envelopes/{envelopeID}`                        | GET    | Retrieve envelope details and status | N/A (Query params: includeFinalDocumentDownloadLink) |
+| `/envelopes/{envelopeID}/signingLinks`           | GET    | Get signing URLs for all signatories | Query params: redirectUrl                            |
+| `/envelopes/{envelopeID}/cancel`                 | POST   | Cancel an in-progress envelope       | `{ "reason": "string" }`                           |
+| `/envelopes/{envelopeID}/remind`                 | POST   | Send reminder to pending signers     | `{ "signerEmail": "string" }`                      |
+| `/envelopes/{envelopeID}/documents`              | GET    | List all documents in an envelope    | N/A                                                  |
+| `/envelopes/{envelopeID}/documents/{documentID}` | GET    | Download specific document           | Query params: type (original, interim, completed)    |
+| `/envelopes/{envelopeID}/history`                | GET    | Get envelope activity/audit history  | N/A                                                  |
 
 #### Template Endpoints
 
-| Endpoint | Method | Description | Request Payload |
-|----------|--------|-------------|-----------------|
-| `/templates` | GET | List all templates | Query params: includeContent (boolean) |
-| `/templates/{templateID}` | GET | Get template details | N/A |
-| `/templates` | POST | Create new template | Template content JSON |
-| `/templates/{templateID}` | PUT | Update existing template | Template content JSON |
-| `/templates/{templateID}` | DELETE | Delete template | N/A |
+| Endpoint                    | Method | Description              | Request Payload                        |
+| --------------------------- | ------ | ------------------------ | -------------------------------------- |
+| `/templates`              | GET    | List all templates       | Query params: includeContent (boolean) |
+| `/templates/{templateID}` | GET    | Get template details     | N/A                                    |
+| `/templates`              | POST   | Create new template      | Template content JSON                  |
+| `/templates/{templateID}` | PUT    | Update existing template | Template content JSON                  |
+| `/templates/{templateID}` | DELETE | Delete template          | N/A                                    |
 
 #### Email Design Endpoints
 
-| Endpoint | Method | Description | Request Payload |
-|----------|--------|-------------|-----------------|
-| `/emailDesignSets` | GET | List all email design sets | N/A |
-| `/emailDesignSets/defaultEmailNotifications/{culture}` | GET | Get default notification templates | Culture: en-US, fr-CA, es-US |
+| Endpoint                                                 | Method | Description                        | Request Payload              |
+| -------------------------------------------------------- | ------ | ---------------------------------- | ---------------------------- |
+| `/emailDesignSets`                                     | GET    | List all email design sets         | N/A                          |
+| `/emailDesignSets/defaultEmailNotifications/{culture}` | GET    | Get default notification templates | Culture: en-US, fr-CA, es-US |
 
 #### Placeholder File Endpoints
 
-| Endpoint | Method | Description | Request Payload |
-|----------|--------|-------------|-----------------|
-| `/placeholderFiles` | GET | List placeholder files | N/A |
-| `/placeholderFiles` | POST | Upload placeholder file | Multipart form with file |
-| `/placeholderFiles/{fileID}` | DELETE | Delete placeholder file | N/A |
+| Endpoint                       | Method | Description             | Request Payload          |
+| ------------------------------ | ------ | ----------------------- | ------------------------ |
+| `/placeholderFiles`          | GET    | List placeholder files  | N/A                      |
+| `/placeholderFiles`          | POST   | Upload placeholder file | Multipart form with file |
+| `/placeholderFiles/{fileID}` | DELETE | Delete placeholder file | N/A                      |
 
 #### Account/User Endpoints
 
-| Endpoint | Method | Description | Request Payload |
-|----------|--------|-------------|-----------------|
-| `/accounts` | GET | List accessible accounts | N/A |
-| `/users` | GET | List users in account | N/A |
+| Endpoint      | Method | Description              | Request Payload |
+| ------------- | ------ | ------------------------ | --------------- |
+| `/accounts` | GET    | List accessible accounts | N/A             |
+| `/users`    | GET    | List users in account    | N/A             |
 
 ---
 
@@ -576,15 +576,15 @@ Response:
 
 ### 4.5 API Response Status Values
 
-| Status | Description |
-|--------|-------------|
-| `Draft` | Envelope created but not sent |
+| Status         | Description                        |
+| -------------- | ---------------------------------- |
+| `Draft`      | Envelope created but not sent      |
 | `InProgress` | Envelope sent, awaiting signatures |
-| `Completed` | All signatures obtained |
-| `Declined` | Signer declined to sign |
-| `Expired` | Envelope passed expiration date |
-| `Cancelled` | Envelope cancelled by sender |
-| `Voided` | Envelope voided after completion |
+| `Completed`  | All signatures obtained            |
+| `Declined`   | Signer declined to sign            |
+| `Expired`    | Envelope passed expiration date    |
+| `Cancelled`  | Envelope cancelled by sender       |
+| `Voided`     | Envelope voided after completion   |
 
 ---
 
@@ -592,12 +592,12 @@ Response:
 
 All authenticated API calls require:
 
-| Header | Value | Description |
-|--------|-------|-------------|
-| `Authorization` | `Bearer {token}` | Token from /authentication/apiUser |
+| Header               | Value                   | Description                                     |
+| -------------------- | ----------------------- | ----------------------------------------------- |
+| `Authorization`    | `Bearer {token}`      | Token from /authentication/apiUser              |
 | `X-AS-UserContext` | `{email}:{contextID}` | Account context (if user has multiple accounts) |
-| `Content-Type` | `application/json` | Required for all POST/PUT requests |
-| `Accept` | `application/json` | Recommended for all requests |
+| `Content-Type`     | `application/json`    | Required for all POST/PUT requests              |
+| `Accept`           | `application/json`    | Recommended for all requests                    |
 
 ---
 
@@ -605,44 +605,44 @@ All authenticated API calls require:
 
 **ec_envelopes (Envelope Requests)**
 
-| Column | Type | Description |
-|--------|------|-------------|
-| ec_envelopeid | GUID | Primary key |
-| ec_name | String | Envelope display name |
-| ec_status | OptionSet | Draft, Pending Approval, Sent, Completed, Declined, Expired |
-| ec_nintexenvelopeid | String | ID returned from Nintex after creation |
-| ec_requestedby | Lookup (User) | User who initiated the request |
-| ec_approvedby | Lookup (User) | Manager who approved (if applicable) |
-| ec_documentcontent | File | Original document (for audit) |
-| ec_recipientcount | Integer | Number of recipients |
-| ec_estimatedcost | Currency | Calculated cost based on pricing model |
-| ec_createdon | DateTime | Request timestamp |
-| ec_senton | DateTime | When envelope was sent to Nintex |
+| Column              | Type          | Description                                                 |
+| ------------------- | ------------- | ----------------------------------------------------------- |
+| ec_envelopeid       | GUID          | Primary key                                                 |
+| ec_name             | String        | Envelope display name                                       |
+| ec_status           | OptionSet     | Draft, Pending Approval, Sent, Completed, Declined, Expired |
+| ec_nintexenvelopeid | String        | ID returned from Nintex after creation                      |
+| ec_requestedby      | Lookup (User) | User who initiated the request                              |
+| ec_approvedby       | Lookup (User) | Manager who approved (if applicable)                        |
+| ec_documentcontent  | File          | Original document (for audit)                               |
+| ec_recipientcount   | Integer       | Number of recipients                                        |
+| ec_estimatedcost    | Currency      | Calculated cost based on pricing model                      |
+| ec_createdon        | DateTime      | Request timestamp                                           |
+| ec_senton           | DateTime      | When envelope was sent to Nintex                            |
 
 **ec_approvals (Approval Queue)**
 
-| Column | Type | Description |
-|--------|------|-------------|
-| ec_approvalid | GUID | Primary key |
-| ec_envelopeid | Lookup | Related envelope |
-| ec_approver | Lookup (User) | Assigned approver |
-| ec_status | OptionSet | Pending, Approved, Rejected |
-| ec_totalcost | Currency | Cost displayed to approver |
-| ec_justification | Text | Reason for send (required if over threshold) |
-| ec_decision_notes | Text | Approver comments |
+| Column            | Type          | Description                                  |
+| ----------------- | ------------- | -------------------------------------------- |
+| ec_approvalid     | GUID          | Primary key                                  |
+| ec_envelopeid     | Lookup        | Related envelope                             |
+| ec_approver       | Lookup (User) | Assigned approver                            |
+| ec_status         | OptionSet     | Pending, Approved, Rejected                  |
+| ec_totalcost      | Currency      | Cost displayed to approver                   |
+| ec_justification  | Text          | Reason for send (required if over threshold) |
+| ec_decision_notes | Text          | Approver comments                            |
 
 ### 4.8 Office Add-in to Broker to Nintex Mapping
 
-| Office Add-in Action | Dataverse OData Call | Broker Logic | Nintex API v3.7 Call |
-|---------------------|----------------------|--------------|----------------------|
-| Send for Signature | `POST /api/data/v9.2/ec_envelopes` | Validate, calculate cost, check threshold, route for approval if needed | `POST /documentnow/v3.7/submit` |
-| Check Status | `GET /api/data/v9.2/ec_envelopes({id})` | Return cached status, refresh from Nintex if stale | `GET /documentnow/v3.7/envelopes/{id}` |
-| Create Template | `POST /api/data/v9.2/ec_templates` | Validate template, store metadata | `POST /documentnow/v3.7/templates` |
-| List Templates | `GET /api/data/v9.2/ec_templates` | Return templates user has access to | `GET /documentnow/v3.7/templates` |
-| Download Signed Doc | `GET /api/data/v9.2/ec_envelopes({id})/document` | Verify authorization, log access | `GET /documentnow/v3.7/envelopes/{id}/documents/{docId}` |
-| Get Signing Links | `GET /api/data/v9.2/ec_envelopes({id})/signinglinks` | Cache and return signing URLs | `GET /documentnow/v3.7/envelopes/{id}/signingLinks` |
-| Cancel Envelope | `POST /api/data/v9.2/ec_envelopes({id})/cancel` | Log cancellation, notify stakeholders | `POST /documentnow/v3.7/envelopes/{id}/cancel` |
-| Send Reminder | `POST /api/data/v9.2/ec_envelopes({id})/remind` | Check reminder limits, log action | `POST /documentnow/v3.7/envelopes/{id}/remind` |
+| Office Add-in Action | Dataverse OData Call                                   | Broker Logic                                                            | Nintex API v3.7 Call                                       |
+| -------------------- | ------------------------------------------------------ | ----------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Send for Signature   | `POST /api/data/v9.2/ec_envelopes`                   | Validate, calculate cost, check threshold, route for approval if needed | `POST /documentnow/v3.7/submit`                          |
+| Check Status         | `GET /api/data/v9.2/ec_envelopes({id})`              | Return cached status, refresh from Nintex if stale                      | `GET /documentnow/v3.7/envelopes/{id}`                   |
+| Create Template      | `POST /api/data/v9.2/ec_templates`                   | Validate template, store metadata                                       | `POST /documentnow/v3.7/templates`                       |
+| List Templates       | `GET /api/data/v9.2/ec_templates`                    | Return templates user has access to                                     | `GET /documentnow/v3.7/templates`                        |
+| Download Signed Doc  | `GET /api/data/v9.2/ec_envelopes({id})/document`     | Verify authorization, log access                                        | `GET /documentnow/v3.7/envelopes/{id}/documents/{docId}` |
+| Get Signing Links    | `GET /api/data/v9.2/ec_envelopes({id})/signinglinks` | Cache and return signing URLs                                           | `GET /documentnow/v3.7/envelopes/{id}/signingLinks`      |
+| Cancel Envelope      | `POST /api/data/v9.2/ec_envelopes({id})/cancel`      | Log cancellation, notify stakeholders                                   | `POST /documentnow/v3.7/envelopes/{id}/cancel`           |
+| Send Reminder        | `POST /api/data/v9.2/ec_envelopes({id})/remind`      | Check reminder limits, log action                                       | `POST /documentnow/v3.7/envelopes/{id}/remind`           |
 
 ---
 
@@ -664,13 +664,13 @@ flowchart TB
         C6 --> C7[+$W for ID verification]
         C7 --> Total[Total Estimated Cost]
     end
-    
+  
     subgraph Display["Cost Visibility"]
         Total --> U[User sees cost\nbefore sending]
         Total --> A[Approver sees cost\nin approval request]
         Total --> D[Dashboard shows\nmonthly spend]
     end
-    
+  
     style CostCalc fill:#fff4e6,stroke:#e8590c
     style Display fill:#e6fcf5,stroke:#0ca678
 ```
@@ -679,13 +679,13 @@ flowchart TB
 
 Elections Canada can configure approval rules based on organizational policies.
 
-| Threshold Type | Example Configuration | Action |
-|---------------|----------------------|--------|
-| Cost per envelope | > $50 | Require manager approval |
-| Daily envelope count | > 20 per user | Require manager approval |
-| Monthly department budget | > 80% consumed | Notify department head |
-| Recipient count | > 50 recipients | Require director approval |
-| External recipients | Any non-gc.ca domain | Log for audit review |
+| Threshold Type            | Example Configuration | Action                    |
+| ------------------------- | --------------------- | ------------------------- |
+| Cost per envelope         | > $50                 | Require manager approval  |
+| Daily envelope count      | > 20 per user         | Require manager approval  |
+| Monthly department budget | > 80% consumed        | Notify department head    |
+| Recipient count           | > 50 recipients       | Require director approval |
+| External recipients       | Any non-gc.ca domain  | Log for audit review      |
 
 ### 5.3 Approval Workflow Process
 
@@ -693,24 +693,24 @@ Elections Canada can configure approval rules based on organizational policies.
 stateDiagram-v2
     [*] --> Draft: User creates envelope
     Draft --> Validating: User clicks Send
-    
+  
     Validating --> AutoApproved: Within limits
     Validating --> PendingApproval: Exceeds threshold
-    
+  
     PendingApproval --> Approved: Manager approves
     PendingApproval --> Rejected: Manager rejects
-    
+  
     AutoApproved --> Sending: Process immediately
     Approved --> Sending: Process after approval
-    
+  
     Sending --> Sent: Nintex confirms
     Sending --> Failed: Nintex error
-    
+  
     Sent --> InProgress: Awaiting signatures
     InProgress --> Completed: All signed
     InProgress --> Declined: Signer declined
     InProgress --> Expired: Past expiry date
-    
+  
     Rejected --> [*]: Request closed
     Failed --> [*]: Request failed
     Completed --> [*]: Envelope complete
@@ -750,188 +750,31 @@ When an envelope requires approval, the designated approver receives a notificat
 └─────────────────────────────────────────────────────────┘
 ```
 
----
+## 6. Appendices
 
-## 6. Business Benefits
+### 6.1 Glossary
 
-### 6.1 Efficiency Gains
+| Term                         | Definition                                                                                                     |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Envelope**           | A container for one or more documents sent for signature, including recipient information and signing workflow |
+| **Broker Service**     | The Dataverse-based intermediary that processes all signature requests before forwarding to Nintex             |
+| **Task Pane**          | A panel that opens within Office applications to display add-in functionality                                  |
+| **OData**              | Open Data Protocol - the REST API standard used by Dataverse                                                   |
+| **Sequential Signing** | Recipients sign in a specified order, each waiting for the previous to complete                                |
+| **Parallel Signing**   | All recipients can sign simultaneously in any order                                                            |
 
-```mermaid
-flowchart LR
-    subgraph PortalOnly["Portal-Only: ~15 minutes"]
-        B1[Create Doc] --> B2[Save] --> B3[Open Portal] --> B4[Login] --> B5[Upload] --> B6[Configure] --> B7[Send]
-    end
-    
-    subgraph Integrated["Integrated Solution: ~3 minutes"]
-        A1[Create Doc] --> A2[Click Ribbon] --> A3[Configure Modal] --> A4[Send]
-    end
-    
-    style PortalOnly fill:#ffe3e3,stroke:#c92a2a
-    style Integrated fill:#d3f9d8,stroke:#2f9e44
-```
-
-| Metric | Portal-Only Approach | Integrated Solution | Improvement |
-|--------|---------------------|---------------------|-------------|
-| Time to send document | 15+ minutes | 3 minutes | **80% reduction** |
-| Training required | Nintex portal + Office | Office only | **50% reduction** |
-| Context switches | 4-5 per document | 0 | **Eliminated** |
-| Approval visibility | Post-invoice | Real-time | **Immediate** |
-
-### 6.2 Cost Control Benefits
-
-| Benefit | Description |
-|---------|-------------|
-| **Budget Predictability** | Real-time visibility into spending against allocated budgets |
-| **Approval Accountability** | Clear audit trail of who approved what expenditure |
-| **Threshold Automation** | Automatic routing for approval when limits are approached |
-| **Cost Awareness** | Users see costs before sending, encouraging responsible use |
-| **Anomaly Detection** | Alerts when usage patterns deviate from normal |
-
-### 6.3 Governance and Compliance
-
-| Requirement | How Solution Addresses |
-|-------------|----------------------|
-| **Audit Trail** | Every envelope request logged in Dataverse with full metadata |
-| **Access Control** | Role-based access through Dataverse security roles |
-| **Data Residency** | All logs and metadata stored in Canadian Dataverse environment |
-| **Credential Security** | Nintex API credentials stored in Azure Key Vault, never exposed to clients |
-| **Template Governance** | Centralized template management with version control |
-
----
-
-## 7. Implementation Phases
-
-### 7.1 Phased Rollout
-
-```mermaid
-gantt
-    title Implementation Timeline
-    dateFormat  YYYY-MM-DD
-    section Phase 1
-    Dataverse schema design     :p1a, 2026-01-05, 2w
-    Broker API development      :p1b, after p1a, 3w
-    Unit testing                :p1c, after p1b, 1w
-    section Phase 2
-    Office Add-in development   :p2a, 2026-01-19, 4w
-    UI/UX refinement            :p2b, after p2a, 2w
-    Integration testing         :p2c, after p2b, 2w
-    section Phase 3
-    Approval workflow config    :p3a, 2026-02-16, 2w
-    Power Automate flows        :p3b, after p3a, 2w
-    Cost tracking dashboards    :p3c, after p3b, 1w
-    section Phase 4
-    Pilot deployment            :p4a, 2026-03-16, 3w
-    User training               :p4b, after p4a, 2w
-    Feedback incorporation      :p4c, after p4b, 2w
-    section Phase 5
-    Organization-wide rollout   :p5a, 2026-04-27, 4w
-    Hypercare support           :p5b, after p5a, 2w
-```
-
-### 7.2 Phase Details
-
-| Phase | Deliverables | Success Criteria |
-|-------|--------------|------------------|
-| **Phase 1: Foundation** | Dataverse tables, broker API, Nintex integration | API can create/retrieve envelopes |
-| **Phase 2: Add-in** | Ribbon button, dropdown menu, task panes, send modal | Users can send documents from Word |
-| **Phase 3: Governance** | Approval workflows, cost calculation, dashboards | Approvers can review and approve requests |
-| **Phase 4: Pilot** | 50-user pilot group, training materials, support process | 90% user satisfaction, zero critical bugs |
-| **Phase 5: Rollout** | Organization-wide deployment, ongoing support | Full adoption, measurable efficiency gains |
-
----
-
-## 8. Technical Requirements
-
-### 8.1 Infrastructure
-
-| Component | Requirement |
-|-----------|-------------|
-| Microsoft 365 | E3/E5 licenses for Office Add-in support |
-| Dataverse | Environment with sufficient storage (estimate: 10GB for 3 years) |
-| Power Platform | Power Automate Premium for approval workflows |
-| Azure | Key Vault for credential storage, optional Azure Functions for complex logic |
-| Nintex AssureSign | API access with sufficient envelope allocation |
-
-### 8.2 Security Considerations
-
-| Area | Approach |
-|------|----------|
-| Authentication | Azure AD SSO for seamless user experience |
-| Authorization | Dataverse security roles aligned with Elections Canada org structure |
-| API Credentials | Nintex API keys stored in Azure Key Vault, accessed by broker only |
-| Data Encryption | TLS 1.2+ in transit, Dataverse encryption at rest |
-| Audit Logging | All API calls logged with user context, action, and timestamp |
-
----
-
-## 9. Success Metrics
-
-### 9.1 Key Performance Indicators
-
-| KPI | Target | Measurement Method |
-|-----|--------|-------------------|
-| Average time to send | < 5 minutes | Usage analytics |
-| User adoption rate | > 80% within 6 months | Active user count vs. licensed users |
-| Cost per envelope variance | < 5% from estimate | Actual vs. estimated costs |
-| Approval turnaround | < 4 hours | Time from request to decision |
-| User satisfaction | > 4.2/5.0 | Quarterly survey |
-| Support tickets | < 10 per month after stabilization | Service desk metrics |
-
-### 9.2 Cost-Benefit Summary
-
-```mermaid
-pie title Projected Annual Savings
-    "Time Savings (Staff Hours)" : 45
-    "Reduced Training Costs" : 15
-    "Avoided Budget Overruns" : 25
-    "Reduced Support Burden" : 15
-```
-
-**Estimated Annual Value:**
-
-| Category | Calculation | Annual Value |
-|----------|-------------|--------------|
-| Time savings | 500 users × 10 min/doc × 20 docs/year × $50/hr | $83,333 |
-| Training reduction | 50% less training time × $500/user × 100 new users | $25,000 |
-| Budget control | 10% reduction in envelope waste | Variable |
-| **Total Estimated Value** | | **$108,333+** |
-
----
-
-## 10. Appendices
-
-### 10.1 Glossary
-
-| Term | Definition |
-|------|------------|
-| **Envelope** | A container for one or more documents sent for signature, including recipient information and signing workflow |
-| **Broker Service** | The Dataverse-based intermediary that processes all signature requests before forwarding to Nintex |
-| **Task Pane** | A panel that opens within Office applications to display add-in functionality |
-| **OData** | Open Data Protocol - the REST API standard used by Dataverse |
-| **Sequential Signing** | Recipients sign in a specified order, each waiting for the previous to complete |
-| **Parallel Signing** | All recipients can sign simultaneously in any order |
-
-### 10.2 Related Documents
+### 6.2 Related Documents
 
 - Nintex AssureSign API Documentation
 - Elections Canada Information Security Policy
 - Microsoft 365 Add-in Deployment Guide
 - Power Platform Center of Excellence Guidelines
 
-### 10.3 Approval
-
-| Role | Name | Signature | Date |
-|------|------|-----------|------|
-| Project Sponsor | | | |
-| IT Director | | | |
-| Security Officer | | | |
-| Finance Representative | | | |
-
 ---
 
 ## Document History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 0.1 | December 2025 | Platform Engineering Team | Initial draft |
-| 1.0 | December 2025 | Platform Engineering Team | Completed for review |
+| Version | Date          | Author                    | Changes              |
+| ------- | ------------- | ------------------------- | -------------------- |
+| 0.1     | December 2025 | Platform Engineering Team | Initial draft        |
+| 1.0     | December 2025 | Platform Engineering Team | Completed for review |

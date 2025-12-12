@@ -1,0 +1,696 @@
+/*
+ * PEPP Portal - Color Palette Override
+ * Elections Canada Political Entities Service Centre
+ * 
+ * This CSS override applies the Elections Canada political entities color palette
+ * to the GCWEB WET-BOEW framework integrated into Power Pages
+ * 
+ * Usage: Include this as a Web Template in Power Pages
+ * Reference: Apply after GCWEB/WET-BOEW CSS files
+ */
+
+/* ============================================================================
+   COLOR PALETTE DEFINITIONS - Elections Canada Political Entities
+   ============================================================================ */
+
+:root {
+  /* Primary Political Entity Colors */
+  --pepp-political-parties: #2C5F6F;      /* Partis politiques - Dark Teal */
+  --pepp-riding-associations: #8B9A46;    /* Associations de circonscription - Olive Green */
+  --pepp-candidates: #6B1D3C;             /* Candidats - Burgundy */
+  --pepp-nomination: #C17F3E;             /* Candidats à l'investiture - Golden Brown */
+  --pepp-leadership: #66336E;             /* Candidats à la direction - Purple */
+  --pepp-third-parties: #2C4A52;          /* Tiers - Dark Slate */
+  
+  /* Functional Colors - Derived from palette */
+  --pepp-primary: #2C5F6F;                /* Primary brand color */
+  --pepp-secondary: #2C4A52;              /* Secondary brand color */
+  --pepp-accent: #C17F3E;                 /* Accent color */
+  --pepp-success: #8B9A46;                /* Success states */
+  --pepp-warning: #C17F3E;                /* Warning states */
+  --pepp-danger: #6B1D3C;                 /* Error/danger states */
+  --pepp-info: #2C5F6F;                   /* Information states */
+  
+  /* Neutral Colors */
+  --pepp-dark: #2C4A52;                   /* Dark backgrounds/text */
+  --pepp-gray-dark: #3a3a3a;              /* Dark gray */
+  --pepp-gray: #767676;                   /* Medium gray */
+  --pepp-gray-light: #e1e4e7;             /* Light gray */
+  --pepp-gray-lighter: #f5f5f5;           /* Very light gray */
+  --pepp-white: #ffffff;                  /* White */
+  
+  /* Link Colors */
+  --pepp-link: #2C5F6F;                   /* Default link color */
+  --pepp-link-hover: #1f4450;             /* Darker on hover */
+  --pepp-link-visited: #66336E;           /* Visited links */
+  
+  /* UI Element Colors */
+  --pepp-border: #ddd;                    /* Default borders */
+  --pepp-shadow: rgba(0, 0, 0, 0.1);      /* Drop shadows */
+  --pepp-overlay: rgba(44, 74, 82, 0.7);  /* Overlay backgrounds */
+}
+
+/* ============================================================================
+   HEADER & NAVIGATION OVERRIDES
+   ============================================================================ */
+
+/* Application Bar (Authenticated Header) */
+.application-bar {
+  background-color: var(--pepp-primary) !important;
+  color: var(--pepp-white) !important;
+  border-bottom: 3px solid var(--pepp-accent);
+}
+
+.application-bar h2 a {
+  color: var(--pepp-white) !important;
+}
+
+.application-bar .dropbtn {
+  color: var(--pepp-white) !important;
+}
+
+.application-bar .dropdown-content {
+  background-color: var(--pepp-primary) !important;
+  border: 1px solid var(--pepp-accent);
+}
+
+.application-bar .dropdown-content a:hover {
+  background-color: var(--pepp-secondary) !important;
+}
+
+/* Anonymous Header Overlay */
+.pepp-anon-header {
+  background: transparent;
+}
+
+/* GCWEB Header Override */
+#wb-bnr {
+  border-bottom: none;
+}
+
+/* ============================================================================
+   HERO SECTION OVERRIDES
+   ============================================================================ */
+
+.pepp-hero {
+  background-color: var(--pepp-primary);
+}
+
+.pepp-hero::before {
+  background: var(--pepp-overlay) !important;
+}
+
+.pepp-hero h1 {
+  border-bottom-color: var(--pepp-white) !important;
+  color: var(--pepp-white) !important;
+}
+
+.pepp-hero .btn-light {
+  background-color: var(--pepp-white) !important;
+  color: var(--pepp-primary) !important;
+  border: 2px solid var(--pepp-white);
+}
+
+.pepp-hero .btn-light:hover {
+  background-color: var(--pepp-accent) !important;
+  color: var(--pepp-white) !important;
+  border-color: var(--pepp-accent);
+}
+
+.pepp-hero .btn-outline-light {
+  color: var(--pepp-white) !important;
+  border-color: var(--pepp-white) !important;
+  background-color: transparent;
+}
+
+.pepp-hero .btn-outline-light:hover {
+  background-color: var(--pepp-white) !important;
+  color: var(--pepp-primary) !important;
+}
+
+/* ============================================================================
+   CARD COMPONENT OVERRIDES
+   ============================================================================ */
+
+/* Service Card 1 - New Filing (Political Parties Color) */
+.pepp-card:nth-child(2) .panel {
+  border-left-color: var(--pepp-political-parties) !important;
+}
+
+.pepp-card:nth-child(2) .fa {
+  color: var(--pepp-political-parties) !important;
+}
+
+/* Service Card 2 - My Filings (Riding Associations Color) */
+.pepp-card:nth-child(3) .panel {
+  border-left-color: var(--pepp-riding-associations) !important;
+}
+
+.pepp-card:nth-child(3) .fa {
+  color: var(--pepp-riding-associations) !important;
+}
+
+/* Service Card 3 - Entity Profile (Candidates Color) */
+.pepp-card:nth-child(4) .panel {
+  border-left-color: var(--pepp-candidates) !important;
+}
+
+.pepp-card:nth-child(4) .fa {
+  color: var(--pepp-candidates) !important;
+}
+
+/* Service Card 4 - Support (Third Parties Color) */
+.pepp-card:nth-child(5) .panel {
+  border-left-color: var(--pepp-third-parties) !important;
+}
+
+.pepp-card:nth-child(5) .fa {
+  color: var(--pepp-third-parties) !important;
+}
+
+/* Card Hover Effects */
+.pepp-card .panel:hover {
+  box-shadow: 0 4px 12px var(--pepp-shadow) !important;
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* ============================================================================
+   PANEL OVERRIDES
+   ============================================================================ */
+
+.panel-default {
+  border: 1px solid var(--pepp-border);
+  border-radius: 0;
+  box-shadow: 0 1px 3px var(--pepp-shadow);
+}
+
+.panel-default > .panel-heading {
+  background-color: var(--pepp-gray-lighter) !important;
+  border-bottom: 1px solid var(--pepp-border) !important;
+  color: var(--pepp-dark);
+}
+
+.panel-title {
+  font-weight: 600;
+  color: var(--pepp-dark);
+}
+
+/* ============================================================================
+   FEATURE SECTION OVERRIDES (Anonymous View)
+   ============================================================================ */
+
+/* Feature 1 - Online Filing */
+.col-sm-6:nth-child(1) > div {
+  border-left-color: var(--pepp-political-parties) !important;
+}
+
+/* Feature 2 - Status Tracking */
+.col-sm-6:nth-child(2) > div {
+  border-left-color: var(--pepp-riding-associations) !important;
+}
+
+/* Feature 3 - Document Management */
+.col-sm-6:nth-child(3) > div {
+  border-left-color: var(--pepp-candidates) !important;
+}
+
+/* Feature 4 - Notifications */
+.col-sm-6:nth-child(4) > div {
+  border-left-color: var(--pepp-third-parties) !important;
+}
+
+/* ============================================================================
+   LINK OVERRIDES
+   ============================================================================ */
+
+a {
+  color: var(--pepp-link) !important;
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  color: var(--pepp-link-hover) !important;
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--pepp-link-visited);
+}
+
+/* Preserve white links in dark backgrounds */
+.application-bar a,
+.pepp-hero a,
+#wb-info a,
+footer a {
+  color: var(--pepp-white) !important;
+}
+
+/* ============================================================================
+   BUTTON OVERRIDES
+   ============================================================================ */
+
+.btn-primary {
+  background-color: var(--pepp-primary) !important;
+  border-color: var(--pepp-primary) !important;
+  color: var(--pepp-white) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--pepp-link-hover) !important;
+  border-color: var(--pepp-link-hover) !important;
+}
+
+.btn-secondary {
+  background-color: var(--pepp-secondary) !important;
+  border-color: var(--pepp-secondary) !important;
+  color: var(--pepp-white) !important;
+}
+
+.btn-success {
+  background-color: var(--pepp-success) !important;
+  border-color: var(--pepp-success) !important;
+}
+
+.btn-warning {
+  background-color: var(--pepp-warning) !important;
+  border-color: var(--pepp-warning) !important;
+  color: var(--pepp-white) !important;
+}
+
+.btn-danger {
+  background-color: var(--pepp-danger) !important;
+  border-color: var(--pepp-danger) !important;
+}
+
+.btn-info {
+  background-color: var(--pepp-info) !important;
+  border-color: var(--pepp-info) !important;
+}
+
+/* ============================================================================
+   FOOTER OVERRIDES
+   ============================================================================ */
+
+#wb-info,
+footer {
+  background: var(--pepp-dark) !important;
+  color: var(--pepp-white);
+  padding: 20px 0;
+}
+
+#wb-info a,
+footer a {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+#wb-info a:hover,
+footer a:hover {
+  color: var(--pepp-white) !important;
+  text-decoration: underline;
+}
+
+.gc-main-footer {
+  background-color: var(--pepp-dark) !important;
+}
+
+/* ============================================================================
+   STATUS INDICATORS
+   ============================================================================ */
+
+.fa-circle.text-success {
+  color: var(--pepp-success) !important;
+}
+
+.fa-circle.text-warning {
+  color: var(--pepp-warning) !important;
+}
+
+.fa-circle.text-danger {
+  color: var(--pepp-danger) !important;
+}
+
+.fa-circle.text-info {
+  color: var(--pepp-info) !important;
+}
+
+/* ============================================================================
+   FORM CONTROLS
+   ============================================================================ */
+
+.form-control:focus {
+  border-color: var(--pepp-primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(44, 95, 111, 0.25) !important;
+}
+
+/* ============================================================================
+   ALERTS & NOTIFICATIONS
+   ============================================================================ */
+
+.alert-success {
+  background-color: rgba(139, 154, 70, 0.1) !important;
+  border-color: var(--pepp-success) !important;
+  color: var(--pepp-dark);
+}
+
+.alert-warning {
+  background-color: rgba(193, 127, 62, 0.1) !important;
+  border-color: var(--pepp-warning) !important;
+  color: var(--pepp-dark);
+}
+
+.alert-danger {
+  background-color: rgba(107, 29, 60, 0.1) !important;
+  border-color: var(--pepp-danger) !important;
+  color: var(--pepp-dark);
+}
+
+.alert-info {
+  background-color: rgba(44, 95, 111, 0.1) !important;
+  border-color: var(--pepp-info) !important;
+  color: var(--pepp-dark);
+}
+
+/* ============================================================================
+   BADGES & LABELS
+   ============================================================================ */
+
+.badge-primary,
+.label-primary {
+  background-color: var(--pepp-primary) !important;
+}
+
+.badge-success,
+.label-success {
+  background-color: var(--pepp-success) !important;
+}
+
+.badge-warning,
+.label-warning {
+  background-color: var(--pepp-warning) !important;
+}
+
+.badge-danger,
+.label-danger {
+  background-color: var(--pepp-danger) !important;
+}
+
+.badge-info,
+.label-info {
+  background-color: var(--pepp-info) !important;
+}
+
+/* ============================================================================
+   PAGINATION
+   ============================================================================ */
+
+.pagination > .active > a,
+.pagination > .active > span {
+  background-color: var(--pepp-primary) !important;
+  border-color: var(--pepp-primary) !important;
+}
+
+.pagination > li > a:hover,
+.pagination > li > span:hover {
+  color: var(--pepp-link-hover) !important;
+  background-color: var(--pepp-gray-lighter) !important;
+}
+
+/* ============================================================================
+   TABLES
+   ============================================================================ */
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: var(--pepp-gray-lighter);
+}
+
+.table-hover > tbody > tr:hover {
+  background-color: rgba(44, 95, 111, 0.05);
+}
+
+/* ============================================================================
+   PROGRESS BARS
+   ============================================================================ */
+
+.progress-bar {
+  background-color: var(--pepp-primary) !important;
+}
+
+.progress-bar-success {
+  background-color: var(--pepp-success) !important;
+}
+
+.progress-bar-warning {
+  background-color: var(--pepp-warning) !important;
+}
+
+.progress-bar-danger {
+  background-color: var(--pepp-danger) !important;
+}
+
+.progress-bar-info {
+  background-color: var(--pepp-info) !important;
+}
+
+/* ============================================================================
+   NAVIGATION TABS & PILLS
+   ============================================================================ */
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  border-top: 3px solid var(--pepp-primary) !important;
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+  background-color: var(--pepp-primary) !important;
+}
+
+/* ============================================================================
+   BREADCRUMBS
+   ============================================================================ */
+
+.breadcrumb {
+  background-color: var(--pepp-gray-lighter);
+}
+
+.breadcrumb > .active {
+  color: var(--pepp-primary);
+}
+
+/* ============================================================================
+   MODALS
+   ============================================================================ */
+
+.modal-header {
+  background-color: var(--pepp-primary);
+  color: var(--pepp-white);
+  border-bottom: 3px solid var(--pepp-accent);
+}
+
+.modal-header .close {
+  color: var(--pepp-white);
+  opacity: 0.8;
+}
+
+.modal-header .close:hover {
+  opacity: 1;
+}
+
+/* ============================================================================
+   WET-BOEW SPECIFIC OVERRIDES
+   ============================================================================ */
+
+/* WET-BOEW Skip Links */
+.wb-sl {
+  background-color: var(--pepp-primary) !important;
+  color: var(--pepp-white) !important;
+}
+
+/* WET-BOEW Menu Button */
+#wb-sm .nvbar {
+  background: var(--pepp-primary) !important;
+}
+
+/* WET-BOEW Secondary Menu */
+.gcweb-menu {
+  background-color: var(--pepp-secondary) !important;
+}
+
+/* WET-BOEW Language Toggle */
+#wb-lng a {
+  color: var(--pepp-primary) !important;
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+
+.bg-primary {
+  background-color: var(--pepp-primary) !important;
+  color: var(--pepp-white);
+}
+
+.bg-secondary {
+  background-color: var(--pepp-secondary) !important;
+  color: var(--pepp-white);
+}
+
+.bg-success {
+  background-color: var(--pepp-success) !important;
+}
+
+.bg-warning {
+  background-color: var(--pepp-warning) !important;
+}
+
+.bg-danger {
+  background-color: var(--pepp-danger) !important;
+  color: var(--pepp-white);
+}
+
+.bg-info {
+  background-color: var(--pepp-info) !important;
+  color: var(--pepp-white);
+}
+
+.text-primary {
+  color: var(--pepp-primary) !important;
+}
+
+.text-secondary {
+  color: var(--pepp-secondary) !important;
+}
+
+.text-success {
+  color: var(--pepp-success) !important;
+}
+
+.text-warning {
+  color: var(--pepp-warning) !important;
+}
+
+.text-danger {
+  color: var(--pepp-danger) !important;
+}
+
+.text-info {
+  color: var(--pepp-info) !important;
+}
+
+.border-primary {
+  border-color: var(--pepp-primary) !important;
+}
+
+.border-secondary {
+  border-color: var(--pepp-secondary) !important;
+}
+
+/* ============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .application-bar-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .application-bar .dropdown {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+  
+  .pepp-hero {
+    padding: 80px 0 60px 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .pepp-card .panel-body {
+    padding: 20px 15px !important;
+  }
+  
+  .pepp-card .fa {
+    font-size: 2rem !important;
+  }
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+
+@media print {
+  .application-bar,
+  .pepp-anon-header,
+  #wb-info,
+  footer {
+    background: none !important;
+    color: #000 !important;
+  }
+  
+  a {
+    color: #000 !important;
+    text-decoration: underline;
+  }
+  
+  .pepp-card .panel {
+    border: 1px solid #000 !important;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================================================ */
+
+/* Focus indicators with brand colors */
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+.btn:focus {
+  outline: 3px solid var(--pepp-accent) !important;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --pepp-primary: #1f4450;
+    --pepp-link: #1f4450;
+    --pepp-border: #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ============================================================================
+   DEVELOPER NOTES
+   ============================================================================ 
+   
+   To customize colors further:
+   1. Modify the CSS custom properties in :root at the top of this file
+   2. Use the --pepp-* variables throughout your custom components
+   3. Add new color variations as needed following the naming convention
+   
+   Entity Type Color Reference:
+   - Political Parties:        #2C5F6F (--pepp-political-parties)
+   - Riding Associations:      #8B9A46 (--pepp-riding-associations)
+   - Candidates:               #6B1D3C (--pepp-candidates)
+   - Nomination Contestants:   #C17F3E (--pepp-nomination)
+   - Leadership Contestants:   #66336E (--pepp-leadership)
+   - Third Parties:            #2C4A52 (--pepp-third-parties)
+   
+   ============================================================================ */
