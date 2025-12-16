@@ -1,0 +1,317 @@
+/* Elections Canada Custom Styles - Official FIP Colors */
+/* Upload this as a Web File in Power Pages */
+
+:root {
+  --fip-red: #26374a;
+  --ec-yellow: #FAD714;
+  --ec-blue: #005A9B;
+  --ec-green: #008750;
+  --ec-light-gray: #C8C8C8;
+  --ec-dark-gray: #4B4B4B;
+  --ec-border-gray: #E0E0E0;
+  --pewter-grey: #969696;
+}
+
+.bg-primary-ec {
+  background-color: var(--ec-blue) !important;
+  color: white;
+}
+
+.ec-header {
+  background-color: white;
+  padding: 40px 0;
+  border-top: 4px solid var(--fip-red);
+  border-bottom: 1px solid var(--ec-border-gray);
+}
+
+.ec-header h1 {
+  border-bottom: 3px solid var(--fip-red);
+  display: inline-block;
+  padding-bottom: 10px;
+  color: #000;
+  margin-top: 0;
+}
+
+.ec-header .lead {
+  font-size: 1.5rem;
+  color: var(--ec-dark-gray);
+  margin-top: 20px;
+}
+
+/* Override GCWeb theme paragraph sizes */
+.ec-header p,
+.ec-header .lead,
+p.lead {
+  color: var(--ec-dark-gray);
+  font-size: 1.5rem !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  margin-bottom: 15px !important;
+}
+
+/* Sub-lead styling - slightly smaller than lead */
+.ec-header .sub-lead,
+p.sub-lead {
+  color: var(--ec-dark-gray);
+  font-size: 1.25rem !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  margin-bottom: 15px !important;
+}
+
+/* Responsive sizing for paragraphs and lead text */
+@media (min-width: 768px) {
+  .ec-header p,
+  .ec-header .lead,
+  p.lead {
+    font-size: 1.75rem !important;
+  }
+  
+  .ec-header .sub-lead,
+  p.sub-lead {
+    font-size: 1.4rem !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .ec-header p,
+  .ec-header .lead,
+  p.lead {
+    font-size: 2rem !important;
+  }
+  
+  .ec-header .sub-lead,
+  p.sub-lead {
+    font-size: 1.6rem !important;
+  }
+}
+
+.btn-ec-primary,
+.btn-ec-primary:link,
+.btn-ec-primary:visited {
+  background-color: var(--fip-red);
+  color: white !important;
+  border: 2px solid var(--fip-red);
+  border-radius: 0;
+  padding: 12px 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+}
+
+.btn-ec-primary:hover,
+.btn-ec-primary:focus,
+.btn-ec-primary:active {
+  background-color: #26374a;
+  color: white !important;
+  border-color: #26374a;
+  text-decoration: none !important;
+}
+
+.btn-ec-outline,
+.btn-ec-outline:link,
+.btn-ec-outline:visited {
+  background-color: transparent;
+  color: var(--fip-red) !important;
+  border: 2px solid var(--fip-red);
+  border-radius: 0;
+  padding: 12px 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+}
+
+.btn-ec-outline:hover,
+.btn-ec-outline:focus,
+.btn-ec-outline:active {
+  background-color: var(--fip-red);
+  color: white !important;
+  text-decoration: none !important;
+}
+
+.home-most-requested {
+  background-color: var(--ec-yellow);
+  border: none;
+  padding: 30px 0;
+}
+
+.home-most-requested h2 {
+  color: #000;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.home-most-requested a {
+  color: #000;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.home-most-requested a:hover,
+.home-most-requested a:focus {
+  color: var(--fip-red);
+  text-decoration: underline;
+}
+
+.gc-srvinfo h2 {
+  color: #000;
+  font-weight: 600;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--ec-border-gray);
+}
+
+.gc-srvinfo h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.gc-srvinfo h3 a {
+  color: var(--ec-blue);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.gc-srvinfo h3 a:hover,
+.gc-srvinfo h3 a:focus {
+  color: var(--fip-red);
+  text-decoration: underline;
+}
+
+.gc-srvinfo p {
+  color: #424242;
+  line-height: 1.6;
+}
+
+.home-your-gov {
+  background-color: var(--ec-dark-gray);
+  color: white;
+  border: none;
+  padding: 30px 0;
+}
+
+.home-your-gov h2 {
+  color: white;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.home-your-gov a {
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.home-your-gov a:hover,
+.home-your-gov a:focus {
+  color: var(--ec-yellow);
+  text-decoration: underline;
+}
+
+.gc-features h2 {
+  color: #000;
+  font-weight: 600;
+  margin: 40px 0 30px 0;
+}
+
+.gc-features .well {
+  border: 2px solid var(--ec-border-gray);
+  transition: box-shadow 0.3s ease;
+}
+
+.gc-features .well:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.gc-features h3 a {
+  color: var(--ec-blue);
+  font-weight: 600;
+}
+
+.gc-features h3 a:hover,
+.gc-features h3 a:focus {
+  color: var(--fip-red);
+}
+
+.stretched-link::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  content: "";
+}
+
+.position-relative {
+  position: relative;
+}
+
+.pagedetails {
+  margin-top: 40px;
+  padding: 20px 0;
+  border-top: 1px solid var(--ec-border-gray);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ec-header {
+    padding: 20px 0;
+  }
+  
+  .ec-header .lead {
+    font-size: 1.2rem;
+  }
+  
+  .btn-ec-primary, 
+  .btn-ec-outline {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+/* Fallback for browsers that don't support CSS variables */
+.btn-ec-primary {
+  background-color: #26374a;
+  border-color: #26374a;
+}
+
+.btn-ec-outline {
+  color: #26374a;
+  border-color: #26374a;
+}
+
+.home-most-requested {
+  background-color: #FAD714;
+}
+
+.gc-srvinfo h3 a {
+  color: #005A9B;
+}
+
+.home-your-gov {
+  background-color: #4B4B4B;
+}
+
+/* Application Bar Content - Match body font size */
+.application-bar-content h2 {
+  font-size: 1rem !important;
+  font-weight: 600;
+  margin: 0;
+}
+
+.application-bar-content h2 a {
+  font-size: 1rem !important;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.application-bar-content h2 a:hover,
+.application-bar-content h2 a:focus {
+  color: var(--ec-yellow);
+  text-decoration: underline;
+}
