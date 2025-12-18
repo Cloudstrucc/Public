@@ -1,3 +1,13 @@
+---
+marp: true
+paginate: true
+header: ''
+theme: default
+size: 16:9
+---
+
+![](./image/cloudstrucc_word_template.png)
+
 # Proposal: Microsoft Dynamics 365 Sales Implementation
 
 ## For Leonardo Company - Canada
@@ -8,7 +18,7 @@
 
 # 🛍️ Executive Summary
 
-Leonardo Company Canada, a leading defence contractor and critical service provider for the naval electronics segment, requires a robust Customer Relationship Management (CRM) platform to enhance sales operations, opportunity tracking, and customer engagement workflows while maintaining compliance with security and data governance requirements.
+Leonardo Company Canada, a leading defence contractor and critical service provider for the naval electronics segment, requires a robust Customer Relationship Management (CRM) platform to enhance sales operations, opportunity tracking, and customer engagement workflows while maintaining compliance with security and data governance requirements. In addition the client seeking the ability to create more comprehensive financial bugetting dashboards that include the end to end process from its clients and products sold.
 
 To support Leonardo Company's strategic growth objectives and operational excellence, Cloudstrucc proposes the implementation of **Microsoft Dynamics 365 Sales** as a comprehensive sales management solution that will:
 
@@ -53,8 +63,8 @@ To perform the activities outlined in this proposal, the following pre-requisite
 
 Cloudstrucc will require:
 
-* A dedicated **privileged administrative account** (e.g., `d365-admin@leonardocompany.com`) or membership in a **privileged role group** within Microsoft Entra ID.
-* The following roles or equivalent custom RBAC assignments:
+* A dedicated **privileged administrative account** (e.g., `d365-admin@leonardocompany.com`) or membership in a **privileged role group** within Microsoft Entra ID. Alternatively, leverage existing Cloudstrucc inc. resource's administrator account.
+* The following roles:
 
   * **Dynamics 365 Administrator** (for environment provisioning and configuration)
   * **Power Platform Administrator** (for Dataverse and security configuration)
@@ -124,7 +134,7 @@ This is reflected in the project schedule.
 | **Total with HST**                              |                                                        | **\$16,950 CAD** |                    |
 
 **Payment Terms**
-The total amount indicated in this proposal, including applicable taxes, shall become payable upon completion of the scope of work as outlined herein. Final payment shall be due within thirty (30) days of the client's written confirmation of acceptance and sign-off of the completed deliverables. 
+The total amount indicated in this proposal, including applicable taxes, shall become payable upon completion of the scope of work as outlined herein. Final payment shall be due within thirty (30) days of the client's written confirmation of acceptance and sign-off of the completed deliverables.
 
 > *Optional post-implementation enhancements / support (after the 30 support period) extension available at \$125/hr.*
 
@@ -136,11 +146,11 @@ To implement Dynamics 365 Sales, Leonardo Company Canada will require the follow
 
 ### Microsoft Dynamics 365 Licensing (CAD)
 
-| License Tier                    | Features Included                                                   | Estimated Monthly Cost (CAD/user)        |
-| ------------------------------- | ------------------------------------------------------------------- | ---------------------------------------- |
+| License Tier                    | Features Included                                                   | Estimated Monthly Cost (CAD/user)             |
+| ------------------------------- | ------------------------------------------------------------------- | --------------------------------------------- |
 | Dynamics 365 Sales Professional | Core sales automation, opportunity management, basic customization  | \~\$78 **(NOTE, does not include CMK)** |
-| Dynamics 365 Sales Enterprise   | Advanced customization, unlimited custom entities, enhanced reports | \~\$118 **(RECOMMENDED)**          |
-| Dynamics 365 Customer Insights  | AI-driven insights, customer segmentation, predictive analytics     | \~\$1,890/tenant (optional)              |
+| Dynamics 365 Sales Enterprise   | Advanced customization, unlimited custom entities, enhanced reports | \~\$118 **(RECOMMENDED)**               |
+| Dynamics 365 Customer Insights  | AI-driven insights, customer segmentation, predictive analytics     | \~\$1,890/tenant (optional)                   |
 
 ### Notes
 
@@ -221,7 +231,7 @@ To implement Dynamics 365 Sales, Leonardo Company Canada will require the follow
 * Audit logging for all create, read, update, delete operations
 * Data retention policies aligned to CGP requirements
 
-**Customer Managed Keys (CMK)** 
+**Customer Managed Keys (CMK)**
 
 * Azure Key Vault provisioning for encryption keys
 * CMK application to Dataverse environment
@@ -271,10 +281,9 @@ To implement Dynamics 365 Sales, Leonardo Company Canada will require the follow
 
 ### Knowledge Transfer Sessions
 
-* 2-hour administrator training (IT staff)
-* 2-hour sales manager training (sales manager role)
-* 2-hour end-user training (sales representatives)
-* Recorded sessions for future reference
+* 2-hour end-user training
+* 1-hour IT administrator training
+* Recorded session for future reference
 
 ---
 
@@ -393,7 +402,7 @@ The implementation will be considered successful upon achievement of the followi
 ### Contact Information
 
 **Cloudstrucc Inc.**
-Email: fpearson@cloudstrucc.com
+Email: <fpearson@cloudstrucc.com>
 Phone: (613) 220-2958
 
 **Project Lead:** [To Be Assigned by Leonardo Canada inc.]
