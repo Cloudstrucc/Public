@@ -43,20 +43,37 @@ adx_contentsnippet:
   DisplayName: Mobile Header
   CheckSum: 6e6d6a631e7ee0c9f6e9580016a20dc053ecfd9b2d64e213da2a90959393efd2
   IsDeleted: false
+adx_entityform:
+- RecordId: 5c9f5415-21d5-f011-8544-7ced8d3606fc
+  DisplayName: Edit Item
+  CheckSum: 3b5ea29f263d5d5688e67698d26844d0c6daa0bf4f83b279f0252fd910624253
+  IsDeleted: false
+- RecordId: fb83a9e9-20d5-f011-8544-7ced8d3606fc
+  DisplayName: Create Item
+  CheckSum: 82a358966b9d8d0a9b81118eda82488ef145033c2c6528815bff582d4e61f5c8
+  IsDeleted: false
 adx_entitylist:
 - RecordId: 81ae888b-0dd5-f011-8544-7ced8d3606fc
   DisplayName: Items
-  CheckSum: ce267fe88632ee8afb801476022b45c7280cc730624df4dfd522b45d5b1405e5
+  CheckSum: 40cafbc52cb7acd0ccfbbbea2fbbfee5f9fe8560ac91d8893acc335bb590bba8
   IsDeleted: false
 adx_entitypermission:
 - RecordId: 2ba7156d-0dd5-f011-8544-7ced8d3606fc
   DisplayName: Items
-  CheckSum: 59ff911b4212572234b41a120f4e6186057f49a28aa02e94b75ee6c5777099d8
+  CheckSum: 4ff1f767b59e3afb37ba2762eed2ec1eb601a0619390c4f0c4a7dc2be4f0b113
+  IsDeleted: false
+- RecordId: 6b275bda-f7db-f011-8543-7ced8da58400
+  DisplayName: Contacts
+  CheckSum: dccdae13c956d01995540bdff8b3962eac0f8174c8f532b54f81756e994687be
   IsDeleted: false
 adx_entitypermission_webrole:
 - RecordId: 22f3f6e7-eb2e-4893-acba-9a293e104fc2
   DisplayName: $RELATIONSHIP$adx_entitypermission:2ba7156d-0dd5-f011-8544-7ced8d3606fc:adx_webrole
   CheckSum: 000098b2f451a096ee5f99ddf20deb65a0d047778deab07a483f8d3154d4cfa8
+  IsDeleted: false
+- RecordId: 948c566f-b103-4122-89fc-df4f377c4872
+  DisplayName: $RELATIONSHIP$adx_entitypermission:6b275bda-f7db-f011-8543-7ced8da58400:adx_webrole
+  CheckSum: 776c1227f8706e9bb191291026c5d262eabc6e966884484bd145a371572fdb17
   IsDeleted: false
 adx_pagetemplate:
 - RecordId: 1f72a2f8-bfd4-f011-8544-7ced8d371ea7
@@ -2215,6 +2232,10 @@ adx_webpage:
   DisplayName: jquery
   CheckSum: 174dcf6108a4fa1c709f17870965b82c4500ba125d1968068ddab74968e9bd71
   IsDeleted: false
+- RecordId: 69bfcef7-f3db-f011-8543-7ced8da58400
+  DisplayName: new item
+  CheckSum: b4850c80ca9329115b2d884ba1705f65b0b223c84e09209f6796f517c212a2a3
+  IsDeleted: false
 - RecordId: 704ea724-c3d4-f011-8544-7ced8d3606fc
   DisplayName: jquery
   CheckSum: aa2faf591748965cfc6870ba7b2315146842f45b60a4299dd32df64ee69605f9
@@ -2407,6 +2428,10 @@ adx_webpage:
   DisplayName: site-assets
   CheckSum: 78376496332122950d184baa21c44ff503cae0e9ae47be6a06171aca17e4405b
   IsDeleted: false
+- RecordId: edeec9fd-f3db-f011-8543-7ced8da58400
+  DisplayName: new item
+  CheckSum: 074135299c93c3205261ce6481e85375b57ab10da3aac095ee2c36abafb2af9f
+  IsDeleted: false
 - RecordId: ee211892-d91e-46d8-9c5d-198aab824f57
   DisplayName: Profile
   CheckSum: 231179a8e2d73f7de9c763e4e683ee92c71ce700c6ec8a27abc2006252afae14
@@ -2541,7 +2566,7 @@ adx_webtemplate:
   IsDeleted: false
 - RecordId: 5d462fef-bfd4-f011-8544-7ced8d3606fc
   DisplayName: CS-footer
-  CheckSum: 482150905601706a4c92c17aaec9721f8ae7f6c037d13baf84d4eeb3bf081d01
+  CheckSum: ce8734cfb956b57b57c1f5004fb9279f0f2fbac4967b8f239972d12e13e323d4
   IsDeleted: false
 - RecordId: 66462fef-bfd4-f011-8544-7ced8d3606fc
   DisplayName: CS-header-bak
@@ -2553,7 +2578,7 @@ adx_webtemplate:
   IsDeleted: false
 - RecordId: 85f63af5-bfd4-f011-8544-7ced8d3606fc
   DisplayName: CS-Home-WET
-  CheckSum: d33d68bac9b93e84423c2dd4a244983e515ea8981cb81772fdcd043fbc35b50d
+  CheckSum: b6fb33f1e3a96fc7d4893420e619dd631eda7468dc670376411eede1662429fa
   IsDeleted: false
 - RecordId: a81dc0f4-8113-45a6-8ad0-121efe97daf7
   DisplayName: Page Header
@@ -2593,7 +2618,7 @@ adx_webtemplate:
   IsDeleted: false
 - RecordId: e99e00f6-bfd4-f011-8544-6045bd5c6e93
   DisplayName: CS-Styles
-  CheckSum: 2ac3159a705e5ae7bf72ebaabd3309d1456d8407c44803f60b4cef1f74bba521
+  CheckSum: 5103136ffe2ba3270f8fcff7e6462c372b325896a2a81c09c9a3ba1bc4ebced3
   IsDeleted: false
 - RecordId: ec76eee4-8910-46a4-b36e-40528d836b87
   DisplayName: Search
@@ -2601,7 +2626,7 @@ adx_webtemplate:
   IsDeleted: false
 - RecordId: ec9169f2-bfd4-f011-8544-7ced8d371ea7
   DisplayName: CS-header
-  CheckSum: ddfc7ad99b2d49e3b11eb29028ae69363bb50d14252e031063e5da970326aedf
+  CheckSum: 5954c75918c720a701b63c2be6e194021efc293428b4ae23bff5a78dd1535b12
   IsDeleted: false
 annotation:
 - RecordId: 004f983b-c2d4-f011-8544-6045bd5c6e93

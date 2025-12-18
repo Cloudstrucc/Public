@@ -1,5 +1,5 @@
 <style>
-/* Sticky footer CSS */
+/* Sticky footer */
 html {
   height: 100%;
 }
@@ -18,66 +18,256 @@ main, #wb-cont {
   flex-shrink: 0;
   margin-top: auto;
 }
+
+/* Force Bootstrap modals to show properly */
+.modal.show {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+.modal.show[aria-hidden="true"] {
+  display: block !important;
+  visibility: visible !important;
+  aria-hidden: false !important;
+}
+
+.modal-backdrop.show {
+  opacity: 0.5 !important;
+}
+
+.modal-dialog {
+  position: relative;
+  z-index: 1060 !important;
+}
+
+.modal.show {
+  pointer-events: auto !important;
+}
+
+.modal-content {
+  height:100px;
+}
+/* Fix close button overflow - keep it inside modal header */
+.modal-header {
+  background-color: #2b4380;
+  color: white !important;
+  flex-shrink: 0;
+  border-bottom: none;
+  padding: 15px 20px;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  padding-right: 50px !important; /* Make room for close button */
+}
+
+.modal-header .btn-close,
+.modal-header .close {
+  background: transparent !important;
+  border: none !important;
+  color: white !important;
+  opacity: 1 !important;
+  font-size: 28px !important;
+  font-weight: 300 !important;
+  line-height: 1 !important;
+  padding: 8px !important;
+  width: 30px !important;
+  height: 30px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  filter: none !important;
+  text-decoration: none !important;
+  position: absolute !important;
+  right: 15px !important; /* Fixed position inside header */
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin: 0 !important;
+}
+
+.modal-header .btn-close span,
+.modal-header .close span {
+  color: white !important;
+  font-weight: 300 !important;
+  text-decoration: none !important;
+  filter: none !important;
+  font-size: 28px !important;
+  line-height: 1 !important;
+}
+
+.modal-header .btn-close:hover,
+.modal-header .close:hover {
+  opacity: 0.8 !important;
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+  border-radius: 4px;
+}
+
+/* Loading indicator - center in modal body */
+.modal-body {
+  max-height: calc(100vh - 200px) !important;
+  overflow-y: auto !important;
+  position: relative;
+  min-height: 200px; /* Ensure there's space for loading indicator */
+}
+
+/* Center loading spinner in modal body */
+.modal-body .spinner,
+.modal-body .loading,
+.modal-body .spinner-border,
+.modal-body [class*="loading"],
+.modal-body .load-container {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 10;
+}
+
+/* If Power Pages uses a specific loading class */
+.modal-body .loading-spinner,
+.modal-body .ms-Spinner {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 10;
+}
+
+/* Loading overlay in modal body */
+.modal-body.loading::before,
+.modal-body[data-loading="true"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 5;
+}
+
+/* Generic loading spinner centering */
+.modal-body > .text-center.p-5,
+.modal-body > div[style*="text-align: center"] {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: auto !important;
+  padding: 0 !important;
+}
+
+/* Ensure modal title doesn't get cut off by close button */
+.modal-header .modal-title {
+  max-width: calc(100% - 50px); /* Leave space for close button */
+  padding-right: 10px;
+}
+
+.modal-header .visually-hidden {
+  display: none !important;
+}
+
+/* Make ALL modals 900px wide (Create, Edit, Delete, etc.) */
+.modal-dialog,
+.modal-form-insert .modal-dialog,
+.modal-form-update .modal-dialog,
+.modal-form-edit .modal-dialog,
+.modal-form .modal-dialog {
+  position: relative;
+  width: auto;
+  max-width: 900px !important;
+  min-width: 900px !important;
+  margin: auto !important;
+  z-index: 1060 !important;
+  transform: none !important;
+}
+
+/* Override any Power Pages specific sizing classes */
+.modal-sm .modal-dialog,
+.modal-lg .modal-dialog,
+.modal-xl .modal-dialog {
+  max-width: 900px !important;
+  min-width: 900px !important;
+}
+
+/* Responsive - allow smaller on tablets and mobile */
+@media (max-width: 992px) {
+  .modal-dialog,
+  .modal-form-insert .modal-dialog,
+  .modal-form-update .modal-dialog,
+  .modal-form-edit .modal-dialog,
+  .modal-form .modal-dialog,
+  .modal-sm .modal-dialog,
+  .modal-lg .modal-dialog,
+  .modal-xl .modal-dialog {
+    max-width: 95% !important;
+    min-width: 0 !important;
+    margin: 10px auto !important;
+  }
+}
 </style>
 
-<footer id="wb-info">
-  <h2 class="wb-inv">About this site</h2>
-  <div class="gc-main-footer">
-    <div class="container">
-     {% comment %} <nav>
-        <h3>Elections Canada</h3>
-        <ul class="list-unstyled colcount-sm-2 colcount-md-3">
-          <li><a href="/about">About us</a></li>
-          <li><a href="/contact">Contact us</a></li>
-          <li><a href="/news">News</a></li>
-        </ul>
-      </nav>{% endcomment %}
+<footer id="wb-info" style="background: #26374A; padding: 20px 0;">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-8">        
+      </div>
+      <div class="col-sm-4 text-right">
+        <img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/wmms-blk.svg" alt="Symbol of the Government of Canada" style="height: 24px; filter: brightness(0) invert(1);">
+      </div>
     </div>
   </div>
-  
 </footer>
 
 <script>
-// Store Power Pages jQuery/Bootstrap if they exist
-if (typeof jQuery !== 'undefined') {
-  window.jQuery_PowerPages = jQuery.noConflict(true);
-  window.$_PowerPages = window.jQuery_PowerPages;
-}
-if (typeof bootstrap !== 'undefined') {
-  window.bootstrap_PowerPages = bootstrap;
-}
+// Fix Bootstrap 5 modal aria-hidden conflict
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    
+    // Override modal behavior
+    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+      const originalShow = bootstrap.Modal.prototype.show;
+      
+      bootstrap.Modal.prototype.show = function() {
+        const modalElement = this._element;
+        
+        if (modalElement) {
+          modalElement.removeAttribute('aria-hidden');
+          modalElement.setAttribute('aria-modal', 'true');
+        }
+        
+        originalShow.call(this);
+        
+        setTimeout(() => {
+          if (modalElement) {
+            modalElement.removeAttribute('aria-hidden');
+            modalElement.style.display = 'block';
+          }
+        }, 50);
+      };
+    }
+    
+    // Watch for aria-hidden changes on modals
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+          const target = mutation.target;
+          if (target.classList.contains('modal') && target.classList.contains('show')) {
+            target.removeAttribute('aria-hidden');
+            target.setAttribute('aria-modal', 'true');
+          }
+        }
+      });
+    });
+    
+    setTimeout(() => {
+      const modals = document.querySelectorAll('.modal');
+      modals.forEach(function(modal) {
+        observer.observe(modal, {
+          attributes: true,
+          attributeFilter: ['aria-hidden', 'aria-modal']
+        });
+      });
+    }, 1000);
+  });
+})();
 </script>
-
-<!-- Load WET-BOEW's jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha384-rY/jv8mMhqDabXSo+UCggqKtdmBfd3qC2/KvyTDNQ6PcUJXaxK1tMepoQda4g5vB" crossorigin="anonymous"></script>
-
-<script>
-// Store WET-BOEW's jQuery
-window.jQuery_WET = jQuery.noConflict(true);
-window.$_WET = window.jQuery_WET;
-
-// Set WET jQuery as global for loading WET scripts
-window.jQuery = jQuery_WET;
-window.$ = $_WET;
-</script>
-
-<script src="/wet-boew/js/wet-boew.min.js"></script>
-<script src="/GCWeb/js/theme.min.js"></script>
-<script src="/wet-boew/js/i18n/en.min.js"></script>
-
-<script>
-// Restore Power Pages jQuery as the global one
-if (typeof jQuery_PowerPages !== 'undefined') {
-  window.jQuery = jQuery_PowerPages;
-  window.$ = jQuery_PowerPages;
-}
-if (typeof bootstrap_PowerPages !== 'undefined') {
-  window.bootstrap = bootstrap_PowerPages;
-}
-
-// Keep WET-BOEW jQuery accessible for WET-BOEW features
-window.jQuery_WET = jQuery_WET;
-window.$_WET = $_WET;
-</script>
-
-<script src="/wet-boew/js/deps/jquery.magnific-popup.min.js"></script>
