@@ -8,13 +8,16 @@
 <main class="pepp-app" property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
   <div class="container mrgn-tp-lg mrgn-bttm-lg">
     
-    <!-- Quick Actions -->
+    <!-- Quick Actions   -->
     <section class="row mrgn-bttm-lg">
       <div class="col-md-12">
         <h2 class="mrgn-tp-0 mrgn-bttm-md">{{ snippets['PEPP/SERVICES/TITLE'] | default: 'Services' }}</h2>
       </div>
+      
+      
+      
       <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
-        <a href="{{ sitemarkers['MyFilings'].url }}" class="pepp-card" style="display: block; text-decoration: none;">
+        <a href="/items" class="pepp-card" style="display: block; text-decoration: none;">
           <div class="panel panel-default" style="border-left: 4px solid #005a70; transition: box-shadow 0.2s;">
             <div class="panel-body text-center" style="padding: 30px 20px;">
               <span class="fa fa-folder-open-o" style="font-size: 2.5rem; color: #005a70; margin-bottom: 15px; display: block;"></span>
@@ -24,7 +27,7 @@
           </div>
         </a>
       </div>
-       
+
       <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
         <a href="/create-item" class="pepp-card" style="display: block; text-decoration: none;">
           <div class="panel panel-default" style="border-left: 4px solid #26374A; transition: box-shadow 0.2s;">
@@ -37,8 +40,6 @@
         </a>
       </div>
       
-     
-      
       <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
         <a href="{{ sitemarkers['EntityProfile'].url }}" class="pepp-card" style="display: block; text-decoration: none;">
           <div class="panel panel-default" style="border-left: 4px solid #d83b01; transition: box-shadow 0.2s;">
@@ -50,12 +51,46 @@
           </div>
         </a>
       </div>
-      
-      
+      {%comment %}
+      <div class="col-lg-3 col-md-6 col-sm-6 mrgn-bttm-md">
+        <a href="{{ sitemarkers['Support'].url }}" class="pepp-card" style="display: block; text-decoration: none;">
+          <div class="panel panel-default" style="border-left: 4px solid #1a5336; transition: box-shadow 0.2s;">
+            <div class="panel-body text-center" style="padding: 30px 20px;">
+              <span class="fa fa-life-ring" style="font-size: 2.5rem; color: #1a5336; margin-bottom: 15px; display: block;"></span>
+              <h3 class="h5 mrgn-tp-0" style="color: #333;">{{ snippets['PEPP/CARD4/TITLE'] | default: 'Support' }}</h3>
+              <p class="small text-muted mrgn-bttm-0">{{ snippets['PEPP/CARD4/DESC'] | default: 'Get help and resources' }}</p>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endcomment %}
     </section>
-
-    <!-- Status & Notifications -->
-    <section class="row">      
+{% comment %}
+   
+    <section class="row">
+      <div class="col-md-8 mrgn-bttm-md">
+        <div class="panel panel-default">
+          <div class="panel-heading" style="background: #f5f5f5; border-bottom: 1px solid #ddd;">
+            <h3 class="panel-title" style="font-weight: 600;">Recent Activity</h3>
+          </div>
+          <div class="panel-body">
+            {% assign activities = entities['pepp_activities'] | where: 'pepp_contactid', user.id | order_by: 'createdon', 'desc' | take: 5 %}
+            {% if activities.size > 0 %}
+              <ul class="list-unstyled mrgn-bttm-0">
+                {% for activity in activities %}
+                <li class="mrgn-bttm-sm" style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                  <span class="fa fa-circle text-{{ activity.pepp_statuscolor | default: 'muted' }}" style="font-size: 0.6rem; vertical-align: middle;"></span>
+                  <span style="margin-left: 10px;">{{ activity.pepp_description }}</span>
+                  <span class="pull-right small text-muted">{{ activity.createdon | date: "%b %d, %Y" }}</span>
+                </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-muted mrgn-bttm-0"><em>No recent activity</em></p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
       
       <div class="col-md-4 mrgn-bttm-md">
         <div class="panel panel-default">
@@ -73,7 +108,7 @@
         </div>
       </div>
     </section>
-
+{% endcomment %}
   </div>
 </main>
 

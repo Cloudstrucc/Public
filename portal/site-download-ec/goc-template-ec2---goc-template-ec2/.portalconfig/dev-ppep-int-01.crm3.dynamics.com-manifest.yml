@@ -88,9 +88,17 @@ adx_contentsnippet:
   CheckSum: 6e6d6a631e7ee0c9f6e9580016a20dc053ecfd9b2d64e213da2a90959393efd2
   IsDeleted: false
 adx_entityform:
+- RecordId: 109109a1-fedb-f011-8543-7ced8da58400
+  DisplayName: Profile
+  CheckSum: 939fe8942811ac28760643e2dfbd71881daf6e1b0fefe371916fdcf89a015c57
+  IsDeleted: false
 - RecordId: 3fd99b1c-eddb-f011-8543-6045bd5c4d94
   DisplayName: Item
   CheckSum: b4c49bc9283dc220005375d2ab04a75a05f20a136fea8ab8c2b38a5728c2361d
+  IsDeleted: false
+- RecordId: 5c9f5415-21d5-f011-8544-7ced8d3606fc
+  DisplayName: Edit Item
+  CheckSum: 3b5ea29f263d5d5688e67698d26844d0c6daa0bf4f83b279f0252fd910624253
   IsDeleted: false
 - RecordId: c0113555-eddb-f011-8543-6045bd5c4d94
   DisplayName: Item (edit)
@@ -100,28 +108,52 @@ adx_entityform:
   DisplayName: Profile
   CheckSum: 52e4c6004e8785f6453ac62e7118317f35b327a94cc21c38c53008835a7353fb
   IsDeleted: false
+- RecordId: fb83a9e9-20d5-f011-8544-7ced8d3606fc
+  DisplayName: Create Item
+  CheckSum: 82a358966b9d8d0a9b81118eda82488ef145033c2c6528815bff582d4e61f5c8
+  IsDeleted: false
 adx_entitylist:
 - RecordId: 171a9e47-ecdb-f011-8543-7c1e5254ad46
   DisplayName: Items
   CheckSum: 83681d64e9334a8ed6423ac2308f5d85d3218189a314d402ad1407fe5bd2f144
   IsDeleted: false
+- RecordId: 81ae888b-0dd5-f011-8544-7ced8d3606fc
+  DisplayName: Items
+  CheckSum: 40cafbc52cb7acd0ccfbbbea2fbbfee5f9fe8560ac91d8893acc335bb590bba8
+  IsDeleted: false
 adx_entitypermission:
+- RecordId: 2ba7156d-0dd5-f011-8544-7ced8d3606fc
+  DisplayName: Items
+  CheckSum: 4ff1f767b59e3afb37ba2762eed2ec1eb601a0619390c4f0c4a7dc2be4f0b113
+  IsDeleted: false
 - RecordId: 42ac1488-ecdb-f011-8543-7c1e5254ad46
   DisplayName: Items
   CheckSum: 5815decc5d00bbd21d61b1344f4d4eab06315bb01af008bfe349a1a8e4744d45
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 4b1d5cac-dbda-f011-8543-6045bd5c442f
   DisplayName: Profile
   CheckSum: 76abe5593e8e40f98337b7edcaffec111ac15bea038f59e4d217783f70915bc1
   IsDeleted: false
+- RecordId: 6b275bda-f7db-f011-8543-7ced8da58400
+  DisplayName: Contacts
+  CheckSum: dccdae13c956d01995540bdff8b3962eac0f8174c8f532b54f81756e994687be
+  IsDeleted: false
 adx_entitypermission_webrole:
+- RecordId: 22f3f6e7-eb2e-4893-acba-9a293e104fc2
+  DisplayName: $RELATIONSHIP$adx_entitypermission:2ba7156d-0dd5-f011-8544-7ced8d3606fc:adx_webrole
+  CheckSum: 000098b2f451a096ee5f99ddf20deb65a0d047778deab07a483f8d3154d4cfa8
+  IsDeleted: false
 - RecordId: 22f3f6e7-eb2e-4893-acba-9a293e104fc2
   DisplayName: $RELATIONSHIP$adx_entitypermission:42ac1488-ecdb-f011-8543-7c1e5254ad46:adx_webrole
   CheckSum: c7de75eb5d77a3e95acd9932ef36d35aff6eed4e317e36a98fd7255443722a6b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 22f3f6e7-eb2e-4893-acba-9a293e104fc2
   DisplayName: $RELATIONSHIP$adx_entitypermission:4b1d5cac-dbda-f011-8543-6045bd5c442f:adx_webrole
   CheckSum: 28fa0f77241f45556b18fee2485841df98aac2f6c2364d30a877b0d706505181
+  IsDeleted: false
+- RecordId: 948c566f-b103-4122-89fc-df4f377c4872
+  DisplayName: $RELATIONSHIP$adx_entitypermission:6b275bda-f7db-f011-8543-7ced8da58400:adx_webrole
+  CheckSum: 776c1227f8706e9bb191291026c5d262eabc6e966884484bd145a371572fdb17
   IsDeleted: false
 adx_pagetemplate:
 - RecordId: 1f72a2f8-bfd4-f011-8544-7ced8d371ea7
@@ -214,7 +246,7 @@ adx_sitemarker:
 - RecordId: 302bc5b8-437e-494e-b533-f41fbed1ca15
   DisplayName: Profile
   CheckSum: 32426a3641ec1e9106ad4cc35ee10b9b2cc3f8dbf87ee3ea552b5c304714fc9f
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 80ff4766-7807-4572-8a37-32e3418f5be0
   DisplayName: Search
   CheckSum: ea7c4608ea48a3755ecd13b01bcf44e861f303d4ea13e2287d2a2877ff7c49c8
@@ -2396,6 +2428,10 @@ adx_weblinkset:
   CheckSum: 674e04031094c02ef4a6491a1a0c43af433e04a7cb565ccfb2f5a4cbae1eb8b1
   IsDeleted: false
 adx_webpage:
+- RecordId: 00daa77b-02dc-f011-8543-7ced8de0923c
+  DisplayName: Profile
+  CheckSum: afec31d406b58ce3e820690a6186e681e122804b620c638f5eeb4a77490570b1
+  IsDeleted: false
 - RecordId: 03d7c030-c2d4-f011-8544-7ced8d371ea7
   DisplayName: js
   CheckSum: cb5389e1d96ff60b9c767d7a36b7ab85fe93204d4048ee43852a2f34bb6e9815
@@ -2568,6 +2604,10 @@ adx_webpage:
   DisplayName: jquery
   CheckSum: 174dcf6108a4fa1c709f17870965b82c4500ba125d1968068ddab74968e9bd71
   IsDeleted: false
+- RecordId: 69bfcef7-f3db-f011-8543-7ced8da58400
+  DisplayName: new item
+  CheckSum: b4850c80ca9329115b2d884ba1705f65b0b223c84e09209f6796f517c212a2a3
+  IsDeleted: false
 - RecordId: 6bb6844c-dbda-f011-8543-7ced8de0923c
   DisplayName: Profile
   CheckSum: b9a0ce6afed57562a8889259099f2bc39f9d7a9bbb4880c7efc9afa73c1667de
@@ -2582,7 +2622,7 @@ adx_webpage:
   IsDeleted: false
 - RecordId: 70543158-dbda-f011-8543-6045bd5c4d94
   DisplayName: Profile
-  CheckSum: baf369ef9ff6bebda1e0154d5d6213cddc7c8caf5d8e94cc5d60a193a87a218e
+  CheckSum: 8704559a0b28183a80a114317c3ce060ed2a080ed2d2807a281f78312295a918
   IsDeleted: false
 - RecordId: 70a8993a-d2da-f011-8543-6045bd6069c4
   DisplayName: Home
@@ -2658,7 +2698,7 @@ adx_webpage:
   IsDeleted: false
 - RecordId: 99f85b54-f1db-f011-8543-6045bd5c4d94
   DisplayName: Create Item
-  CheckSum: fb7e1ddbc19eb4e2fc0da5fd28897f2230422ec1aa47bfdcad194bf22121dac3
+  CheckSum: c86f15e4f4ac1049fae4cae25789133f26cbf5722131494633076183304426f6
   IsDeleted: false
 - RecordId: 9ba32a37-c3d4-f011-8544-7ced8d360f5e
   DisplayName: fonts
@@ -2690,7 +2730,7 @@ adx_webpage:
   IsDeleted: false
 - RecordId: a5d9f6bb-0dd5-f011-8544-7ced8d3606fc
   DisplayName: Items
-  CheckSum: b1b1522e5b81573557b18f2e0bc9c030612eb723dc772445e1016e32475db671
+  CheckSum: f6177c119c7cf7b5361e8929964c537fee12bee65c76fa0638c98f8d64a70382
   IsDeleted: false
 - RecordId: a63b152c-c1d4-f011-8544-7ced8d371ea7
   DisplayName: fieldflow
@@ -2738,7 +2778,7 @@ adx_webpage:
   IsDeleted: false
 - RecordId: b3d9f6bb-0dd5-f011-8544-7ced8d3606fc
   DisplayName: Items
-  CheckSum: 1ba77032350f769af8eecd21bfb781bc94325ede3fe7cd66a825d77a7ff094e5
+  CheckSum: f2e8960ce3438fc976f7f39fbb620dcd422d5ddd187d9d1db10f7c79dffc9db3
   IsDeleted: false
 - RecordId: b6a39440-d2da-f011-8543-6045bd6069c4
   DisplayName: wb-chtwzrd
@@ -2759,6 +2799,10 @@ adx_webpage:
 - RecordId: bca39440-d2da-f011-8543-6045bd6069c4
   DisplayName: authentication
   CheckSum: 0995e1d502b2993e9c24cd64d0baa765bdbcba8be138e12b8723d851058ae27c
+  IsDeleted: false
+- RecordId: bdf5ff1f-c48a-45bf-977a-3e98fe35c555
+  DisplayName: Profile
+  CheckSum: 18d3001f56028d197044247a97c5e4c1ad3df4cdfc3100f41f8fb148f3bf20ef
   IsDeleted: false
 - RecordId: c045022f-c2d4-f011-8544-6045bd5c6e93
   DisplayName: deps
@@ -2880,6 +2924,14 @@ adx_webpage:
   DisplayName: site-assets
   CheckSum: 78376496332122950d184baa21c44ff503cae0e9ae47be6a06171aca17e4405b
   IsDeleted: false
+- RecordId: edeec9fd-f3db-f011-8543-7ced8da58400
+  DisplayName: new item
+  CheckSum: 074135299c93c3205261ce6481e85375b57ab10da3aac095ee2c36abafb2af9f
+  IsDeleted: false
+- RecordId: ee211892-d91e-46d8-9c5d-198aab824f57
+  DisplayName: Profile
+  CheckSum: 2c596a88a1feeb83e460547cbe13161f1817a9c146fcb9ed44597b8acb17640f
+  IsDeleted: false
 - RecordId: f0a32a37-c3d4-f011-8544-7ced8d360f5e
   DisplayName: fonts
   CheckSum: d18f8ba8444707c7a237c823d6dced3be47ed4846874daf878b2444cce2b7539
@@ -2910,7 +2962,7 @@ adx_webpage:
   IsDeleted: false
 - RecordId: f92c5e5a-f1db-f011-8543-6045bd5c4d94
   DisplayName: Create Item
-  CheckSum: 7c62bc7dc0e4e9cf226783ca1b9cccd8b32ece119cbeae5c7ea8459dd7a90956
+  CheckSum: 527c099e47615f7c552438c17552ddb83608b00e9ffe4378c2f9df7faa0c8319
   IsDeleted: false
 - RecordId: fc68fd22-c2d4-f011-8544-6045bd5c6e93
   DisplayName: fonts
@@ -3034,7 +3086,7 @@ adx_webtemplate:
   IsDeleted: false
 - RecordId: 85f63af5-bfd4-f011-8544-7ced8d3606fc
   DisplayName: CS-Home-WET
-  CheckSum: 91e98b5f38b72f662fd89af128e7eecb3a8430d03bc01a008e9b053300397d9e
+  CheckSum: b6fb33f1e3a96fc7d4893420e619dd631eda7468dc670376411eede1662429fa
   IsDeleted: false
 - RecordId: a81dc0f4-8113-45a6-8ad0-121efe97daf7
   DisplayName: Page Header
@@ -3082,1654 +3134,3302 @@ adx_webtemplate:
   IsDeleted: false
 - RecordId: ec9169f2-bfd4-f011-8544-7ced8d371ea7
   DisplayName: CS-header
-  CheckSum: b90332af10fc0860579134383815eaff26170a1856baf4140761c86a3e00b1a3
+  CheckSum: 5954c75918c720a701b63c2be6e194021efc293428b4ae23bff5a78dd1535b12
   IsDeleted: false
 annotation:
 - RecordId: 0086e753-e9db-f011-8543-7ced8de0923c
   DisplayName: slider.min.js
   CheckSum: f9d6d0517c610533bd1d37ce5f2ea543dd7164590d6e27bad0cbd804a0722bdb
+  IsDeleted: true
+- RecordId: 023f8059-05dc-f011-8543-7c1e5254af8c
+  DisplayName: ie8-wet-boew.js
+  CheckSum: 5f33395dc0561f5d1041845c95733a7ba8f33f52da5f70c76468ce38653f699a
+  IsDeleted: false
+- RecordId: 029ed530-05dc-f011-8543-7c1e5254ad46
+  DisplayName: slider.min.css
+  CheckSum: a4ed2072acc91c69c9c19627a63207e9935bb7a5906ff5a88b5857ffd4d35dea
   IsDeleted: false
 - RecordId: 0322627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: unorm.js
   CheckSum: 3a3d50fda53d19bfbf705a9ccd69930b58c7564c10391050b9ab19c56d33f2db
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 03f55578-e9db-f011-8543-7ced8de0923c
   DisplayName: MathJax_Typewriter-Regular.woff
   CheckSum: 7b80e0fb58cfb4fb9cc59fb43a405fc073546dd8d520c19d6226edf01641cfea
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 04cddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: de.min.js
   CheckSum: 515bdb758b53d8f81914bf3a64689708ed528294807632368fb676c74532d1c9
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 04f55578-e9db-f011-8543-7ced8de0923c
   DisplayName: progress.js
   CheckSum: 34f18a6914b3f2e8bc0097109852f58391419ddb3bc669aeb8c35d08bfd30d8e
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 053df944-e9db-f011-8543-7c1e5254ad46
   DisplayName: cs.js
   CheckSum: c3e4659fc849718499f45be5cde56a10f7c1406c4f47b1604bb29dc0eadf936f
+  IsDeleted: true
+- RecordId: 0591e15a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: gcweb_0c4a4eb7974d0a7287c93c02965f9b3f.eot
+  CheckSum: 4f91553ac79ead423ae80b75131c4bd85d4fb2c37c065c3ce0b7ac029bb01701
+  IsDeleted: false
+- RecordId: 0598d23c-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-tex.min.js
+  CheckSum: d7b6ab9b107341e64288f54d163793f99676e4dc833cf911dbe7c18ce825d140
   IsDeleted: false
 - RecordId: 05cddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: jsonpointer.min.js
   CheckSum: 44a4da41078cfb3861ac64c87a7b24a1876a038c47a8ecd22eaac11e61e676fb
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 05f55578-e9db-f011-8543-7ced8de0923c
   DisplayName: v5-migration.html
   CheckSum: e3a5e3ca3a70562077fb683e9f5132f08d772127d9d0c27cb5831a3b9195dd2d
+  IsDeleted: true
+- RecordId: 0754691c-05dc-f011-8543-6045bd5c4d94
+  DisplayName: meter.min.js
+  CheckSum: 17b88a48408f1a48970968dce1e805f24932ef8260acae5b496bbcaa3359e198
   IsDeleted: false
 - RecordId: 07e9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: unorm.min.js
   CheckSum: 937b2d3448dce67edd5a15fb236981b01f2fa362890c0b6efad22c311a7d98ba
+  IsDeleted: true
+- RecordId: 086c8a47-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lang-apollo.min.js
+  CheckSum: cbeddcda3751f3d91630db7a1a38f5735fb3bd031fbcd8eb64ad894982983c6c
   IsDeleted: false
 - RecordId: 08cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: hy.min.js
   CheckSum: 6bcb32fef890917f92232dbcf9283d41070cf41db52e0464edb206b9f8785fb8
+  IsDeleted: true
+- RecordId: 093f8059-05dc-f011-8543-7c1e5254af8c
+  DisplayName: payload.json
+  CheckSum: c4f3313ebda285fc89c60cf18725d40be2445e5ff00ee1e710d62abcf989ce74
   IsDeleted: false
 - RecordId: 096a0451-e9db-f011-8543-7c1e5254ad46
   DisplayName: fr.min.js
   CheckSum: 4a86e68c3d26d25e49d75a4f9b14d830038ac0de46c86f7cd4de8e3a94b090ea
+  IsDeleted: true
+- RecordId: 096c8a47-05dc-f011-8543-6045bd5c4d94
+  DisplayName: slider.css
+  CheckSum: 0f10b8019850eea17018294c733cec9f776c7c423bc8b93f2e401801be81fd8b
   IsDeleted: false
 - RecordId: 09f55578-e9db-f011-8543-7ced8de0923c
   DisplayName: ec-blk-white.png
   CheckSum: 321b056dac337bf6b9789c2107a8b079bc89f38ea78ff8b2f8f9ebbdc7b997a8
+  IsDeleted: true
+- RecordId: 0a3f8059-05dc-f011-8543-7c1e5254af8c
+  DisplayName: jquery.flot.min.js
+  CheckSum: 7a25841b26481a0110d0d0912bfbac2df3dfb1f5ad5b2fd55da0d34ae339f975
   IsDeleted: false
 - RecordId: 0a6a0451-e9db-f011-8543-7c1e5254ad46
   DisplayName: v5.0-en.html
   CheckSum: 0a3b59c7d73976c0225000c00c18e2d7910261352d700edd98e1f9782fa55bb9
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 0acddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: chatwizard-json-fr.html
   CheckSum: 6c53d0932e256c770d0ce9f811a96aaaff6746d4bb11df4face2bf9e09622aae
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 0ae9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: progress.min.js
   CheckSum: 167762c20f09f9ac367ac08dea1a8e8c51a1b46741088ce593fa1e8327fe20ed
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 0b22627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: ie8-wet-boew2.min.js.map
   CheckSum: 4e7aad82d89f33c508ea9659fc7de08e1406aed9fb5ccc6231af3c4f3fd70212
+  IsDeleted: true
+- RecordId: 0b3f8059-05dc-f011-8543-7c1e5254af8c
+  DisplayName: MathJax_Size2-Regular.woff
+  CheckSum: afdd81203e7dbaf4af740228c8a753c8e3c2ccea358fb175c0fb7d5098bd5c0b
+  IsDeleted: false
+- RecordId: 0b43d536-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-css.js
+  CheckSum: c8809910676042cfd1ef07defc3900d97752a8285c93ce8e90aaac64a5381e0e
+  IsDeleted: false
+- RecordId: 0b71d82a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: linkedin.svg
+  CheckSum: 340c1b3d342f92f41fb04788ceab9caec0837500d51f5395607ad6a581252ab5
+  IsDeleted: false
+- RecordId: 0bb8e948-05dc-f011-8543-7c1e5254ad46
+  DisplayName: it.min.js
+  CheckSum: af4f953230f4b58f20d90ca609210c62c45aadc655c53f554b374eba8d1775dc
   IsDeleted: false
 - RecordId: 0be9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-scala.js
   CheckSum: a7d451d83c215c95fc3e8ed3b10bc37d3413d7b5de88ff6654d9c1ff64c7cfea
+  IsDeleted: true
+- RecordId: 0c43d536-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Main-Italic.woff
+  CheckSum: 971c0c2d2f38559362c28f87c5c80b806b06d9737e275da9228335617d1d7a16
   IsDeleted: false
 - RecordId: 0c633152-e9db-f011-8543-7c1e5254af8c
   DisplayName: lang-logtalk.min.js
   CheckSum: 74ab0571b06a42cecc8a85a4a9f745b1b71005e0805bdeb162a0fbdb3330b419
+  IsDeleted: true
+- RecordId: 0c71d82a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-vb.js
+  CheckSum: 3db76405080f97b410da46ac466b6f55fde4f004638c2c213caa1468b0cf66b6
   IsDeleted: false
 - RecordId: 0ccddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: datepicker.min.js.map
   CheckSum: 033c8d40f13ddb47e2fc196a6bdb7aaea588d610c08f7b03547243af0ffd3b0b
+  IsDeleted: true
+- RecordId: 0cd1d128-05dc-f011-8543-6045bd5c4d94
+  DisplayName: urlmapping-doc-fr.html
+  CheckSum: a0616c38bb693086e7820baa9759fbce638b3f904c313ddcbcd1e3e9c9d98983
   IsDeleted: false
 - RecordId: 0d18f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-basic.min.js
   CheckSum: bf06fe06e63c15ee7721abeafab728bd1b7d5f46dbf394a2206ab8a62b0a124d
+  IsDeleted: true
+- RecordId: 0dcbfe2e-05dc-f011-8543-6045bd5c4d94
+  DisplayName: prettify.min.js
+  CheckSum: e43ce0f1f95611dc9a20d1f59fd15b0f8e596a8c05f8c1bde1e8ffd97c82d72e
   IsDeleted: false
 - RecordId: 0de8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: wmms-blk.png
   CheckSum: 4ab693e6509039134b6d91ae24d4030e0e4c11580a4c93b40c205e6fa2985647
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 0e18f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: svg.js
   CheckSum: 11aa3eafe2226b0a3766607fec7020a20efeed15c4587fd25555dce700ac9df7
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 0ee8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-logtalk.js
   CheckSum: 2fe1ffaf176d41e22d6c59aeaebc9f88182d24adad2b0ac391f2af227f63d9cd
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 0ef55578-e9db-f011-8543-7ced8de0923c
   DisplayName: robots.txt
   CheckSum: 226834404091abc24177939e934697d50e4b8b2079d69f12a5a8fda40ed92397
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 0f86e753-e9db-f011-8543-7ced8de0923c
   DisplayName: MathJax_Size4-Regular.woff
   CheckSum: aab0fd384269925fcb81d63e15bd03a6da7f3f8c210fd5a5789aa490cf959558
+  IsDeleted: true
+- RecordId: 0f95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: meter.css
+  CheckSum: 0975c3f65635fd5091b46beb2505ac41a4606c2bb8c3b2d5b7b54298fe96d1c4
   IsDeleted: false
 - RecordId: 0fe8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: bootstrap.min.css
   CheckSum: 05c4959149afdcaf94f97f27ad10b0210ca2ba43c69b5ec8c02486340b2d276a
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 0ff55578-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-lua.js
   CheckSum: 7574eb0ae381ad5a3f8c789fe8eeb42ba32d6dfb2c0b142151d44589f812e48d
+  IsDeleted: true
+- RecordId: 1095f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: geomap-lib.min.js
+  CheckSum: 255423de39fb04381f4b1a2fed0ce2bfdcc35ae721bea7a2de382b82fc06f9bc
   IsDeleted: false
 - RecordId: 10e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-rd.min.js
   CheckSum: 9e22641a8c47a8b334412eef822c75d928f5602683741f033a13b367302c35fe
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 10f55578-e9db-f011-8543-7ced8de0923c
   DisplayName: datepicker.min.css
   CheckSum: edbde8b6b418f6dad919146a7d100fedec206cbe0dd5c321257d9d1df617c7cb
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1118f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: prettify.js
   CheckSum: 4ff5eff9434be0a7a0c2e0b91e4ccf97f30acca6aa208c519ab33497dfb51007
+  IsDeleted: true
+- RecordId: 116c8a47-05dc-f011-8543-6045bd5c4d94
+  DisplayName: jquery.js
+  CheckSum: 7652ee1f0baf095fcc2d31ad614f5ed618a28f3bb65a5b5c96635bf76c3d70b2
+  IsDeleted: false
+- RecordId: 1195f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: unorm.js
+  CheckSum: 129c26e899e4f35a4daa3fe8b2b25d155aefc9cbc8c23776d289da8f82d8e272
   IsDeleted: false
 - RecordId: 11cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-lasso.js
   CheckSum: 12264dc441b2376719ea252489fa3ee2762fe32f0ad22437f95c91e9124eca80
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 11e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-dart.js
   CheckSum: 9bf0bb50356e1dd0c55404afd032572c7aa694fa6885d3f066bfb4f9847ab338
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 11e9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-xq.min.js
   CheckSum: ceda8ade82adc406b0145dd2b1aca39c79765d60200bc9f473b4202863f1f5e9
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 11f55578-e9db-f011-8543-7ced8de0923c
   DisplayName: template-en.html
   CheckSum: f3703a0c57030c9b29febd9dfaab1a433b7196ec9b3f6aac290116b4dad4c958
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1218f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: pl.min.js
   CheckSum: 5ad3ae28c14bd77f1236f08e3d4da05adbfa908aafb55f39babcb783770f3a74
+  IsDeleted: true
+- RecordId: 1248da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: ec-blk-white.png
+  CheckSum: 51fa9fcc1ea71d78281e5f61f696831823457a639cecf535324879793d354851
+  IsDeleted: false
+- RecordId: 1295f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: bkg-home-yourgov.jpg
+  CheckSum: 4f75b30aa922b19bc99ac87d069b31d414eb4c473a6362d04ab875eb687434f0
+  IsDeleted: false
+- RecordId: 12ac9751-05dc-f011-8543-7c1e5254af8c
+  DisplayName: basic-fr.html
+  CheckSum: e7ea063c5fc6ad2254eb44dcb57915f1d8f8dc7c03c99cf964b4db6f58cf96c3
+  IsDeleted: false
+- RecordId: 12d3f61d-05dc-f011-8543-7c1e5254ad46
+  DisplayName: theme-srv.css
+  CheckSum: e9f481338b853dedb323c9261073b6e88c6fda8dbbc422193ebb7e749282f4b7
   IsDeleted: false
 - RecordId: 12e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: vi.min.js
   CheckSum: 791ac0ee38f681f33cde6388975492e057de3d7d71b54650521972738e79d00a
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 12eb7541-e9db-f011-8543-7ced8de0923c
   DisplayName: jsonmanager-doaction-en.html
   CheckSum: 8bc5549a9d3de37d5c065a6f35246eaa1f54b14b740c884c45fca97a7b9a093a
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1318f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: geomap-lib.js
   CheckSum: 8b7f9af5c53dd27256667c443d550529344c1aaa986aec65a3fb0a255ab11112
+  IsDeleted: true
+- RecordId: 1348da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: chatwizard-json-fr.html
+  CheckSum: 69cc67ff9f847208d0752307c50deecc10f431686593b170116a732ce14ba11b
+  IsDeleted: false
+- RecordId: 1395f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-llvm.js
+  CheckSum: 46b0066be0167d0c37d14b8fa06ee023dc0b2b359a409b04f35f589289c3ecf6
+  IsDeleted: false
+- RecordId: 1398d23c-05dc-f011-8543-7c1e5254ad46
+  DisplayName: datepicker.min.js
+  CheckSum: f073f0bf9c0474b300228a4432baaecc3dac966e7b53793ad4e42dadc6b67162
+  IsDeleted: false
+- RecordId: 13ac9751-05dc-f011-8543-7c1e5254af8c
+  DisplayName: tableparser.min.js
+  CheckSum: fa512cc7fa91f15c0c295f043e442c1d9c82216eeb66bba92ec4718939aaccc1
+  IsDeleted: false
+- RecordId: 13cbfe2e-05dc-f011-8543-6045bd5c4d94
+  DisplayName: ol.js
+  CheckSum: 1ebd86e9cebd08e8a3c36d280c6b7ec05eea2444a8e515cff61d6742f7df88a0
   IsDeleted: false
 - RecordId: 13e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-tcl.js
   CheckSum: 08f1f8794921a915f140631631ea89ffbde574a44e2e6b29c63207c2af372a19
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 13e9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: v8.0-fr.html
   CheckSum: 2f0b0be3b87661c710122853865cb20073b0048a87a9c652bbcf619704dd6579
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 13eb7541-e9db-f011-8543-7ced8de0923c
   DisplayName: datepicker.js
   CheckSum: d4032c3cdcc99245e02462f49f7afcd15f20cb65aa7da0c35f6085c9c66f365c
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 13f55578-e9db-f011-8543-7ced8de0923c
   DisplayName: ko.min.js
   CheckSum: bbf7b07ae7e1d06252eeb7008f34cf79bb06b23f1be3d0af6f5fda22b329de66
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1418f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: v5.0-fr.html
   CheckSum: cf14dbb6df14d4c6b5648d7b89b3237c5627950c0646fe549679497b19212218
+  IsDeleted: true
+- RecordId: 1495f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: id.min.js
+  CheckSum: f729a610289e7ed2d68951c6557dce1ea83085e61a508bc16e0943ee47dbb9eb
+  IsDeleted: false
+- RecordId: 1498d23c-05dc-f011-8543-7c1e5254ad46
+  DisplayName: wet-boew.min.css
+  CheckSum: d992cf6eed1eca5575d1f5934084cb3b7b379327a6b42b5ef5af7274eb36bf70
   IsDeleted: false
 - RecordId: 14cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-rd.js
   CheckSum: 8c4240f2a0b7cc97530a7b84a51a055ffd794032144648be2651548e740c03bc
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 14cddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-apollo.min.js
   CheckSum: 9ac4a7fde54b7f989ec62b5b620f041bb1b46cf8ad6970213061eb1bf5fa591b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 14e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: MathJax_AMS-Regular.woff
   CheckSum: a034ff252a278757f5335bd69113c8b81ef0d1dad5649bd3a3d04f281a38cf25
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 14f55578-e9db-f011-8543-7ced8de0923c
   DisplayName: tblfilter-fr.html
   CheckSum: 6d493871779f9d7ad0b5711980c1ae1d7b4c106430a34882f46892bd3013beb6
+  IsDeleted: true
+- RecordId: 1595f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: details.min.js.map
+  CheckSum: 3180c1275c3af2ec0a6550aad836c7e5ee82267b433cc36d5e6c6d2925dca9da
   IsDeleted: false
 - RecordId: 15cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: gc-chckbxrdio-en.html
   CheckSum: fcac1bbd56cdaf5c9edb7579b41122285079208057d09a3068b98ed8e99337bb
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 15e9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: slider_wrapper.min.js
   CheckSum: 9fd556b6cbbe3e20cad2c44a13d9fba3a99bf81c006fef4e70f2fe4babee54d4
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 15f55578-e9db-f011-8543-7ced8de0923c
   DisplayName: MathJax_SansSerif-Regular.woff
   CheckSum: 53da2402e579492708ee2f4dd8cd639c521e853e1bc7b4662b3cc293dd1607c5
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1618f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: test.min.js
   CheckSum: 1990d64ed16653b0a4259393c4ae82f9ac6b8e1c759cafa8deb6e9f7048b46c6
+  IsDeleted: true
+- RecordId: 1695f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-vhdl.js
+  CheckSum: b88cd3589441f67849fbf9b3a755570098c1972498a7aada9da39659f6abc6dc
   IsDeleted: false
 - RecordId: 16cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: x-bootstrap-4.min.css
   CheckSum: 039763523c6b2ff69e8d6e9cc96904c9ddc86777b616a55fd0647eb7cace949b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 16cddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: v6.0-fr.html
   CheckSum: 0645c5d23c20374341d36b09435dfd988e6a63567f8286d74e1477a42ccb418e
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 16e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: mml-chtml.js
   CheckSum: b8ccadd7a35292ecb09f5bc0f5f92eb0f88c511a355d85c18926952a52230b3c
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 16e9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: details.min.js
   CheckSum: 69b9c86c0aef4c880a6effeeb6bcddc98d947535c794f5379be51000d5b0ab1a
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1718f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: doaction-doc-fr.html
   CheckSum: 44f15ee34cdd34c6d00d9080a76b0929693448ef0f2cf048d979b9f0736b28bd
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1722627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: pl.js
   CheckSum: 7942c43ccdc6b5ce458d3f25c134afad2e8b6fe639adc1aaacaae9518330b8c2
+  IsDeleted: true
+- RecordId: 1795f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: v7.0-fr.html
+  CheckSum: 8fa4b0fc83129b0a157ec27be83d266b5a057ff2ae07215bed508aca7b1dd4e8
   IsDeleted: false
 - RecordId: 17cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: jsonpointer.js
   CheckSum: 85339e71046182aac5d6e4a23019c4cf5e93585937ce10214ab553b7a4230770
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 17e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: x-blue-line.png
   CheckSum: 053d1821227286fab564c49646456297da47b24dbaf873417d89c556517f27d6
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 18e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-mumps.min.js
   CheckSum: d3e042001867ed5451599cd5324c8341c8da5b969541e9bcf1dca488029a27ad
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1918f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-yaml.min.js
   CheckSum: 5eeb21e0cd9c45739541ce60a581b2c9adb92048e416e47501c542a0b9299df7
+  IsDeleted: true
+- RecordId: 1995f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: custom-styles.css
+  CheckSum: b30b997dc1b5a9f3ae4675261f4ac042c591dbbd3851a45b5313b39a189c2ccf
   IsDeleted: false
 - RecordId: 19af7171-e9db-f011-8543-7c1e5254af8c
   DisplayName: ie8-wet-boew.min.js.map
   CheckSum: 82a3345e6bda3a7e155b567af4f753d12ecf536bd0a9bdeb3e309ea7452d9804
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 19e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: gcweb_0c4a4eb7974d0a7287c93c02965f9b3f.svg
   CheckSum: d9468f99fd01e0f5ce9a67e5b8ef0b96ef6329e4c78da1c7beaa6925f6799229
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 19e9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: bootstrap-3.html
   CheckSum: 1201e5d21751db6dd19ac927d299096913011d3605fe3bf77cbd4e9c13f90b22
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 19f9f658-e9db-f011-8543-7c1e5254af8c
   DisplayName: messages.min.css
   CheckSum: 07a68bad4e932450124f8b6480d4b01c677d3c0cfd05507170b8531c4cd6061c
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1a18f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-vb.min.js
   CheckSum: 42c6b664e26a7acf18e4ffebc67718cd36e6a5c1fa0b7e6270e7644a3bc40358
+  IsDeleted: true
+- RecordId: 1a48da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: gc-chckbxrdio-en.html
+  CheckSum: 1a5dac5edb20c2765b49cfc00c3dade1820d7a14411b86d367a5e064066193f0
   IsDeleted: false
 - RecordId: 1a5cfc5c-e9db-f011-8543-7c1e5254ad46
   DisplayName: messages.css
   CheckSum: 96fd36acbf8c9ebf862ec5c1fafdf627b7b0bd6d722f046a44b230e2cbd6dfd8
+  IsDeleted: true
+- RecordId: 1a95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: hi.min.js
+  CheckSum: e5eae2c5fe3bad8c94fa3a235a1702f897d027992343d0b0b7b5719e700a9615
   IsDeleted: false
 - RecordId: 1acbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: loading.png
   CheckSum: f3556e930f2fe5c06b5a65e6d81b2c811c992c7a321f6e1a809d0377f6ec19f3
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1acddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: json-patch.js
   CheckSum: d5fcce90d11d4a1ab152c481c691d1f812a058023f963c2c9e1059ac07e88aad
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1b18f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: progress.min.js.map
   CheckSum: 74354fad8a0eb9eae4b8cdab3309c581f0dcf1445af7a9a126bcc98254996791
+  IsDeleted: true
+- RecordId: 1b95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: theme.css
+  CheckSum: 12e7c6275383e07ff74aae93197fe50729a6382aac091e90e43199128ec39f43
+  IsDeleted: false
+- RecordId: 1bb8e948-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Calligraphic-Regular.woff
+  CheckSum: 9d373e6709c1df0a03c54af2e71a64bfa928c576090658b509ccafa9b62bd181
   IsDeleted: false
 - RecordId: 1be8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: progress.css
   CheckSum: 0a2f21ad6efd7e4cfb7d8df40e2c44acdb3a5d0ec2efae4bd2e9b670bcba48be
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1beb7541-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-basic.js
   CheckSum: 8865ff9501e698b19ad7394104a47b995bd095e184aec8216db2816b311318db
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1bf9f658-e9db-f011-8543-7c1e5254af8c
   DisplayName: tr.min.js
   CheckSum: 70837fd744bc972917c627096c6ceceafca59236541fbe891e3be9e3c7f87c7d
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1c18f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: wet-boew.min.js.map
   CheckSum: ad1feb2134f62dbf101f6eb4d801e9b602f04fabb2e49a576330592868dd761f
+  IsDeleted: true
+- RecordId: 1c48da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Zero.woff
+  CheckSum: e34991102ab5d0564a24c645335607ce858dd1784f0984be38b8c1287ddf3bd5
   IsDeleted: false
 - RecordId: 1c5cfc5c-e9db-f011-8543-7c1e5254ad46
   DisplayName: jquery.validate.js
   CheckSum: 3433aa29f3441ec03b4490c55fa2055891218db94a6ed3cf05830761a966c7b7
+  IsDeleted: true
+- RecordId: 1ccbfe2e-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lang-pascal.min.js
+  CheckSum: d3c3a55b016d65a8850a8e5a436254ae07af1ed670fe56107d5a2ccdab83a329
   IsDeleted: false
 - RecordId: 1ce8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: bkg-home-yourgov-md.jpg
   CheckSum: 0c642372e03fb59c5e92ea436036893ee32bbae405ac6d37cebfcd573f805e65
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1ce9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: landscape.png
   CheckSum: aa458ab41ee5e5e941e639eaba1c5f837e95a8816d8798b23efc908c93b8da99
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1ceb7541-e9db-f011-8543-7ced8de0923c
   DisplayName: payload.json
   CheckSum: 87176744521176b4bd8abc493546e2d50ae7ffffb6127640332a150ad9b43399
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1d18f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: zoom-minus-mini.png
   CheckSum: 23e776a502acce28c6f3ed75b3a41f5b72b669a998d8b40986bc94b9116b6453
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1d5cfc5c-e9db-f011-8543-7c1e5254ad46
   DisplayName: gcweb_0c4a4eb7974d0a7287c93c02965f9b3f.eot
   CheckSum: ca20f42e8ec1a843225b47b5678d5b02e8f92326b0f5595e4c21af80fa14ed7c
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1dcbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: mobile.min.js.map
   CheckSum: 98a5529bcdb28a7d853d83e7e05554abe949fd17e828b28a8de41c657723ee12
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1e01c632-e9db-f011-8543-7c1e5254af8c
   DisplayName: dev-build.html
   CheckSum: 9f693d1cedb4c1a464329467a143e513da498b850adbca966ced4f273aabd33a
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1e18f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: MathJax_Size3-Regular.woff
   CheckSum: b7f1e41d4ffb61ec238226786296b92299ea91e18e866845743719e31f7b8045
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1e22627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: previous-signedon-fr.png
   CheckSum: 9a27afad5f2e7d90eadf3482638f5c9aacfff358cda54aa553896574fae49c50
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1ee8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: temp-v5issue.html
   CheckSum: bbefe0abbde379c4e938a8e2f87977faf8ec862bc3c3f6b586fb4e03fbd0424b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1f18f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: v6.0-en.html
   CheckSum: e113de170b647d1cc7983e5ab77bac519dcb035b03c857af0f7537a4f126a8fa
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1f5cfc5c-e9db-f011-8543-7c1e5254ad46
   DisplayName: sk.min.js
   CheckSum: 5bbe08abda57d36a904aadd34cae826e8b0f9d06db84612ce371475e72025773
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 1fe9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-css.js
   CheckSum: 0bbf784c9c9480b477102f2246bf58103e223cf5f34ab0a4b9b899276be575b3
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2018f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: facebook.svg
   CheckSum: b200b0e37bc942402d5e2af45f48b3e628b106221e64cc0adff0c9dc6a6f94ca
+  IsDeleted: true
+- RecordId: 2033392d-05dc-f011-8543-7ced8de0923c
+  DisplayName: gcweb_0c4a4eb7974d0a7287c93c02965f9b3f.woff
+  CheckSum: 5615af750a7b9e8037864ec5f8e6eaee07ae53d8d9f628c909e9b39690bd2243
+  IsDeleted: false
+- RecordId: 2048da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: jsonmanager-fr.html
+  CheckSum: d85f3db94b3b38ef09ecff4bf64ea4a7a399a9b3a0bf83966777491c22c7615b
   IsDeleted: false
 - RecordId: 205cfc5c-e9db-f011-8543-7c1e5254ad46
   DisplayName: it.min.js
   CheckSum: c11801b3ba29f48cae505cc6df6001d5e1016b3ebe655d0825922f27e3ab3b44
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 20cddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: slider.css
   CheckSum: 71a2e0858f226f8584923b5fedf53326ce22154b55e13bdb14b5ca830b70f6e3
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 20f9f658-e9db-f011-8543-7c1e5254af8c
   DisplayName: pt-BR.min.js
   CheckSum: 311e89b101c22edae2ccbd05a778f7b89ff87e93adc85e8c07becd31a3da5027
+  IsDeleted: true
+- RecordId: 2133392d-05dc-f011-8543-7ced8de0923c
+  DisplayName: jsonmanager-doaction-en.html
+  CheckSum: 42b88173decf5e3c571f4014b076bb1e182eaae7f3c2f84fb80dca1fbda54cce
   IsDeleted: false
 - RecordId: 215cfc5c-e9db-f011-8543-7c1e5254ad46
   DisplayName: MathJax_Calligraphic-Regular.woff
   CheckSum: 2ae5a26a122f37ad7f02b8abd6d2d544bf64b66ce5b0f4d4cc9e33d308ea1ddb
+  IsDeleted: true
+- RecordId: 219dd530-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Size1-Regular.woff
+  CheckSum: 4c00d65d2f900688505d6b839b1f568b737012f4d450029d8ef8846a18cbca2b
   IsDeleted: false
 - RecordId: 21eb7541-e9db-f011-8543-7ced8de0923c
   DisplayName: lt.js
   CheckSum: c947738a32c7dd3f464cd203a303c8a29811566909bd355cfe57ae36af740069
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2218f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: lv.min.js
   CheckSum: d498342ca69f72ad552a850ee88cb4d0cb49867f0fc55109f677cbd0ffd767a7
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2233d865-e9db-f011-8543-7ced8de0923c
   DisplayName: pt.js
   CheckSum: f66f957377aa96b39a052a33e27f72e3a5aa3ebaf718c3263b8da8e23d063ad3
+  IsDeleted: true
+- RecordId: 2243d536-05dc-f011-8543-7c1e5254ad46
+  DisplayName: template-fr.html
+  CheckSum: 18ffaa9f0bdc6083d465f30587a662f2361b3936ca398e17c4bd2613686fe42a
+  IsDeleted: false
+- RecordId: 2248da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: mobile.min.js.map
+  CheckSum: 7e8939bd485562075b3bed14cacd4a7618b31d96df87dd405dcfa2be35f1a191
+  IsDeleted: false
+- RecordId: 22559d24-05dc-f011-8543-7c1e5254ad46
+  DisplayName: sig-blk-fr.png
+  CheckSum: 7220f7b69877a7ba8d30450d1a198b985926befc1bb21ab06539c72ec5294e81
+  IsDeleted: false
+- RecordId: 225cc717-05dc-f011-8543-7c1e5254ad46
+  DisplayName: gcweb_0c4a4eb7974d0a7287c93c02965f9b3f.ttf
+  CheckSum: a0531a01cec3a8a96e65b6427633730041afa074d24159f659e211c66dd1a00b
+  IsDeleted: false
+- RecordId: 228f9e45-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-lasso.min.js
+  CheckSum: 3d61c09e9f0f15672c2f05dce45d4099e9917eb74643f3dc73866fab2a72658a
+  IsDeleted: false
+- RecordId: 2295f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: details.css
+  CheckSum: 4b5bcc6867473103ecc1cc935cb1cd1cb243a4ab83c353e22c17b07b4e0f6248
   IsDeleted: false
 - RecordId: 22cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: jawsariafixes.min.js.map
   CheckSum: b9519def1c46666440f10a76a8a78a074331e8883f85cc49d9ccec7075baa1aa
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 22e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: gc-table-en.html
   CheckSum: 79ea45b3777bb92bc392e9720a8be430a24a20088a1c3a5249a3622e85844622
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 22e9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: jquery.flot.pie.min.js
   CheckSum: 3186a1f1ae1901f2662c44f3e9ae88fd1de082576e3a73b7e02184bc9bb2f661
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 22eb7541-e9db-f011-8543-7ced8de0923c
   DisplayName: index-en.html
   CheckSum: 72e2264b461eb05fb152390e9542f6152a237ff287387a08107eaf20a6a54af5
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2318f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: ie8-wet-boew2.min.js
   CheckSum: a6b21df314653eb8b693bc1d2d882518026756f54aa132603d5c4fa4c1b30545
+  IsDeleted: true
+- RecordId: 2333392d-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-basic.js
+  CheckSum: 4c6a33070afc3f3063328ad3925c2de4f860017bf3c38d25e470e7d101403f1e
+  IsDeleted: false
+- RecordId: 2348da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_SansSerif-Regular.woff
+  CheckSum: 67469a4c569851283aa792a9f833a9034ed79aaaaa5b8e77dedcca2d8bd229a5
   IsDeleted: false
 - RecordId: 23633152-e9db-f011-8543-7c1e5254af8c
   DisplayName: lang-tcl.min.js
   CheckSum: 6610653931bbd4b9771412c2eef6ee4bfaa39726ff27a9a8b2b39310c195ee4d
+  IsDeleted: true
+- RecordId: 238f9e45-05dc-f011-8543-7ced8de0923c
+  DisplayName: v6.1-fr.html
+  CheckSum: a2417a3d3f8e10e43dfe8286566cabaa8cdb19927f64759c48e9e1285945f67a
+  IsDeleted: false
+- RecordId: 2395f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Main-Regular.woff
+  CheckSum: a42a11aab8a3557b75a5b4f560a2480c6e3f071b661a296ea23a4bcf62569bed
   IsDeleted: false
 - RecordId: 23cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: x.svg
   CheckSum: 2db40a0eebc199e5b51bea53ec973901e78f30d59fe4ddadb929747e9326d2b0
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 23e9ee4d-e9db-f011-8543-7ced8de0923c
   DisplayName: MathJax_Main-Italic.woff
   CheckSum: 36ca1899b32baa601c1619b13485009e538665783762fe556be02d8f3ddf3384
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2433d865-e9db-f011-8543-7ced8de0923c
   DisplayName: advanced-en.html
   CheckSum: eea53fb7c9ce3b6beabb0963fcf519c9ad889cc3c3f74604c1c3d604afc72a6b
+  IsDeleted: true
+- RecordId: 2448da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: wmms-blk.png
+  CheckSum: 3542ba05e4829f15c1d7029a5088fb2db7bcc899dd4b3ba9043e0fd579008933
+  IsDeleted: false
+- RecordId: 2495f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-r.js
+  CheckSum: 2ea3cfb1ee150796f00b23d380d874d8b853464d4659943845349e77bcdc7b4e
   IsDeleted: false
 - RecordId: 24cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: es.min.js
   CheckSum: 370b6cc786dda8b480b699eb3814fca397684edd092c32068bf8e68631ac9ca9
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 24e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: jquery.flot.js
   CheckSum: 6c2a548b8f40f698c66dc3586a629c88fbc21e53c8fbad74b492d1ed71497004
+  IsDeleted: true
+- RecordId: 2533392d-05dc-f011-8543-7ced8de0923c
+  DisplayName: index-fr.html
+  CheckSum: fcaea41a41b38c298d45e684ed74efef279184c3cd9a267d7bbd33e1098e8ada
+  IsDeleted: false
+- RecordId: 2548da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: previous-signedoff-fr.png
+  CheckSum: d5e18f47ab6a7b9b682545b806b75deef0dca815201a8e1ccb492bb39f3f8add
   IsDeleted: false
 - RecordId: 25cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: ol.min.js
   CheckSum: 6b73a0bd77025b3b43f60a61a509ae5d883b9888220b327edce171ab4486ee11
+  IsDeleted: true
+- RecordId: 2633392d-05dc-f011-8543-7ced8de0923c
+  DisplayName: pepp-color-override.css
+  CheckSum: 8cd1d82b9e6b9f599f9317a5a0767535eeead9c0cfc196c881c0d0f080782615
+  IsDeleted: false
+- RecordId: 2648da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: jsonpointer.js
+  CheckSum: 9e3a004340415b64db804cef12f77364bd1979bbb5c754dcdac0a81a98fc028f
   IsDeleted: false
 - RecordId: 2686e753-e9db-f011-8543-7ced8de0923c
   DisplayName: additional-methods.min.js
   CheckSum: 69916c1dfd2e9a1ad275c4e0c44a70a9c3264f463c96b0196f07d1b3dae25343
+  IsDeleted: true
+- RecordId: 2695f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-css.min.js
+  CheckSum: cfa251fea40ef42b52a6790352e2e428d1b2e7e6a41b0e874db37f589d90e9c5
+  IsDeleted: false
+- RecordId: 26af5f22-05dc-f011-8543-6045bd5c4d94
+  DisplayName: slider_wrapper.js
+  CheckSum: 6588915caeb223c9f1241e9e3fbd7f4c304a1b04025ab6dd671d4b2395d581d5
   IsDeleted: false
 - RecordId: 26cddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: sprites_share.png
   CheckSum: 88e9c49e0b51154f8bdc07eae60ce05bdf79433d07a6f8879286ac05070076c7
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 26e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-lua.min.js
   CheckSum: ed8026d81cc34db5c9e4c47a790e3695d4905a288f21600053670f8ba47bf853
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2718f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: zoom-plus-mini.png
   CheckSum: d29bae193a46de1b35efa952abbcefd0a5db30d3760aade90772fe8c8f517bd9
+  IsDeleted: true
+- RecordId: 2748da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-rd.min.js
+  CheckSum: 880f52c28e40e1c61031da64608b27075211a5c4fbeeba6f97b862e2d7369995
   IsDeleted: false
 - RecordId: 275fc53e-e9db-f011-8543-7c1e5254af8c
   DisplayName: youtube.svg
   CheckSum: 39f22ba6073dd35e949ce4e37834998731c573ed3597b3ed1a93709f395c76c2
+  IsDeleted: true
+- RecordId: 2795f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: basic-en.html
+  CheckSum: 132b8c280d5e8ad9509ef9523860b4a15dd6540c9d246574a34f4dfe6ab7a608
+  IsDeleted: false
+- RecordId: 27b8e948-05dc-f011-8543-7c1e5254ad46
+  DisplayName: sig-spl.svg
+  CheckSum: a0d83bb130a48d7a3e6c85d9a59b95cce40bb14614b1683a0162ef8247e4e2e7
   IsDeleted: false
 - RecordId: 27cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-erlang.js
   CheckSum: 6cf0deff58eab54223f0a9423e12249523c3b71255da2da40619468f45ac0a71
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 27cddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: cloud-popup-relative.png
   CheckSum: 503d4c6f1654ee16d82670162d6bce3cdf3b2cf7826fb0cf13039d02d35beda8
+  IsDeleted: true
+- RecordId: 27d1d128-05dc-f011-8543-6045bd5c4d94
+  DisplayName: sig-blk-fr.svg
+  CheckSum: 4ea09f083f2647b8385ef5eb8cb935c3cebb2b15c97ead69553276fad2923919
   IsDeleted: false
 - RecordId: 27e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-sql.js
   CheckSum: 760389bb14c4c86740069434863efd04e00a5696b7acf6f5bb46cfc6ef8f389f
+  IsDeleted: true
+- RecordId: 2815d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: urlmapping-doc-en.html
+  CheckSum: 11447104eddbb713f4be0e3092128144073de9b3c808b3ece495954bbf533796
   IsDeleted: false
 - RecordId: 2822627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: MathJax_Main-Regular.woff
   CheckSum: 898ecc393da091c9f39b95569ddd7859b91badd044903df6d5f3facd8c88ced0
+  IsDeleted: true
+- RecordId: 2848da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-dart.js
+  CheckSum: 47a56e16cb349740ed66664b6afc458d430da599b4ac30e85c83bad5f5fef8c1
+  IsDeleted: false
+- RecordId: 288f9e45-05dc-f011-8543-7ced8de0923c
+  DisplayName: MathJax_Calligraphic-Bold.woff
+  CheckSum: b9ce98c9d881881c0b4ee79d342dba7f79f6167802d8c67da8d8b0cf38346c06
+  IsDeleted: false
+- RecordId: 2895f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: hy.js
+  CheckSum: ecbaff505664dc0356d81ac3f17a930ed0754bcde56ad8c521bf9bd5c0ba9703
   IsDeleted: false
 - RecordId: 28cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: nl.min.js
   CheckSum: f356f33732e7e79a9fe3f6f1aeb2a7fbe1297b166d128d4684892e8f1ad5363c
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 28e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: iu.min.js
   CheckSum: 7896495926b3c09b639f3aaba717f170f853a7b0c213b4482c1e083ecb5e2ef8
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2918f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: basic-en.html
   CheckSum: 5dfcc35ed3a31faf9a40567547bb5927b20a338d0aa00c65e2115a89cb0b9bf4
+  IsDeleted: true
+- RecordId: 2954691c-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lang-n.min.js
+  CheckSum: cadfe03a04eb1ec3c4247c0512b9434fc51de51715b0d42a024f3fca98d978cf
+  IsDeleted: false
+- RecordId: 2995f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-matlab.min.js
+  CheckSum: a2bb4ec0ff402ef4621302166359d2c947fa614e1159eda770c214707443e069
+  IsDeleted: false
+- RecordId: 29a83339-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-scala.min.js
+  CheckSum: 1ff7a46b6d6abed003e83a57b1dd6c1eab86ede0d480fbbb42ba24a0e5766ba4
   IsDeleted: false
 - RecordId: 29cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: wet-boew.css
   CheckSum: 24f927005773f55aec0ddd04d8bfa207f49705665d4a4c11fb001e6b2a52b5fe
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2a633152-e9db-f011-8543-7c1e5254af8c
   DisplayName: additional-methods.js
   CheckSum: f312900afce49b1575ac697b46c8e951fd8b38b93f7378b17cfa32091575f941
+  IsDeleted: true
+- RecordId: 2a95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Fraktur-Bold.woff
+  CheckSum: 9311e91cb5209be6efb3d07c2146861c0377737486dd62e2f4f774024045a7f5
+  IsDeleted: false
+- RecordId: 2aa83339-05dc-f011-8543-7ced8de0923c
+  DisplayName: zh.min.js
+  CheckSum: e8acee64a235414edb7639fc16951d8222e84669c7792667327f4d3c442b074a
   IsDeleted: false
 - RecordId: 2ae8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: index-fr.html
   CheckSum: d1f66014cbf7f5c19c5633e4671c80851a46ec29cd97ba63eec32779496a5d20
+  IsDeleted: true
+- RecordId: 2b8f9e45-05dc-f011-8543-7ced8de0923c
+  DisplayName: data-json-fr.html
+  CheckSum: 430c980edd567100a64299fd9f1658bd28fe6ce808d2fa015fccbdb34a49d14c
+  IsDeleted: false
+- RecordId: 2b95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-swift.min.js
+  CheckSum: 9334d2a8190bc635b52cbf91bddeafc51acb8b811aaab84b45c0612b3b71434d
+  IsDeleted: false
+- RecordId: 2ba83339-05dc-f011-8543-7ced8de0923c
+  DisplayName: bootstrap-3.html
+  CheckSum: 292ef56ed3503c09e13ec3cf8cb755e110f9d4a859e81f9903e303d33fb61d88
   IsDeleted: false
 - RecordId: 2bcbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: instagram.svg
   CheckSum: 2d4a858ef76969ff298db05bee07629d61468e6f2bbf35b0e22d5a204630dc64
+  IsDeleted: true
+- RecordId: 2c95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: index-en.html
+  CheckSum: b8336a6136b492e00d02dfcb65ac5bf5bd2e17c0b13e458826e9a321bf8bb963
   IsDeleted: false
 - RecordId: 2ccbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: urlmapping-doc-en.html
   CheckSum: 51b52d7e365101d11ad3fccd8f06b88a653e95fb4b0689ec0683ef0b852b4696
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2ce4e459-e9db-f011-8543-7ced8de0923c
   DisplayName: jquery.min.js
   CheckSum: 3e885d695c06e11c81bf9a78a02357b6344f09782ad99067cc40b263fe2a9e1f
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2ce8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: bg.min.js
   CheckSum: 662ba31c86c4f47ac58e3245ae179d5451a5121b7ca0d6982d2f431bc17f720e
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2d54e02e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-tex.js
   CheckSum: d85930fd002248da3b55f0607e751531e68fc9660eb1da1015a607330c823ab2
+  IsDeleted: true
+- RecordId: 2d8f9e45-05dc-f011-8543-7ced8de0923c
+  DisplayName: json-patch.js
+  CheckSum: 7e059a523b733f8014cc0b074f1e08e2c7d4c9ff3f7e890bd947d5bafd9035e8
+  IsDeleted: false
+- RecordId: 2d95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: geomap-lib.js
+  CheckSum: 20848952cdac833fa6e1ca098076dd58ac7bca03d86a12701b39f4ef60241fad
   IsDeleted: false
 - RecordId: 2dcbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: es.js
   CheckSum: deb73b152f4b2f50c22834fe12230c02032a519d0494f5a91db7e94d7a73c720
+  IsDeleted: true
+- RecordId: 2dd3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: x-bootstrap-4.min.css
+  CheckSum: 64722dc8f0bb1c0fd780ef45d4cf7e589bcca2f02a645359a66b2f06fff559a5
   IsDeleted: false
 - RecordId: 2de4e459-e9db-f011-8543-7ced8de0923c
   DisplayName: doaction-doc-en.html
   CheckSum: c92676bb4b9ba8a684aea8e3262f6f08bd382cc3a50dd7b7927fe184c94dc637
+  IsDeleted: true
+- RecordId: 2e95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: v5.0-fr.html
+  CheckSum: ace72cd8a8e1e25f6efe71e382748b3307887e1213a8a25bc2e59be888877386
+  IsDeleted: false
+- RecordId: 2ed3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: cloud-popup-relative.png
+  CheckSum: d5339f12d7a23fbaa3469bf6a8a659a2b1748c5238e3d9e3782c7aa4a4445d94
   IsDeleted: false
 - RecordId: 2ee8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: bg.js
   CheckSum: 2e92c4c4be0a763d614266917abfaf763124507abd00819b475fc563f066d7cc
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2eeb7541-e9db-f011-8543-7ced8de0923c
   DisplayName: MathJax_Size1-Regular.woff
   CheckSum: 2c6236b9184e163aae339ee631988a2c0c973a623bc3ccdd0e19f9ba018e4494
+  IsDeleted: true
+- RecordId: 2f141d41-05dc-f011-8543-6045bd5c4d94
+  DisplayName: v5.1-en.html
+  CheckSum: f4a68ee3baf9d6b3610d7fd518abe53d89c48bacbfb7d8f275e53f81d59cfe66
+  IsDeleted: false
+- RecordId: 2f48da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_AMS-Regular.woff
+  CheckSum: b6f0c9c23f2d32216ac323eff9d8e1a64a1b1a6d1dc1683c3ee811a0268d75a4
   IsDeleted: false
 - RecordId: 2f5cfc5c-e9db-f011-8543-7c1e5254ad46
   DisplayName: tblfilter-fr.html
   CheckSum: abc4482d7efccc512438f83f94993a8d860805e4344b0632ed238f06f3b68297
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2f81fe3e-e9db-f011-8543-7c1e5254ad46
   DisplayName: gcweb_0c4a4eb7974d0a7287c93c02965f9b3f.woff
   CheckSum: d913eb33c95dc80d65e9ea331f75dcfb284e0ad658058990221bce683e8455f7
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 2fcbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: is.min.js
   CheckSum: 5fde1d55f8f60cadd7d85e8a09b0e32d260df6e1464e0075f7b9191d3cdf1076
+  IsDeleted: true
+- RecordId: 2fd3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: bootstrap.min.css
+  CheckSum: fc4298790dcd5992ceab504a917b61072dc77164bdeb58df0865a6db17d0b671
   IsDeleted: false
 - RecordId: 3018f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: datalist.min.js
   CheckSum: a1ad6dcca2ec770672be33c651da3f3bcc797a255c1c5a5436ff665047877f60
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 3081fe3e-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-proto.min.js
   CheckSum: f593b97dfafdb30e5fcad84ac05486400a298623e95fe41cfc38424e7496d9e2
+  IsDeleted: true
+- RecordId: 3095f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: page-feedback-en.html
+  CheckSum: 0996d48b5be662a9a658d5f6ac99f278b5b8e460b4515e75ca8a8aa1991fc91d
+  IsDeleted: false
+- RecordId: 30a83339-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-logtalk.min.js
+  CheckSum: fbe83aed5dab1326ac4e47c4c88617034d0e906d3577f7deb81c68afa2c80360
+  IsDeleted: false
+- RecordId: 30d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: loading.png
+  CheckSum: d006dca6be5a2d27c036e49701024e6b40ab2bda7d7b4ec9d0ca9be1a040d598
+  IsDeleted: false
+- RecordId: 31141d41-05dc-f011-8543-6045bd5c4d94
+  DisplayName: default-avatar.png
+  CheckSum: 448b49105936d7bd26b91dbfcf52279df25bee95dee9c0cf9340d321c7a13db2
   IsDeleted: false
 - RecordId: 3118f581-e9db-f011-8543-7c1e5254ad46
   DisplayName: fr.js
   CheckSum: 7b3f942a621a694033b7bb0a4c2dcd8016af828721e1276d0bc195cfb296992f
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 3122627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: hy.js
   CheckSum: 86cb9173b4df124caf256e710b12abdb65cf2384db66349ec84feea32500deb1
+  IsDeleted: true
+- RecordId: 3195f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: datalist.min.js
+  CheckSum: a4c031acac37c36e1d535d0e921e01175561d7b5e8e92edf6a009da110b06061
+  IsDeleted: false
+- RecordId: 31a83339-05dc-f011-8543-7ced8de0923c
+  DisplayName: jquery.flot.pie.min.js
+  CheckSum: da8388faba2be43a38f0f4c2220eb0010066bf999b42360dd950d2d082c58d71
   IsDeleted: false
 - RecordId: 31cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: theme.min.css
   CheckSum: 93a241c67c46e5bc3dd27eddb871e3a92c21b64b1c4956565df1c2ae4872869b
+  IsDeleted: true
+- RecordId: 31d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: vi.min.js
+  CheckSum: 5070125a6912617a45c37dca28b293d5d25ae9337b918039b67d9563e978d52c
   IsDeleted: false
 - RecordId: 31e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: ec-blk-white.png
   CheckSum: 405af488ea6f6d323606660bf2c29d07fbb69160bc5610b3265978fa3ed4da39
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 31eb7541-e9db-f011-8543-7ced8de0923c
   DisplayName: pepp-color-override.css
   CheckSum: 8882c192503591eef6b189d30f71a3b95b396223eee1c30057ff1d88ed617cbc
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 3254e02e-e9db-f011-8543-7ced8de0923c
   DisplayName: mathml.min.css
   CheckSum: 08307f17c0a4f2cf008dc41e44907485d8a791e0f7ee246043062f9fde0a24e4
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 326dff6f-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-tex.min.js
   CheckSum: 8a0e8cea645b10551f678fae5420620bd4aa478f3c7cb48b0ee8b302fdcd80cb
+  IsDeleted: true
+- RecordId: 3295f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: details.js
+  CheckSum: 231a21084e67f4998622a800924a2e910f811d49334909daf9707d722f8b8c02
+  IsDeleted: false
+- RecordId: 32d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: slider.min.js.map
+  CheckSum: 119ac0352e588a708418e315c2c70a27f83ad24d2e884e180fc6f564778f69f8
   IsDeleted: false
 - RecordId: 32e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: hu.min.js
   CheckSum: f36b666a94665ca95886219e7fb66e17d49754096cad02988b5f296f5c723516
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 32eb7541-e9db-f011-8543-7ced8de0923c
   DisplayName: mobile.min.js
   CheckSum: c3d15c6e4037a4490e430d2bb6f8e0adc6b962421cb885989366870d98ca8fe2
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 3381fe3e-e9db-f011-8543-7c1e5254ad46
   DisplayName: prettify.min.js
   CheckSum: ce0f4dd34ced29270937f4d17a2606f10068209090e25f7a1256cd845a8f6157
+  IsDeleted: true
+- RecordId: 3395f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: theme.js
+  CheckSum: 1c65db720bd47e19f7f52b2d5a9f737ca1901a6419ae1a4a2f7d1e29ddf7c871
   IsDeleted: false
 - RecordId: 33cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-llvm.js
   CheckSum: 95179498568245747df4a6fd82afd206e649114a0cd5e1d551d2b323f208bd15
+  IsDeleted: true
+- RecordId: 33d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: bkg-home-yourgov-md.jpg
+  CheckSum: 0288f4be9cb52975c4993dfbbe1ae5342d397772a37617fe627d95126a9e5e64
   IsDeleted: false
 - RecordId: 33e4e459-e9db-f011-8543-7ced8de0923c
   DisplayName: default-avatar.png
   CheckSum: 0bc798357874b43cda4ac3e71e7156e347ff1665c6c5f144b347509d9c0201b4
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 33e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-xq.js
   CheckSum: 5c216a9d07f6cd04eacc1803e039e644799ac17eccf2502f1c404db80f6d12b5
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 33eb7541-e9db-f011-8543-7ced8de0923c
   DisplayName: ajax-en.html
   CheckSum: 4c2e6e751d9314390ac2419a7ddc8d65eb487955cf9d291eebc7230d4c04767b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 346dff6f-e9db-f011-8543-7c1e5254ad46
   DisplayName: MathJax_Fraktur-Bold.woff
   CheckSum: a376ae578bc6e189e5805cee03cc52fac9b8f7b351ba971e423ab5ab602710b5
+  IsDeleted: true
+- RecordId: 3495f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: de.js
+  CheckSum: b1a98b801fac33f04b2454adb2b6194ac3db9efa58633fe782206f32eafa1705
   IsDeleted: false
 - RecordId: 34cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: advanced-fr.html
   CheckSum: 1b48cf0d6f964400181458f9d68a3495ea0d3c186eaa966b7d24696e48d5f5ef
+  IsDeleted: true
+- RecordId: 34d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: temp-v5issue.html
+  CheckSum: 23b3755b2a6d4db2be68833165bc52fd52f647ed5e187990842bb989699df2ba
   IsDeleted: false
 - RecordId: 3533d865-e9db-f011-8543-7ced8de0923c
   DisplayName: License-en.txt
   CheckSum: da71a4eb3352c79e06cb7a29e628579196cc66497677bdf7ea9c83232c9fd81c
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 3554e02e-e9db-f011-8543-7ced8de0923c
   DisplayName: theme.min.js
   CheckSum: 99df840d04a564ff8eeaa3d680fddecacc4f5ee92a62761dc915b622c1b714a5
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 35cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: favicon.ico
   CheckSum: 96e7e79c35f879d3fb8270306591ac7b4d7cd31172f03fa5e7e0a81e3ac13fe6
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 35cddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: uk.min.js
   CheckSum: 28aea1be234d3b895f3b6a0676f8c02182b3d58353c8e1a6d8e5a2b25f2c80a3
+  IsDeleted: true
+- RecordId: 35d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-lua.min.js
+  CheckSum: c0641ecd8cb56d08f6c6bfd83b1518ea8e5317561bb589f88292c21352bde335
   IsDeleted: false
 - RecordId: 35e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: jquery.magnific-popup.min.js
   CheckSum: 582ba15f300916d08896a854db540edd7b982780b996f5b2d4274dcb270813cb
+  IsDeleted: true
+- RecordId: 3648da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: jawsariafixes.min.js.map
+  CheckSum: dabd1b646811e008c66478f3723a0dc0176dd7ca2a7dafdfd7e4e893310c3143
   IsDeleted: false
 - RecordId: 3654e02e-e9db-f011-8543-7ced8de0923c
   DisplayName: sig-blk-fr.png
   CheckSum: 9a12ca78f526c54d9241e9c19077928e52132d4c76532eb2715ec744ac8f2846
+  IsDeleted: true
+- RecordId: 3695f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: mediacontrols.html
+  CheckSum: 4e5d182990406d5b056fbf912d1bdc3bae3bdcde42e39a1dd34121c386bf76c4
+  IsDeleted: false
+- RecordId: 3698d23c-05dc-f011-8543-7c1e5254ad46
+  DisplayName: zh-Hans.min.js
+  CheckSum: 82b68b9af613ce6f95b647114919b828a5fbcfc59297c53988dd6564a8cc827d
   IsDeleted: false
 - RecordId: 36b5044b-e9db-f011-8543-7c1e5254ad46
   DisplayName: zh.min.js
   CheckSum: 6b2a7729db4a7cfd8f0281a4b78907e5a425c8f32387850197014840321e9b1e
+  IsDeleted: true
+- RecordId: 36d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: tblfilter-fr.html
+  CheckSum: 189bea119399e49c45920c930d4c70099cf9fc474f1be6968c8f6c37150d34f4
   IsDeleted: false
 - RecordId: 36e4e459-e9db-f011-8543-7ced8de0923c
   DisplayName: lv.js
   CheckSum: 8ec0b106b42e4dda6b85b120561cf67db63fd72094872ffb8db364ac554c0859
+  IsDeleted: true
+- RecordId: 3748da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: en.js
+  CheckSum: 63c5112a9da9502968437978096a9762cb454358388b3398134964f661a0b394
+  IsDeleted: false
+- RecordId: 3795f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: test-menu.html
+  CheckSum: e43d9ca1a040fb5d51d2e6ffdaf0642a8c28a88f4c67caa5d8e69cea096776e9
+  IsDeleted: false
+- RecordId: 37a83339-05dc-f011-8543-7ced8de0923c
+  DisplayName: v5.0-en.html
+  CheckSum: c93156b82dfc4e6ccecf6ac9189a753e2d7357f678297049fd1717b833ea270f
   IsDeleted: false
 - RecordId: 37b5044b-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-hs.js
   CheckSum: 3bc8ebf69d7ce369a8d0a8576a69fce3904eb3adcd2b159a970f65b0799284fc
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 37e4e459-e9db-f011-8543-7ced8de0923c
   DisplayName: page2-en.html
   CheckSum: 1950245208d30f7e1bc9b41450494ee3c4377af70ed0d50717d641d20d1bcbc5
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 37e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: geomap-lib.min.js
   CheckSum: 6e14ee7854e1497da5f3fe34cde6b32825d577a67992f77356b0667480213cba
+  IsDeleted: true
+- RecordId: 3848da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: advanced-en.html
+  CheckSum: 3d7fb500fd43427620d6a11afd7bc4ea4692807461ec151ed6144c5e102fa28d
+  IsDeleted: false
+- RecordId: 3895f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: wmms-spl.svg
+  CheckSum: 05705561e403582d266a0c3a23e1f33e4cbaa0fdb06215034413926587888d81
+  IsDeleted: false
+- RecordId: 38a83339-05dc-f011-8543-7ced8de0923c
+  DisplayName: glyphicons-halflings-regular.woff2
+  CheckSum: 49a88a6146b705e21946b5dfbaecbf438a982abeba4f9a7313439804990b4f3d
+  IsDeleted: false
+- RecordId: 38d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: zoom-plus-mini.png
+  CheckSum: 31a0ec732d7d6923d17ee6b152b899a973964411314c4cc8cf9331e1769afd5d
   IsDeleted: false
 - RecordId: 38e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: is.js
   CheckSum: bf6c93574da9a0a0562a7c5ac3a68501fba3067034ce77f06ae11996a348064f
+  IsDeleted: true
+- RecordId: 3915d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: advanced-fr.html
+  CheckSum: 9e562d23f8c9b42d2b9aea33a46843201dda5c9472537a7e6a020862714fdf4e
+  IsDeleted: false
+- RecordId: 3948da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: index-fr.html
+  CheckSum: f772c5b344fe0603136746c262183d9720365805ba7e871e61006fd5b6d73f3a
   IsDeleted: false
 - RecordId: 3954e02e-e9db-f011-8543-7ced8de0923c
   DisplayName: theme-srv.css
   CheckSum: abc9afd9ce16c34dc097452e97bb816e96bc422be658dee83d44b3353a4b0e88
+  IsDeleted: true
+- RecordId: 396ecf6a-05dc-f011-8543-7ced8de0923c
+  DisplayName: doaction-doc-fr.html
+  CheckSum: 0a26db0617d8b06b97b557a356c6ace69df4d82cb1217493e8d649025c58199f
+  IsDeleted: false
+- RecordId: 397aaa20-05dc-f011-8543-7c1e5254af8c
+  DisplayName: test.js
+  CheckSum: c1bb2c8b4e68c6b1d7a749884967de8c12e6837c7d95070372c77fe09e9a380e
+  IsDeleted: false
+- RecordId: 3995f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: x-bootstrap-4.css
+  CheckSum: 4080329ed6636e2996e41f24bdc0b7931b0f8ac4597e8b0a37c7e540efbb2e1f
   IsDeleted: false
 - RecordId: 39cbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: MathJax_Math-Regular.woff
   CheckSum: 8d7a424257a3b2d66bb3cf80e9353355447d91b06333d99d2b8a0b6d6f9e32cb
+  IsDeleted: true
+- RecordId: 39d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: jquery.magnific-popup.min.js
+  CheckSum: 0e2078a549736f2644da6ceaacb302f2381d70ed4f6c814007c5a4fa48f4ceec
   IsDeleted: false
 - RecordId: 39e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: zoom-world-mini.png
   CheckSum: eae991ea7c4cb0a0d5a492058d7d3358f39dffd8a807ccd57a6f6be269a505b8
+  IsDeleted: true
+- RecordId: 3a48da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: ol.min.js
+  CheckSum: fd27f3efa728a531abf543c9f0bda19eb1eb4a3b5d15ddab4b38152e5c6aa6f9
+  IsDeleted: false
+- RecordId: 3a6ecf6a-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-sql.min.js
+  CheckSum: 96b5e50415f4fb8ab528e14679ce9c9fb4808e4c5b6c1049805c368d0740482b
+  IsDeleted: false
+- RecordId: 3a95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: v6.1-en.html
+  CheckSum: 1485a3d27264bd7eeddc676a0da6171cbba24670b38e27c31603a292d427a7d5
   IsDeleted: false
 - RecordId: 3acbf77b-e9db-f011-8543-7c1e5254ad46
   DisplayName: it.js
   CheckSum: 573b7c5e12e796f8421ba4c31fdc0687decc007221f5c12decfcbab0ec8aa686
+  IsDeleted: true
+- RecordId: 3ad3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: tblfilter-en.html
+  CheckSum: 081678616097599f2929628224f5e2b12e3287a1c464697eb28a49ecd63090f3
+  IsDeleted: false
+- RecordId: 3b0c4945-05dc-f011-8543-7c1e5254af8c
+  DisplayName: et.js
+  CheckSum: 92ba2e5af3fb6b7c90c00c550f4584f3c3cc24321b578cdcb404f60b901afbb5
+  IsDeleted: false
+- RecordId: 3b141d41-05dc-f011-8543-6045bd5c4d94
+  DisplayName: patches-fr.html
+  CheckSum: e755547f135325e20b761ec7c2ad2bd59d9bf02b958add2e348b0f56850a85f6
+  IsDeleted: false
+- RecordId: 3b7aaa20-05dc-f011-8543-7c1e5254af8c
+  DisplayName: datalist.js
+  CheckSum: c958b4b6ecd584911c2e60acb0208d4b304a3dcd9f2d4fe478188ea9f7a746ca
+  IsDeleted: false
+- RecordId: 3b95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: ru.min.js
+  CheckSum: c8bdcba91b18a7851ebbf9309662d8aa8fc43c036b9646dc3dda277679d66598
+  IsDeleted: false
+- RecordId: 3bd3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: zoom-world-mini.png
+  CheckSum: b89c4ce78351d76f64b0afc99db0a595ad014af4e345df0288986818c6576a22
   IsDeleted: false
 - RecordId: 3c22627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: hu.js
   CheckSum: 0896c030d84a5c30bfad5bc2b4ae9faed0134e4eec1e9e3cc1551daad18f9204
+  IsDeleted: true
+- RecordId: 3c48da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: ja.js
+  CheckSum: 157ff1af0fee200cc8dd86a39666dbc960d0d1dcc4a32fa5a00074fdfd9277c7
+  IsDeleted: false
+- RecordId: 3c95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: ko.js
+  CheckSum: bc5328f07b0aa44f2e5b242cf009c1de5bfc14cc00a4b12d617c5d42e5563661
+  IsDeleted: false
+- RecordId: 3cb8e948-05dc-f011-8543-7c1e5254ad46
+  DisplayName: implementing.html
+  CheckSum: affa460989ad52ea10c35bd34919a42fc487388f5be16ed305ba1215f694bc3a
+  IsDeleted: false
+- RecordId: 3d48da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: iu.min.js
+  CheckSum: cb7775fdcc038aefd9f2d69b78a77130de769123f45ee8f9b2b42c92f50fe83c
+  IsDeleted: false
+- RecordId: 3d95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: datalist_dynamic.min.js
+  CheckSum: 69affc11620ed0419cc7b753328eacc4b1bfaf82be1b6ef815c12e84adb5cb93
+  IsDeleted: false
+- RecordId: 3dd3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: theme.min.css
+  CheckSum: d15bcfc400dbbc306bf68933b057f80c7d87eb95b67b4e4f0d5813e15f883d89
   IsDeleted: false
 - RecordId: 3dea766b-e9db-f011-8543-7c1e5254af8c
   DisplayName: MathJax_SansSerif-Italic.woff
   CheckSum: d683ca66efb109e7de921bb3603d66def302f661a1adf1aa9ee667d77266e35b
+  IsDeleted: true
+- RecordId: 3e15d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: it.js
+  CheckSum: 24da33a5c61bd30c903eced9a63592d98e0c4bd60592e1eb2159c378efa635aa
   IsDeleted: false
 - RecordId: 3e33d865-e9db-f011-8543-7ced8de0923c
   DisplayName: json-en.html
   CheckSum: 0301cdfba5dc2bdb1c2e5e404fcc1fb76529b3c9df739c83bf98a6ff35b67f1f
+  IsDeleted: true
+- RecordId: 3e48da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-vhdl.min.js
+  CheckSum: d82711f7c4943f02d852fcbc660a996cf09a84852251da062cb2cc7bbd58aedf
+  IsDeleted: false
+- RecordId: 3e95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: meter.js
+  CheckSum: f7274eb39377f282e01cc198ffab71301c4f20b59ebc2642b3ee31847f3e4092
+  IsDeleted: false
+- RecordId: 3e98d23c-05dc-f011-8543-7c1e5254ad46
+  DisplayName: Cat-PC.png
+  CheckSum: 0e7dfa43a068603d81aa75a381bcabde8bbea43f90998c6d7484323ddbf675a0
+  IsDeleted: false
+- RecordId: 3ed3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: el.js
+  CheckSum: 30d1470db1484d51fd524b8a9231d5144ccbee2160aa8f00b3ce700f0037209a
   IsDeleted: false
 - RecordId: 3ee4e459-e9db-f011-8543-7ced8de0923c
   DisplayName: patches-fr.html
   CheckSum: a68ba207983a3d13e8eb21ad1f0d0be79ab2f2423de8c8a3347f7e3d320afab5
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 3ee8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: id.js
   CheckSum: ee6a565ffa554019a1fc358b4324bfd6329de2ccccbb4872b0c39b8b9c197649
+  IsDeleted: true
+- RecordId: 3f48da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: nl.min.js
+  CheckSum: 389655859739a89fd2dc5c55da446944cb5cb4ee7ccc1dddec9999b661a619c2
+  IsDeleted: false
+- RecordId: 3f95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: v6.0-en.html
+  CheckSum: 8eb7051d4c2d01908aaa186d9e5350c46de5f3ad3d4fb9475d618a0145da8eaf
+  IsDeleted: false
+- RecordId: 3fd3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: pl.js
+  CheckSum: 340c0d36dc4d0582978c40a722b98093f79dfeb6894b214f6f32bf56404c7109
   IsDeleted: false
 - RecordId: 3fe4e459-e9db-f011-8543-7ced8de0923c
   DisplayName: v6.1-fr.html
   CheckSum: 67a4cac36202d21d3c9c3882b7db3591ced5f2663c79464afe6e02c178d51554
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 3fe8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-rust.min.js
   CheckSum: b51924a333f088fca29aab8b674fdc98a5ba1eb62ef3d634bf9aff9159aa9f2e
+  IsDeleted: true
+- RecordId: 4048da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: instagram.svg
+  CheckSum: c7330c3ec35684115b417727fbba1a762de306aa454b252426d1b9fb849280c7
+  IsDeleted: false
+- RecordId: 405a4d4b-05dc-f011-8543-7c1e5254af8c
+  DisplayName: index-fr.html
+  CheckSum: fd436ea7226ffc7c8978c15cdff2b59e559227ff600bd6a59bef1874bee0d2a0
+  IsDeleted: false
+- RecordId: 4095f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: gc-subway-fr.html
+  CheckSum: 33bbec8c3f4448f98a83087865d289121728a2b262caa03c0df6daa8da3a7de6
+  IsDeleted: false
+- RecordId: 40d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: index-en.html
+  CheckSum: f0a69aa4f92a22c26c765a7ca2f0a72eb16313dc962c4b327e1957927f87ff80
   IsDeleted: false
 - RecordId: 40e4e459-e9db-f011-8543-7ced8de0923c
   DisplayName: jquery.flot.orderBars.js
   CheckSum: b5d8a75728aa8f8d5dd4aab95c151f662c7c59e36205a247a709dc28d8e64f8b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 40e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: MathJax_Vector-Bold.woff
   CheckSum: 7d961d2654b13296772010619c1ff6611559b52169f9a08e8b1c9bbf90d589c6
+  IsDeleted: true
+- RecordId: 4148da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: ie8-wet-boew2.min.js
+  CheckSum: ffb17b1a7af357a54114b009e6cdf4ddde672632a8c8707e820bee226d288713
+  IsDeleted: false
+- RecordId: 4195f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-go.min.js
+  CheckSum: 6f83c290ff620a78c0040a5276d48fd248bb6db3e1adb4202e33dab5af61ae8a
+  IsDeleted: false
+- RecordId: 41d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-pascal.js
+  CheckSum: 0c5aa561011b97b052195d7e7a43d304aa5bf11e0e0b5ecb1d27db5b324ff9e4
   IsDeleted: false
 - RecordId: 41e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: el.js
   CheckSum: 00bf487718adce0083983f47f250344599ada87ac33cdba85620d0fd9a607439
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 4233d865-e9db-f011-8543-7ced8de0923c
   DisplayName: theme.css
   CheckSum: ad0ec705ef437cb67213ebc03d708be01e7628596b80b33446fc1db5c8fffc78
+  IsDeleted: true
+- RecordId: 4248da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-xq.js
+  CheckSum: cee2e2e2c4579ebaa363408c0aa5bb7351b1128d4f143174751fdda18648be56
+  IsDeleted: false
+- RecordId: 4252cb60-05dc-f011-8543-7c1e5254af8c
+  DisplayName: progress.js
+  CheckSum: 7f9390e17cc657a806b10e79a53397480a9870e5d0610f17c15a289a1da427dd
+  IsDeleted: false
+- RecordId: 4295f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: el.min.js
+  CheckSum: 8db3952e0c49d28b3d94bd736c278b951d143027b8e4b2b7755449c832a1b20e
+  IsDeleted: false
+- RecordId: 42d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-go.js
+  CheckSum: fe9ab57b715a206913907543e3d7f1bd1ca72fa801852d7f1200990d8123ce1a
   IsDeleted: false
 - RecordId: 42e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: bkg-home-yourgov.jpg
   CheckSum: df287c69e7be88058fbc9a8ea55b3e20ce82f5d4c87a24c285b77848d72e94c6
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 4333d865-e9db-f011-8543-7ced8de0923c
   DisplayName: hi.js
   CheckSum: 0ee609925031e16696a9e72fc11f712b81670e95f99359a72119b43125dbc479
+  IsDeleted: true
+- RecordId: 4348da60-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Fraktur-Regular.woff
+  CheckSum: e9e99bfabf15882059b0c3c0f04604887df2a2a8f7c6380b98137586bfd59eb8
+  IsDeleted: false
+- RecordId: 4349e24e-05dc-f011-8543-7c1e5254ad46
+  DisplayName: fr.min.js
+  CheckSum: d422821002631339180cc891f555e37649d945a0be109c5a676f5022dff4b0f1
+  IsDeleted: false
+- RecordId: 4395f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: jquery.flot.js
+  CheckSum: d249431a183bb69e4de2d83ee210e7981f29f676e71a4e70b1c860f2e7a752a1
+  IsDeleted: false
+- RecordId: 43e6e242-05dc-f011-8543-7c1e5254ad46
+  DisplayName: additional-methods.js
+  CheckSum: 4444f484e51a2083ff965484d1715f1fe96fcc77426f0317d3b7f6b0a45641a7
   IsDeleted: false
 - RecordId: 4422627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: details.js
   CheckSum: af97cc8167b159e4aa79caa79eef19dc2c52b2e14591e3eb123ae338baeb6782
+  IsDeleted: true
+- RecordId: 445a4d4b-05dc-f011-8543-7c1e5254af8c
+  DisplayName: details.min.js
+  CheckSum: 1556c4d60d45cf46d5141a929e72a19963d09c34811f9bf113a3aab85ef5687b
+  IsDeleted: false
+- RecordId: 4495f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-mumps.min.js
+  CheckSum: d2e4c812dd6c815de8e231430867d649525d171e382a3f33d0f3c0c7002d2cbd
+  IsDeleted: false
+- RecordId: 44d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: wmms-spl.png
+  CheckSum: ebac41044e56013d2509903242188ebff6666691426b461e0f8af1e3b9d56572
+  IsDeleted: false
+- RecordId: 44e6e242-05dc-f011-8543-7c1e5254ad46
+  DisplayName: messages.min.css
+  CheckSum: 4e0cdf73ee52d98aad9369ee655d5e290c6495c726d211e09cd689fa49542705
   IsDeleted: false
 - RecordId: 44e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: v7.0-fr.html
   CheckSum: 3782aa1154d1cb4fe9da9c066d2267fcbe577b2bc4a9ac7d421b7fd5f428e5b5
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 44ea766b-e9db-f011-8543-7c1e5254af8c
   DisplayName: template.js
   CheckSum: 1aead976326397df47a26f768e15a90fd26789a6e49446e9e880dac8db00af89
+  IsDeleted: true
+- RecordId: 455a4d4b-05dc-f011-8543-7c1e5254af8c
+  DisplayName: 2-wetplugin-gcweb2.html
+  CheckSum: fd2a0b132314e51d123872ceaef16c4ee4483072256308cd04e35639163ca929
+  IsDeleted: false
+- RecordId: 457aaa20-05dc-f011-8543-7c1e5254af8c
+  DisplayName: jquery.magnific-popup.js
+  CheckSum: bfb021203081a00fb7feabc064bb0e277fdb12876b5e647c6ca5e139fc825401
+  IsDeleted: false
+- RecordId: 4595f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-erlang.js
+  CheckSum: 0fc216d81d5d628ce38fd7b134eacd69d598a949a1a7c48d04902297287cbd8f
   IsDeleted: false
 - RecordId: 45b4044b-e9db-f011-8543-7c1e5254ad46
   DisplayName: af.js
   CheckSum: 459bba5611cb10162bc4ee34762385a8a14243d4ce7699f5ccb765e4c07b31ad
+  IsDeleted: true
+- RecordId: 45d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-basic.min.js
+  CheckSum: 909d761bd02dd8923903e92e250534a4fba93c2fba64c98cb6aab0b73825d583
   IsDeleted: false
 - RecordId: 45e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-vhdl.js
   CheckSum: c16ce024c60de601d253c195c0560f58a173b312dd170c6308d5ab4355625570
+  IsDeleted: true
+- RecordId: 4695f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: is.min.js
+  CheckSum: ef3a9048c40f567753baf03e168e96c4f527189a9efbcbea97f2c4706b4d285a
+  IsDeleted: false
+- RecordId: 46d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: bootstrap-4.html
+  CheckSum: 09d373f0674ac51cd73c8597d4440aaa94c223ccf63ed1df2ff83bbcf07f9a09
+  IsDeleted: false
+- RecordId: 4795f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: is.js
+  CheckSum: e0c65c3abc6f5fa3ca9d0a637fab4f4f173d89857ae4b9df723d58fc4bbca695
+  IsDeleted: false
+- RecordId: 47d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: theme-srv.min.css
+  CheckSum: c9765bf49ffa57523ab132b9c17068b1c044c5c6f6038d3c04f21e410a0a4ab8
+  IsDeleted: false
+- RecordId: 4815d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: wet-boew.min.js
+  CheckSum: ecd4c48572e2bac56615d2fbfb40fb36e63a9a49bb756067a94bd925dfb0b4e5
+  IsDeleted: false
+- RecordId: 4895f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Vector-Bold.woff
+  CheckSum: b66404727bef26addd74bfa612243b1326ca948ce10839d6bdea8248d3a9ab64
+  IsDeleted: false
+- RecordId: 48d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: noscript.min.css
+  CheckSum: 98c0ab299a88595e4e1dbd642ae98891c14b773ae3578318e9d97822673417cc
+  IsDeleted: false
+- RecordId: 491f3433-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-n.js
+  CheckSum: 80f6f119a0388ecbc2724830ce97520e657acf5dfe0bbae4ce340bfaab250800
+  IsDeleted: false
+- RecordId: 49d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: ie8-wet-boew2.js
+  CheckSum: cb1d0f4de304677d109891917daa2582c812b310d623bbba5302b1307c924ac5
+  IsDeleted: false
+- RecordId: 4a1f3433-05dc-f011-8543-7ced8de0923c
+  DisplayName: et.min.js
+  CheckSum: 0e936c8572488b6173e2f1a74955ef3194b614196fbc9174b443f6d73a63f0a7
+  IsDeleted: false
+- RecordId: 4a95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: ar.js
+  CheckSum: 60c7ef5ad63e3cc0689befc46cf8cacfa86615180c97221f88202217ac6ae941
+  IsDeleted: false
+- RecordId: 4ad3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: datalist.min.js.map
+  CheckSum: e9f721dc188c4efcb27fdf69aa4740dd0df2f935767cbd5ac0558a0a005411cc
   IsDeleted: false
 - RecordId: 4ae8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: hi.min.js
   CheckSum: 8b9db379c7b8364fdbc314b088cafc52066ea745693fef73271e6dc12e96831c
+  IsDeleted: true
+- RecordId: 4b1f3433-05dc-f011-8543-7ced8de0923c
+  DisplayName: tblfilter-fr.html
+  CheckSum: 1151a7d9ce94b00b63eac7352aa9b10ac9904414277501334ae52a4d080c0624
   IsDeleted: false
 - RecordId: 4b33d865-e9db-f011-8543-7ced8de0923c
   DisplayName: sk.js
   CheckSum: 2f1541c9e1f68aa205b1890ce806026559bcc6ec73699565f43b5b6ee1f1ac14
+  IsDeleted: true
+- RecordId: 4b95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Math-Regular.woff
+  CheckSum: dd6ff707798a3a2a8e109fb6518dc817abb9e02db799572970572851788ab5ad
+  IsDeleted: false
+- RecordId: 4bb8e948-05dc-f011-8543-7c1e5254ad46
+  DisplayName: gcweb_0c4a4eb7974d0a7287c93c02965f9b3f.svg
+  CheckSum: abfbc88252996edde4190c8d9311d3f9b6543ad2ae9787758478cd6702d0b258
+  IsDeleted: false
+- RecordId: 4bd3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-hs.min.js
+  CheckSum: 1da937404f70cf0dbeb1002c57e322d7b65b15e83d039bc21a8caa85291f0ba8
   IsDeleted: false
 - RecordId: 4be8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: custom-styles.css
   CheckSum: 4155471e929885b96bd3bebc580e0d9485c8ef65fd87b93c52208b542203d946
+  IsDeleted: true
+- RecordId: 4c95f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: fd-slider-sprite.png
+  CheckSum: b6ef67658aa012e184b9e97ed3b1a87f46c7bbb19084ac9d41e69eca815c2fc2
+  IsDeleted: false
+- RecordId: 4cd3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: v5.1-fr.html
+  CheckSum: 5e2163c8a8bad5c8604e9b4b2b8a6d30d5bd5a346549acc14016b72fbbec3ced
   IsDeleted: false
 - RecordId: 4ce8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: ajax-fr.html
   CheckSum: 5831999477d42fc5e77422105b3417cb5981007264351fe0caa5a27acfb2cd13
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 4d4c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: jquery.flot.canvas.min.js
   CheckSum: 4eceb92e9f834f8bae06b379b7b763b6b17bc93f79f071b2baf79fd77678f1b8
+  IsDeleted: true
+- RecordId: 4d70d82a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Main-Bold.woff
+  CheckSum: 8be728b5e4d3048d9ae9cdbb0794b8eae00bace40ced093e683727cea0ace60a
+  IsDeleted: false
+- RecordId: 4dd3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: test.min.js
+  CheckSum: 5cf8c1d2ec08c85235c3009b9578674e08de145ee2ea7c730070250b104ba508
+  IsDeleted: false
+- RecordId: 4e1f3433-05dc-f011-8543-7ced8de0923c
+  DisplayName: jquery.flot.orderBars.min.js
+  CheckSum: ce38133a49faffcae4a6b18a9a99b7c622975f5c1b24a6d373a2085cb962ed84
   IsDeleted: false
 - RecordId: 4e4c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: sq.js
   CheckSum: 21e00c900380a837dffd70edaebc8b501535037eb690086317a48dece06063f6
+  IsDeleted: true
+- RecordId: 4ed3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-yaml.min.js
+  CheckSum: b695e6dd4c461abc17330047e9d3a314722294dd6495635b6b67fe9e388e30c7
   IsDeleted: false
 - RecordId: 4ee4e459-e9db-f011-8543-7ced8de0923c
   DisplayName: data-json-fr.html
   CheckSum: 5d915e9f0607b517feced74f244853a7a920d31a75898f02405fa791de2de1fe
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 4ee8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: tr.js
   CheckSum: 3eed2bee20fefec3f52d2356b68c0d3a5d1c4ff59583496bbd8f632447081956
+  IsDeleted: true
+- RecordId: 4f04d919-05dc-f011-8543-7c1e5254af8c
+  DisplayName: sp-bg-2.jpg
+  CheckSum: 0fb268108993cae79bd1e4df1fa7eea311d91317b441789a9e454c8ba0c06663
   IsDeleted: false
 - RecordId: 4f22627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: mediacontrols.html
   CheckSum: 1aa6208538d5bf827e9d41724d9ee8b9bed3607821d4af3850fddf68256af6ce
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 4f4c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: pt-BR.js
   CheckSum: 6eb0a0668d8c2e31a99de0780885707aa79b110bbd848695c1573c80f6abf149
+  IsDeleted: true
+- RecordId: 4fd3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: page2-fr.html
+  CheckSum: 0ce74e67258f274a26e43411a74e6645ee1541f4bfc1796ed5d0fb6667315cd9
+  IsDeleted: false
+- RecordId: 5015d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: proj4.min.js
+  CheckSum: ebeb65f2f466dafc5d01c20c6c21b72a552395b51df5ef38f8bde45340f0bfad
+  IsDeleted: false
+- RecordId: 50d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: vi.js
+  CheckSum: c3869c4220ce5f1ded013e9acfaebff805c24aa1b3cc8816f6c946fcbe87e28f
+  IsDeleted: false
+- RecordId: 50e6e242-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lv.js
+  CheckSum: dec29f2883d062d10c21e8215620538b943d5f2befc32ec6ecd185927b3ee927
   IsDeleted: false
 - RecordId: 50e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-pascal.js
   CheckSum: 26954768749a8ab3a80e98b524bb51e30f8940b6d240220135c90cc13d9154df
+  IsDeleted: true
+- RecordId: 511f3433-05dc-f011-8543-7ced8de0923c
+  DisplayName: af.js
+  CheckSum: bb87f13159e52295a57bf717a49f936a8260c67b4b8186330d4251087507af07
+  IsDeleted: false
+- RecordId: 5183755e-05dc-f011-8543-7ced8de0923c
+  DisplayName: th.min.js
+  CheckSum: 219397f9e226b82a0a1cb91c078381dc5cecd908a2e9dcb80d0377c8fec328e5
+  IsDeleted: false
+- RecordId: 51d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: progress.min.js.map
+  CheckSum: eb61e7edaf52c29bf1b99b8d3130d882617a1a5bf117e1b98b078a80577addde
+  IsDeleted: false
+- RecordId: 5295f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: landscape.png
+  CheckSum: 34d4f8b36f7c5670aab54eef3daf765fec945324f0ca0f36365d19b43ba2d851
   IsDeleted: false
 - RecordId: 52af7171-e9db-f011-8543-7c1e5254af8c
   DisplayName: Logo-sm-64.png
   CheckSum: bc96a11b2b37bb3c3e0841c199037f9fa2117a028abc4767a20b93b1f599941d
+  IsDeleted: true
+- RecordId: 52d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: zoom-minus-mini.png
+  CheckSum: b8fd674915d1cb19b906387ec40a5ecb7ee508e787d5ec4d1fe34c3ae25fd78a
+  IsDeleted: false
+- RecordId: 5315d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: MathJax_Math-BoldItalic.woff
+  CheckSum: ef895ec1e418e5b0ace9247d25e80af64a1eca14b81638f417df26a97a6bee35
+  IsDeleted: false
+- RecordId: 531f3433-05dc-f011-8543-7ced8de0923c
+  DisplayName: test.min.js.map
+  CheckSum: 11cb23ccadcc9b21d20ab58a2515f086eb1d0c8ec3e48115bb76fceb8c25f568
   IsDeleted: false
 - RecordId: 534c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-llvm.min.js
   CheckSum: fc3a68737c9216a5a2728f82a7c9768409a88f20d979b94ac6f8a0aaec2b469e
+  IsDeleted: true
+- RecordId: 5383755e-05dc-f011-8543-7ced8de0923c
+  DisplayName: messages-ie.min.css
+  CheckSum: ac7f98c6c643a3b069e830567621e7468a9f7cb7d4e4ed1eabcdfd15a5421e98
+  IsDeleted: false
+- RecordId: 5395f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-matlab.js
+  CheckSum: f1c754f7b6f5097241993bd6a79e3fbb2cae358df4415fb0483aa43a2aafef54
+  IsDeleted: false
+- RecordId: 53d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: previous-signedoff-en.png
+  CheckSum: 238547510bebca1d42194ad74960b157a884496f2de2ea78db2138ba1998802e
   IsDeleted: false
 - RecordId: 53e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-go.js
   CheckSum: 16e2a3243bc2df1d0a9d137b0a19c81ae0ddebcfeb66bbb3f9f27cb50ec9c505
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 544c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: meter.css
   CheckSum: fef34e61c1487e9dd0aafb01beab434c09c9898cbca869185908abb965748304
+  IsDeleted: true
+- RecordId: 5483755e-05dc-f011-8543-7ced8de0923c
+  DisplayName: ru.js
+  CheckSum: 3dbba838ab8811bd7c38509cbd0ab3776f0a3ab98390f38d414c62bddfb57200
+  IsDeleted: false
+- RecordId: 5495f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: wet-boew.min.js.map
+  CheckSum: 22f717efc48c513920c2eb8cb25499ac3a236bb5e69085087988caa7da124ee9
+  IsDeleted: false
+- RecordId: 54aba22c-05dc-f011-8543-7c1e5254af8c
+  DisplayName: lang-proto.min.js
+  CheckSum: a56514f008c542638bcc3139336628f21db53a6c045d43da11042839f30bf393
+  IsDeleted: false
+- RecordId: 54d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: robots.txt
+  CheckSum: 908f85e95b956aae9f29f4ba40cc43eb45838b8d675a409738dd9bd3a1bff901
+  IsDeleted: false
+- RecordId: 5515d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: iu.js
+  CheckSum: 7f2bf2efc32b175fcc2b5e0add8a8e50a3982d7390902441dec338ce2960ca28
   IsDeleted: false
 - RecordId: 554c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-vhdl.min.js
   CheckSum: 2c6886b5e09c10dc46d2400e79ed6f7862ca2e5f1865295c664d6b724efa9b1a
+  IsDeleted: true
+- RecordId: 5583755e-05dc-f011-8543-7ced8de0923c
+  DisplayName: v5-migration.html
+  CheckSum: 58501ddb2c7bbdf41bb9c08868bb5a600a3d011dba8f9af27d1809969ea4c18f
+  IsDeleted: false
+- RecordId: 55d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: pt-BR.js
+  CheckSum: 4a34de396ab6858ea1bc65871242daed5a461c818aca6dee65d52ec8c02c25a7
   IsDeleted: false
 - RecordId: 55e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: wmms-spl.png
   CheckSum: 6fa3e524171dab5b55a079a194718624d2d56767a47a66ea42ab4107a6c264f6
+  IsDeleted: true
+- RecordId: 5604d919-05dc-f011-8543-7c1e5254af8c
+  DisplayName: mathml.min.css
+  CheckSum: 208448f8ae51c6849af7740729d254af0a14429b59a4a3453ecff0937488e74a
+  IsDeleted: false
+- RecordId: 5615d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: Licence-fr.txt
+  CheckSum: 87853c3ab0f1b6f4d551f09df9379505e8f7b79a5a9e34e0dc65a09c669eecc5
   IsDeleted: false
 - RecordId: 5622627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: lang-matlab.js
   CheckSum: 834abbeae12a0cf5ed69b83442e5079b8335d35147024ea12e5c56cc941f09e1
+  IsDeleted: true
+- RecordId: 5695f166-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Size3-Regular.woff
+  CheckSum: 82029ad5b9ced707f4111e077ceafd97d9156ebbd1c38889bc03b3acfe36df77
   IsDeleted: false
 - RecordId: 56967563-e9db-f011-8543-7c1e5254ad46
   DisplayName: previous-signedoff-fr.png
   CheckSum: be92d5bca3f976c3e4574083dce1562f52b4e79c38b7f3dcc5e94569b2559966
+  IsDeleted: true
+- RecordId: 569dd530-05dc-f011-8543-7c1e5254ad46
+  DisplayName: mobile.min.js
+  CheckSum: 05be589d0eb1905bf33c62acec8bb70eb84befdb59ecfef234a6677c8b8eae72
   IsDeleted: false
 - RecordId: 56a6d56b-e9db-f011-8543-7ced8de0923c
   DisplayName: wet-boew.js
   CheckSum: 8c22bde06743fb194afc98bede3b68ce62b12e5deefff7c24a4d2dce591f53ba
+  IsDeleted: true
+- RecordId: 56d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: geomap-en.html
+  CheckSum: ebd9886bf0d9caafd1a151b6cd539390945455442e8e475ddc01228ee5620524
   IsDeleted: false
 - RecordId: 56e6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: index-fr.html
   CheckSum: a8950fa955e42775d137db1e0f1a1fe8b42193b4a61580925a3cfd3a7a4c8801
+  IsDeleted: true
+- RecordId: 5715d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: jsonmanager-en.html
+  CheckSum: 3b1c896847443dcdb3da90b2e74d5fa930d3d66a2ba09a149ca1b17dd2d061ee
+  IsDeleted: false
+- RecordId: 579dd530-05dc-f011-8543-7c1e5254ad46
+  DisplayName: progress.min.css
+  CheckSum: 67e51c9d00c9d8606e2345a1a45c80f11810c0a74c66208c3d864f9a2b5c053f
   IsDeleted: false
 - RecordId: 57a6d56b-e9db-f011-8543-7ced8de0923c
   DisplayName: glyphicons-halflings-regular.eot
   CheckSum: 79d2e0f9d50b660d0082862853fa6b08002392d75ccf1c0ea70d33a974ab7b88
+  IsDeleted: true
+- RecordId: 57d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: ie8-wet-boew2.min.js.map
+  CheckSum: a65bce7149fc8912ad243ba024b318242fd9759b206bdb01a4b427d2180a1a76
   IsDeleted: false
 - RecordId: 57e6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: index-en.html
   CheckSum: 59635eedb92cfc8f8a27a17d002ab25e47e023c2d3650f68f777f68234bb4b86
+  IsDeleted: true
+- RecordId: 57e6e242-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-apollo.js
+  CheckSum: ef9d2b2fc74f5c57eab8f897d98f46c3589e93d25454e10048dc7744090eb7d0
   IsDeleted: false
 - RecordId: 57e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: details.css
   CheckSum: 6f3725d9bfd1b93d4643ea016f98a6cba09249c0027cdffe82a82db02f9b9e8f
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 584c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: id.min.js
   CheckSum: a69d284e033e79f38dbb9fa04da62cc92af2807856ffb7dae45a52760992efb2
+  IsDeleted: true
+- RecordId: 5883755e-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-lua.js
+  CheckSum: 5eb326013c8a337987184d58afc0cde450da1c6fffe3788e67c7949e4fd42fb7
   IsDeleted: false
 - RecordId: 5886e753-e9db-f011-8543-7ced8de0923c
   DisplayName: wet-boew.min.css
   CheckSum: 624c7718465eff589b427807831f22b8ccd452ca98c76b616e57da9608678850
+  IsDeleted: true
+- RecordId: 58d3d664-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-wiki.js
+  CheckSum: 07ae8e33f824cf915df34259e5d9397a1de797b4f07417ae9455f0df21e1f240
   IsDeleted: false
 - RecordId: 58e10b65-e9db-f011-8543-7c1e5254af8c
   DisplayName: zh-Hans.js
   CheckSum: aea2f5b8e50b1ca66020c6f6d6f0805a1d8a16f8579da246f18b74b0d8abd881
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 58e6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: ol.js
   CheckSum: 305ae702cca7c97682640e0bc0184afc0f37bc347025f3decc1efd5022d93d2b
+  IsDeleted: true
+- RecordId: 5915d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: template-en.html
+  CheckSum: 1dca2fe52efad56ee8ac441337092131c76b6be59fb3c04cc201de09dd58a5b1
   IsDeleted: false
 - RecordId: 596a0451-e9db-f011-8543-7c1e5254ad46
   DisplayName: datepicker.min.js
   CheckSum: ffc67532ef2c5e94cb6eee3f2a43331b2b7f4a164f317aa87e5d87666eff412b
+  IsDeleted: true
+- RecordId: 5983755e-05dc-f011-8543-7ced8de0923c
+  DisplayName: facebook.svg
+  CheckSum: 3fddf83f2871c5f29fb159ccaa7f27dde7cf9da14a0d37301feeb39c9ad3c00a
   IsDeleted: false
 - RecordId: 5986e753-e9db-f011-8543-7ced8de0923c
   DisplayName: glyphicons-halflings-regular.woff2
   CheckSum: cdc22807b05f8823b421b2f025603f077da89f56c554472119e1e7e42ecbd8af
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 59e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-r.js
   CheckSum: 97f88f6a3c0d18511657571b4279a75fb9ac16bf49f128cb8838ab1c76211de9
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 5a4c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: details.min.js.map
   CheckSum: 6bbe64c3709cf6c8cc1cc1b8b8a9594bf9311615db5d80dd4bb8ae0350f68c40
+  IsDeleted: true
+- RecordId: 5aaba22c-05dc-f011-8543-7c1e5254af8c
+  DisplayName: lang-mumps.js
+  CheckSum: b73439deba8beb5feb32380e2be0912c1414c30358c56a7a37ae2102eb47f7b5
   IsDeleted: false
 - RecordId: 5ae8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: wet-boew.min.js
   CheckSum: 7d2ee0781ed493a9c89bb425cce0df7acc09b1b268fb860dd35dd926c2dd4ac9
+  IsDeleted: true
+- RecordId: 5b15d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: tblfilter-en.html
+  CheckSum: 4584adb45da048c848186bd01e90ac570bb0cfd9395fb4ba6c54eb6700116dc3
   IsDeleted: false
 - RecordId: 5b4c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: 1-accessibility.html
   CheckSum: 7ba361f8eb5d0313602e355124c79cb94cca626659e20c38e52fe319e2f43c83
+  IsDeleted: true
+- RecordId: 5b83755e-05dc-f011-8543-7ced8de0923c
+  DisplayName: sq.js
+  CheckSum: 58ce200db7a2030a3cb2b8008fdb5bdb31373c043afa8895e604a3000f78fbb3
+  IsDeleted: false
+- RecordId: 5b98d23c-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-clj.js
+  CheckSum: 46773dea9b047740aa304af55084967c7f4f5b5994053ab5c85c0346d3eb4989
   IsDeleted: false
 - RecordId: 5be6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: noscript.css
   CheckSum: 6ccf9df84cf012814f6ea86a100c90ed169703dd6d8ce3a59bd10c03e01611c5
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 5be8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: payload.json
   CheckSum: 31febeed1b416a01b8192867117121bc913047ca1b7c9827fc1c84b7875f7241
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 5c4c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-swift.min.js
   CheckSum: 438a7aca2aee3eef28494d4ebfdb43ad0177c0ec9446bd8ebf515cedecdfd0ad
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 5ce8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-css.min.js
   CheckSum: d031f8415a1c664f06e4ed49081e16c62950699984f15a47e33194c42207768f
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 5de8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-wiki.js
   CheckSum: cb6d49090ce6848f649a3e6285a42134f24042873f49223f0d9692b152f6398a
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 5ee8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: bootstrap-4.html
   CheckSum: c44c5b45f4d397ee8f26d5b4d3882dab54ebbb7627559b6714b288a17fc65d13
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 5f4c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: page2-fr.html
   CheckSum: faf279393d9877a37c7ceabe86c775cc6c7d671f83951cd8933741d6a25f3565
+  IsDeleted: true
+- RecordId: 5f559d24-05dc-f011-8543-7c1e5254ad46
+  DisplayName: meter.min.css
+  CheckSum: 15e2505de84a833ab6af71b6f520377369c471b24bd7009e531fea822e3e3678
+  IsDeleted: false
+- RecordId: 5fe6e242-05dc-f011-8543-7c1e5254ad46
+  DisplayName: page2-en.html
+  CheckSum: fd343c2913f793b892a370000d85219d97f3f2b9966be339cefde48edfa974b8
   IsDeleted: false
 - RecordId: 5fe8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: theme-srv.min.css
   CheckSum: d9d7e33e9e20085cae790e66ae149a35918c908df8fd4a09e3c2f4528ef91b19
+  IsDeleted: true
+- RecordId: 6015d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: chatwizard-fr.html
+  CheckSum: 6b544843618e9942e4170f975386312e26e83bd2afb99a403ae465620f6ac3c7
   IsDeleted: false
 - RecordId: 604c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: wmms-spl.svg
   CheckSum: 59e6230d409bf668833bb26e5fbd33eebe3d6f9fe86d3c09b41f236362553b81
+  IsDeleted: true
+- RecordId: 60559d24-05dc-f011-8543-7c1e5254ad46
+  DisplayName: ec-logo-invert.png
+  CheckSum: bcc22b7c6afee86965c4d56ddd47b046de51c5661441c05effda90cc135c1053
   IsDeleted: false
 - RecordId: 60a6d56b-e9db-f011-8543-7ced8de0923c
   DisplayName: datepicker.css
   CheckSum: 892534a76c041cb7c86d8e574dc281c1ba805ed83b09f4871b6a2516e3f1bd35
+  IsDeleted: true
+- RecordId: 60e6e242-05dc-f011-8543-7c1e5254ad46
+  DisplayName: messages.css
+  CheckSum: b59ddc993e92955d60fa2b5ad1b1d079564f5df4526f3e3e14cd581ef3222992
   IsDeleted: false
 - RecordId: 60e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: ar.js
   CheckSum: 258925c1636ae584539537d186415d2dcaefc3d4557758a96c7d4d46893a3d3b
+  IsDeleted: true
+- RecordId: 6115d966-05dc-f011-8543-7c1e5254af8c
+  DisplayName: elections-canada-logo-bw-contrast.png
+  CheckSum: d2596cc5bf76b097173d9323c682ca2436f9b922731c4d26c7b56a32f85df36b
   IsDeleted: false
 - RecordId: 614c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-hs.min.js
   CheckSum: b0c5cdbae989689626fdfc85d93d1ae411ca5df268ebdcb056151ca640909430
+  IsDeleted: true
+- RecordId: 615ae320-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-lisp.min.js
+  CheckSum: e811649bc32127b0eb657e574b5e477d897f0323f80982ea3abab90127797454
+  IsDeleted: false
+- RecordId: 6170d82a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: youtube.svg
+  CheckSum: b6e9894124079c36ff3227a10e3ef9ce1616c11dc930d5da0d29d1c5aef741f4
+  IsDeleted: false
+- RecordId: 61e6e242-05dc-f011-8543-7c1e5254ad46
+  DisplayName: hy.min.js
+  CheckSum: dc5a1a770b488d341bcfb47ea1230e8dda37597738db198766b6e249b285763d
   IsDeleted: false
 - RecordId: 6222627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: ru.min.js
   CheckSum: 74a1041f270b2626d115de24cad03a3341b1939587ffaa55e1fc27ab03241aa5
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 624c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: patches-en.html
   CheckSum: 6f6e1b6219600048cc4fd281aef5538a8071a5e41c52121fd229f58de74ac8af
+  IsDeleted: true
+- RecordId: 6252cb60-05dc-f011-8543-7c1e5254af8c
+  DisplayName: datepicker.min.css
+  CheckSum: 9279ea411655d037ad03fa0da26187ca14f6b81c1b2d535eb817f2dcfe4da7b8
   IsDeleted: false
 - RecordId: 62967563-e9db-f011-8543-7c1e5254ad46
   DisplayName: jquery.js
   CheckSum: 8f03a4dd8082bf456bb7bb351c3258c3539405e5d1b4e2f87df0bcc57a1c14c9
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 62e6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: data-json-doc-en.html
   CheckSum: 3c28e7cd3ef3867f38cb20241696ad0f9d5e718fb588e678cffb15e5a1ca211e
+  IsDeleted: true
+- RecordId: 62e6e242-05dc-f011-8543-7c1e5254ad46
+  DisplayName: sq.min.js
+  CheckSum: 721040510b1960a448e2135e5b85cbf9855f9b583586312c4104c5765a06ade2
   IsDeleted: false
 - RecordId: 62e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: fd-slider-sprite.png
   CheckSum: af7d8c4ee69d209f222c7b47f323077222122eb43c0013250004c0805a120425
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 63e6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: jawsariafixes.js
   CheckSum: 754976dcc8c02028d626372cf1b0a63a95300018874e62bae92ba778e63e7211
+  IsDeleted: true
+- RecordId: 63e6e242-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-lasso.js
+  CheckSum: 10be1bb20cb1f7fadb725bee3b693707a62491219616958e65b0efef85ab144b
   IsDeleted: false
 - RecordId: 63e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: ie8-wet-boew2.js
   CheckSum: 58ad26ad3b5acc4a646d7a6fcda35bb7e4c2fbb1feb865d2ae036e7f9b06e68b
+  IsDeleted: true
+- RecordId: 645ae320-05dc-f011-8543-7ced8de0923c
+  DisplayName: pt.min.js
+  CheckSum: 38586eb04405cef6dd7a97fbba75d62412990501bd6b8ddc0c78c85de7cc4aab
+  IsDeleted: false
+- RecordId: 64e3ba4b-05dc-f011-8543-7ced8de0923c
+  DisplayName: v6.0-fr.html
+  CheckSum: a7028a624170c4c609ec17850ea67e78507d6fdfe7d1da1e7b16cee38e84f064
   IsDeleted: false
 - RecordId: 64e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: slider_wrapper.min.js.map
   CheckSum: 22a90f65ac0a11f7b18476a847f1e8021dac8c7ab4ab3722aa947ddc4105bafc
+  IsDeleted: true
+- RecordId: 655ae320-05dc-f011-8543-7ced8de0923c
+  DisplayName: gc-chckbxrdio-fr.html
+  CheckSum: 8799dc815234aeec66643c91baff0a6c4f429afcf745e97edbba91aa2813bb2b
   IsDeleted: false
 - RecordId: 655fc53e-e9db-f011-8543-7c1e5254af8c
   DisplayName: lang-mumps.js
   CheckSum: b96c5c91ca4661ed2ab3bfd83f83aeb609677cd437e998dcedabadc36cfccf2f
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 65e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: datalist.min.js.map
   CheckSum: d5b9946279094410adae97083ad1d30785d48a41cc083d7039fb28ff8368be36
+  IsDeleted: true
+- RecordId: 6630503f-05dc-f011-8543-7c1e5254af8c
+  DisplayName: page-feedback-fr.html
+  CheckSum: 30849d55c4422dff26608d4bbd47ede9acfa9b8c63f52d3e4021fb5d688e84ec
+  IsDeleted: false
+- RecordId: 665ae320-05dc-f011-8543-7ced8de0923c
+  DisplayName: fieldflow-doc-fr.html
+  CheckSum: 9f14e20d40a3e6509d02863b16beb22738ed6a9c42382e227b71fabfe4921687
   IsDeleted: false
 - RecordId: 66c46c3b-e9db-f011-8543-7ced8de0923c
   DisplayName: run_prettify.min.js
   CheckSum: 031d5b5600519416a9d76f00541b45217350ba0ae37c2a58f1c074f1ceaadaa0
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 66e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: proj4.min.js
   CheckSum: dffc739a3435aa9084c31816258acbd1d472c9dac7d8999676d215e0dc6fa9a9
+  IsDeleted: true
+- RecordId: 67b8e948-05dc-f011-8543-7c1e5254ad46
+  DisplayName: sprites_share.png
+  CheckSum: 32e9e7441689bb2b982908a15420d5c7a6c79022d3889c8aabceee58372269da
+  IsDeleted: false
+- RecordId: 67e6e242-05dc-f011-8543-7c1e5254ad46
+  DisplayName: sk.min.js
+  CheckSum: 26a88dd3461b08db4357002980dcbd920a3ea9487978ea91b61c2a1922652ddd
   IsDeleted: false
 - RecordId: 67e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: elections-canada-logo-bw-contrast.png
   CheckSum: 8706a7f809b93089b5543b06aad2847f5e0fbd916f4cfef21d4bf5c7893e0aa9
+  IsDeleted: true
+- RecordId: 6879455b-05dc-f011-8543-6045bd5c4d94
+  DisplayName: hu.js
+  CheckSum: a7c41f2dc8bcb02e234f5acc552083ce1130e25b04da1c46c67327b2ebacbfc6
+  IsDeleted: false
+- RecordId: 68e3ba4b-05dc-f011-8543-7ced8de0923c
+  DisplayName: uk.min.js
+  CheckSum: 0aeb5eca5eec2b2e79af86d339784214b821c25c63626fba02dda13ba859e6f9
   IsDeleted: false
 - RecordId: 68e6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: en.min.js
   CheckSum: 357ef08f6ef0caf7aae658d6199365020196bd411b5aa94b7c19636d64edae56
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 68e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: page-feedback-en.html
   CheckSum: 333b13a0a8626e051fdf33dae44209f8ad2f6fff6f3b64c613eb061d6c14078a
+  IsDeleted: true
+- RecordId: 6966fe3a-05dc-f011-8543-6045bd5c4d94
+  DisplayName: json-en.html
+  CheckSum: dbfe7195290c12fb3cf4fd630154a4b7aa0e2ae8c7ca6f76d1585565140b6fe2
+  IsDeleted: false
+- RecordId: 69e3ba4b-05dc-f011-8543-7ced8de0923c
+  DisplayName: pt.js
+  CheckSum: f6a681a093bcf34aeba1035e838098387d2e2d1f300acc325ea0d71ec38b6983
   IsDeleted: false
 - RecordId: 69e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: tableparser.js
   CheckSum: dfa7a5bc49d5287d1e21a56d5ea705b88cf90629e7a1117d21de41bc95696bc0
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 6a22627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: el.min.js
   CheckSum: f6332d91bfa94abec22720cb17aaa710507190ec7b1f0fe499909003f2259119
+  IsDeleted: true
+- RecordId: 6a2d5539-05dc-f011-8543-7c1e5254af8c
+  DisplayName: lang-scala.js
+  CheckSum: e34175e286a78db8d5442ef9a7533f93571f8719b26ee89d8d8ea6c4dd665533
+  IsDeleted: false
+- RecordId: 6a5ae320-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-rust.js
+  CheckSum: e221a1f042bb39dd0c00401aeef84323309ef7fd7f42f9100a9bad2fcdd62451
+  IsDeleted: false
+- RecordId: 6ae3ba4b-05dc-f011-8543-7ced8de0923c
+  DisplayName: zh-Hans.js
+  CheckSum: 7d5e306d6989c56b56534e2b8696fc093ca1e4af84c60d056a5807b7a0fca4a9
   IsDeleted: false
 - RecordId: 6ae8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: v5.1-fr.html
   CheckSum: 279ad56e572af247983ff7c1df81c8bcea3acc2d285078d722d1c3fdef2d71b3
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 6b33d865-e9db-f011-8543-7ced8de0923c
   DisplayName: basic-fr.html
   CheckSum: ddaf2eed6d6400f458ed93b65a8d0e0705c7cfbf2ad59860b54e4f39a4ce3e72
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 6b75f471-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-clj.min.js
   CheckSum: 82560e655ba1eff3af6a2110bc244db0c27c2b76b6b863ee15b9dcaccb4d33c7
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 6c4c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: index-en.html
   CheckSum: 9fe9bc9b7591a1508d5262e67c7446774a78e966ed6a9bd1c31641a06287c818
+  IsDeleted: true
+- RecordId: 6c66fe3a-05dc-f011-8543-6045bd5c4d94
+  DisplayName: landscape.png
+  CheckSum: 638ecc62afeda585073655d5f0d8d18f2c908f66bedce2a590f17dbf450cc486
   IsDeleted: false
 - RecordId: 6c967563-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-erlang.min.js
   CheckSum: 84b077c592e8e4e12d42677200c49a5b7c1fab7c4440e77b5b66788b19ab0fb3
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 6cc46c3b-e9db-f011-8543-7ced8de0923c
   DisplayName: run_prettify.js
   CheckSum: 4f97b455ffe5982b15294c5e86acf1a752a0eade97226968c018f12d64c1220c
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 6ce8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: iu.js
   CheckSum: 6636bccd611343ce0e1b65ebf6329a2d5b23db5064c90193a3e20722a2701b76
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 6d75f471-e9db-f011-8543-7ced8de0923c
   DisplayName: af.min.js
   CheckSum: 4f53b71f8e8e5e261a0ba6c7386e35e9728df4d5c2420a19d0b6da8d6df08ef5
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 6dc46c3b-e9db-f011-8543-7ced8de0923c
   DisplayName: index.html
   CheckSum: f8e0b43e3a62bb1821e6c5526725a88f6eba2bd788571424c5a818716da829b2
+  IsDeleted: true
+- RecordId: 6de3ba4b-05dc-f011-8543-7ced8de0923c
+  DisplayName: progress.css
+  CheckSum: 5f4921d71727686157741777f185c9442f6b768461548c29dea59555cdcb400e
   IsDeleted: false
 - RecordId: 6de8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: jquery.min.map
   CheckSum: 1f1c66acb00f49b667b2285b6b6dad957d312a8605eef5765dc8aaf4d05efe49
+  IsDeleted: true
+- RecordId: 6e49e24e-05dc-f011-8543-7c1e5254ad46
+  DisplayName: sk.js
+  CheckSum: fc996fb9bc0b5ab046bba444d45b00a740ecd94de388008e0a1c99589f305bbf
   IsDeleted: false
 - RecordId: 6e4c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-go.min.js
   CheckSum: d21bbc68898a8bbac32378ca2f3b1225d485a0c84f7e299045da02fbc8b5ec44
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 6e6cff6f-e9db-f011-8543-7c1e5254ad46
   DisplayName: theme.css
   CheckSum: 73e12b05a69fdb98be8709d42a0a54599e3260a994e5180dc3a77830a828025d
+  IsDeleted: true
+- RecordId: 6eada526-05dc-f011-8543-7c1e5254af8c
+  DisplayName: json-patch.min.js
+  CheckSum: b84c35afe0f34fd0e460f8db583c83e62a5b7f880bf709a114ab1b08e67caf8f
+  IsDeleted: false
+- RecordId: 6eaf5f22-05dc-f011-8543-6045bd5c4d94
+  DisplayName: jquery.validate.min.js
+  CheckSum: c5f60ddf0455cacdb93fc48c03ce209513cbf187d333cadf473d611970b3355a
   IsDeleted: false
 - RecordId: 6ec46c3b-e9db-f011-8543-7ced8de0923c
   DisplayName: previous-signedon-en.png
   CheckSum: c239ff510029e1b24b8ab90b72a43a1ede50fb38b9bf2c964273c7dc0fe6d942
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 6ee8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: datalist_dynamic.min.js.map
   CheckSum: eb72dff902622021a35be1ffd6b78b8cbf6c62d69d791e78c45cee1d5cb32357
+  IsDeleted: true
+- RecordId: 6f49e24e-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-r.min.js
+  CheckSum: 83a896b06ebe1238c16724ff2e80c4240b0afafd4a724be83d916340175ec7d4
   IsDeleted: false
 - RecordId: 6f4c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: meter.js
   CheckSum: d26537261369e55172e69aeea14251bd1d506a933e12238e1a0eeb2bfe6e7945
+  IsDeleted: true
+- RecordId: 6fd3f61d-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-tex.js
+  CheckSum: 345d4e63bd8c696bc546fd9a498b7d2c5c0bf605a298be30a7692ac2f88feca5
   IsDeleted: false
 - RecordId: 6fe8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: theme.js
   CheckSum: ca37fe4ea05fa0aed625e4e8c05c734f93c884d2ab5b7584fb55d0eafded483f
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 704c6384-e9db-f011-8543-7ced8de0923c
   DisplayName: test-case-1.html
   CheckSum: 5cf80373f37c28471478cbbf7c23a27671ea9bdea29173043228e2b499197899
+  IsDeleted: true
+- RecordId: 7079455b-05dc-f011-8543-6045bd5c4d94
+  DisplayName: jsonmanager-doc-en.html
+  CheckSum: 02313cdacf51d3b6bba927150a5b343ba1b3c313fbca13cbe8b1226f01ba5541
   IsDeleted: false
 - RecordId: 70c46c3b-e9db-f011-8543-7ced8de0923c
   DisplayName: geomap-fr.html
   CheckSum: 51635ba52e0c3d6c3683b7c53f5d09b7b0a9e43fedd3215f3bf0f027f2be9a9a
+  IsDeleted: true
+- RecordId: 70e3ba4b-05dc-f011-8543-7ced8de0923c
+  DisplayName: ar.min.js
+  CheckSum: 71bfa899c64d3cd8dfda53491b30ca05be2b01fb463346c602394c1925b1f780
   IsDeleted: false
 - RecordId: 70e6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: jquery.flot.orderBars.min.js
   CheckSum: 80d5414f8660a81f4f1fb907f363cd408e25d7640e8d029e727dc6484391ff9b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 70ea766b-e9db-f011-8543-7c1e5254af8c
   DisplayName: mobile.js
   CheckSum: b006182475de663cff54b3529b3d9e4d9591d39d2f6352c210a3452b20d2d08b
+  IsDeleted: true
+- RecordId: 710b4945-05dc-f011-8543-7c1e5254af8c
+  DisplayName: jquery.flot.orderBars.js
+  CheckSum: 233e0bd91de93100dedd1c482a422930d1d6e5f1f1f87aaf7b5c9fd33975ebdd
   IsDeleted: false
 - RecordId: 71cddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: v7.0-en.html
   CheckSum: daac2842f079020f085bee8ae72dcefe02dc863ab5888a9a5b2f24f2e7cfbfc9
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 71e10b65-e9db-f011-8543-7c1e5254af8c
   DisplayName: lang-ml.js
   CheckSum: d78b7da63731144bf094d76babde550eb8a046600b4c589458b48783cf37faa7
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 72a6d56b-e9db-f011-8543-7ced8de0923c
   DisplayName: datalist.css
   CheckSum: eece7f39561a1b4745912248184354f48af6d5ef4555dc5314402a24dc4c19e1
+  IsDeleted: true
+- RecordId: 72e3ba4b-05dc-f011-8543-7ced8de0923c
+  DisplayName: hi.js
+  CheckSum: c8fadfaa0ff7ae50a3eb90f7b30c32f1ea6a41a4b34b19a6965d75d469ea3232
   IsDeleted: false
 - RecordId: 72e4e459-e9db-f011-8543-7ced8de0923c
   DisplayName: sq.min.js
   CheckSum: a1283cceff5306634426b446bf9e8a1c3fe14564c15a4264db387e2c0739fa20
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 73a6d56b-e9db-f011-8543-7ced8de0923c
   DisplayName: wmms-blk.svg
   CheckSum: b20276b8bf63eda740bcfbe2a88e83a685ba4c19f48f968f616128891a4415bf
+  IsDeleted: true
+- RecordId: 74284027-05dc-f011-8543-7ced8de0923c
+  DisplayName: run_prettify.min.js
+  CheckSum: b0ffa4feaae4dfeea722bb066ea730bf52f9ba1660b851bc43ed73021eef21bb
   IsDeleted: false
 - RecordId: 74e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: x-bootstrap-4.css
   CheckSum: 9755edcc07482b53b133f87ca6196a21b66470f2b302b250d3c95c833c100584
+  IsDeleted: true
+- RecordId: 75284027-05dc-f011-8543-7ced8de0923c
+  DisplayName: index.html
+  CheckSum: 9b7a106a7a690530d29e65733a3951b2560e91e795f435901084a3559930eafc
+  IsDeleted: false
+- RecordId: 7530503f-05dc-f011-8543-7c1e5254af8c
+  DisplayName: favicon.ico
+  CheckSum: 6caf46cd535cb11ccb0c73f2cc57fc305f9307d61c2ace32b27f15e623496a6d
   IsDeleted: false
 - RecordId: 75e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: test-menu.html
   CheckSum: 7f8e2603de29a5cd9cad3337b46b8edb3562adf638c2f4decfa4ec5e499e8c9e
+  IsDeleted: true
+- RecordId: 7666fe3a-05dc-f011-8543-6045bd5c4d94
+  DisplayName: additional-methods.min.js
+  CheckSum: c1906d0e997b4ae8bc3508ffb4c7e406850f1a05a0bdd40a6a684bbf4eb25a82
+  IsDeleted: false
+- RecordId: 76af5f22-05dc-f011-8543-6045bd5c4d94
+  DisplayName: run_prettify.js
+  CheckSum: 791ac77b8f3f94c5cff4181ebf2494a210a7b1bcb7db6f96d7e361e4989438d2
+  IsDeleted: false
+- RecordId: 7779455b-05dc-f011-8543-6045bd5c4d94
+  DisplayName: ie8-wet-boew.min.js
+  CheckSum: 4a8f72cd6797716711ca63847833e36854928d364b274cbfa94474bea35ee1a0
   IsDeleted: false
 - RecordId: 789eef5e-e9db-f011-8543-7c1e5254af8c
   DisplayName: MathJax_Calligraphic-Bold.woff
   CheckSum: e92df4bfa652221fd97216f8dc45ee4feecf8f3cde955ddd77ff964703dece05
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 78c46c3b-e9db-f011-8543-7ced8de0923c
   DisplayName: gc-table-fr.html
   CheckSum: 09458845c1502c926d01b2842f9f39a7fee6dd289fe958fd5aa11dacef845cfe
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 78e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: index-en.html
   CheckSum: 45c47d8dfbc95a4e2f493bb160b950de987e5dc99c3f252d418eaea9303d0186
+  IsDeleted: true
+- RecordId: 79284027-05dc-f011-8543-7ced8de0923c
+  DisplayName: MathJax_Script-Regular.woff
+  CheckSum: 69e38ea8ec91ec94ead0dee1d62bd55201061d7d5962e42d134288c3ccb0a8b8
+  IsDeleted: false
+- RecordId: 7966fe3a-05dc-f011-8543-6045bd5c4d94
+  DisplayName: jawsariafixes.min.js
+  CheckSum: f178f047c73ef413677f2ecb0ce76fcee3c7f8219ff6779250df2a492fab3c0a
   IsDeleted: false
 - RecordId: 796a0451-e9db-f011-8543-7c1e5254ad46
   DisplayName: jawsariafixes.min.js
   CheckSum: cc0c2de2c3715612c1aaeb4483ddcd882596ac3db6c8f74f82ddd5a4cc42255d
+  IsDeleted: true
+- RecordId: 7a284027-05dc-f011-8543-7ced8de0923c
+  DisplayName: svg.min.js.map
+  CheckSum: 19de99fb0a4edc448338e47a187f5bbba383cdad86d63ff15c50a852e52707b8
   IsDeleted: false
 - RecordId: 7a75f471-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-ml.min.js
   CheckSum: a7ffc6c3da4bc9ab44d1cfe2c4191b5644947554bb0013b5d44e923387e7edb7
+  IsDeleted: true
+- RecordId: 7b70d82a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: glyphicons-halflings-regular.ttf
+  CheckSum: 10d938f820a3960842bab034c4c46436c93e90a60e4bd76b532070e922237ad1
+  IsDeleted: false
+- RecordId: 7b7aaa20-05dc-f011-8543-7c1e5254af8c
+  DisplayName: jquery.dataTables.min.js
+  CheckSum: 4ad8f4f7cb9ef059cbc7b87b3deab40a83b0287a38fb95c0ee9bc281b28b3b8f
+  IsDeleted: false
+- RecordId: 7b9dd530-05dc-f011-8543-7c1e5254ad46
+  DisplayName: jawsariafixes.js
+  CheckSum: 642daf99d4a2786e71eb89611bfe3c4bf0627b61e031aa623cb25c8a4581c437
   IsDeleted: false
 - RecordId: 7ba6d56b-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-yaml.js
   CheckSum: bbcaeb970dfec57cb7905bcf7bfb8432301cc1c6635f8105db01afe5e69819ea
+  IsDeleted: true
+- RecordId: 7bae5f22-05dc-f011-8543-6045bd5c4d94
+  DisplayName: favicon.ico
+  CheckSum: f9672ff6e695dc458fe74a96978262ef7b23a4d9ea72ffb2fc8b6ff32551e687
   IsDeleted: false
 - RecordId: 7c75f471-e9db-f011-8543-7ced8de0923c
   DisplayName: jsonmanager-doaction-fr.html
   CheckSum: 16cea111899bac9385ffd164b05ced31c01cc72b577aa89a200f3b1226f343eb
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 7ce8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: vi.js
   CheckSum: cf6936bffc6ebce00b2ea9b5d1ca79dfee33b69e07dc5169f017161a4f4b4a7a
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 7d75f471-e9db-f011-8543-7ced8de0923c
   DisplayName: noscript.min.css
   CheckSum: 4e5dbeb8c88f7fa2e761e6a57b1ba679252e0cd183dd10fea198be5b24dcdb6b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 7de8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: Licence-fr.txt
   CheckSum: 69cc8f817c7b9ee15faf2144f54c87cc4351244cb7d61e831c4fd37af673d17e
+  IsDeleted: true
+- RecordId: 7e30503f-05dc-f011-8543-7c1e5254af8c
+  DisplayName: tr.min.js
+  CheckSum: 1755e8df1cb44edca1c6461e526ad02c874724b8e9bf1a0b2f1f3f881d8bde8a
+  IsDeleted: false
+- RecordId: 7e79455b-05dc-f011-8543-6045bd5c4d94
+  DisplayName: MathJax_Typewriter-Regular.woff
+  CheckSum: 1caea798feaf5c140d9864c9fca2a13780d928adf1d77f0e6662305d9f4db578
   IsDeleted: false
 - RecordId: 7ee8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-sql.min.js
   CheckSum: b8336dc86dcbbed1ff4a869ddd865bee00de18fa4a23ef6d57a3e46ae534b0e5
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 7f75f471-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-matlab.min.js
   CheckSum: 1b445193ae4eebd54da38fae6d3e95be0e422bbb21b3d88e2e19c1bebb961837
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 7f86e753-e9db-f011-8543-7ced8de0923c
   DisplayName: glyphicons-halflings-regular.svg
   CheckSum: bdb97d71d0485424971ce50e313e01cfb7e33c49ffc8343711faee3cf6c14aa6
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 7f967563-e9db-f011-8543-7c1e5254ad46
   DisplayName: favicon-mobile.png
   CheckSum: 71761a8fafd5e1ff86d903babcbe7bc36076dcec51e50d3c600c34395ac944be
+  IsDeleted: true
+- RecordId: 7faba22c-05dc-f011-8543-7c1e5254af8c
+  DisplayName: ajax-en.html
+  CheckSum: 226ffa3d27f605a12b3aedbdfeed7b46c72201cc067cd68cf0c648f82189ce31
   IsDeleted: false
 - RecordId: 7fe8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: ko.js
   CheckSum: 7c346653929ea5247b5275a08a2b7a606996e23bd4d01e51ffee9f1646ed4f0b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 80e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: previous-signedoff-en.png
   CheckSum: 88ca6c28af5cb4b0e08644ae6bececab6477eca5f13d945c9c12381013a94476
+  IsDeleted: true
+- RecordId: 80ea4758-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-ml.min.js
+  CheckSum: b7d6f41ef82bdb489a7e2945f97770714ade0922f7df65f581bf2ade58b9e057
+  IsDeleted: false
+- RecordId: 8143b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lang-rd.js
+  CheckSum: f6e2597677a7eb9389c2e6646440293e5395e175dae58a9b16e53b485f7c8fd9
+  IsDeleted: false
+- RecordId: 81e5fa51-05dc-f011-8543-7ced8de0923c
+  DisplayName: es.js
+  CheckSum: 531fc9c3c1cd92b6664725de2abecb56ba9093f68b17d4672b362b5a69d85888
   IsDeleted: false
 - RecordId: 81e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: jsonmanager-en.html
   CheckSum: 8d03ab492d5342d59d04446a5e260835ea199262535e3b0d7adef92961d0fee5
+  IsDeleted: true
+- RecordId: 81ea4758-05dc-f011-8543-7ced8de0923c
+  DisplayName: index-en.html
+  CheckSum: 9befd2f2c81ec778d1d820235ae158c67a93a0d64beea4b13076d0da19f9fd1e
   IsDeleted: false
 - RecordId: 82a6d56b-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-lisp.js
   CheckSum: 350176307e1829a2ea999829e155d604b740e26ac435c002bdb10430bbba269f
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 82e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: data-json-en.html
   CheckSum: 842d942b624802ec5ce4198d971709625f7da52e80f24cdf14b07c1a4562daae
+  IsDeleted: true
+- RecordId: 82ea4758-05dc-f011-8543-7ced8de0923c
+  DisplayName: doaction-doc-en.html
+  CheckSum: 1e704c7918b0c37315d082c1b1d076f46d6c251bfdef03806d643315b26fd832
   IsDeleted: false
 - RecordId: 83e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: datalist_dynamic.min.js
   CheckSum: 2d60178cb8af40c0f2b0a1a29f3a93eab1890fc89cc8a27cba920d09f6da456e
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 8449c338-e9db-f011-8543-7c1e5254af8c
   DisplayName: meter.min.css
   CheckSum: 0d5206b34964b6998747497347edb160ce5be93337f54b0b9d82a42190ab28d6
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 846a234c-e9db-f011-8543-7c1e5254af8c
   DisplayName: slider.js
   CheckSum: 764dc6789f3dbffb1fb4df06e87d8ff08b40684f0b8f735fddeb2d118aa48dc8
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 849eef5e-e9db-f011-8543-7c1e5254af8c
   DisplayName: sig-spl.svg
   CheckSum: 2105b265c58cd6e0341a559818b3688300ac86c94fe1cd88ce2dc0696f9ebff3
+  IsDeleted: true
+- RecordId: 85b8e948-05dc-f011-8543-7c1e5254ad46
+  DisplayName: mml-chtml.js
+  CheckSum: 9163ba1d3edd3d6eefc954c1980c5900c7608d8a9264a728ce69bccea3ad5fe4
   IsDeleted: false
 - RecordId: 85c46c3b-e9db-f011-8543-7ced8de0923c
   DisplayName: MathJax_Script-Regular.woff
   CheckSum: 0306eee2c97a4cc35000c441ec31c6c6a43cbc52339c088307929e3656edb7c7
+  IsDeleted: true
+- RecordId: 85e5fa51-05dc-f011-8543-7ced8de0923c
+  DisplayName: zh.js
+  CheckSum: 06396ba126ae76e89fc96e39b9a814a4825bf6e32cfd5aa0a305a4d0da09d622
   IsDeleted: false
 - RecordId: 85e8597e-e9db-f011-8543-7ced8de0923c
   DisplayName: chatwizard-json-en.html
   CheckSum: d415ee625ef822cb3a58921766fdfea51f5bdbebf3491f109ce7257375949f19
+  IsDeleted: true
+- RecordId: 85ea4758-05dc-f011-8543-7ced8de0923c
+  DisplayName: Logo-sm-64.png
+  CheckSum: 1624a80bcbbd44c22bc91aeff413ab183bf03c36fb8198595fbfc6b1f121b7d9
+  IsDeleted: false
+- RecordId: 85ef9c19-05dc-f011-8543-7ced8de0923c
+  DisplayName: th.js
+  CheckSum: e7d9b487f5dd2bd30f4a54c6d32d6f61f5c444451cf7a744bce2a0e89f63748d
   IsDeleted: false
 - RecordId: 8675f471-e9db-f011-8543-7ced8de0923c
   DisplayName: Cat-PC.png
   CheckSum: aad31f844a612d470c3b7b4332c4182f3864dff2b647fc08051b1deeb318393e
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 86a2712b-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-lisp.min.js
   CheckSum: 2c58338285983545a30868c720bcfe95495b02a35f2508ff97e2978ce5b5eef2
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 86e6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: uk.js
   CheckSum: c4c1cb98124cbade336cc161d3b2dcd6354caab54610b371d872900200eb00c7
+  IsDeleted: true
+- RecordId: 86ea4758-05dc-f011-8543-7ced8de0923c
+  DisplayName: proj4.js
+  CheckSum: f84e888a988f5f5716503aa280a00eaa6d0bce87af9b71cfdef61b8d3bc25bb6
   IsDeleted: false
 - RecordId: 87a6d56b-e9db-f011-8543-7ced8de0923c
   DisplayName: landscape.png
   CheckSum: 3d01631833ec0c35ea73ba28163d4b5403562f94e0e3a3de421a16c745e4d36a
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 87e6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: datalist.min.css
   CheckSum: 894b614c6465800540ab0b173d4d87a92f13b1780513b0b570b781e3c0464dd0
+  IsDeleted: true
+- RecordId: 87ef9c19-05dc-f011-8543-7ced8de0923c
+  DisplayName: gc-subway-en.html
+  CheckSum: dd68334e6742cff31ea39d1353cd2472e6b2a5dba01fd1c2d74e5cc286f23d50
   IsDeleted: false
 - RecordId: 88cbfc75-e9db-f011-8543-7c1e5254ad46
   DisplayName: data-json-doc-fr.html
   CheckSum: 7b9f206605280254e3b3c4fedd792bbcd51fc90a6dba0a174214148c79120381
+  IsDeleted: true
+- RecordId: 88e5fa51-05dc-f011-8543-7ced8de0923c
+  DisplayName: portalbasictheme.css
+  CheckSum: 6854ae1c8aca7a86bfa999c92a3798477832e51a18d72e6922bfb1fb368665d6
   IsDeleted: false
 - RecordId: 88e6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: fieldflow-fr.html
   CheckSum: a793245509fa5405810fbd1607e79bbb6ec1c10a5dbbba83fd3f8c0bd5f3b095
+  IsDeleted: true
+- RecordId: 89284027-05dc-f011-8543-7ced8de0923c
+  DisplayName: template.min.js
+  CheckSum: 95b7d53ae5a9b0288974d59cb91cee02827b8e575d55f81ccc376d47ffee8783
+  IsDeleted: false
+- RecordId: 8952cb60-05dc-f011-8543-7c1e5254af8c
+  DisplayName: ko.min.js
+  CheckSum: b8f3aff2a8c9cb6eaee92e654109548b050399b1113419c9d31a1ffe70e5202e
+  IsDeleted: false
+- RecordId: 89e5fa51-05dc-f011-8543-7ced8de0923c
+  DisplayName: wet-boew.js
+  CheckSum: cf71d994215bcfb1f5e0eeef113cd845ad37c9a173cb2da78b137d82986d311d
   IsDeleted: false
 - RecordId: 89e6a247-e9db-f011-8543-7ced8de0923c
   DisplayName: slider.min.css
   CheckSum: 9d8f25f83306ff3aa439ab8bf87a69a4f60977c8c0a03ae33d92fa2bc58954f4
+  IsDeleted: true
+- RecordId: 8a284027-05dc-f011-8543-7ced8de0923c
+  DisplayName: index-en.html
+  CheckSum: 586949b82e20190e2cfbc7e4edaa87aef6d3494657a907af0b17f6893f07fa68
   IsDeleted: false
 - RecordId: 8a33d865-e9db-f011-8543-7ced8de0923c
   DisplayName: messages-ie.css
   CheckSum: 2413830ae8bd7ab36f9619d8c1f9b72bdaca009e3812d5bb5b2a672675d83b8b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 8ac46c3b-e9db-f011-8543-7ced8de0923c
   DisplayName: urlmapping-doc-fr.html
   CheckSum: 8511dbc58f6aaeab426e6848d7081b786efe779e17282dcb0e59912c7d5aaa5d
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 8acbfc75-e9db-f011-8543-7c1e5254ad46
   DisplayName: fieldflow-en.html
   CheckSum: fe4d1197e6ca4b6c80a75f872abd0411d8df4bd10f568c03459e585a5af11a42
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 8ae10b65-e9db-f011-8543-7c1e5254af8c
   DisplayName: lt.min.js
   CheckSum: 41755daf9dfe2d87378fc1cd578bdfca9375c8b412841f178a5933366caa315d
+  IsDeleted: true
+- RecordId: 8aea4758-05dc-f011-8543-7ced8de0923c
+  DisplayName: v8.0-en.html
+  CheckSum: a3225811d5a7b07f15723579d31188e66575d337d5fe0fdfb9c9c89a2d392cc0
+  IsDeleted: false
+- RecordId: 8bef9c19-05dc-f011-8543-7ced8de0923c
+  DisplayName: theme.min.js
+  CheckSum: ad1f5cd7d4b909fb7ab1b7d5c0f4c460324dae12c99de67eca055d41c73a8f22
+  IsDeleted: false
+- RecordId: 8c24dd54-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_SansSerif-Italic.woff
+  CheckSum: 42f36250e7c23aa7ffd0b419bf31b347029c60cf161e911d77530e84f9a76493
+  IsDeleted: false
+- RecordId: 8ce5fa51-05dc-f011-8543-7ced8de0923c
+  DisplayName: datalist.css
+  CheckSum: 1d0013a1cae44d84e0316d7cfa58cdcd4820b92f9c98012948fa0ac28574e56d
+  IsDeleted: false
+- RecordId: 8d9dd530-05dc-f011-8543-7c1e5254ad46
+  DisplayName: cs.js
+  CheckSum: 1fb11fc31713b44361647ba3500d9ad52dbd336b147cfab0fda17e149f61904f
+  IsDeleted: false
+- RecordId: 8de5fa51-05dc-f011-8543-7ced8de0923c
+  DisplayName: template.js
+  CheckSum: fd3ecde7d2c5d03cf17343c409fcac7961571153ccb21937facca1e4f3795dab
   IsDeleted: false
 - RecordId: 8e75f471-e9db-f011-8543-7ced8de0923c
   DisplayName: proj4.js
   CheckSum: 3eace8128cf24159b406813880c4dc098664b7d2ab8dc3423c92da68819f004b
+  IsDeleted: true
+- RecordId: 8e9dd530-05dc-f011-8543-7c1e5254ad46
+  DisplayName: jsonmanager-doc-fr.html
+  CheckSum: dbe4dff2bbd5440cad1baca44998f140cf53bc6cd5d6c2eb002db91f65d68de4
   IsDeleted: false
 - RecordId: 8e9e0545-e9db-f011-8543-7c1e5254af8c
   DisplayName: lang-vb.js
   CheckSum: 0fd8fdd97bd0a49e3152c1e31b94a37c9bfb155c0745df2f6fb9eba5cd70400b
+  IsDeleted: true
+- RecordId: 8f43b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: jquery.flot.canvas.min.js
+  CheckSum: 5cc009294046e160f486bf6ce58ce91d62c79fefdb4feb98c1b6d45a9c5ec742
   IsDeleted: false
 - RecordId: 8fa9e734-e9db-f011-8543-7ced8de0923c
   DisplayName: package.json
   CheckSum: 2efc4579dd8398efdf9ae741aebb77284aa173fac7ea45310d3eae32a5ea3c57
+  IsDeleted: true
+- RecordId: 8fe5fa51-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-yaml.js
+  CheckSum: 71404f35b1cc2de3855214e21be3ea623c0af306e93e83e6dd9558336f9e6cbc
+  IsDeleted: false
+- RecordId: 9024dd54-05dc-f011-8543-7c1e5254ad46
+  DisplayName: jquery.min.js
+  CheckSum: c526d05c129cf8eeaec5b450733d4b194e51908bfef51277877078cdf08b61bb
+  IsDeleted: false
+- RecordId: 9043b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lang-logtalk.js
+  CheckSum: 7b5e74c15560e3929134cd62475bb724847e9d286bae5ce3dc71fc32f428fb0f
   IsDeleted: false
 - RecordId: 90a9e734-e9db-f011-8543-7ced8de0923c
   DisplayName: gc-subway-en.html
   CheckSum: 4d667e2ce893b8b2bcd273625ff1bfd4d3c60cf927ae23de2bb3837612ff3c01
+  IsDeleted: true
+- RecordId: 9124dd54-05dc-f011-8543-7c1e5254ad46
+  DisplayName: datepicker.css
+  CheckSum: 50589db8a0509b64189f2b740e5972a1456591cdcae7f9279b5cbe1b1c444b21
   IsDeleted: false
 - RecordId: 9175f471-e9db-f011-8543-7ced8de0923c
   DisplayName: jsonmanager-doc-en.html
   CheckSum: f79528a4dae388c3db6cc23d0f6dee46ab9178ba0fe7398cd5c2c0343822250b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 91e10b65-e9db-f011-8543-7c1e5254af8c
   DisplayName: svg.min.js
   CheckSum: 10b94a9014845486cb91f00b22835cbd0fa86e2c9a9a0e0de0de1cdb08dc7b0b
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 9233d865-e9db-f011-8543-7ced8de0923c
   DisplayName: zh.js
   CheckSum: 2f7fae19cd2845560439d1c649a6da7efac62733ba669ef1d55e891e05022479
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 92967563-e9db-f011-8543-7c1e5254ad46
   DisplayName: ar.min.js
   CheckSum: ea7ab69bdc3f5c1a13e32dd3cecaf26eb326d93689817e095f87df143805b805
+  IsDeleted: true
+- RecordId: 92ea4758-05dc-f011-8543-7ced8de0923c
+  DisplayName: jquery.min.map
+  CheckSum: 7b6c34e1776a23e0f992de8f22571ef2f025157132c6702d678b0864a71aaab6
   IsDeleted: false
 - RecordId: 9333d865-e9db-f011-8543-7ced8de0923c
   DisplayName: jquery.flot.pie.js
   CheckSum: cdc4f28372587a1a5a9b1e203587a8b22d00fb36ebbdb9616401d984be42fbee
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 9433d865-e9db-f011-8543-7ced8de0923c
   DisplayName: portalbasictheme.css
   CheckSum: e1ec96c2fbd7747d79f52822a4761535cb55c8fa5e8cb1c58faad9d716b1e72c
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 946a234c-e9db-f011-8543-7c1e5254af8c
   DisplayName: MathJax_SansSerif-Bold.woff
   CheckSum: d3cb6f93791d1cf113619d4328608858a33aee23ebb4f3a9c2ede432d0f6ff07
+  IsDeleted: true
+- RecordId: 9470d82a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: jquery.dataTables.js
+  CheckSum: 4f9656007debc240687302dda07e5643e41b5cff206e4b02fe3d52ddc95efca8
   IsDeleted: false
 - RecordId: 9533d865-e9db-f011-8543-7ced8de0923c
   DisplayName: tableparser.min.js
   CheckSum: 4ea56f386fe34d1b0e2182883348799a9f9372da3f4d7c7e44049066fc56b4ba
+  IsDeleted: true
+- RecordId: 9543b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lv.min.js
+  CheckSum: 7aa1b66846630b11d4a5109de72afe43918f9b75d58a10e0b2c13dfd7c8587ef
+  IsDeleted: false
+- RecordId: 9552cb60-05dc-f011-8543-7c1e5254af8c
+  DisplayName: payload.json
+  CheckSum: 3601a33acbc5cf533b0aba147435025b385b361f215f20449c736ef95fe58f19
+  IsDeleted: false
+- RecordId: 9570d82a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: datepicker.js
+  CheckSum: 2d85cb7ead3fd04301bf0c92c945923234a11b23219ef27ff6cfd9be979f21e9
   IsDeleted: false
 - RecordId: 9575f471-e9db-f011-8543-7ced8de0923c
   DisplayName: jquery.flot.min.js
   CheckSum: 911e5403fcbadae14cdc4146213317dcf046b815cf673c87fe97d4baf949e837
+  IsDeleted: true
+- RecordId: 9624dd54-05dc-f011-8543-7c1e5254ad46
+  DisplayName: jsonmanager-doaction-fr.html
+  CheckSum: 2c07ed5112cec612f76a84ab8166aeb88b1a9bae32527da070cb69e52b8994b5
   IsDeleted: false
 - RecordId: 969e0545-e9db-f011-8543-7c1e5254af8c
   DisplayName: et.min.js
   CheckSum: 910d1bd7489ae6c2658e04ce45246e2b044ce6217022c3a1b3cb7d535020e85d
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 96a9e734-e9db-f011-8543-7ced8de0923c
   DisplayName: datalist.js
   CheckSum: caa8e91f39cb3739f7baa3b6684523c066aa7659f3cf2d984bccaed743fa02a9
+  IsDeleted: true
+- RecordId: 9743b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: fieldflow-doc-en.html
+  CheckSum: 6803aab9657e9a86ebcf5afce7c8ed37c7cb15555507be98a022e669855e0f65
   IsDeleted: false
 - RecordId: 97a9e734-e9db-f011-8543-7ced8de0923c
   DisplayName: details.min.css
   CheckSum: b6a09a341c1c132f7360b0ad7161c54b2ad183fd575e955fd7d8160cd552db65
+  IsDeleted: true
+- RecordId: 9843b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lang-llvm.min.js
+  CheckSum: c510d11db09ca47f1051d538547518451a6b2cb3a26423b530222aa532c3ee11
   IsDeleted: false
 - RecordId: 98a9e734-e9db-f011-8543-7ced8de0923c
   DisplayName: gcweb_0c4a4eb7974d0a7287c93c02965f9b3f.ttf
   CheckSum: 1a85f9589cbf9aa26b0b01d49b6d97d19d8a677f115debc2a6c1f6a5c29a969b
+  IsDeleted: true
+- RecordId: 9943b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: gc-table-en.html
+  CheckSum: dc437492997099eb5abc9176a98c315fd34cbc97e691bc1d2ea2a1e1898bf9d9
   IsDeleted: false
 - RecordId: 99a9e734-e9db-f011-8543-7ced8de0923c
   DisplayName: slider_wrapper.js
   CheckSum: 313bbbc803221d40d84f08719240cce72be3a6d5b34124756619918d253e6d1a
+  IsDeleted: true
+- RecordId: 9a43b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: bg.min.js
+  CheckSum: f91495bd6690aa8e133d425b0643577a943033b6d67f93e85dd071d804205023
   IsDeleted: false
 - RecordId: 9a9e0545-e9db-f011-8543-7c1e5254af8c
   DisplayName: lang-n.js
   CheckSum: c86dd035b711cc93edb25a7a0db3e72f2730f8f2f2e724865951b3edff1d4ee5
+  IsDeleted: true
+- RecordId: 9b43b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: hu.min.js
+  CheckSum: 5283faf2fd08a64060692a450789e54a17ca111a623a042ee19d609301735577
   IsDeleted: false
 - RecordId: 9b75f471-e9db-f011-8543-7ced8de0923c
   DisplayName: cs.min.js
   CheckSum: 376bfe663859569e69b701a29b432449dd45e039470bb908caffd2a630a20172
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 9ba9e734-e9db-f011-8543-7ced8de0923c
   DisplayName: fieldflow-doc-fr.html
   CheckSum: 49381517bb08b0a7b8b4583cdb5188d695622e935104cb1060cdce0b47b6d084
+  IsDeleted: true
+- RecordId: 9c43b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: datalist_dynamic.js
+  CheckSum: cf03aa0e8a96a7ed0f51dbd5a0f63fe33ed66d73b4517055b84bfa1ac859b0b9
+  IsDeleted: false
+- RecordId: 9d43b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: id.js
+  CheckSum: 99ceebd47989eacd4cc41d5f09e0dc2d7e9a161c3f53c9acc58aa2fa59ff7306
+  IsDeleted: false
+- RecordId: 9d52cb60-05dc-f011-8543-7c1e5254af8c
+  DisplayName: v7.0-en.html
+  CheckSum: 3f4bc003fa7f11acd5c377c165825667f47430a2b20aa81d5c7df5e9c050a111
   IsDeleted: false
 - RecordId: 9d690451-e9db-f011-8543-7c1e5254ad46
   DisplayName: template-fr.html
   CheckSum: a7fb452477b922343d5e7c5fc4cdbc12e40d540e4b0d6c5252d63f1b342ce23d
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 9d86e753-e9db-f011-8543-7ced8de0923c
   DisplayName: page-feedback-fr.html
   CheckSum: 26be7859206175eeb39eafcc12b6a8bd10580575b8026002c7d3a92d0ca9fa44
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 9e690451-e9db-f011-8543-7c1e5254ad46
   DisplayName: 2-wetplugin-gcweb2.html
   CheckSum: 8d7a4de85c58b992d97c2aee66ca2f72758246abc2f23bb25b90a9255a9ab846
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 9e9eef5e-e9db-f011-8543-7c1e5254af8c
   DisplayName: et.js
   CheckSum: 50adafa22217dcecd7a12cdcd605a8325babfc4ef013a2100963b2271e9772ef
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 9f9e0545-e9db-f011-8543-7c1e5254af8c
   DisplayName: jsonmanager-doc-fr.html
   CheckSum: e9a166a89ceb690004cca91cfa58d51524572f32ecb3eecd79792d09a66653f0
+  IsDeleted: true
+- RecordId: a143b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lang-rust.min.js
+  CheckSum: a64dd2eecd4b4bda257b03c9c36350294bb96863060e08050e5e4439a2e6973f
+  IsDeleted: false
+- RecordId: a243b061-05dc-f011-8543-6045bd5c4d94
+  DisplayName: wmms-blk.svg
+  CheckSum: 35e4d1d3f06b8ce5068f06e52a4bb73b4524db5b290fae15ec08153486b24034
+  IsDeleted: false
+- RecordId: a352cb60-05dc-f011-8543-7c1e5254af8c
+  DisplayName: lang-tcl.js
+  CheckSum: 0a51dcd777d5f25ef58a527584c75df4a5796e30af6c41a1699721fe4c692fbe
+  IsDeleted: false
+- RecordId: a3aba22c-05dc-f011-8543-7c1e5254af8c
+  DisplayName: noscript.css
+  CheckSum: f7d55d87a060d4e7954d8d910bcc412d1003d471d08a797a043a8dce7f61e15f
+  IsDeleted: false
+- RecordId: a40b4945-05dc-f011-8543-7c1e5254af8c
+  DisplayName: jquery.validate.js
+  CheckSum: 7d02ead0a40161c053ddecdc58f34ac54e6f9c3a682cb70808f8929e2885f37f
+  IsDeleted: false
+- RecordId: a4559d24-05dc-f011-8543-7c1e5254ad46
+  DisplayName: geomap-fr.html
+  CheckSum: 528c19f8a0e2d7b2eea08b526ed866f142d20f3a3d857a7fa1eb59996116e46f
+  IsDeleted: false
+- RecordId: a549e24e-05dc-f011-8543-7c1e5254ad46
+  DisplayName: messages-ie.css
+  CheckSum: 6eecf114a231be910b95aa394d8eca9e0b28b7c4cf0852c3c9dad4f618a212a7
+  IsDeleted: false
+- RecordId: a5559d24-05dc-f011-8543-7c1e5254ad46
+  DisplayName: previous-signedon-en.png
+  CheckSum: a8bf6e2121e3e1cfcf41b107761c3a2f5e8d0ad75703a5b53e67479ec50f59c1
   IsDeleted: false
 - RecordId: a5cddf5f-e9db-f011-8543-7ced8de0923c
   DisplayName: chatwizard-en.html
   CheckSum: d88923cc857b127190e64ce4c167017edd2e5d216bc2b84d25d49b0abdff989a
+  IsDeleted: true
+- RecordId: a824dd54-05dc-f011-8543-7c1e5254ad46
+  DisplayName: previous-signedon-fr.png
+  CheckSum: f0951114974b8bfd06423706d41bfb2857297111237d2b2458607eaf4010e2e1
+  IsDeleted: false
+- RecordId: a8713a3f-05dc-f011-8543-7ced8de0923c
+  DisplayName: glyphicons-halflings-regular.svg
+  CheckSum: 2642c32812ab327123da4d14a7b5d33a503898ecd27090c716d3b54f6b60d9db
+  IsDeleted: false
+- RecordId: a924dd54-05dc-f011-8543-7c1e5254ad46
+  DisplayName: ajax-fr.html
+  CheckSum: d609e40b14adf0a2d956a060fa8389d154248dbf187879a363c609331a97d772
+  IsDeleted: false
+- RecordId: a9713a3f-05dc-f011-8543-7ced8de0923c
+  DisplayName: sig-spl.png
+  CheckSum: ef389913ebab38c4dd8d062007c1e85afe3f2228f0f8cb39e22aa73e928aa45e
   IsDeleted: false
 - RecordId: aa914a78-e9db-f011-8543-7c1e5254af8c
   DisplayName: sig-spl.png
   CheckSum: 49e4835831e74c296204e59da97ca68d421afe6b9b070b2dda81824c71493123
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: aac46c3b-e9db-f011-8543-7ced8de0923c
   DisplayName: template.min.js
   CheckSum: f73989e1e09c76d1e2d6c232061bb5d4506707ff0d27ba88f5f104876fa92f3d
+  IsDeleted: true
+- RecordId: ad49e24e-05dc-f011-8543-7c1e5254ad46
+  DisplayName: glyphicons-halflings-regular.eot
+  CheckSum: fec0f3407a14008c4bcc6c9ff3c3c2bed8d4d07effba50b38e18f77bc34d20fc
+  IsDeleted: false
+- RecordId: ad52cb60-05dc-f011-8543-7c1e5254af8c
+  DisplayName: x-blue-line.png
+  CheckSum: b36161a1836f67180b9d11a832f5979124e0ba239f9ed1a596950a91339e6ab9
   IsDeleted: false
 - RecordId: ad93e331-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-dart.min.js
   CheckSum: de0115da90c3fe03b9d635a8119a256aa147666839889ed195c7f20426d3ffde
+  IsDeleted: true
+- RecordId: adb8e948-05dc-f011-8543-7c1e5254ad46
+  DisplayName: chatwizard-en.html
+  CheckSum: f6ef493efac81538eaec10ccb10f3626f2e6c8ba33641911449984f2f95adf3e
+  IsDeleted: false
+- RecordId: ae35db53-05dc-f011-8543-6045bd5c4d94
+  DisplayName: MathJax_Size4-Regular.woff
+  CheckSum: a7544661a6d03d0eac6da439cb732a46813cb355bcdcf3a465eb7210965edcdf
+  IsDeleted: false
+- RecordId: ae49e24e-05dc-f011-8543-7c1e5254ad46
+  DisplayName: svg.min.js
+  CheckSum: 7f670296e18375437284e9a687404138ed10e035bb2ec78db17199991608afde
+  IsDeleted: false
+- RecordId: b035db53-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lang-lisp.js
+  CheckSum: 70ec112fd00644501039012e14949842e8b50908bf39a9a7cd783eba1859c908
+  IsDeleted: false
+- RecordId: b0559d24-05dc-f011-8543-7c1e5254ad46
+  DisplayName: theme.css
+  CheckSum: dba43e1b9e7737232d74c4193a8e73f9c6488bd723e028d889c49863205dffd1
+  IsDeleted: false
+- RecordId: b0713a3f-05dc-f011-8543-7ced8de0923c
+  DisplayName: lang-swift.js
+  CheckSum: af3588340bbd461049a019eceb8efa9cfeb600c4ab2bf71aea95e022f115273a
   IsDeleted: false
 - RecordId: b10aff56-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-swift.js
   CheckSum: ce99af50c8bd68f897867ccf7e0af21f8430947a66efd95ac83f34adf62a72f9
+  IsDeleted: true
+- RecordId: b1713a3f-05dc-f011-8543-7ced8de0923c
+  DisplayName: af.min.js
+  CheckSum: 0653100610d1dd738f1cc4f70d4193d0eff8971ff554cb79269a4a2578a61a4d
   IsDeleted: false
 - RecordId: b1914a78-e9db-f011-8543-7c1e5254af8c
   DisplayName: jsonmanager-fr.html
   CheckSum: 8dc0bda32420ca8ae151889584c9c31f8e6a6e1e893cee8373ae880da7c8d110
+  IsDeleted: true
+- RecordId: b235db53-05dc-f011-8543-6045bd5c4d94
+  DisplayName: glyphicons-halflings-regular.woff
+  CheckSum: 66d1791f208400ee2ee6adc92294bc3d9495698f86e97ee39dbfabfefd8d535b
+  IsDeleted: false
+- RecordId: b335db53-05dc-f011-8543-6045bd5c4d94
+  DisplayName: nl.js
+  CheckSum: 01eeff8b5b484a75f048562b0c9cad0371db372b56d559037c2fd48a3928adb0
+  IsDeleted: false
+- RecordId: b4713a3f-05dc-f011-8543-7ced8de0923c
+  DisplayName: de.min.js
+  CheckSum: 34fbbf6c20e719dd280f6412a5a18ae0e2ec8b5ad5582c538ce9fd59de80c9e7
+  IsDeleted: false
+- RecordId: b5713a3f-05dc-f011-8543-7ced8de0923c
+  DisplayName: jquery.flot.canvas.js
+  CheckSum: 2e51d02f0cfc97b3bba18cb70af03cbe4c901ce97eefc1080f8b052b242934f3
   IsDeleted: false
 - RecordId: b686e753-e9db-f011-8543-7ced8de0923c
   DisplayName: zh-Hans.min.js
   CheckSum: bb489187b15e5298e2304ccda1032be4c9117565c58407c872c43d24e541a9e1
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: b80aff56-e9db-f011-8543-7c1e5254ad46
   DisplayName: v5.1-en.html
   CheckSum: 7a7e33873e4bf041ae5142e3fbad2a2548efb4f720f4d0f25af1443298087bd7
+  IsDeleted: true
+- RecordId: b852cb60-05dc-f011-8543-7c1e5254af8c
+  DisplayName: wet-boew.css
+  CheckSum: 7826321836c6ee3fb7edd1a4b9c141f3bf1b9988d75da918f88abe3aeb952fc5
+  IsDeleted: false
+- RecordId: b890e15a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: prettify.js
+  CheckSum: b35ce10e1af17045cc9ee9b92fd14264618b528ccc35228c35770e8915fd22a2
   IsDeleted: false
 - RecordId: b893e331-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-n.min.js
   CheckSum: 422edb25a6d90702d76acdca8b7ebfd49d79a051083a948acd2e95310900ed15
+  IsDeleted: true
+- RecordId: b990e15a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: MathJax_Math-Italic.woff
+  CheckSum: 9095febb189f21906d642c936ec5f6a83a6b4704be6acbacc00bbfc6abd95da5
   IsDeleted: false
 - RecordId: b9914a78-e9db-f011-8543-7c1e5254af8c
   DisplayName: jquery.flot.canvas.js
   CheckSum: c9a63a152dc3249dce877ee197c46a9256a10b69839596338795ade1df527806
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: bd914a78-e9db-f011-8543-7c1e5254af8c
   DisplayName: MathJax_Zero.woff
   CheckSum: 66b20ac65a6f3e9237dcc4436d6bca02d4cca9721ae9511c3227b26aac80b65c
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: bd93e331-e9db-f011-8543-7c1e5254ad46
   DisplayName: th.js
   CheckSum: 5d78b19e2b7f31141b53731d284759b2f978f36bd726a3f95cf5eba8c5851663
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: bdcbfc75-e9db-f011-8543-7c1e5254ad46
   DisplayName: MathJax_Math-BoldItalic.woff
   CheckSum: 5688f02c6dae2b6b56c4ecd35f73535070b94a7259d195f097456c38d507445a
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: bf93e331-e9db-f011-8543-7c1e5254ad46
   DisplayName: test.js
   CheckSum: 3545413ac5c8a9a2ed955fd7018e0d608cb130155c6c2e616e5c100de02c5ee8
+  IsDeleted: true
+- RecordId: c052cb60-05dc-f011-8543-7c1e5254af8c
+  DisplayName: ec-blk-white.png
+  CheckSum: 033f498f61df1b07fb7e1f2950b3dd00856b4f43d762336aae80b62557b83ce5
   IsDeleted: false
 - RecordId: c10aff56-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-wiki.min.js
   CheckSum: 6cdb77dfd25ba578627305eca3396dccc88303bca34ae2e8a4be711d528629e4
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: c16a234c-e9db-f011-8543-7c1e5254af8c
   DisplayName: lang-scala.min.js
   CheckSum: fe77318b879bebc9aba702813ea52ff918dc029aeeca3cd84e674a58ce7c9683
+  IsDeleted: true
+- RecordId: c313a732-05dc-f011-8543-7c1e5254af8c
+  DisplayName: data-json-doc-en.html
+  CheckSum: 1f5c0be4d7bb564c019d9435118db1bf25e0067d5406df613e700e0521fb36c0
+  IsDeleted: false
+- RecordId: c370d82a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lt.js
+  CheckSum: 17abfca78673a64a660bbd78afda5c4ab39acbae94229a680705e8c0d924790e
   IsDeleted: false
 - RecordId: c3cbfc75-e9db-f011-8543-7c1e5254ad46
   DisplayName: favicon.ico
   CheckSum: 9917e07c4dbe1f229f589294ca6aebb4b4e7505238ed622294056423bc516d9e
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: c50aff56-e9db-f011-8543-7c1e5254ad46
   DisplayName: index-fr.html
   CheckSum: 964445f5065502270a62d958d7ef1b2599bc0872551207a202e3407d095a716f
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: c56cff6f-e9db-f011-8543-7c1e5254ad46
   DisplayName: MathJax_Math-Italic.woff
   CheckSum: 8bf2d13284821cdeaf2c0fdab78b272201672123712b1805bf887d0e52bd2d01
+  IsDeleted: true
+- RecordId: c724dd54-05dc-f011-8543-7c1e5254ad46
+  DisplayName: mobile.js
+  CheckSum: 8c2a93bab1a2a575649a5223c8b41a73f3f521bb0c879eb20c902f858b00b496
   IsDeleted: false
 - RecordId: c7cbfc75-e9db-f011-8543-7c1e5254ad46
   DisplayName: json-fr.html
   CheckSum: 8ffe5dfe057dab91971b0e3b53adad72509687b81d180562100e1ee682ba571f
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: c8cbfc75-e9db-f011-8543-7c1e5254ad46
   DisplayName: ie8-wet-boew.min.js
   CheckSum: ad59aae05294350e1fb5c862696ebf28b6d12222fd9aff6f2da36f67c577f1f2
+  IsDeleted: true
+- RecordId: cc3fb54d-05dc-f011-8543-6045bd5c4d94
+  DisplayName: index-fr.html
+  CheckSum: ab0fdfe3f4c8b9e2b1e6bb7e5e629210be65aec783075825489ff5a06d2686b4
   IsDeleted: false
 - RecordId: cc93e331-e9db-f011-8543-7c1e5254ad46
   DisplayName: meter.min.js
   CheckSum: c3c1aac7c103b4cf269968a744bd9fc0fc238d0e61b9fd6c5d0c2cbbdd704b96
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: cd0aff56-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-apollo.js
   CheckSum: d04f121441014ce538cc831ad6e90a9995d5fc3c27ed7fea86133da08b730c31
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: cdcb066a-e9db-f011-8543-7c1e5254ad46
   DisplayName: datalist_dynamic.js
   CheckSum: cbf179762d8d40b26894ff438344a15711286ee38f25f92a9555cebef63dfec6
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: cf3cf944-e9db-f011-8543-7c1e5254ad46
   DisplayName: progress.min.css
   CheckSum: 956669bd5fda2b62eaac699121a2a593a069dbf59fde43dfe5d6adc637afeea8
+  IsDeleted: true
+- RecordId: cf48e24e-05dc-f011-8543-7c1e5254ad46
+  DisplayName: License-en.txt
+  CheckSum: 57c001fc4b261a65d5d22b0e39319b4b4ee737930570361d75be4fa7e057305d
   IsDeleted: false
 - RecordId: cfcb066a-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-r.min.js
   CheckSum: bce978c8f4d7d0743013f80847c32ebd6635c81321ef0d32f113fcf7226ab43d
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: cff55738-e9db-f011-8543-7c1e5254ad46
   DisplayName: jquery.validate.min.js
   CheckSum: a1f6c3fcf78570126fc9212c47e939f5203e37420246977e078b756db28fd7b5
+  IsDeleted: true
+- RecordId: d03fb54d-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lang-ml.js
+  CheckSum: 1f1467c7325f24b89f8703f6b0e2bb1ae203d1b0ca28df583655735d4a88e2d5
+  IsDeleted: false
+- RecordId: d048e24e-05dc-f011-8543-7c1e5254ad46
+  DisplayName: favicon-mobile.png
+  CheckSum: 5306a87a86d30eb17cd7b58c6e7881f7648ac5486e17ff864641cfc03b687d6c
   IsDeleted: false
 - RecordId: d0f55738-e9db-f011-8543-7c1e5254ad46
   DisplayName: pt.min.js
   CheckSum: 40895825329634de921dbbfdc61c68d0a5ff589ef5f37635fcb1ced665e924ba
+  IsDeleted: true
+- RecordId: d19dd530-05dc-f011-8543-7c1e5254ad46
+  DisplayName: uk.js
+  CheckSum: 6d295c2046539630999a194ec540691119e33dca1e7975ff229f2ea4646cc7e1
   IsDeleted: false
 - RecordId: d1f55738-e9db-f011-8543-7c1e5254ad46
   DisplayName: ec-logo-invert.png
   CheckSum: 531f68b1f3adf49677d491f2e854bd3c837e0a5a4e70c4a080c4e7b8f2561a2d
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: d20aff56-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-lasso.min.js
   CheckSum: a303b074bd253d96be5564e8cadb34f9646643a3f71431fa987211f63626fccf
+  IsDeleted: true
+- RecordId: d297d23c-05dc-f011-8543-7c1e5254ad46
+  DisplayName: jquery.flot.pie.js
+  CheckSum: 179931156d0b06e549744df78fa0cba1ea3d706a3b25c58640933787dd953a98
   IsDeleted: false
 - RecordId: d2c97484-e9db-f011-8543-7c1e5254af8c
   DisplayName: fieldflow-doc-en.html
   CheckSum: 0c01548133c6088922a06aa7288261f9ce4f8729ab6a1645aec1cc53d992b1fb
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: d2cbfc75-e9db-f011-8543-7c1e5254ad46
   DisplayName: ru.js
   CheckSum: 41b7a1b5780a3845170f7487032770688d1f0d767c13c9ed91442861506cec50
+  IsDeleted: true
+- RecordId: d324dd54-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-clj.min.js
+  CheckSum: 5821985d14d9d33cdfebf972fb897d8966c837d2c154aae696179e5670fece13
+  IsDeleted: false
+- RecordId: d397d23c-05dc-f011-8543-7c1e5254ad46
+  DisplayName: slider.min.js
+  CheckSum: f0231d24a8c6d4029bbf597d2a1913d8fdf17cebc5eb6b82311638e8a50aa52a
   IsDeleted: false
 - RecordId: d3c46c3b-e9db-f011-8543-7ced8de0923c
   DisplayName: index-fr.html
   CheckSum: aceb20375069acce2cc7d304a4c6673eccddd131109ad78e17a3875d4dc068d4
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: d3f55738-e9db-f011-8543-7c1e5254ad46
   DisplayName: MathJax_Vector-Regular.woff
   CheckSum: 4e153a9d17bea1d49afd077932494ce892899ecfe9cadbad3990c25e4306438a
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: d4c46c3b-e9db-f011-8543-7ced8de0923c
   DisplayName: json-patch.min.js
   CheckSum: 158b3bb4c125dc543bd4ed26224e17c5798168828f5b03821be0e0b295a0ca02
+  IsDeleted: true
+- RecordId: d524dd54-05dc-f011-8543-7c1e5254ad46
+  DisplayName: ie8-wet-boew.min.js.map
+  CheckSum: 44a597e1a66a51135dbbe513b564151cda327b6ec0b96d89b62ee4726efed352
   IsDeleted: false
 - RecordId: d5f55738-e9db-f011-8543-7c1e5254ad46
   DisplayName: tblfilter-en.html
   CheckSum: 61295c9b20e7079d1062dfaca6d8e044a18ad374fb70d205c09daf33c37e0e52
+  IsDeleted: true
+- RecordId: d6e8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: 1-accessibility.html
+  CheckSum: b4a62795cca4ebc8d02725775d1f6c5d276668d360af4e39bf02d075d72d21f0
   IsDeleted: false
 - RecordId: d6f55738-e9db-f011-8543-7c1e5254ad46
   DisplayName: svg.min.js.map
   CheckSum: 99e199718a7b3de7420977feaa6343e09d1d807650b8817085cb42dc93e147bc
+  IsDeleted: true
+- RecordId: d9b8e948-05dc-f011-8543-7c1e5254ad46
+  DisplayName: x.svg
+  CheckSum: c1b65a955ae4e281d3877d6f50780c17b8396643cbf955e1268be698b8f4c7ac
   IsDeleted: false
 - RecordId: dac97484-e9db-f011-8543-7c1e5254af8c
   DisplayName: chatwizard-fr.html
   CheckSum: 58e7ea20799f5da48e2d45fa079f0f1026473ce9019f7c69d37a6e6a6eb4fcd7
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: dacb066a-e9db-f011-8543-7c1e5254ad46
   DisplayName: ie8-wet-boew.js
   CheckSum: 9424b4007e80ce6465b67bdc9e3390f51fc6661d0ce53010a301b631eb9b7e9d
+  IsDeleted: true
+- RecordId: dafc0035-05dc-f011-8543-6045bd5c4d94
+  DisplayName: fieldflow-fr.html
+  CheckSum: e8cfd8f174476bf4c01851a1340d0922ed31d45b1fd0500c51735b22f2cacaac
+  IsDeleted: false
+- RecordId: db549d24-05dc-f011-8543-7c1e5254ad46
+  DisplayName: details.min.css
+  CheckSum: 46938eb8b31ecd1e11344f408e9d05ab567e5569638ab26e8fa3e7379586ea08
+  IsDeleted: false
+- RecordId: db90e15a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: cs.min.js
+  CheckSum: a7c3fa410b4409f01698b990b09100ed97e8d30b870224809f06506037998bc8
+  IsDeleted: false
+- RecordId: dce8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: svg.js
+  CheckSum: d6e9dec69c217e738804fc873b838c98fdfc2209aefeaab80291dd5d2d3cf28e
+  IsDeleted: false
+- RecordId: dd549d24-05dc-f011-8543-7c1e5254ad46
+  DisplayName: dev-build.html
+  CheckSum: 7ce03bec2f1c6c1354601b5b408231e748cb4f9dd90508239d1f5727ef5e14d5
   IsDeleted: false
 - RecordId: dea9e734-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-rust.js
   CheckSum: 73f49d6be1cacb670fd2cb81bb1c9a372931572e1a1f39440347c123dd4401d2
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: dfa9e734-e9db-f011-8543-7ced8de0923c
   DisplayName: gc-chckbxrdio-fr.html
   CheckSum: 723837ba5d0fa3df3785b5236d94e0d9677902d3282e63f0a16a7449dcde22e8
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: dfc97484-e9db-f011-8543-7c1e5254af8c
   DisplayName: v6.1-en.html
   CheckSum: 2008edc65e737dd53c9cf4d8970b0443c6d6f64e044780d2b4aeb5e408772ea2
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: e03cf944-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-pascal.min.js
   CheckSum: b3cfe627854cf68bef4e621f8b9af3163a78350cfd0c3578092cef0bb1e03649
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: e0a9e734-e9db-f011-8543-7ced8de0923c
   DisplayName: jquery.magnific-popup.js
   CheckSum: 2a805c616af53e09541521aa902b50feee0a910c71a15b908bcb044597faf131
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: e1f45578-e9db-f011-8543-7ced8de0923c
   DisplayName: meter.min.js.map
   CheckSum: 637a488fde7c6c71740984089b6976a7228f9213f96247c17d9304ad0b925ef4
+  IsDeleted: true
+- RecordId: e1fc0035-05dc-f011-8543-6045bd5c4d94
+  DisplayName: datalist.min.css
+  CheckSum: 598dfc35de84988a8c3a47438c897a1d346927d9670fe1952a9358d181d2120e
   IsDeleted: false
 - RecordId: e2f45578-e9db-f011-8543-7ced8de0923c
   DisplayName: v8.0-en.html
   CheckSum: 2467189ca606cdad9b9965de1de8aef3359cfad767981a4f64ed2997ca9ddbfa
+  IsDeleted: true
+- RecordId: e413a732-05dc-f011-8543-7c1e5254af8c
+  DisplayName: en.min.js
+  CheckSum: 34f10318eefbb4814dfdcf0f6ffcb3d48ec6f2ccf3ff74f85f78975156aad10a
+  IsDeleted: false
+- RecordId: e4e8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: pl.min.js
+  CheckSum: 3a86dc187a16cd89995dd5a746e01184cc997c96a232c6cdd5a7c87c55736481
   IsDeleted: false
 - RecordId: e4f45578-e9db-f011-8543-7ced8de0923c
   DisplayName: MathJax_Size2-Regular.woff
   CheckSum: ace32636533f6fdf86ab2f29a3a3c4e30ec409b5bbe60e37fa94fdf1fda388ac
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: e6cb066a-e9db-f011-8543-7c1e5254ad46
   DisplayName: glyphicons-halflings-regular.woff
   CheckSum: 177d319e2889c5c997dca6ce0aca3b6c88fe5bb5b3499aa47aac5158ac92b97b
+  IsDeleted: true
+- RecordId: e6e8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: slider_wrapper.min.js.map
+  CheckSum: 645da9a9c4deed7c58104944e9d48f0ef84c034578df19dee9ba1e4791358e11
+  IsDeleted: false
+- RecordId: e742d536-05dc-f011-8543-7c1e5254ad46
+  DisplayName: unorm.min.js
+  CheckSum: 1623c71d80a1b35394dbc6c1ad132a0699150c189e6e978086b085195a57111d
+  IsDeleted: false
+- RecordId: e797d23c-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-tcl.min.js
+  CheckSum: 1996262bed9dad93be497b00694aa10e498e3a773069c0a3b56c570b122561d4
+  IsDeleted: false
+- RecordId: e842d536-05dc-f011-8543-7c1e5254ad46
+  DisplayName: slider.js
+  CheckSum: f73c1a6d71c5752a8c75d7a2ca26f601232c524ef2576177b4722ea6fbe503ef
+  IsDeleted: false
+- RecordId: e913a732-05dc-f011-8543-7c1e5254af8c
+  DisplayName: MathJax_SansSerif-Bold.woff
+  CheckSum: 867b69aeb317fc52b8eb8f5b3d0ba0e831e4affc53d0d238dc7d4e1fe57b576f
   IsDeleted: false
 - RecordId: e95ec53e-e9db-f011-8543-7c1e5254af8c
   DisplayName: MathJax_Main-Bold.woff
   CheckSum: 2df5dbc4a7647a8df4c5856886e9a4a90bdf1a9fcfb4d8d8aeeb0e93e0ae0361
+  IsDeleted: true
+- RecordId: ea3fb54d-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lt.min.js
+  CheckSum: 97045978ed3720275e30e4565960a5c29f63baed231a38e0eea85ed12d61543a
+  IsDeleted: false
+- RecordId: ea42d536-05dc-f011-8543-7c1e5254ad46
+  DisplayName: progress.min.js
+  CheckSum: 0a8ea538ec7142f80463928911e00dfd4953a564a60d3ae16256916c4fe3bec2
+  IsDeleted: false
+- RecordId: eafc0035-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lang-xq.min.js
+  CheckSum: 6006b42f0c0762e0b18c657ffe4f9b05570a4606a6cbbbdb8a6655a9e57bbae4
   IsDeleted: false
 - RecordId: eb21627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: gc-subway-fr.html
   CheckSum: f3de8e21300a85160c8e8adfab89d7cd3979b1e7047d37ef3ae2765a766164f9
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: eb80fe3e-e9db-f011-8543-7c1e5254ad46
   DisplayName: lang-proto.js
   CheckSum: e50ff0bd3a61c30b5d8fdf7a2d2c62e6d1ef2947a2a2d170e8706ade2bae68be
+  IsDeleted: true
+- RecordId: ec42d536-05dc-f011-8543-7c1e5254ad46
+  DisplayName: v8.0-fr.html
+  CheckSum: 106f70731a00b5e72d9f78259fc876a91062a7b4d07a414aa676a1142ea28d78
+  IsDeleted: false
+- RecordId: ece8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: tableparser.js
+  CheckSum: b75081c564eb9da6c9470731c89b69e3fe394b3068a50bed074240dcecd1d063
   IsDeleted: false
 - RecordId: ecea7541-e9db-f011-8543-7ced8de0923c
   DisplayName: glyphicons-halflings-regular.ttf
   CheckSum: 9190cf3c34aa2f3ba6eb4c7bf810dcd88f29fac7a08fdbd9ae79a70e0f328a4b
+  IsDeleted: true
+- RecordId: ed42d536-05dc-f011-8543-7c1e5254ad46
+  DisplayName: slider_wrapper.min.js
+  CheckSum: b6e6adf6531a47b6bbe0919d1f822e67d08deefcd59c5fd0e383cc9f6edc745d
   IsDeleted: false
 - RecordId: edea7541-e9db-f011-8543-7ced8de0923c
   DisplayName: sig-blk-fr.svg
   CheckSum: fd71b5de8c54e923270941adfb1496f02c3700d6a34e59993cd4c5206a0778e3
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: edf45578-e9db-f011-8543-7ced8de0923c
   DisplayName: messages-ie.min.css
   CheckSum: 141321b226acc7cf673c6ba06a00315ce7886da5c7adeca6d04e67833a3c890f
+  IsDeleted: true
+- RecordId: ee42d536-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-hs.js
+  CheckSum: 784342866282bcbefb01fd553594fd63f4e07d53f450a968692c2612de0df46e
+  IsDeleted: false
+- RecordId: eee8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: datalist_dynamic.min.js.map
+  CheckSum: b24b22e9d040479a141d4e0c105296d99b7e752989e995d3cd613b2b37447ffa
   IsDeleted: false
 - RecordId: eef45578-e9db-f011-8543-7ced8de0923c
   DisplayName: th.min.js
   CheckSum: d6a954111f5eadf31eb9b868bf747c601bdc2a63ef873c726618a732bcfca9f8
+  IsDeleted: true
+- RecordId: efaca526-05dc-f011-8543-7c1e5254af8c
+  DisplayName: MathJax_Vector-Regular.woff
+  CheckSum: 76ca1318243900e7beaac06774ef42bbac9224cb6dd83acf8c279f67fcebfff2
   IsDeleted: false
 - RecordId: eff45578-e9db-f011-8543-7ced8de0923c
   DisplayName: de.js
   CheckSum: f7a92220eb1562cdc3897a06b77e533ad04d9936af5b2cb8d8ac28d244bc157e
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: f021627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: implementing.html
   CheckSum: 7769f6c3c7f7d009557bb580ab0e869417bd99197ebff164cb6c3dff0453dce1
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: f06a234c-e9db-f011-8543-7c1e5254af8c
   DisplayName: tblfilter-en.html
   CheckSum: 27a8985e8468026106fcb2ed0c71faa8b717cfbb078695a4227f4f8bbc526383
+  IsDeleted: true
+- RecordId: f0e8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: lang-vb.min.js
+  CheckSum: 688f32469fcf19e6705f612e2f24faf47b2a1714b76467a77c7458883d234730
   IsDeleted: false
 - RecordId: f121627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: slider.min.js.map
   CheckSum: 1e3117357eace14b99542120dae383d0100c531ed60d62f35aeb96f426526d34
+  IsDeleted: true
+- RecordId: f190e15a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: fieldflow-en.html
+  CheckSum: 6af2c11b6d55faf2342ac179703e15af1ccb8ef2e9c4f5fda5b295e03fa22696
+  IsDeleted: false
+- RecordId: f1e8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: patches-en.html
+  CheckSum: 98d3280056bbed109c251fb5104e0f7c60a2f3631b62f38d5ddf58d6ec14c70c
   IsDeleted: false
 - RecordId: f221627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: en.js
   CheckSum: 5e5d33709a098fcf0ac8e6fb2d03f1132d9695cb244a59d54e5c8d4737c53d75
+  IsDeleted: true
+- RecordId: f290e15a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: data-json-doc-fr.html
+  CheckSum: 1fdebbc7bd3f26d76ff56a0d259011d3bea7a2601218550440105a8f9e36f360
+  IsDeleted: false
+- RecordId: f2e8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: data-json-en.html
+  CheckSum: b07308cc33d8da9bd28ed89121740598b62f7e3d13bee124b7cd9bc0df0a2a26
   IsDeleted: false
 - RecordId: f321627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: ja.js
   CheckSum: 97250db1b34d0dfc920a392880dcd3e6dc57b36bdd53de73046f20765440da83
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: f386e753-e9db-f011-8543-7ced8de0923c
   DisplayName: nl.js
   CheckSum: 821bc42c99eccd06a7d374a4fc22f216d5ac619783af0695b9e66708dfe70542
+  IsDeleted: true
+- RecordId: f490e15a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: meter.min.js.map
+  CheckSum: 86c670972279ca92413a0bae8528944068b7cc038335b6f9790704eef8730caa
+  IsDeleted: false
+- RecordId: f524dd54-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-wiki.min.js
+  CheckSum: b6db1910005f2b34d9fe3f7303e2b40721f15a60cb33e75ed259e8cac15ca7d9
+  IsDeleted: false
+- RecordId: f55bc717-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-dart.min.js
+  CheckSum: d2e78f468faeb449df6dd1d5e02183dcc4e26010b0c7ff3f7e74fa22220b2d4d
+  IsDeleted: false
+- RecordId: f590e15a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: json-fr.html
+  CheckSum: ea461f288396fb5cf6fe0bf8655a3bc0a2d5967f9021190beaf2262999eeb472
+  IsDeleted: false
+- RecordId: f5e8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: chatwizard-json-en.html
+  CheckSum: 8bc9091c6833bf86a72f2bc246cd8ea577d8355b4abb1a4eb91ef08d18d365c9
+  IsDeleted: false
+- RecordId: f65bc717-05dc-f011-8543-7c1e5254ad46
+  DisplayName: package.json
+  CheckSum: 44fc3265ffcb3ce0226b060268386b3ff05015fa7bf511792ec075567fb95709
   IsDeleted: false
 - RecordId: f680fe3e-e9db-f011-8543-7c1e5254ad46
   DisplayName: jquery.dataTables.js
   CheckSum: 1967497fbaeda11502fc8e3fc11c235304e491608b61b776c485349fc8825097
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: f6b4044b-e9db-f011-8543-7c1e5254ad46
   DisplayName: test.min.js.map
   CheckSum: f5a88d70bed049da31852f15cad53d251c66f3cc3acc9ca3f3a160169d24ba1e
+  IsDeleted: true
+- RecordId: f6e8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: es.min.js
+  CheckSum: 305ab77448078785da9ee9799e6d068824df415d9151b9a0586a2410c0359ded
   IsDeleted: false
 - RecordId: f721627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: geomap-en.html
   CheckSum: e1a21efc7b90ac61ae9f154b437ec1c050afe3435fd50c0e072a324be0a09cb4
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: f780fe3e-e9db-f011-8543-7c1e5254ad46
   DisplayName: mathml.css
   CheckSum: 98cc6436756a14ae5447e208b04aa2e4cf593a1ddcc89b10308d3723c7bdc382
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: f7b4044b-e9db-f011-8543-7c1e5254ad46
   DisplayName: linkedin.svg
   CheckSum: 6f82c27a47216fc9e5cadaf113f4843932f585da92f1a704d4bade5340ee5b46
+  IsDeleted: true
+- RecordId: f7d0d128-05dc-f011-8543-6045bd5c4d94
+  DisplayName: gc-table-fr.html
+  CheckSum: 20ed1471c126fb53db726831fdf2ab713415842e7a59d948ba8e83c066f970c1
+  IsDeleted: false
+- RecordId: f7e8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: bg.js
+  CheckSum: e40b3fdc5d3c7c6541a9d79fa89ffbdb2b50b83a3404a82387d4f04230fbf0be
   IsDeleted: false
 - RecordId: f7f45578-e9db-f011-8543-7ced8de0923c
   DisplayName: ja.min.js
   CheckSum: 6b36097c5110bf02f78564dd9c407e27ef0c0167f3ae55d59635eea97fe1ce55
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: f821627e-e9db-f011-8543-7c1e5254af8c
   DisplayName: MathJax_Fraktur-Regular.woff
   CheckSum: 5e7bb1400f52b695afbf6869a7db167651282766dee06bd38d22565699c88fe3
+  IsDeleted: true
+- RecordId: f8e8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: tr.js
+  CheckSum: c207050ac64ae98e905c9e72ebd9251d74888b7d47e4a4ae088efb73fc038e02
   IsDeleted: false
 - RecordId: f900c632-e9db-f011-8543-7c1e5254af8c
   DisplayName: sp-bg-2.jpg
   CheckSum: 8b12399999f98f86889f8d0602adffb34a28d6e67b3026d3a7b960e7ba37e5b1
+  IsDeleted: true
+- RecordId: f90b4945-05dc-f011-8543-7c1e5254af8c
+  DisplayName: datepicker.min.js.map
+  CheckSum: 66b9a40b8262c9e16b8bd82e1c41febca954ee98ea9b9f73b651a98348c6c4a0
+  IsDeleted: false
+- RecordId: f9e8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: fr.js
+  CheckSum: 3b4da591eab14a71e787d9d44da6105bdfa2f8a97677cb83cd8bb3823fbfb121
   IsDeleted: false
 - RecordId: fa48c338-e9db-f011-8543-7c1e5254af8c
   DisplayName: jquery.dataTables.min.js
   CheckSum: 1f7aa2ae64a4ac33fa97775156963f71f7c3a676a242f321de7a9f75cb629b67
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: fa86e753-e9db-f011-8543-7ced8de0923c
   DisplayName: lang-clj.js
   CheckSum: f31812340995710b9063a2f5171689475fdbb43e9eef7695e8755653639b2740
+  IsDeleted: true
+- RecordId: fae8c067-05dc-f011-8543-6045bd5c4d94
+  DisplayName: test-case-1.html
+  CheckSum: 30155a96c4ccf3bd27e8ade99778ea2b2be344badbc3c11535cc7387c88d6e8d
+  IsDeleted: false
+- RecordId: fb48e24e-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-sql.js
+  CheckSum: e8487b075ba59ba0dd0920d929244ffd496448365d54f2d57faa1a6816cf3d4e
+  IsDeleted: false
+- RecordId: fc559d24-05dc-f011-8543-7c1e5254ad46
+  DisplayName: mathml.css
+  CheckSum: 05cc12cfd2b039cdbc316d79eea86769b39f2a9109550ff8e91216076168f4da
+  IsDeleted: false
+- RecordId: fc90e15a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: pt-BR.min.js
+  CheckSum: 4ab6bdcc5f2948a07cd94009559eab6544eeebba88f5f493f9d031416ae87730
+  IsDeleted: false
+- RecordId: fd90e15a-05dc-f011-8543-7c1e5254ad46
+  DisplayName: ja.min.js
+  CheckSum: 2c0fcf40c98d5d86220ab5ccc484d5d902a20df850b51a480845e91b569ae46e
+  IsDeleted: false
+- RecordId: fdb8e948-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-erlang.min.js
+  CheckSum: aa461418236caf56c8851560b19af24262ac3988e491fa0bde5d994e9ceb35cb
+  IsDeleted: false
+- RecordId: fe559d24-05dc-f011-8543-7c1e5254ad46
+  DisplayName: lang-proto.js
+  CheckSum: e514f526b72b0af204306cd7102d6061c3d7bae4b1b2888cd2d5929f2a07bf84
+  IsDeleted: false
+- RecordId: fe6b8a47-05dc-f011-8543-6045bd5c4d94
+  DisplayName: jsonpointer.min.js
+  CheckSum: 40afb3eb5b0b1e734aac40908958ed5126595a5b716ece04b04bc79bf52dd2c1
   IsDeleted: false

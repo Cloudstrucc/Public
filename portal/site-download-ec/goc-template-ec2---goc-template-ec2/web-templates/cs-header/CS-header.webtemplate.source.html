@@ -542,6 +542,362 @@ select.form-control.form-select {
   cursor: pointer !important;
 }
 
+/* AGGRESSIVE - Force all form controls to full width */
+form .control {
+  display: block !important;
+  width: 100% !important;
+}
+
+form .control input.form-control,
+form .control textarea.form-control,
+form .control select.form-control {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+}
+
+/* Override inline styles */
+input.form-control[style],
+textarea.form-control[style],
+select.form-control[style] {
+  width: 100% !important;
+}
+
+/* Target by ID pattern */
+input[id*="cs_"],
+textarea[id*="cs_"],
+select[id*="cs_"] {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+/* Better form field styling */
+.control input.form-control,
+.control textarea.form-control,
+.control select.form-control {
+  width: 100% !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  min-height: 38px !important;
+}
+
+.control input.form-control:focus,
+.control textarea.form-control:focus,
+.control select.form-control:focus {
+  border-color: #2b4380 !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(43,67,128,0.25) !important;
+}
+
+/* Labels styling */
+.entity-form label,
+.entityform label {
+  font-weight: 600 !important;
+  margin-bottom: 5px !important;
+  display: block !important;
+}
+
+/* Required field indicator (red asterisk) */
+.entity-form label .required,
+.entityform label .required {
+  color: #d9534f !important;
+}
+
+/* COMPLETE FIX - Entity Form Fields */
+
+/* Form container full width */
+.entity-form,
+.entityform,
+.crmEntityFormView {
+  width: 100% !important;
+}
+
+.entity-form table,
+.entityform table,
+.crmEntityFormView table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.entity-form td,
+.entityform td,
+.crmEntityFormView td {
+  width: 100% !important;
+  padding: 10px 15px !important;
+}
+
+/* Labels */
+.entity-form .table-info label {
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+  font-size: 16px !important;
+  color: #333 !important;
+}
+
+/* Control wrapper */
+.entity-form .control,
+.entityform .control,
+.crmEntityFormView .control {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Standard inputs - full width */
+.entity-form .control input.form-control:not(.lookup),
+.entity-form .control textarea.form-control,
+.entity-form .control select.form-control {
+  width: 100% !important;
+  max-width: 100% !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  min-height: 38px !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+
+/* Focus states */
+.entity-form .control input.form-control:focus,
+.entity-form .control textarea.form-control:focus,
+.entity-form .control select.form-control:focus {
+  border-color: #2b4380 !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(43,67,128,0.25) !important;
+}
+
+/* === LOOKUP FIELD FIX === */
+.entity-form .control .input-group,
+.entityform .control .input-group,
+.crmEntityFormView .control .input-group {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100% !important;
+  position: relative !important;
+  gap: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Lookup input - flexible width */
+.entity-form .control .input-group input.lookup {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  border: 1px solid #ccc !important;
+  border-right: none !important;
+  border-radius: 4px 0 0 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  min-height: 38px !important;
+  height: 38px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+/* Hide duplicate lookup input if present */
+.entity-form .control .input-group input[type="hidden"] {
+  display: none !important;
+}
+
+/* Lookup buttons - fixed width on right */
+.entity-form .control .input-group .btn {
+  flex: 0 0 44px !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-left: none !important;
+  color: white !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0 !important;
+  cursor: pointer !important;
+}
+
+/* Last button (launch) gets right border radius */
+.entity-form .control .input-group .btn.launchentitylookup {
+  border-radius: 0 4px 4px 0 !important;
+}
+
+/* Button hover */
+.entity-form .control .input-group .btn:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+}
+
+/* Show only icons in buttons */
+.entity-form .control .input-group .btn .fa,
+.entity-form .control .input-group .btn [class*="fa-"] {
+  font-size: 16px !important;
+  color: white !important;
+  display: block !important;
+}
+
+/* Hide button text */
+.entity-form .control .input-group .btn .visually-hidden,
+.entity-form .control .input-group .btn .sr-only {
+  display: none !important;
+}
+
+/* Hide text-muted placeholder */
+.entity-form .control .input-group .text-muted {
+  display: none !important;
+}
+
+/* === DATETIME FIELD FIX === */
+
+/* Hide the hidden datetime input */
+.entity-form .control input.datetime[data-ui="datetimepicker"] {
+  display: none !important;
+}
+
+/* Datetime picker container */
+.entity-form .control .datetimepicker,
+.entityform .control .datetimepicker,
+.crmEntityFormView .control .datetimepicker {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100% !important;
+  position: relative !important;
+  gap: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Datetime input - flexible width */
+.entity-form .control .datetimepicker input.form-control {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  border: 1px solid #ccc !important;
+  border-right: none !important;
+  border-radius: 4px 0 0 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  min-height: 38px !important;
+  height: 38px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+/* Calendar button - fixed width on right */
+.entity-form .control .datetimepicker .input-group-addon {
+  flex: 0 0 44px !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-left: none !important;
+  color: white !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 4px 4px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+}
+
+.entity-form .control .datetimepicker .input-group-addon:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+}
+
+.entity-form .control .datetimepicker .input-group-addon .fa {
+  font-size: 16px !important;
+  color: white !important;
+}
+
+/* === SUBMIT BUTTON === */
+.entity-form .submit-btn,
+.entity-form .actions .btn-primary {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  color: white !important;
+  padding: 10px 24px !important;
+  border-radius: 4px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+}
+
+.entity-form .submit-btn:hover,
+.entity-form .actions .btn-primary:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 992px) {
+  .entity-form .control input.form-control,
+  .entity-form .control textarea.form-control,
+  .entity-form .control select.form-control,
+  .entity-form .control .input-group input.lookup,
+  .entity-form .control .datetimepicker input.form-control {
+    min-height: 44px !important;
+    height: 44px !important;
+    font-size: 16px !important;
+  }
+  
+  .entity-form .control .input-group .btn,
+  .entity-form .control .datetimepicker .input-group-addon {
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    width: 48px !important;
+    min-width: 48px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .entity-form td {
+    padding: 10px 5px !important;
+  }
+  
+  .entity-form .control input.form-control,
+  .entity-form .control textarea.form-control,
+  .entity-form .control select.form-control,
+  .entity-form .control .input-group input.lookup,
+  .entity-form .control .datetimepicker input.form-control {
+    min-height: 48px !important;
+    height: 48px !important;
+  }
+  
+  .entity-form .control .input-group .btn,
+  .entity-form .control .datetimepicker .input-group-addon {
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    width: 52px !important;
+    min-width: 52px !important;
+  }
+  
+  .entity-form .control .input-group .btn .fa,
+  .entity-form .control .datetimepicker .input-group-addon .fa {
+    font-size: 18px !important;
+  }
+  
+  .entity-form .submit-btn,
+  .entity-form .actions .btn-primary {
+    width: 100% !important;
+    display: block !important;
+  }
+}
+
 </style>
 
 <nav>
