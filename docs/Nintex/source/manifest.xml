@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xsi:type="TaskPaneApp">
+
+  <!-- Basic Identity -->
+  <Id>ec-nintex-esign-addin-00001</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Elections Canada - Platform Engineering Team</ProviderName>
+  <DefaultLocale>en-CA</DefaultLocale>
+  <DisplayName DefaultValue="Nintex E-Sign"/>
+  <Description DefaultValue="Insert signature fields and send documents for electronic signature via Nintex AssureSign."/>
+  
+  <!-- Icons -->
+  <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
+  
+  <SupportUrl DefaultValue="https://support.elections.ca"/>
+  
+  <AppDomains>
+    <AppDomain>https://localhost:3000</AppDomain>
+  </AppDomains>
+  
+  <Hosts>
+    <Host Name="Document"/>
+  </Hosts>
+  
+  <Requirements>
+    <Sets>
+      <Set Name="WordApi" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+  
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/>
+  </DefaultSettings>
+  
+  <Permissions>ReadWriteDocument</Permissions>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Document">
+        <DesktopFormFactor>
+          
+          <FunctionFile resid="Commands.Url"/>
+          
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <OfficeTab id="TabHome">
+              <Group id="NintexGroup" insertAfterMso="GroupEditing">
+                <Label resid="GroupLabel"/>
+                <Icon>
+                  <bt:Image size="16" resid="Icon.16x16"/>
+                  <bt:Image size="32" resid="Icon.32x32"/>
+                  <bt:Image size="80" resid="Icon.80x80"/>
+                </Icon>
+                
+                <!-- Main Menu Button -->
+                <Control xsi:type="Menu" id="NintexMenu">
+                  <Label resid="MenuLabel"/>
+                  <Tooltip resid="MenuTooltip"/>
+                  <Supertip>
+                    <Title resid="MenuLabel"/>
+                    <Description resid="MenuTooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
+                  </Icon>
+                  
+                  <Items>
+                    <!-- Field Insertion -->
+                    <Item id="btnSignature">
+                      <Label resid="SignatureLabel"/>
+                      <Tooltip resid="SignatureTooltip"/>
+                      <Supertip>
+                        <Title resid="SignatureLabel"/>
+                        <Description resid="SignatureTooltip"/>
+                      </Supertip>
+                      <Icon>
+                        <bt:Image size="16" resid="SignatureIcon.16x16"/>
+                        <bt:Image size="32" resid="SignatureIcon.32x32"/>
+                        <bt:Image size="80" resid="SignatureIcon.80x80"/>
+                      </Icon>
+                      <Action xsi:type="ExecuteFunction">
+                        <FunctionName>insertSignature</FunctionName>
+                      </Action>
+                    </Item>
+                    
+                    <Item id="btnInitials">
+                      <Label resid="InitialsLabel"/>
+                      <Tooltip resid="InitialsTooltip"/>
+                      <Supertip>
+                        <Title resid="InitialsLabel"/>
+                        <Description resid="InitialsTooltip"/>
+                      </Supertip>
+                      <Icon>
+                        <bt:Image size="16" resid="InitialsIcon.16x16"/>
+                        <bt:Image size="32" resid="InitialsIcon.32x32"/>
+                        <bt:Image size="80" resid="InitialsIcon.80x80"/>
+                      </Icon>
+                      <Action xsi:type="ExecuteFunction">
+                        <FunctionName>insertInitials</FunctionName>
+                      </Action>
+                    </Item>
+                    
+                    <Item id="btnDate">
+                      <Label resid="DateLabel"/>
+                      <Tooltip resid="DateTooltip"/>
+                      <Supertip>
+                        <Title resid="DateLabel"/>
+                        <Description resid="DateTooltip"/>
+                      </Supertip>
+                      <Icon>
+                        <bt:Image size="16" resid="DateIcon.16x16"/>
+                        <bt:Image size="32" resid="DateIcon.32x32"/>
+                        <bt:Image size="80" resid="DateIcon.80x80"/>
+                      </Icon>
+                      <Action xsi:type="ExecuteFunction">
+                        <FunctionName>insertDate</FunctionName>
+                      </Action>
+                    </Item>
+                    
+                    <Item id="btnName">
+                      <Label resid="NameLabel"/>
+                      <Tooltip resid="NameTooltip"/>
+                      <Supertip>
+                        <Title resid="NameLabel"/>
+                        <Description resid="NameTooltip"/>
+                      </Supertip>
+                      <Icon>
+                        <bt:Image size="16" resid="NameIcon.16x16"/>
+                        <bt:Image size="32" resid="NameIcon.32x32"/>
+                        <bt:Image size="80" resid="NameIcon.80x80"/>
+                      </Icon>
+                      <Action xsi:type="ExecuteFunction">
+                        <FunctionName>insertName</FunctionName>
+                      </Action>
+                    </Item>
+                    
+                    <Item id="btnCheckbox">
+                      <Label resid="CheckboxLabel"/>
+                      <Tooltip resid="CheckboxTooltip"/>
+                      <Supertip>
+                        <Title resid="CheckboxLabel"/>
+                        <Description resid="CheckboxTooltip"/>
+                      </Supertip>
+                      <Icon>
+                        <bt:Image size="16" resid="CheckboxIcon.16x16"/>
+                        <bt:Image size="32" resid="CheckboxIcon.32x32"/>
+                        <bt:Image size="80" resid="CheckboxIcon.80x80"/>
+                      </Icon>
+                      <Action xsi:type="ExecuteFunction">
+                        <FunctionName>insertCheckbox</FunctionName>
+                      </Action>
+                    </Item>
+                    
+                    <Item id="btnText">
+                      <Label resid="TextLabel"/>
+                      <Tooltip resid="TextTooltip"/>
+                      <Supertip>
+                        <Title resid="TextLabel"/>
+                        <Description resid="TextTooltip"/>
+                      </Supertip>
+                      <Icon>
+                        <bt:Image size="16" resid="TextIcon.16x16"/>
+                        <bt:Image size="32" resid="TextIcon.32x32"/>
+                        <bt:Image size="80" resid="TextIcon.80x80"/>
+                      </Icon>
+                      <Action xsi:type="ExecuteFunction">
+                        <FunctionName>insertText</FunctionName>
+                      </Action>
+                    </Item>
+                    
+                    <!-- Separator -->
+                    <Item id="sep1">
+                      <Label resid="SepLabel"/>
+                      <Icon>
+                        <bt:Image size="16" resid="Icon.16x16"/>
+                        <bt:Image size="32" resid="Icon.32x32"/>
+                        <bt:Image size="80" resid="Icon.80x80"/>
+                      </Icon>
+                      <Action xsi:type="ExecuteFunction">
+                        <FunctionName>noOp</FunctionName>
+                      </Action>
+                    </Item>
+                    
+                    <!-- Manage Fields -->
+                    <Item id="btnManageFields">
+                      <Label resid="ManageFieldsLabel"/>
+                      <Tooltip resid="ManageFieldsTooltip"/>
+                      <Supertip>
+                        <Title resid="ManageFieldsLabel"/>
+                        <Description resid="ManageFieldsTooltip"/>
+                      </Supertip>
+                      <Icon>
+                        <bt:Image size="16" resid="ManageIcon.16x16"/>
+                        <bt:Image size="32" resid="ManageIcon.32x32"/>
+                        <bt:Image size="80" resid="ManageIcon.80x80"/>
+                      </Icon>
+                      <Action xsi:type="ShowTaskpane">
+                        <TaskpaneId>ManageFieldsPane</TaskpaneId>
+                        <SourceLocation resid="Taskpane.Url"/>
+                      </Action>
+                    </Item>
+                    
+                    <!-- Send Envelope -->
+                    <Item id="btnSendEnvelope">
+                      <Label resid="SendLabel"/>
+                      <Tooltip resid="SendTooltip"/>
+                      <Supertip>
+                        <Title resid="SendLabel"/>
+                        <Description resid="SendTooltip"/>
+                      </Supertip>
+                      <Icon>
+                        <bt:Image size="16" resid="SendIcon.16x16"/>
+                        <bt:Image size="32" resid="SendIcon.32x32"/>
+                        <bt:Image size="80" resid="SendIcon.80x80"/>
+                      </Icon>
+                      <Action xsi:type="ShowTaskpane">
+                        <TaskpaneId>SendEnvelopePane</TaskpaneId>
+                        <SourceLocation resid="SendPane.Url"/>
+                      </Action>
+                    </Item>
+                    
+                  </Items>
+                </Control>
+                
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+          
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon.16x16" DefaultValue="https://localhost:3000/assets/icon-16.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3000/assets/icon-32.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3000/assets/icon-80.png"/>
+        <bt:Image id="SignatureIcon.16x16" DefaultValue="https://localhost:3000/assets/signature-16.png"/>
+        <bt:Image id="SignatureIcon.32x32" DefaultValue="https://localhost:3000/assets/signature-32.png"/>
+        <bt:Image id="SignatureIcon.80x80" DefaultValue="https://localhost:3000/assets/signature-80.png"/>
+        <bt:Image id="InitialsIcon.16x16" DefaultValue="https://localhost:3000/assets/initials-16.png"/>
+        <bt:Image id="InitialsIcon.32x32" DefaultValue="https://localhost:3000/assets/initials-32.png"/>
+        <bt:Image id="InitialsIcon.80x80" DefaultValue="https://localhost:3000/assets/initials-80.png"/>
+        <bt:Image id="DateIcon.16x16" DefaultValue="https://localhost:3000/assets/date-16.png"/>
+        <bt:Image id="DateIcon.32x32" DefaultValue="https://localhost:3000/assets/date-32.png"/>
+        <bt:Image id="DateIcon.80x80" DefaultValue="https://localhost:3000/assets/date-80.png"/>
+        <bt:Image id="NameIcon.16x16" DefaultValue="https://localhost:3000/assets/name-16.png"/>
+        <bt:Image id="NameIcon.32x32" DefaultValue="https://localhost:3000/assets/name-32.png"/>
+        <bt:Image id="NameIcon.80x80" DefaultValue="https://localhost:3000/assets/name-80.png"/>
+        <bt:Image id="CheckboxIcon.16x16" DefaultValue="https://localhost:3000/assets/checkbox-16.png"/>
+        <bt:Image id="CheckboxIcon.32x32" DefaultValue="https://localhost:3000/assets/checkbox-32.png"/>
+        <bt:Image id="CheckboxIcon.80x80" DefaultValue="https://localhost:3000/assets/checkbox-80.png"/>
+        <bt:Image id="TextIcon.16x16" DefaultValue="https://localhost:3000/assets/text-16.png"/>
+        <bt:Image id="TextIcon.32x32" DefaultValue="https://localhost:3000/assets/text-32.png"/>
+        <bt:Image id="TextIcon.80x80" DefaultValue="https://localhost:3000/assets/text-80.png"/>
+        <bt:Image id="ManageIcon.16x16" DefaultValue="https://localhost:3000/assets/manage-16.png"/>
+        <bt:Image id="ManageIcon.32x32" DefaultValue="https://localhost:3000/assets/manage-32.png"/>
+        <bt:Image id="ManageIcon.80x80" DefaultValue="https://localhost:3000/assets/manage-80.png"/>
+        <bt:Image id="SendIcon.16x16" DefaultValue="https://localhost:3000/assets/send-16.png"/>
+        <bt:Image id="SendIcon.32x32" DefaultValue="https://localhost:3000/assets/send-32.png"/>
+        <bt:Image id="SendIcon.80x80" DefaultValue="https://localhost:3000/assets/send-80.png"/>
+      </bt:Images>
+      
+      <bt:Urls>
+        <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
+        <bt:Url id="SendPane.Url" DefaultValue="https://localhost:3000/send-envelope.html"/>
+      </bt:Urls>
+      
+      <bt:ShortStrings>
+        <bt:String id="GroupLabel" DefaultValue="Nintex"/>
+        <bt:String id="MenuLabel" DefaultValue="E-Sign"/>
+        <bt:String id="SignatureLabel" DefaultValue="Signature"/>
+        <bt:String id="InitialsLabel" DefaultValue="Initials"/>
+        <bt:String id="DateLabel" DefaultValue="Date Field"/>
+        <bt:String id="NameLabel" DefaultValue="Name Field"/>
+        <bt:String id="CheckboxLabel" DefaultValue="Checkbox"/>
+        <bt:String id="TextLabel" DefaultValue="Text Input"/>
+        <bt:String id="SepLabel" DefaultValue="─────────"/>
+        <bt:String id="ManageFieldsLabel" DefaultValue="Manage Fields"/>
+        <bt:String id="SendLabel" DefaultValue="Send for Signature"/>
+      </bt:ShortStrings>
+      
+      <bt:LongStrings>
+        <bt:String id="MenuTooltip" DefaultValue="Insert signature fields and send for electronic signature"/>
+        <bt:String id="SignatureTooltip" DefaultValue="Insert a signature capture field"/>
+        <bt:String id="InitialsTooltip" DefaultValue="Insert an initials field"/>
+        <bt:String id="DateTooltip" DefaultValue="Insert an auto-populated date field"/>
+        <bt:String id="NameTooltip" DefaultValue="Insert a full name field"/>
+        <bt:String id="CheckboxTooltip" DefaultValue="Insert a checkbox field"/>
+        <bt:String id="TextTooltip" DefaultValue="Insert a free-form text input field"/>
+        <bt:String id="ManageFieldsTooltip" DefaultValue="View and configure signature fields in this document"/>
+        <bt:String id="SendTooltip" DefaultValue="Send this document for electronic signature"/>
+      </bt:LongStrings>
+    </Resources>
+    
+  </VersionOverrides>
+</OfficeApp>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Envelope Status</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .status-filter {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      padding: 6px 12px;
+      border: 1px solid var(--neutral-30);
+      border-radius: 20px;
+      background: white;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .filter-btn:hover {
+      background: var(--neutral-20);
+    }
+    
+    .filter-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .envelope-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .envelope-card {
+      background: white;
+      border: 1px solid var(--neutral-30);
+      border-radius: 8px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .envelope-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .envelope-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .envelope-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    
+    .envelope-date {
+      font-size: 12px;
+      color: var(--neutral-60);
+    }
+    
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .status-draft { background: #f3f2f1; color: #605e5c; }
+    .status-pending { background: #fff4ce; color: #8a6914; }
+    .status-sent { background: #deecf9; color: #004578; }
+    .status-inprogress { background: #e5f2ff; color: #0078d4; }
+    .status-completed { background: #dff6dd; color: #107c10; }
+    .status-declined { background: #fde7e9; color: #a80000; }
+    .status-expired { background: #f3f2f1; color: #605e5c; }
+    
+    .envelope-signers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .signer-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--neutral-20);
+      border-radius: 16px;
+      font-size: 12px;
+    }
+    
+    .signer-chip.signed {
+      background: #dff6dd;
+    }
+    
+    .signer-chip.pending {
+      background: #fff4ce;
+    }
+    
+    .signer-status-icon {
+      font-size: 10px;
+    }
+    
+    .envelope-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .progress-bar {
+      flex: 1;
+      height: 6px;
+      background: var(--neutral-20);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--success);
+      transition: width 0.3s;
+    }
+    
+    .progress-text {
+      font-size: 11px;
+      color: var(--neutral-60);
+      white-space: nowrap;
+    }
+    
+    .envelope-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--neutral-20);
+    }
+    
+    .envelope-actions .btn {
+      flex: 1;
+      padding: 8px;
+      font-size: 12px;
+    }
+    
+    .cost-summary {
+      background: linear-gradient(135deg, #0078d4 0%, #004578 100%);
+      color: white;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .cost-summary h3 {
+      font-size: 12px;
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 4px;
+    }
+    
+    .cost-amount {
+      font-size: 28px;
+      font-weight: 600;
+    }
+    
+    .cost-detail {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      font-size: 12px;
+    }
+    
+    .notification-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: white;
+      border: 1px solid var(--neutral-30);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .notification-icon {
+      font-size: 20px;
+    }
+    
+    .notification-content {
+      flex: 1;
+    }
+    
+    .notification-title {
+      font-weight: 500;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+    
+    .notification-time {
+      font-size: 11px;
+      color: var(--neutral-60);
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--neutral-30);
+      margin-bottom: 16px;
+    }
+    
+    .tab {
+      padding: 12px 16px;
+      border: none;
+      background: none;
+      font-size: 14px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      color: var(--neutral-60);
+    }
+    
+    .tab:hover {
+      color: var(--neutral-90);
+    }
+    
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 500;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .empty-state-small {
+      text-align: center;
+      padding: 32px;
+      color: var(--neutral-60);
+    }
+    
+    .empty-state-small span {
+      font-size: 32px;
+      display: block;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Header -->
+    <header class="header">
+      <h1>📊 E-Sign Status</h1>
+      <p>Track your envelopes</p>
+    </header>
+    
+    <!-- Cost Summary Card -->
+    <div class="cost-summary">
+      <h3>Monthly Usage</h3>
+      <div class="cost-amount" id="monthlySpend">$0.00</div>
+      <div class="cost-detail">
+        <span><span id="envelopeCount">0</span> envelopes</span>
+        <span>Budget: $<span id="budgetLimit">500</span></span>
+      </div>
+      <div style="margin-top: 8px;">
+        <div class="progress-bar" style="background: rgba(255,255,255,0.3);">
+          <div class="progress-bar-fill" id="budgetProgress" style="width: 0%; background: white;"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('envelopes')">📄 Envelopes</button>
+      <button class="tab" onclick="switchTab('notifications')">🔔 Activity</button>
+    </div>
+    
+    <!-- Envelopes Tab -->
+    <div id="envelopesTab" class="tab-content active">
+      
+      <!-- Status Filter -->
+      <div class="status-filter">
+        <button class="filter-btn active" onclick="filterEnvelopes('all')">All</button>
+        <button class="filter-btn" onclick="filterEnvelopes('pending')">⏳ Pending</button>
+        <button class="filter-btn" onclick="filterEnvelopes('inprogress')">🔄 In Progress</button>
+        <button class="filter-btn" onclick="filterEnvelopes('completed')">✅ Completed</button>
+      </div>
+      
+      <!-- Envelope List -->
+      <div id="envelopeList" class="envelope-list">
+        <div class="empty-state-small">
+          <span>📭</span>
+          <p>No envelopes yet</p>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Notifications Tab -->
+    <div id="notificationsTab" class="tab-content">
+      <div id="notificationList">
+        <div class="empty-state-small">
+          <span>🔔</span>
+          <p>No recent activity</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Refresh Button -->
+    <section class="section" style="margin-top: 16px;">
+      <button class="btn btn-secondary btn-full" onclick="refreshData()">
+        🔄 Refresh
+      </button>
+    </section>
+    
+  </div>
+  
+  <!-- Envelope Detail Modal -->
+  <div id="envelopeModal" class="modal" style="display: none;">
+    <div class="modal-backdrop" onclick="closeEnvelopeModal()"></div>
+    <div class="modal-content" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3 id="modalEnvelopeName">Envelope Details</h3>
+        <button class="btn-close" onclick="closeEnvelopeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        
+        <div style="text-align: center; margin-bottom: 16px;">
+          <span id="modalStatusBadge" class="status-badge status-sent">SENT</span>
+        </div>
+        
+        <div class="summary-card" style="margin-bottom: 16px;">
+          <div class="summary-row">
+            <span class="summary-label">Created</span>
+            <span class="summary-value" id="modalCreatedDate">-</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Sent</span>
+            <span class="summary-value" id="modalSentDate">-</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Cost</span>
+            <span class="summary-value" id="modalCost">-</span>
+          </div>
+        </div>
+        
+        <h4 style="font-size: 13px; margin-bottom: 8px;">Signers</h4>
+        <div id="modalSignerList"></div>
+        
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeEnvelopeModal()">Close</button>
+        <button class="btn btn-primary" id="modalDownloadBtn" onclick="downloadSignedDoc()">
+          📥 Download
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="status.js"></script>
+</body>
+</html>
