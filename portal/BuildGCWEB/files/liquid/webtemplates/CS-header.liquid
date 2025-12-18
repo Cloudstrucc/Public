@@ -6,67 +6,542 @@
 {% if user %}
 
 <style>
+/* Logo positioning */
+#wb-bnr {
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+
+#wb-bnr .row {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+#wb-bnr .brand {
+  order: 1;
+}
+
+#wb-bnr .brand a {
+  display: inline-block;
+  line-height: 1;
+}
+
+#wb-bnr .brand img {
+  max-width: 100%;
+  height: auto;
+  max-height: 45px;
+  display: block;
+}
+
+#wb-lng {
+  order: 2;
+  padding-top: 5px;
+}
+
+/* Application bar styles */
 .application-bar {
   background-color: #38414d;
   color: #fff;
   margin-top: 0;
 }
+
 .application-bar-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .application-bar h2 a {
   color: #fff;
   text-decoration: none;
 }
+
 .application-bar h2 a:hover {
   text-decoration: underline;
 }
+
 .application-bar h2 {
   border: none;
   margin: 10px 0 8px;
 }
-.dropdown {
+
+/* Profile menu styles */
+.profile-menu {
   position: relative;
   display: inline-block;
   margin-left: auto;
 }
-.dropbtn {
+
+.profile-menu-toggle {
   background-color: transparent;
   color: #fff;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  font-size: 14px;
+  text-decoration: none;
 }
-.dropdown-content {
+
+.profile-menu-toggle:hover,
+.profile-menu-toggle:focus {
+  background-color: rgba(255,255,255,0.1);
+  color: #fff;
+  text-decoration: none;
+}
+
+.profile-menu-content {
   display: none;
   position: absolute;
   background-color: #38414d;
-  min-width: 160px;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
   z-index: 1000;
-  top: 100%;
   right: 0;
+  top: 100%;
+  margin-top: 2px;
 }
-.dropdown-content a {
-  color: #fff;
+
+/* Show dropdown on hover OR focus */
+.profile-menu:hover .profile-menu-content,
+.profile-menu:focus-within .profile-menu-content {
+  display: block;
+}
+
+.profile-menu-content a {
+  color: white;
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
-.dropdown-content a:hover {
+
+.profile-menu-content a:last-child {
+  border-bottom: none;
+}
+
+.profile-menu-content a:hover {
   background-color: #4a5568;
+  color: #fff;
+  text-decoration: none;
 }
-.dropdown:hover .dropdown-content {
-  display: block;
+
+.profile-icon {
+  font-size: 16px;
 }
-.profile-favicon {
-  font-size: 18px;
-  vertical-align: middle;
+
+.profile-caret {
+  font-size: 12px;
+  margin-left: 4px;
 }
+
+/* Entity List Search Styling */
+.entitylist-search {
+  margin-bottom: 15px !important;
+}
+
+.entitylist-search .query.form-control {
+  border: 1px solid #ccc !important;
+  border-radius: 4px 0 0 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  height: 38px !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075) !important;
+}
+
+.entitylist-search .query.form-control:focus {
+  border-color: #2b4380 !important;
+  outline: 0 !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075), 0 0 0 0.2rem rgba(43,67,128,0.25) !important;
+}
+
+/* Search button styling */
+.entitylist-search .btn-default {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-radius: 0 4px 4px 0 !important;
+  color: white !important;
+  height: 38px !important;
+  padding: 8px 16px !important;
+  margin-left: -1px !important;
+}
+
+.entitylist-search .btn-default:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+  color: white !important;
+}
+
+.entitylist-search .btn-default .fa-search {
+  color: white !important;
+  font-size: 14px !important;
+}
+
+/* New Item button styling */
+.create-action.btn-primary,
+a.btn-primary.create-action {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-radius: 4px !important;
+  color: white !important;
+  padding: 8px 20px !important;
+  height: 38px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  margin-left: 10px !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.create-action.btn-primary:hover,
+a.btn-primary.create-action:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+  color: white !important;
+  text-decoration: none !important;
+}
+
+/* Override parent container */
+.view-toolbar.grid-actions {
+  display: block !important;
+  overflow: visible !important;
+}
+
+/* Force toolbar actions to display properly - override ALL floats and inline styles */
+.toolbar-actions,
+.float-end.toolbar-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  margin-bottom: 15px !important;
+  flex-wrap: wrap !important;
+  float: none !important;
+  clear: both !important;
+}
+
+/* Override BOTH search containers - target by multiple selectors */
+.toolbar-actions .view-search.input-group,
+.toolbar-actions .input-group.float-start.view-search,
+.toolbar-actions .entitylist-search {
+  display: flex !important;
+  flex: 0 1 350px !important;
+  min-width: 250px !important;
+  max-width: 350px !important;
+  float: none !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+/* Override button wrapper container */
+.toolbar-actions .input-group:has(.create-action),
+.toolbar-actions .input-group.float-start:has(.create-action) {
+  display: inline-flex !important;
+  float: none !important;
+  width: auto !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+}
+
+/* Search input - override inline styles */
+.entitylist-search .query.form-control,
+.toolbar-actions input.query.form-control[style] {
+  display: block !important;
+  width: 100% !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px 0 0 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  height: 38px !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075) !important;
+  float: none !important;
+  table-layout: auto !important;
+}
+
+.entitylist-search .query.form-control:focus {
+  border-color: #2b4380 !important;
+  outline: 0 !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075), 0 0 0 0.2rem rgba(43,67,128,0.25) !important;
+}
+
+/* Search button container - override inline styles */
+.entitylist-search .input-group-btn,
+.toolbar-actions .input-group-btn[style] {
+  display: flex !important;
+  align-items: center !important;
+  float: none !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+}
+
+/* Search button styling */
+.entitylist-search .btn-default,
+.toolbar-actions .btn-default[style] {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-radius: 0 4px 4px 0 !important;
+  color: white !important;
+  height: 38px !important;
+  padding: 8px 16px !important;
+  margin-left: -1px !important;
+  float: none !important;
+  flex-shrink: 0 !important;
+}
+
+.entitylist-search .btn-default:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+  color: white !important;
+}
+
+.entitylist-search .btn-default .fa-search {
+  color: white !important;
+  font-size: 14px !important;
+}
+
+/* New Item button styling - override all float classes */
+.create-action.btn-primary,
+a.btn-primary.float-end.create-action,
+.toolbar-actions .create-action {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-radius: 4px !important;
+  color: white !important;
+  padding: 8px 20px !important;
+  height: 38px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  float: none !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.create-action.btn-primary:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+  color: white !important;
+  text-decoration: none !important;
+}
+
+/* Hide "Search Results" text, keep icon */
+.entitylist-search .btn-default .visually-hidden {
+  display: none !important;
+}
+
+/* Force clear floats */
+.toolbar-actions::before,
+.toolbar-actions::after {
+  content: "" !important;
+  display: table !important;
+  clear: both !important;
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+  .toolbar-actions,
+  .float-end.toolbar-actions {
+    justify-content: flex-start !important;
+  }
+  
+  .toolbar-actions .view-search.input-group {
+    flex: 1 1 auto !important;
+    min-width: 200px !important;
+    max-width: 500px !important;
+  }
+}
+
+/* Mobile - full width stacking */
+@media (max-width: 768px) {
+  .toolbar-actions,
+  .float-end.toolbar-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  
+  .toolbar-actions .view-search.input-group,
+  .toolbar-actions .input-group.float-start.view-search {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+  
+  .toolbar-actions .input-group:has(.create-action) {
+    width: 100% !important;
+  }
+  
+  .create-action.btn-primary,
+  a.btn-primary.float-end.create-action {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+/* Entity List Filter Panel Styling */
+.entitylist-filter.content-panel.card {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.entitylist-filter .card-body {
+  padding: 20px;
+}
+
+/* Filter option groups - vertical stacking */
+.entitylist-filter-option-group {
+  margin-bottom: 20px;
+  display: block !important;
+}
+
+/* Filter labels - on top */
+.entitylist-filter-option-group-label {
+  display: block !important;
+  width: 100% !important;
+  margin-bottom: 8px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+}
+
+/* Filter inputs container */
+.entitylist-filter-option-group > ul {
+  display: block !important;
+  width: 100% !important;
+  margin-bottom: 0 !important;
+  padding-left: 0 !important;
+  list-style: none !important;
+}
+
+/* Hide the filter icon */
+.entitylist-filter-option-text .input-group-text {
+  display: none !important;
+}
+
+/* Filter input styling */
+.entitylist-filter-option {
+  list-style: none !important;
+  margin-bottom: 5px !important;
+}
+
+.entitylist-filter-option-text {
+  width: 100% !important;
+}
+
+.entitylist-filter-option-text .form-control,
+.entitylist-filter-option-text .form-select {
+  width: 100% !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  height: 38px !important;
+}
+
+.entitylist-filter-option-text .form-control:focus,
+.entitylist-filter-option-text .form-select:focus {
+  border-color: #2b4380 !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(43,67,128,0.25) !important;
+}
+
+/* FORCE CHECKBOXES TO SHOW - Very aggressive */
+.entitylist-filter-option-group-box-overflow {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.entitylist-filter-option .checkbox {
+  margin: 0 0 8px 0 !important;
+  display: block !important;
+  position: relative !important;
+  padding-left: 0 !important;
+}
+
+.entitylist-filter-option .checkbox label {
+  font-weight: normal !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 0 !important;
+  padding: 4px 0 !important;
+  font-size: 14px !important;
+  position: relative !important;
+  padding-left: 0 !important;
+}
+
+/* CRITICAL - Force checkbox input to be visible */
+.entitylist-filter-option .checkbox input[type="checkbox"],
+.entitylist-filter-option input[type="checkbox"],
+.entitylist-filter input[type="checkbox"] {
+  display: inline-block !important;
+  position: relative !important;
+  margin-right: 10px !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  appearance: auto !important;
+  -webkit-appearance: checkbox !important;
+  -moz-appearance: checkbox !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  clip: auto !important;
+  clip-path: none !important;
+  transform: none !important;
+  margin-left: 0 !important;
+  padding: 0 !important;
+  border: 1px solid #999 !important;
+  background-color: white !important;
+  z-index: 1 !important;
+}
+
+/* Checkbox checked state */
+.entitylist-filter input[type="checkbox"]:checked {
+  background-color: #2b4380 !important;
+  border-color: #2b4380 !important;
+}
+
+/* Apply button styling */
+.btn-entitylist-filter-submit {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  color: white !important;
+  padding: 8px 20px !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  margin-top: 15px !important;
+  cursor: pointer !important;
+}
+
+.btn-entitylist-filter-submit:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+  color: white !important;
+}
+
+/* Dropdown styling */
+select.form-control.form-select {
+  appearance: auto !important;
+  background-color: white !important;
+  cursor: pointer !important;
+}
+
 </style>
 
 <nav>
@@ -80,7 +555,18 @@
 <header>
   <div id="wb-bnr" class="container">
     <div class="row">
-      <section id="wb-lng" class="col-xs-3 col-sm-12 pull-right text-right">
+      <!-- Logo - comes first in DOM -->
+      <div class="col-xs-9 col-sm-5 col-md-4" property="publisher" typeof="GovernmentOrganization">
+        <a href="/" property="url">
+          <img src="/ec-logo.png" alt="Elections Canada" property="logo">
+          <span class="wb-inv"> / <span lang="fr">Élections Canada</span></span>
+        </a>
+        <meta property="name" content="Elections Canada">
+        <meta property="areaServed" typeof="Country" content="Canada">
+      </div>
+      
+      <!-- Language toggle -->
+      <section id="wb-lng" class="col-xs-3 col-sm-7 col-md-8 text-right">
         <h2 class="wb-inv">Language selection</h2>
         <ul class="list-inline mrgn-bttm-0">
           <li>
@@ -91,15 +577,6 @@
           </li>
         </ul>
       </section>
-      <div class="brand col-xs-9 col-sm-5 col-md-4" property="publisher" typeof="GovernmentOrganization">
-        <a href="/" property="url">
-          <img src="https://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/sig-blk-en.svg" alt="Government of Canada" property="logo">
-          <span class="wb-inv"> / <span lang="fr">Gouvernement du Canada</span></span>
-        </a>
-        <meta property="name" content="Government of Canada">
-        <meta property="areaServed" typeof="Country" content="Canada">
-        <link property="logo" href="https://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/wmms-blk.svg">
-      </div>
     </div>
   </div>
 </header>
@@ -107,42 +584,24 @@
 <section class="application-bar">
   <div class="container">
     <div class="application-bar-content">
-      <h2><a href="/">{{ snippets['PEPP/APP/TITLE'] | default: 'Political Entities Service Centre' }}</a></h2>
-      <div class="dropdown">
-        <a class="btn dropbtn dropdown-toggle" type="button" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fa fa-user"></i> {{ user.fullname }}
-        </a>
-        <div class="dropdown-menu dropdown-content" aria-labelledby="profileDropdown">
+      <h2><a href="/">{{ snippets['PEPP/APP/TITLE'] | default: '' }}</a></h2>
+      <div class="profile-menu">
+        <button class="profile-menu-toggle" tabindex="0">
+          <i class="fa fa-user profile-icon"></i>
+          <span>{{ user.fullname }}</span>
+          <i class="fa fa-caret-down profile-caret"></i>
+        </button>
+        <div class="profile-menu-content">
           {% assign weblink_set = weblinks["Profile Navigation"] %}
           {% for link in weblink_set.weblinks %}
             <a href="{{ link.url | h }}{{ request.query }}" title="{{ link.tooltip | h }}">{{ link.name | h }}</a>
           {% endfor %}
-          <a href="/Account/Login/LogOff?returnUrl=/" title="logout">Logout</a>
+          <a href="/Account/Login/LogOff?returnUrl=/" title="Logout">Logout</a>
         </div>
       </div>
     </div>
   </div>
 </section>
-
-<nav id="wb-bc" property="breadcrumb">
-  <h2 class="wb-inv">You are here:</h2>
-  <div class="container">
-    <ol class="breadcrumb" typeof="BreadcrumbList">
-      <li property="itemListElement" typeof="ListItem">
-        <a property="item" typeof="WebPage" href="/">
-          <span property="name">Home</span>
-        </a>
-        <meta property="position" content="1">
-      </li>
-      {% if page.title != 'Home' and page.adx_partialurl != '/' %}
-      <li property="itemListElement" typeof="ListItem">
-        <span property="name">{{ page.title }}</span>
-        <meta property="position" content="2">
-      </li>
-      {% endif %}
-    </ol>
-  </div>
-</nav>
 
 {% else %}
 
@@ -182,8 +641,12 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-6">
-        <a href="/" class="brand">
-          <img src="https://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/sig-blk-en.svg" alt="Government of Canada">
+        <a href="/" class="">
+          {% if user %}
+          <img src="/ec-logo.png" alt="Elections Canada">
+          {% else %}
+          <img src="/ec-logo-invert.png" alt="Elections Canada">
+          {% endif %}
         </a>
       </div>
       <div class="col-xs-6 text-right">
