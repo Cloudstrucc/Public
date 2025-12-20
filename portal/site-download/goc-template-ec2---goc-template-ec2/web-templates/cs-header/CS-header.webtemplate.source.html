@@ -385,6 +385,7 @@ a.btn-primary.float-end.create-action,
     justify-content: center !important;
   }
 }
+
 /* Entity List Filter Panel Styling */
 .entitylist-filter.content-panel.card {
   border: 1px solid #ddd;
@@ -571,6 +572,7 @@ select[id*="cs_"] {
   width: 100% !important;
   max-width: 100% !important;
 }
+
 /* Better form field styling */
 .control input.form-control,
 .control textarea.form-control,
@@ -896,6 +898,885 @@ select[id*="cs_"] {
     width: 100% !important;
     display: block !important;
   }
+}
+
+/* ========================================
+   LOOKUP MODAL STYLING
+   ======================================== */
+
+/* Lookup modal backdrop */
+.modal-lookup {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Lookup modal dialog sizing - WIDER for all columns */
+.modal-lookup .modal-dialog {
+  max-width: 1400px !important;  /* Increased from 900px */
+  width: 95% !important;          /* Increased from 90% */
+  margin: 30px auto !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1600px) {
+  .modal-lookup .modal-dialog {
+    max-width: 1200px !important;
+    width: 95% !important;
+  }
+}
+
+@media (max-width: 1400px) {
+  .modal-lookup .modal-dialog {
+    max-width: 1100px !important;
+    width: 95% !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .modal-lookup .modal-dialog {
+    max-width: 95% !important;
+    width: 95% !important;
+  }
+}
+
+/* Lookup modal header - PEPP primary color */
+.modal-lookup .modal-header {
+  background-color: #2C5F6F !important;
+  color: white !important;
+  padding: 15px 20px !important;
+  border-radius: 4px 4px 0 0 !important;
+  border-bottom: none !important;
+}
+
+.modal-lookup .modal-header .modal-title {
+  color: white !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+/* Lookup modal close button */
+.modal-lookup .modal-header .form-close,
+.modal-lookup .modal-header .close,
+.modal-lookup .modal-header button[data-bs-dismiss] {
+  background: transparent !important;
+  border: none !important;
+  color: white !important;
+  opacity: 1 !important;
+  font-size: 28px !important;
+  font-weight: 300 !important;
+  padding: 8px !important;
+  width: 30px !important;
+  height: 30px !important;
+  position: absolute !important;
+  right: 15px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  cursor: pointer !important;
+}
+
+.modal-lookup .modal-header .form-close:hover,
+.modal-lookup .modal-header .close:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 4px !important;
+}
+
+.modal-lookup .modal-header .form-close span,
+.modal-lookup .modal-header .close span {
+  color: white !important;
+}
+
+/* Lookup modal body */
+.modal-lookup .modal-body {
+  padding: 20px !important;
+  max-height: calc(100vh - 250px) !important;
+  overflow-y: auto !important;
+}
+
+/* Search box in lookup modal */
+.modal-lookup .view-search.entitylist-search {
+  margin-bottom: 15px !important;
+}
+
+.modal-lookup .entitylist-search .query.form-control {
+  border: 1px solid #ccc !important;
+  border-radius: 4px 0 0 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  height: 38px !important;
+}
+
+.modal-lookup .entitylist-search .query.form-control:focus {
+  border-color: #2C5F6F !important;
+  box-shadow: 0 0 0 0.2rem rgba(44, 95, 111, 0.25) !important;
+}
+
+.modal-lookup .entitylist-search .btn-default {
+  background-color: #2C5F6F !important;
+  border: 1px solid #2C5F6F !important;
+  border-radius: 0 4px 4px 0 !important;
+  color: white !important;
+  height: 38px !important;
+  padding: 8px 16px !important;
+}
+
+.modal-lookup .entitylist-search .btn-default:hover {
+  background-color: #234A57 !important;
+  border-color: #234A57 !important;
+}
+
+/* Lookup modal table */
+.modal-lookup .view-grid table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-size: 14px !important;
+}
+
+.modal-lookup .view-grid table thead th {
+  background-color: #f8f9fa !important;
+  border-bottom: 2px solid #dee2e6 !important;
+  padding: 12px 8px !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+  color: #333 !important;
+}
+
+.modal-lookup .view-grid table tbody tr {
+  border-bottom: 1px solid #dee2e6 !important;
+}
+
+.modal-lookup .view-grid table tbody tr:hover {
+  background-color: #f8f9fa !important;
+}
+
+.modal-lookup .view-grid table tbody td {
+  padding: 12px 8px !important;
+  vertical-align: middle !important;
+}
+
+/* Checkbox column */
+.modal-lookup .view-grid table tbody td:first-child {
+  width: 40px !important;
+  text-align: center !important;
+}
+
+.modal-lookup .view-grid table .fa.fa-fw {
+  cursor: pointer !important;
+  font-size: 18px !important;
+  color: #2C5F6F !important;
+}
+
+.modal-lookup .view-grid table .fa.fa-fw:hover {
+  color: #234A57 !important;
+}
+
+/* Pagination */
+.modal-lookup .view-pagination {
+  margin-top: 15px !important;
+  text-align: center !important;
+}
+
+.modal-lookup .pagination {
+  justify-content: center !important;
+  margin: 0 !important;
+}
+
+.modal-lookup .pagination .page-link {
+  color: #2C5F6F !important;
+  border: 1px solid #dee2e6 !important;
+  padding: 6px 12px !important;
+  margin: 0 2px !important;
+}
+
+.modal-lookup .pagination .page-item.active .page-link {
+  background-color: #2C5F6F !important;
+  border-color: #2C5F6F !important;
+  color: white !important;
+}
+
+.modal-lookup .pagination .page-link:hover {
+  background-color: #f8f9fa !important;
+  border-color: #dee2e6 !important;
+  color: #234A57 !important;
+}
+
+/* Lookup modal footer */
+.modal-lookup .modal-footer {
+  padding: 15px 20px !important;
+  border-top: 1px solid #dee2e6 !important;
+  background-color: #f8f9fa !important;
+  border-radius: 0 0 4px 4px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+/* Footer buttons */
+.modal-lookup .modal-footer .btn {
+  padding: 8px 20px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+}
+
+/* Primary button (Select) */
+.modal-lookup .modal-footer .btn.btn-primary,
+.modal-lookup .modal-footer .btn.primary {
+  background-color: #2C5F6F !important;
+  border: 1px solid #2C5F6F !important;
+  color: white !important;
+}
+
+.modal-lookup .modal-footer .btn.btn-primary:hover,
+.modal-lookup .modal-footer .btn.primary:hover {
+  background-color: #234A57 !important;
+  border-color: #234A57 !important;
+}
+
+.modal-lookup .modal-footer .btn.btn-primary:disabled,
+.modal-lookup .modal-footer .btn.primary:disabled {
+  background-color: #ccc !important;
+  border-color: #ccc !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
+
+/* Secondary buttons (Cancel, Remove value) */
+.modal-lookup .modal-footer .btn.btn-default,
+.modal-lookup .modal-footer .btn.cancel,
+.modal-lookup .modal-footer .btn.remove-value {
+  background-color: white !important;
+  border: 1px solid #ccc !important;
+  color: #333 !important;
+}
+
+.modal-lookup .modal-footer .btn.btn-default:hover,
+.modal-lookup .modal-footer .btn.cancel:hover,
+.modal-lookup .modal-footer .btn.remove-value:hover {
+  background-color: #f8f9fa !important;
+  border-color: #999 !important;
+}
+
+/* Remove value button on the right */
+.modal-lookup .modal-footer .remove-value {
+  margin-left: auto !important;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .modal-lookup .modal-dialog {
+    width: 95% !important;
+    margin: 20px auto !important;
+  }
+  
+  .modal-lookup .modal-body {
+    max-height: calc(100vh - 200px) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-lookup .view-grid {
+    overflow-x: auto !important;
+  }
+  
+  .modal-lookup .modal-footer {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  
+  .modal-lookup .modal-footer .btn {
+    width: 100% !important;
+  }
+  
+  .modal-lookup .modal-footer .remove-value {
+    margin-left: 0 !important;
+  }
+}
+
+/* Ensure lookup modal ALWAYS appears above form modals */
+.modal-lookup,
+section.modal-lookup {
+  z-index: 10050 !important;
+}
+
+.modal-lookup .modal-dialog {
+  z-index: 10051 !important;
+}
+
+/* Ensure form modals stay below lookup modals */
+.modal-form,
+.modal.show:not(.modal-lookup) {
+  z-index: 9999 !important;
+}
+
+/* Ensure lookup modal backdrop is above form modal */
+.modal-backdrop {
+  z-index: 9998 !important;
+}
+
+.modal-lookup ~ .modal-backdrop,
+.modal-backdrop.modal-lookup {
+  z-index: 10049 !important;
+}
+
+/* ========================================
+   LOOKUP MODAL - TEXT CLEANUP
+   ======================================== */
+
+/* Hide "Close" text next to × in close button */
+.modal-lookup .modal-header .form-close,
+.modal-lookup .modal-header .close,
+.modal-lookup .modal-header button[data-bs-dismiss] {
+  font-size: 0 !important; /* Hide text */
+}
+
+/* Show only the × symbol */
+.modal-lookup .modal-header .form-close::before,
+.modal-lookup .modal-header .close::before {
+  content: "×" !important;
+  font-size: 32px !important;
+  line-height: 1 !important;
+  display: block !important;
+  color: white !important;
+}
+
+/* If close button has a span, show only that */
+.modal-lookup .modal-header .form-close span,
+.modal-lookup .modal-header .close span {
+  font-size: 32px !important;
+  display: block !important;
+}
+
+/* Hide "Close" text after × */
+.modal-lookup .modal-header .close::after {
+  content: none !important;
+}
+
+/* Fix checkbox column header */
+.modal-lookup .view-grid table thead th:first-child {
+  width: 50px !important;
+  text-align: center !important;
+}
+
+/* Hide "Select" text in checkbox column header */
+.modal-lookup .view-grid table thead th:first-child .view-grid-column-header {
+  font-size: 0 !important;
+}
+
+/* Hide sort links text but keep functionality */
+.modal-lookup .view-grid table thead th a {
+  display: inline-block !important;
+  text-decoration: none !important;
+}
+
+/* Show only the column name, hide sort indicators in link text */
+.modal-lookup .view-grid table thead th a .view-grid-column-header {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+}
+
+/* Hide the ↑ and "sort ascending/descending" text */
+.modal-lookup .view-grid table thead th a .fa,
+.modal-lookup .view-grid table thead th a [class*="fa-"] {
+  display: none !important;
+}
+
+/* Clean up header text - show ONLY column name */
+.modal-lookup .view-grid table thead th {
+  font-size: 0 !important; /* Hide all text */
+}
+
+.modal-lookup .view-grid table thead th a {
+  font-size: 14px !important; /* Show link text at proper size */
+  white-space: nowrap !important;
+}
+
+/* Fix modal title */
+.modal-lookup .modal-header .modal-title {
+  font-size: 20px !important;
+  line-height: 1.4 !important;
+  padding-right: 40px !important;
+}
+
+/* Ensure close button doesn't overlap title */
+.modal-lookup .modal-header {
+  position: relative !important;
+  padding-right: 60px !important;
+}
+
+.modal-lookup .modal-header .form-close,
+.modal-lookup .modal-header .close {
+  position: absolute !important;
+  right: 15px !important;
+  top: 15px !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+/* ========================================
+   LOOKUP MODAL - CHECKBOX FIX
+   ======================================== */
+
+/* Fix checkbox column width and alignment */
+.modal-lookup .view-grid table tbody td:first-child,
+.modal-lookup .view-grid table thead th:first-child {
+  width: 50px !important;
+  min-width: 50px !important;
+  max-width: 50px !important;
+  text-align: center !important;
+  padding: 8px !important;
+  vertical-align: middle !important;
+}
+
+/* Center the FontAwesome checkbox icons */
+.modal-lookup .view-grid table .fa.fa-fw,
+.modal-lookup .view-grid table .fa-square-o,
+.modal-lookup .view-grid table .fa-check-square {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+  cursor: pointer !important;
+  color: #2C5F6F !important;
+}
+
+.modal-lookup .view-grid table .fa.fa-fw:hover,
+.modal-lookup .view-grid table .fa-square-o:hover,
+.modal-lookup .view-grid table .fa-check-square:hover {
+  color: #234A57 !important;
+}
+
+/* Ensure rows have consistent height */
+.modal-lookup .view-grid table tbody tr {
+  min-height: 44px !important;
+}
+
+.modal-lookup .view-grid table tbody td {
+  padding: 10px 12px !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Make table responsive with horizontal scroll if needed */
+.modal-lookup .modal-body {
+  overflow-x: auto !important;
+}
+
+.modal-lookup .view-grid {
+  min-width: 100% !important;
+  overflow-x: visible !important;
+}
+
+.modal-lookup .view-grid table {
+  min-width: 1200px !important; /* Ensure table doesn't collapse */
+  width: 100% !important;
+}
+
+/* Column minimum widths to prevent squishing */
+.modal-lookup .view-grid table th,
+.modal-lookup .view-grid table td {
+  min-width: 100px !important;
+}
+
+.modal-lookup .view-grid table th:first-child,
+.modal-lookup .view-grid table td:first-child {
+  min-width: 50px !important; /* Checkbox column */
+}
+
+/* Make specific columns wider for better readability */
+.modal-lookup .view-grid table th:nth-child(2),
+.modal-lookup .view-grid table td:nth-child(2) {
+  min-width: 180px !important; /* Full Name */
+}
+
+.modal-lookup .view-grid table th:nth-child(3),
+.modal-lookup .view-grid table td:nth-child(3) {
+  min-width: 200px !important; /* Email */
+}
+
+/* ========================================
+   MODAL VERTICAL CENTERING FIX
+   ======================================== */
+
+/* Ensure ALL modals are properly centered vertically */
+.modal.show {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+}
+
+/* Modal dialog proper centering */
+.modal-dialog {
+  position: relative !important;
+  margin: auto !important;
+  max-height: calc(100vh - 40px) !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Modal content should scroll if too tall */
+.modal-content {
+  max-height: calc(100vh - 60px) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: auto !important;
+}
+
+/* Modal body should scroll, not the whole modal */
+.modal-body {
+  overflow-y: auto !important;
+  max-height: calc(100vh - 220px) !important;
+  flex: 1 1 auto !important;
+}
+
+/* Prevent modal from going off-screen at top */
+.modal {
+  overflow-y: auto !important;
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+}
+
+/* Fix for form modals specifically */
+.modal-form .modal-dialog,
+.modal.show:not(.modal-lookup) .modal-dialog {
+  margin-top: auto !important;
+  margin-bottom: auto !important;
+  transform: none !important;
+}
+
+/* Ensure lookup modals also center properly */
+.modal-lookup.show {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+}
+
+.modal-lookup .modal-dialog {
+  margin: auto !important;
+  transform: none !important;
+}
+
+/* For very tall content, allow scrolling within modal body */
+.modal-body {
+  position: relative !important;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden !important;
+}
+
+/* ========================================
+   AGGRESSIVE MODAL WIDTH FIX - ALL MODALS
+   ======================================== */
+
+/* Target EVERY possible modal dialog class combination */
+.modal-dialog,
+.modal .modal-dialog,
+section.modal .modal-dialog,
+div.modal .modal-dialog,
+.modal-form .modal-dialog,
+.modal-form-insert .modal-dialog,
+.modal-form-update .modal-dialog,
+.modal-form-edit .modal-dialog,
+.modal-form-details .modal-dialog,
+.entitylist .modal-dialog,
+body .modal-dialog,
+[class*="modal"] .modal-dialog {
+  max-width: 900px !important;
+  min-width: 900px !important;
+  width: 900px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Lookup modals get special wider treatment */
+.modal-lookup .modal-dialog,
+section.modal-lookup .modal-dialog {
+  max-width: 1400px !important;
+  min-width: 1400px !important;
+  width: 1400px !important;
+}
+
+/* Override ANY Bootstrap modal size classes */
+.modal-sm .modal-dialog,
+.modal-lg .modal-dialog,
+.modal-xl .modal-dialog,
+.modal-dialog.modal-sm,
+.modal-dialog.modal-lg,
+.modal-dialog.modal-xl {
+  max-width: 900px !important;
+  min-width: 900px !important;
+  width: 900px !important;
+}
+
+/* Override inline styles that might be set */
+.modal-dialog[style] {
+  max-width: 900px !important;
+  min-width: 900px !important;
+  width: 900px !important;
+}
+
+/* Lookup modals override inline styles too */
+.modal-lookup .modal-dialog[style] {
+  max-width: 1400px !important;
+  min-width: 1400px !important;
+  width: 1400px !important;
+}
+
+/* Ensure modal content fills the dialog */
+.modal-content,
+.modal-dialog .modal-content {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1600px) {
+  .modal-lookup .modal-dialog,
+  .modal-lookup .modal-dialog[style] {
+    max-width: 1200px !important;
+    min-width: 1200px !important;
+    width: 1200px !important;
+  }
+}
+
+@media (max-width: 1400px) {
+  .modal-lookup .modal-dialog,
+  .modal-lookup .modal-dialog[style] {
+    max-width: 1100px !important;
+    min-width: 1100px !important;
+    width: 1100px !important;
+  }
+}
+
+@media (max-width: 992px) {
+  .modal-dialog,
+  .modal-dialog[style],
+  .modal .modal-dialog,
+  .modal-form .modal-dialog,
+  .modal-lookup .modal-dialog,
+  [class*="modal"] .modal-dialog {
+    max-width: 95% !important;
+    min-width: 0 !important;
+    width: 95% !important;
+    margin: 10px auto !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-dialog,
+  .modal-dialog[style] {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    margin: 5px !important;
+  }
+}
+
+/* ========================================
+   NESTED LOOKUP MODAL STYLING FIX
+   ======================================== */
+
+/* Force ALL lookup modals (nested or not) to use teal header */
+.modal-lookup .modal-header,
+section.modal-lookup .modal-header,
+.modal .modal-lookup .modal-header,
+body .modal-lookup .modal-header {
+  background-color: #2C5F6F !important;
+  color: white !important;
+  padding: 15px 20px !important;
+  padding-right: 60px !important;
+  border-radius: 4px 4px 0 0 !important;
+  position: relative !important;
+}
+
+/* Force lookup modal title white */
+.modal-lookup .modal-header .modal-title,
+.modal-lookup .modal-header h2,
+.modal-lookup .modal-header h3 {
+  color: white !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+/* Fix close button in nested lookup modals */
+.modal-lookup .modal-header .form-close,
+.modal-lookup .modal-header .close,
+.modal-lookup .modal-header button[data-bs-dismiss],
+.modal-lookup .modal-header .btn-close {
+  background: transparent !important;
+  border: none !important;
+  color: white !important;
+  opacity: 1 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  padding: 8px !important;
+  width: 32px !important;
+  height: 32px !important;
+  position: absolute !important;
+  right: 15px !important;
+  top: 15px !important;
+  margin: 0 !important;
+  transform: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Show only × in close button */
+.modal-lookup .modal-header .form-close::before,
+.modal-lookup .modal-header .close::before,
+.modal-lookup .modal-header button[data-bs-dismiss]::before,
+.modal-lookup .modal-header .btn-close::before {
+  content: "×" !important;
+  font-size: 32px !important;
+  line-height: 1 !important;
+  display: block !important;
+  color: white !important;
+  font-weight: 300 !important;
+}
+
+/* Hide any span inside close button */
+.modal-lookup .modal-header .form-close span,
+.modal-lookup .modal-header .close span {
+  display: none !important;
+}
+
+/* Close button hover */
+.modal-lookup .modal-header .form-close:hover,
+.modal-lookup .modal-header .close:hover,
+.modal-lookup .modal-header button[data-bs-dismiss]:hover,
+.modal-lookup .modal-header .btn-close:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 4px !important;
+}
+
+/* Fix checkboxes in lookup modal - convert to FontAwesome style */
+.modal-lookup .view-grid table input[type="checkbox"] {
+  display: none !important;
+}
+
+/* Style the checkbox label to look like FontAwesome */
+.modal-lookup .view-grid table td:first-child label,
+.modal-lookup .view-grid table td:first-child {
+  cursor: pointer !important;
+  text-align: center !important;
+}
+
+/* If regular checkboxes exist, hide them and show FontAwesome icons */
+.modal-lookup .view-grid table td:first-child::before {
+  font-family: "Font Awesome 5 Free", "FontAwesome" !important;
+  content: "\f0c8" !important; /* fa-square-o */
+  font-weight: 400 !important;
+  font-size: 20px !important;
+  color: #2C5F6F !important;
+  cursor: pointer !important;
+  display: inline-block !important;
+}
+
+.modal-lookup .view-grid table tr.selected td:first-child::before,
+.modal-lookup .view-grid table td:first-child.selected::before {
+  content: "\f14a" !important; /* fa-check-square */
+  font-weight: 900 !important;
+}
+
+/* Clean up column headers */
+.modal-lookup .view-grid table thead th {
+  background-color: #f8f9fa !important;
+  border-bottom: 2px solid #dee2e6 !important;
+  padding: 12px 8px !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+  color: #333 !important;
+  font-size: 14px !important;
+}
+
+/* Hide sort indicators */
+.modal-lookup .view-grid table thead th a .fa,
+.modal-lookup .view-grid table thead th [class*="fa-"],
+.modal-lookup .view-grid table thead th .view-grid-column-sort {
+  display: none !important;
+}
+
+/* Ensure nested lookup modal appears ABOVE edit modal */
+.modal-lookup {
+  z-index: 10060 !important;
+}
+
+.modal-lookup .modal-dialog {
+  z-index: 10061 !important;
+}
+
+.modal-lookup + .modal-backdrop,
+.modal-backdrop.modal-lookup {
+  z-index: 10059 !important;
+}
+
+/* ========================================
+   REMOVE RED UNDERLINE FROM H1 HEADINGS
+   ======================================== */
+
+/* Remove underline from ALL h1 elements globally */
+h1,
+h1.modal-title,
+.modal-header h1,
+.modal-title,
+h1.h1,
+.h1 {
+  border-bottom: none !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Remove any pseudo-elements that might create underlines */
+h1::after,
+h1::before,
+.modal-title::after,
+.modal-title::before {
+  content: none !important;
+  display: none !important;
+  border: none !important;
+  background: none !important;
+}
+
+/* Specifically target modal headers */
+.modal-header h1,
+.modal-header .modal-title,
+.modal-header h2,
+.modal-header h3 {
+  border-bottom: none !important;
+  text-decoration: none !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Target any heading inside modals */
+.modal h1,
+.modal h2,
+.modal h3,
+.modal .modal-title {
+  border-bottom: none !important;
+  text-decoration: none !important;
+}
+
+/* Remove GCWeb template underlines if present */
+.wb-sl h1,
+main h1,
+#wb-cont h1 {
+  border-bottom: none !important;
 }
 
 </style>

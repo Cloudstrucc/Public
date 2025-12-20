@@ -19,20 +19,10 @@ main, #wb-cont {
   margin-top: auto;
 }
 
-/* Force Bootstrap modals to show properly */
+/* Modal styling */
 .modal.show {
   display: block !important;
   opacity: 1 !important;
-}
-
-.modal.show[aria-hidden="true"] {
-  display: block !important;
-  visibility: visible !important;
-  aria-hidden: false !important;
-}
-
-.modal-backdrop.show {
-  opacity: 0.5 !important;
 }
 
 .modal-dialog {
@@ -40,14 +30,13 @@ main, #wb-cont {
   z-index: 1060 !important;
 }
 
-.modal.show {
-  pointer-events: auto !important;
+.modal-content {
+  min-height: 200px;
+  max-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
 }
 
-.modal-content {
-  height:100px;
-}
-/* Fix close button overflow - keep it inside modal header */
 .modal-header {
   background-color: #2b4380;
   color: white !important;
@@ -56,7 +45,7 @@ main, #wb-cont {
   padding: 15px 20px;
   border-radius: 8px 8px 0 0;
   position: relative;
-  padding-right: 50px !important; /* Make room for close button */
+  padding-right: 50px !important;
 }
 
 .modal-header .btn-close,
@@ -67,141 +56,43 @@ main, #wb-cont {
   opacity: 1 !important;
   font-size: 28px !important;
   font-weight: 300 !important;
-  line-height: 1 !important;
   padding: 8px !important;
   width: 30px !important;
   height: 30px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  filter: none !important;
-  text-decoration: none !important;
   position: absolute !important;
-  right: 15px !important; /* Fixed position inside header */
+  right: 15px !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
-  margin: 0 !important;
 }
 
-.modal-header .btn-close span,
-.modal-header .close span {
-  color: white !important;
-  font-weight: 300 !important;
-  text-decoration: none !important;
-  filter: none !important;
-  font-size: 28px !important;
-  line-height: 1 !important;
-}
-
-.modal-header .btn-close:hover,
 .modal-header .close:hover {
-  opacity: 0.8 !important;
   background-color: rgba(255, 255, 255, 0.15) !important;
-  color: white !important;
   border-radius: 4px;
 }
 
-/* Loading indicator - center in modal body */
 .modal-body {
+  flex: 1 1 auto;
   max-height: calc(100vh - 200px) !important;
   overflow-y: auto !important;
-  position: relative;
-  min-height: 200px; /* Ensure there's space for loading indicator */
+  padding: 20px;
 }
 
-/* Center loading spinner in modal body */
-.modal-body .spinner,
-.modal-body .loading,
-.modal-body .spinner-border,
-.modal-body [class*="loading"],
-.modal-body .load-container {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  z-index: 10;
+.modal-footer {
+  flex-shrink: 0;
+  padding: 15px 20px;
+  border-top: 1px solid #dee2e6;
 }
 
-/* If Power Pages uses a specific loading class */
-.modal-body .loading-spinner,
-.modal-body .ms-Spinner {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  z-index: 10;
-}
-
-/* Loading overlay in modal body */
-.modal-body.loading::before,
-.modal-body[data-loading="true"]::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
-  z-index: 5;
-}
-
-/* Generic loading spinner centering */
-.modal-body > .text-center.p-5,
-.modal-body > div[style*="text-align: center"] {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: auto !important;
-  padding: 0 !important;
-}
-
-/* Ensure modal title doesn't get cut off by close button */
-.modal-header .modal-title {
-  max-width: calc(100% - 50px); /* Leave space for close button */
-  padding-right: 10px;
-}
-
-.modal-header .visually-hidden {
-  display: none !important;
-}
-
-/* Make ALL modals 900px wide (Create, Edit, Delete, etc.) */
-.modal-dialog,
-.modal-form-insert .modal-dialog,
-.modal-form-update .modal-dialog,
-.modal-form-edit .modal-dialog,
-.modal-form .modal-dialog {
-  position: relative;
-  width: auto;
+.modal-dialog {
   max-width: 900px !important;
   min-width: 900px !important;
   margin: auto !important;
-  z-index: 1060 !important;
-  transform: none !important;
 }
 
-/* Override any Power Pages specific sizing classes */
-.modal-sm .modal-dialog,
-.modal-lg .modal-dialog,
-.modal-xl .modal-dialog {
-  max-width: 900px !important;
-  min-width: 900px !important;
-}
-
-/* Responsive - allow smaller on tablets and mobile */
 @media (max-width: 992px) {
-  .modal-dialog,
-  .modal-form-insert .modal-dialog,
-  .modal-form-update .modal-dialog,
-  .modal-form-edit .modal-dialog,
-  .modal-form .modal-dialog,
-  .modal-sm .modal-dialog,
-  .modal-lg .modal-dialog,
-  .modal-xl .modal-dialog {
+  .modal-dialog {
     max-width: 95% !important;
     min-width: 0 !important;
-    margin: 10px auto !important;
   }
 }
 </style>
@@ -209,8 +100,7 @@ main, #wb-cont {
 <footer id="wb-info" style="background: #26374A; padding: 20px 0;">
   <div class="container">
     <div class="row">
-      <div class="col-sm-8">        
-      </div>
+      <div class="col-sm-8"></div>
       <div class="col-sm-4 text-right">
         <img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/wmms-blk.svg" alt="Symbol of the Government of Canada" style="height: 24px; filter: brightness(0) invert(1);">
       </div>
@@ -219,55 +109,340 @@ main, #wb-cont {
 </footer>
 
 <script>
-// Fix Bootstrap 5 modal aria-hidden conflict
+// Smart modal blocker - only prevents auto-opening on page load, allows user-initiated modals
 (function() {
-  document.addEventListener('DOMContentLoaded', function() {
+  console.log('🟢 Smart modal blocker initialized');
+  
+  // Track user interactions
+  window.USER_INITIATED_ACTION = false;
+  
+  // Prevent ONLY auto-opening modals in first 3 seconds after page load
+  let pageLoadTime = Date.now();
+  let blockingActive = true;
+  
+  // Disable blocking after 3 seconds
+  setTimeout(function() {
+    blockingActive = false;
+    console.log('✅ Auto-modal blocking disabled - user interactions now allowed');
+  }, 3000);
+  
+  // Track ALL user clicks that might open modals
+  document.addEventListener('click', function(e) {
+    const modalTrigger = e.target.closest(
+      '.launchentitylookup, ' +      // Lookup buttons
+      '.create-action, ' +             // Create buttons
+      '.edit-action, ' +               // Edit buttons
+      '.delete-action, ' +             // Delete buttons
+      '[data-toggle="modal"], ' +      // Bootstrap 4 triggers
+      '[data-bs-toggle="modal"], ' +   // Bootstrap 5 triggers
+      'a[href*="modal"], ' +           // Links to modals
+      'button[onclick*="modal"]'       // Buttons with modal onclick
+    );
     
-    // Override modal behavior
-    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-      const originalShow = bootstrap.Modal.prototype.show;
+    if (modalTrigger) {
+      console.log('✅ User clicked modal trigger:', modalTrigger.className);
+      window.USER_INITIATED_ACTION = true;
       
-      bootstrap.Modal.prototype.show = function() {
-        const modalElement = this._element;
-        
-        if (modalElement) {
-          modalElement.removeAttribute('aria-hidden');
-          modalElement.setAttribute('aria-modal', 'true');
-        }
-        
-        originalShow.call(this);
-        
-        setTimeout(() => {
-          if (modalElement) {
-            modalElement.removeAttribute('aria-hidden');
-            modalElement.style.display = 'block';
-          }
-        }, 50);
-      };
+      // Keep flag active for 5 seconds
+      setTimeout(function() {
+        window.USER_INITIATED_ACTION = false;
+      }, 5000);
+    }
+  }, true);
+  
+  // Only block auto-opening modals during initial page load
+  const preventAutoModals = function() {
+    if (!blockingActive || window.USER_INITIATED_ACTION) {
+      return; // Don't block after 3 seconds or if user clicked
     }
     
-    // Watch for aria-hidden changes on modals
-    const observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
-          const target = mutation.target;
-          if (target.classList.contains('modal') && target.classList.contains('show')) {
-            target.removeAttribute('aria-hidden');
-            target.setAttribute('aria-modal', 'true');
-          }
-        }
-      });
+    const modals = document.querySelectorAll('.modal');
+    
+    modals.forEach(function(modal) {
+      // Only hide modals that are showing WITHOUT user action
+      if ((modal.classList.contains('show') || modal.style.display === 'flex' || modal.style.display === 'block') && 
+          !window.USER_INITIATED_ACTION) {
+        
+        console.log('🚫 Blocked auto-opening modal:', modal.className);
+        
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+        modal.style.opacity = '0';
+        modal.style.visibility = 'hidden';
+        modal.setAttribute('aria-hidden', 'true');
+      }
     });
     
-    setTimeout(() => {
-      const modals = document.querySelectorAll('.modal');
-      modals.forEach(function(modal) {
-        observer.observe(modal, {
-          attributes: true,
-          attributeFilter: ['aria-hidden', 'aria-modal']
-        });
+    // Remove any orphaned backdrops
+    if (!window.USER_INITIATED_ACTION) {
+      document.querySelectorAll('.modal-backdrop').forEach(function(bd) {
+        bd.remove();
       });
-    }, 1000);
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  };
+  
+  // Only run during first 3 seconds
+  const intervals = [100, 300, 500, 1000, 2000];
+  intervals.forEach(function(delay) {
+    setTimeout(function() {
+      if (blockingActive) {
+        preventAutoModals();
+      }
+    }, delay);
+  });
+  
+  console.log('🟢 Auto-modal blocking active for 3 seconds');
+})();
+
+// Lookup modal selection handler
+(function() {
+  console.log('🟢 Lookup selection handler initialized');
+  
+  // Handle Select button clicks in lookup modal
+  document.addEventListener('click', function(e) {
+    const selectButton = e.target.closest('.modal-lookup .btn.primary, .modal-lookup .btn-primary');
+    
+    if (selectButton && selectButton.textContent.trim() === 'Select') {
+      console.log('✅ Select button clicked');
+      
+      const lookupModal = selectButton.closest('.modal-lookup');
+      const checkedCheckbox = lookupModal.querySelector('.view-grid tbody .fa[aria-checked="true"]');
+      
+      if (!checkedCheckbox) {
+        console.log('⚠️ No record selected');
+        return;
+      }
+      
+      const row = checkedCheckbox.closest('tr');
+      const recordId = row.getAttribute('data-id');
+      
+      // Get name from table cell
+      const nameCell = row.querySelector('td[data-attribute="fullname"]');
+      let recordName = nameCell ? nameCell.textContent.trim() : '';
+      
+      // Fallback to email if no name
+      if (!recordName) {
+        const emailCell = row.querySelector('td[data-attribute="emailaddress1"]');
+        recordName = emailCell ? emailCell.textContent.trim() : 'Selected Record';
+      }
+      
+      console.log('📝 Selected:', recordName, recordId);
+      
+      // Get field name
+      const lookupModalContainer = lookupModal.closest('.lookup-modal');
+      const entityLookup = lookupModalContainer ? lookupModalContainer.querySelector('.entity-lookup') : null;
+      const fieldName = entityLookup ? entityLookup.getAttribute('data-lookup-datafieldname') : '';
+      
+      if (!fieldName) {
+        console.error('❌ Could not find field name');
+        return;
+      }
+      
+      // Find input fields
+      const lookupInput = document.querySelector(`input#${fieldName}_name`);
+      const lookupHiddenInput = document.querySelector(`input#${fieldName}`);
+      
+      if (lookupInput && recordName) {
+        // Populate visible input
+        lookupInput.value = recordName;
+        console.log('✅ Populated visible field');
+        
+        // Populate hidden ID input
+        if (lookupHiddenInput && recordId) {
+          lookupHiddenInput.value = recordId;
+          lookupHiddenInput.classList.add('dirty');
+          console.log('✅ Populated hidden ID');
+        }
+        
+        // Trigger change events
+        lookupInput.dispatchEvent(new Event('change', { bubbles: true }));
+        if (lookupHiddenInput) {
+          lookupHiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        
+        // Close modal
+        const closeButton = lookupModal.querySelector('[data-bs-dismiss="modal"], .close, .form-close');
+        if (closeButton) {
+          closeButton.click();
+          console.log('✅ Modal closed');
+        }
+      } else {
+        console.error('❌ Could not populate fields');
+      }
+    }
+  });
+  
+  // Handle checkbox selection
+  document.addEventListener('click', function(e) {
+    const checkbox = e.target.closest('.modal-lookup .view-grid tbody .fa');
+    
+    if (checkbox) {
+      console.log('✅ Checkbox clicked');
+      
+      const lookupModal = checkbox.closest('.modal-lookup');
+      
+      // Uncheck all others
+      lookupModal.querySelectorAll('.view-grid tbody .fa').forEach(cb => {
+        cb.setAttribute('aria-checked', 'false');
+        cb.classList.remove('fa-check-square');
+        cb.classList.add('fa-square-o');
+      });
+      
+      // Check this one
+      checkbox.setAttribute('aria-checked', 'true');
+      checkbox.classList.remove('fa-square-o');
+      checkbox.classList.add('fa-check-square');
+      
+      // Enable Select button
+      const selectButton = lookupModal.querySelector('.btn.primary, .btn-primary');
+      if (selectButton) {
+        selectButton.removeAttribute('disabled');
+      }
+    }
   });
 })();
+
+// Remove fade class from lookup modals when opened
+(function() {
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.launchentitylookup')) {
+      console.log('🔍 Lookup button clicked - preparing modal');
+      
+      // Mark as user-initiated
+      window.USER_INITIATED_ACTION = true;
+      
+      setTimeout(function() {
+        const lookupModal = document.querySelector('section.modal.modal-lookup');
+        
+        if (lookupModal) {
+          // Remove fade class for instant display
+          lookupModal.classList.remove('fade');
+          console.log('✅ Lookup modal ready');
+        }
+      }, 100);
+    }
+  }, true);
+})();
+
+console.log('🎯 All modal handlers loaded successfully');
+
+// Clean up lookup modal text
+(function() {
+  console.log('🧹 Lookup modal text cleaner initialized');
+  
+  // Function to clean up modal text
+  const cleanupLookupModal = function() {
+    const lookupModal = document.querySelector('.modal-lookup');
+    if (!lookupModal) return;
+    
+    // Clean up column headers - remove sort text
+    const headers = lookupModal.querySelectorAll('.view-grid table thead th a');
+    headers.forEach(function(header) {
+      const text = header.textContent;
+      
+      // Extract just the column name (before the sort indicator)
+      let cleanText = text.split('.')[0].trim(); // Remove ". sort ascending"
+      cleanText = cleanText.replace(/↑|↓/g, '').trim(); // Remove arrows
+      cleanText = cleanText.replace(/\s+sort\s+(ascending|descending)/gi, '').trim(); // Remove "sort ascending/descending"
+      
+      // Update header text
+      if (cleanText && cleanText !== text) {
+        header.textContent = cleanText;
+        console.log('✅ Cleaned header:', text, '→', cleanText);
+      }
+    });
+    
+    // Clean up close button - ensure only × shows
+    const closeButtons = lookupModal.querySelectorAll('.modal-header .close, .modal-header .form-close');
+    closeButtons.forEach(function(btn) {
+      // If button contains text other than ×
+      const text = btn.textContent.trim();
+      if (text && text !== '×' && text.length > 1) {
+        btn.textContent = '×';
+        console.log('✅ Cleaned close button');
+      }
+    });
+  };
+  
+  // Run cleanup when lookup button is clicked
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.launchentitylookup')) {
+      setTimeout(cleanupLookupModal, 200);
+      setTimeout(cleanupLookupModal, 500);
+      setTimeout(cleanupLookupModal, 1000);
+    }
+  }, true);
+  
+  // Also run on any modal shown
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+        const target = mutation.target;
+        if (target.classList && target.classList.contains('modal-lookup') && target.classList.contains('show')) {
+          setTimeout(cleanupLookupModal, 100);
+        }
+      }
+    });
+  });
+  
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['class'],
+    subtree: true
+  });
+  
+  console.log('🧹 Text cleaner ready');
+})();
+
+// Fix close button text for ALL modals
+(function() {
+  console.log('🧹 Universal close button fixer initialized');
+  
+  const fixCloseButton = function() {
+    const closeButtons = document.querySelectorAll('.modal-header .close, .modal-header .form-close, .modal-header .btn-close, .modal-header button[data-bs-dismiss]');
+    
+    closeButtons.forEach(function(btn) {
+      // Check if button has text other than ×
+      const text = btn.textContent.trim();
+      if (text && text.length > 1) {
+        // Replace with just ×
+        btn.textContent = '×';
+        console.log('✅ Fixed close button text');
+      }
+    });
+  };
+  
+  // Watch for any modal appearing
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+        const target = mutation.target;
+        if (target.classList && target.classList.contains('modal') && target.classList.contains('show')) {
+          setTimeout(fixCloseButton, 100);
+        }
+      }
+    });
+  });
+  
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['class'],
+    subtree: true
+  });
+  
+  // Also fix on any button click
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.create-action, .edit-action, .delete-action, .launchentitylookup')) {
+      setTimeout(fixCloseButton, 200);
+      setTimeout(fixCloseButton, 500);
+    }
+  }, true);
+  
+  console.log('🧹 Close button fixer ready');
+})();
+
+
 </script>

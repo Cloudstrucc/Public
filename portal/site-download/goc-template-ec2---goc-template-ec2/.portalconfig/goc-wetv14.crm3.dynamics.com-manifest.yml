@@ -50,7 +50,7 @@ adx_entityform:
   IsDeleted: false
 - RecordId: 5c9f5415-21d5-f011-8544-7ced8d3606fc
   DisplayName: Edit Item
-  CheckSum: 3b5ea29f263d5d5688e67698d26844d0c6daa0bf4f83b279f0252fd910624253
+  CheckSum: 1f20fa53e47649f6722e96fcdd88ae04c54a812c76a44e7fe3924a478423b962
   IsDeleted: false
 - RecordId: fb83a9e9-20d5-f011-8544-7ced8d3606fc
   DisplayName: Create Item
@@ -2570,7 +2570,7 @@ adx_webtemplate:
   IsDeleted: false
 - RecordId: 5d462fef-bfd4-f011-8544-7ced8d3606fc
   DisplayName: CS-footer
-  CheckSum: ce8734cfb956b57b57c1f5004fb9279f0f2fbac4967b8f239972d12e13e323d4
+  CheckSum: 68c35ccb46fe62ba3cc95d22c103f31ef7c1a51380f48aa6376f7e800e669515
   IsDeleted: false
 - RecordId: 66462fef-bfd4-f011-8544-7ced8d3606fc
   DisplayName: CS-header-bak
@@ -2630,7 +2630,7 @@ adx_webtemplate:
   IsDeleted: false
 - RecordId: ec9169f2-bfd4-f011-8544-7ced8d371ea7
   DisplayName: CS-header
-  CheckSum: 5954c75918c720a701b63c2be6e194021efc293428b4ae23bff5a78dd1535b12
+  CheckSum: 7fc927f11fb57ed63dcaac737e8cb5a4f7300121e43a528e6000874c01a70f33
   IsDeleted: false
 annotation:
 - RecordId: 004f983b-c2d4-f011-8544-6045bd5c6e93
