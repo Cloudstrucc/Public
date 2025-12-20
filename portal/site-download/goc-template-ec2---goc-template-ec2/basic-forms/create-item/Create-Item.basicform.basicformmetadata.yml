@@ -1,0 +1,14 @@
+- adx_adddescription: false
+  adx_attributelogicalname: cs_lookupfield
+  adx_controlstyle: 756150000
+  adx_descriptionposition: 100000000
+  adx_entityform: fb83a9e9-20d5-f011-8544-7ced8d3606fc
+  adx_entityformforcreate: fb83a9e9-20d5-f011-8544-7ced8d3606fc
+  adx_entityformmetadataid: a2c10350-80dd-f011-8406-7ced8da58400
+  adx_fieldisrequired: false
+  adx_ignoredefaultvalue: false
+  adx_name: Create Item cs_lookupfield
+  adx_randomizeoptionsetvalues: false
+  adx_setvalueonsave: false
+  adx_type: 100000000
+  adx_useattributedescriptionproperty: true

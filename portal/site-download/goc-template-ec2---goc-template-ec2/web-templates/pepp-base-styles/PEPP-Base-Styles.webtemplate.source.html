@@ -1,0 +1,1320 @@
+<style>
+/* ========================================
+   PEPP Core Styles v1.0
+   ======================================== */
+
+/* ========================================
+   STICKY FOOTER
+   ======================================== */
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+main, #wb-cont {
+  flex: 1 0 auto;
+}
+
+#wb-info {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+/* ========================================
+   LOGO POSITIONING
+   ======================================== */
+
+#wb-bnr {
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+
+#wb-bnr .row {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+#wb-bnr .brand {
+  order: 1;
+}
+
+#wb-bnr .brand a {
+  display: inline-block;
+  line-height: 1;
+}
+
+#wb-bnr .brand img {
+  max-width: 100%;
+  height: auto;
+  max-height: 45px;
+  display: block;
+}
+
+#wb-lng {
+  order: 2;
+  padding-top: 5px;
+}
+
+/* ========================================
+   APPLICATION BAR
+   ======================================== */
+
+.application-bar {
+  background-color: #38414d;
+  color: #fff;
+  margin-top: 0;
+}
+
+.application-bar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* AGGRESSIVE h2 styling to override GCWeb */
+.application-bar h2,
+.application-bar h2 a,
+section.application-bar h2,
+section.application-bar h2 a {
+  color: #fff !important;
+  text-decoration: none !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  border: none !important;
+  border-bottom: none !important;
+  margin: 10px 0 8px !important;
+  padding: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+.application-bar h2 a:hover {
+  text-decoration: underline !important;
+  color: #fff !important;
+}
+
+/* Remove any pseudo-elements that might add underlines */
+.application-bar h2::before,
+.application-bar h2::after,
+.application-bar h2 a::before,
+.application-bar h2 a::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* ========================================
+   PROFILE MENU
+   ======================================== */
+
+.profile-menu {
+  position: relative;
+  display: inline-block;
+  margin-left: auto;
+}
+
+.profile-menu-toggle {
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  line-height: 1.5;
+}
+
+.profile-menu-toggle:hover,
+.profile-menu-toggle:focus {
+  background-color: rgba(255,255,255,0.1);
+  color: #fff;
+  text-decoration: none;
+}
+
+.profile-menu-content {
+  display: none;
+  position: absolute;
+  background-color: #38414d;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+  z-index: 1000;
+  right: 0;
+  top: 100%;
+  margin-top: 2px;
+}
+
+.profile-menu:hover .profile-menu-content,
+.profile-menu:focus-within .profile-menu-content {
+  display: block;
+}
+
+.profile-menu-content a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.profile-menu-content a:last-child {
+  border-bottom: none;
+}
+
+.profile-menu-content a:hover {
+  background-color: #4a5568;
+  color: #fff;
+  text-decoration: none;
+}
+
+.profile-icon {
+  font-size: 16px;
+}
+
+.profile-caret {
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+/* ========================================
+   ANONYMOUS HEADER
+   ======================================== */
+
+.pepp-anon-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 15px 0;
+}
+
+.pepp-anon-header .brand img {
+  filter: brightness(0) invert(1);
+  height: 28px;
+}
+
+.pepp-anon-header .lang-link {
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+}
+
+.pepp-anon-header .lang-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* ========================================
+   ENTITY LIST - SEARCH & TOOLBAR
+   ======================================== */
+
+.entitylist-search {
+  margin-bottom: 15px !important;
+}
+
+.entitylist-search .query.form-control {
+  border: 1px solid #ccc !important;
+  border-radius: 4px 0 0 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  height: 38px !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075) !important;
+}
+
+.entitylist-search .query.form-control:focus {
+  border-color: #2b4380 !important;
+  outline: 0 !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075), 0 0 0 0.2rem rgba(43,67,128,0.25) !important;
+}
+
+.entitylist-search .btn-default {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-radius: 0 4px 4px 0 !important;
+  color: white !important;
+  height: 38px !important;
+  padding: 8px 16px !important;
+  margin-left: -1px !important;
+}
+
+.entitylist-search .btn-default:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+  color: white !important;
+}
+
+.entitylist-search .btn-default .fa-search {
+  color: white !important;
+  font-size: 14px !important;
+}
+
+.create-action.btn-primary,
+a.btn-primary.create-action {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-radius: 4px !important;
+  color: white !important;
+  padding: 8px 20px !important;
+  height: 38px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  margin-left: 10px !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.create-action.btn-primary:hover,
+a.btn-primary.create-action:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+  color: white !important;
+  text-decoration: none !important;
+}
+
+.view-toolbar.grid-actions {
+  display: block !important;
+  overflow: visible !important;
+}
+
+.toolbar-actions,
+.float-end.toolbar-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  margin-bottom: 15px !important;
+  flex-wrap: wrap !important;
+  float: none !important;
+  clear: both !important;
+}
+
+.toolbar-actions .view-search.input-group,
+.toolbar-actions .input-group.float-start.view-search,
+.toolbar-actions .entitylist-search {
+  display: flex !important;
+  flex: 0 1 350px !important;
+  min-width: 250px !important;
+  max-width: 350px !important;
+  float: none !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+.toolbar-actions .input-group:has(.create-action),
+.toolbar-actions .input-group.float-start:has(.create-action) {
+  display: inline-flex !important;
+  float: none !important;
+  width: auto !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+}
+
+.entitylist-search .query.form-control,
+.toolbar-actions input.query.form-control[style] {
+  display: block !important;
+  width: 100% !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px 0 0 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  height: 38px !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075) !important;
+  float: none !important;
+  table-layout: auto !important;
+}
+
+.entitylist-search .input-group-btn,
+.toolbar-actions .input-group-btn[style] {
+  display: flex !important;
+  align-items: center !important;
+  float: none !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+}
+
+.entitylist-search .btn-default,
+.toolbar-actions .btn-default[style] {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-radius: 0 4px 4px 0 !important;
+  color: white !important;
+  height: 38px !important;
+  padding: 8px 16px !important;
+  margin-left: -1px !important;
+  float: none !important;
+  flex-shrink: 0 !important;
+}
+
+.create-action.btn-primary,
+a.btn-primary.float-end.create-action,
+.toolbar-actions .create-action {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-radius: 4px !important;
+  color: white !important;
+  padding: 8px 20px !important;
+  height: 38px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  float: none !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.entitylist-search .btn-default .visually-hidden {
+  display: none !important;
+}
+
+.toolbar-actions::before,
+.toolbar-actions::after {
+  content: "" !important;
+  display: table !important;
+  clear: both !important;
+}
+
+/* ========================================
+   ENTITY LIST - FILTER PANEL
+   ======================================== */
+
+.entitylist-filter.content-panel.card {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.entitylist-filter .card-body {
+  padding: 20px;
+}
+
+.entitylist-filter-option-group {
+  margin-bottom: 20px;
+  display: block !important;
+}
+
+.entitylist-filter-option-group-label {
+  display: block !important;
+  width: 100% !important;
+  margin-bottom: 8px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+}
+
+.entitylist-filter-option-group > ul {
+  display: block !important;
+  width: 100% !important;
+  margin-bottom: 0 !important;
+  padding-left: 0 !important;
+  list-style: none !important;
+}
+
+.entitylist-filter-option-text .input-group-text {
+  display: none !important;
+}
+
+.entitylist-filter-option {
+  list-style: none !important;
+  margin-bottom: 5px !important;
+}
+
+.entitylist-filter-option-text {
+  width: 100% !important;
+}
+
+.entitylist-filter-option-text .form-control,
+.entitylist-filter-option-text .form-select {
+  width: 100% !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  height: 38px !important;
+}
+
+.entitylist-filter-option-text .form-control:focus,
+.entitylist-filter-option-text .form-select:focus {
+  border-color: #2b4380 !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(43,67,128,0.25) !important;
+}
+
+.entitylist-filter-option-group-box-overflow {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.entitylist-filter-option .checkbox {
+  margin: 0 0 8px 0 !important;
+  display: block !important;
+  position: relative !important;
+  padding-left: 0 !important;
+}
+
+.entitylist-filter-option .checkbox label {
+  font-weight: normal !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 0 !important;
+  padding: 4px 0 !important;
+  font-size: 14px !important;
+  position: relative !important;
+  padding-left: 0 !important;
+}
+
+.entitylist-filter-option .checkbox input[type="checkbox"],
+.entitylist-filter-option input[type="checkbox"],
+.entitylist-filter input[type="checkbox"] {
+  display: inline-block !important;
+  position: relative !important;
+  margin-right: 10px !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  appearance: auto !important;
+  -webkit-appearance: checkbox !important;
+  -moz-appearance: checkbox !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  clip: auto !important;
+  clip-path: none !important;
+  transform: none !important;
+  margin-left: 0 !important;
+  padding: 0 !important;
+  border: 1px solid #999 !important;
+  background-color: white !important;
+  z-index: 1 !important;
+}
+
+.entitylist-filter input[type="checkbox"]:checked {
+  background-color: #2b4380 !important;
+  border-color: #2b4380 !important;
+}
+
+.btn-entitylist-filter-submit {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  color: white !important;
+  padding: 8px 20px !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  margin-top: 15px !important;
+  cursor: pointer !important;
+}
+
+.btn-entitylist-filter-submit:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+  color: white !important;
+}
+
+select.form-control.form-select {
+  appearance: auto !important;
+  background-color: white !important;
+  cursor: pointer !important;
+}
+
+/* ========================================
+   FORM FIELDS - BASIC STYLING
+   ======================================== */
+
+form .control {
+  display: block !important;
+  width: 100% !important;
+}
+
+form .control input.form-control,
+form .control textarea.form-control,
+form .control select.form-control {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+}
+
+input.form-control[style],
+textarea.form-control[style],
+select.form-control[style] {
+  width: 100% !important;
+}
+
+input[id*="cs_"],
+textarea[id*="cs_"],
+select[id*="cs_"] {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.control input.form-control,
+.control textarea.form-control,
+.control select.form-control {
+  width: 100% !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  min-height: 38px !important;
+}
+
+.control input.form-control:focus,
+.control textarea.form-control:focus,
+.control select.form-control:focus {
+  border-color: #2b4380 !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(43, 67, 128, 0.25) !important;
+}
+
+.entity-form label,
+.entityform label {
+  font-weight: 600 !important;
+  margin-bottom: 5px !important;
+  display: block !important;
+}
+
+.entity-form label .required,
+.entityform label .required {
+  color: #d9534f !important;
+}
+
+/* ========================================
+   ENTITY FORM - COMPLETE STYLING
+   ======================================== */
+
+.entity-form,
+.entityform,
+.crmEntityFormView {
+  width: 100% !important;
+}
+
+.entity-form table,
+.entityform table,
+.crmEntityFormView table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.entity-form td,
+.entityform td,
+.crmEntityFormView td {
+  width: 100% !important;
+  padding: 10px 15px !important;
+}
+
+.entity-form .table-info label {
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+  font-size: 16px !important;
+  color: #333 !important;
+}
+
+.entity-form .control,
+.entityform .control,
+.crmEntityFormView .control {
+  display: block !important;
+  width: 100% !important;
+}
+
+.entity-form .control input.form-control:not(.lookup),
+.entity-form .control textarea.form-control,
+.entity-form .control select.form-control {
+  width: 100% !important;
+  max-width: 100% !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  min-height: 38px !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+
+.entity-form .control input.form-control:focus,
+.entity-form .control textarea.form-control:focus,
+.entity-form .control select.form-control:focus {
+  border-color: #2b4380 !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(43, 67, 128, 0.25) !important;
+}
+
+/* ========================================
+   LOOKUP FIELDS
+   ======================================== */
+
+.entity-form .control .input-group,
+.entityform .control .input-group,
+.crmEntityFormView .control .input-group {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100% !important;
+  position: relative !important;
+  gap: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.entity-form .control .input-group input.lookup {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  border: 1px solid #ccc !important;
+  border-right: none !important;
+  border-radius: 4px 0 0 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  min-height: 38px !important;
+  height: 38px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+.entity-form .control .input-group input[type="hidden"] {
+  display: none !important;
+}
+
+.entity-form .control .input-group .btn {
+  flex: 0 0 44px !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-left: none !important;
+  color: white !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0 !important;
+  cursor: pointer !important;
+}
+
+.entity-form .control .input-group .btn.launchentitylookup {
+  border-radius: 0 4px 4px 0 !important;
+}
+
+.entity-form .control .input-group .btn:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+}
+
+.entity-form .control .input-group .btn .fa,
+.entity-form .control .input-group .btn [class*="fa-"] {
+  font-size: 16px !important;
+  color: white !important;
+  display: block !important;
+}
+
+.entity-form .control .input-group .btn .visually-hidden,
+.entity-form .control .input-group .btn .sr-only {
+  display: none !important;
+}
+
+.entity-form .control .input-group .text-muted {
+  display: none !important;
+}
+
+/* ========================================
+   DATETIME FIELDS
+   ======================================== */
+
+.entity-form .control input.datetime[data-ui="datetimepicker"] {
+  display: none !important;
+}
+
+.entity-form .control .datetimepicker,
+.entityform .control .datetimepicker,
+.crmEntityFormView .control .datetimepicker {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100% !important;
+  position: relative !important;
+  gap: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.entity-form .control .datetimepicker input.form-control {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  border: 1px solid #ccc !important;
+  border-right: none !important;
+  border-radius: 4px 0 0 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  min-height: 38px !important;
+  height: 38px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+.entity-form .control .datetimepicker .input-group-addon {
+  flex: 0 0 44px !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  border-left: none !important;
+  color: white !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 4px 4px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+}
+
+.entity-form .control .datetimepicker .input-group-addon:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+}
+
+.entity-form .control .datetimepicker .input-group-addon .fa {
+  font-size: 16px !important;
+  color: white !important;
+}
+
+/* ========================================
+   SUBMIT BUTTON
+   ======================================== */
+
+.entity-form .submit-btn,
+.entity-form .actions .btn-primary {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  color: white !important;
+  padding: 10px 24px !important;
+  border-radius: 4px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+}
+
+.entity-form .submit-btn:hover,
+.entity-form .actions .btn-primary:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+}
+
+/* ========================================
+   MODAL STYLING - FORM & LOOKUP
+   ======================================== */
+
+.modal-lookup {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* UNIVERSAL MODAL HEADER POSITIONING */
+.modal-header {
+  position: relative !important;
+}
+
+/* FORM MODAL HEADERS */
+.modal-form .modal-header,
+.modal-form-insert .modal-header,
+.modal-form-edit .modal-header,
+.modal-form-details .modal-header,
+.modal-form-createrecord .modal-header {
+  position: relative !important;
+  background-color: #2C5F6F !important;
+  color: white !important;
+  padding: 15px 20px !important;
+  border-radius: 4px 4px 0 0 !important;
+  border-bottom: none !important;
+}
+
+.modal-form .modal-header .modal-title,
+.modal-form .modal-header h1,
+.modal-form .modal-header h2,
+.modal-form .modal-header h3,
+.modal-form .modal-header h4 {
+  color: white !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+/* LOOKUP MODAL HEADERS */
+.modal-lookup .modal-header {
+  position: relative !important;
+  background-color: #2C5F6F !important;
+  color: white !important;
+  padding: 15px 20px !important;
+  border-radius: 4px 4px 0 0 !important;
+  border-bottom: none !important;
+}
+
+.modal-lookup .modal-header .modal-title {
+  color: white !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+/* ========================================
+   NUCLEAR CLOSE BUTTON FIX - BOOTSTRAP 5
+   ======================================== */
+
+/* Remove ALL Bootstrap close button styling and replace with our own */
+.modal-header .btn-close,
+.modal-header button.btn-close,
+.modal-header button[data-bs-dismiss="modal"],
+.modal-header .close,
+.modal-header .form-close {
+  /* Reset ALL Bootstrap styles */
+  all: unset !important;
+  
+  /* Position */
+  display: inline-flex !important;
+  position: absolute !important;
+  right: 15px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  
+  /* Size */
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  
+  /* Appearance */
+  background: transparent !important;
+  border: none !important;
+  
+  /* Text styling */
+  color: white !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 36px !important;
+  font-weight: 300 !important;
+  line-height: 36px !important;
+  text-align: center !important;
+  
+  /* Layout */
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  
+  /* Behavior */
+  cursor: pointer !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+}
+
+/* Hover state */
+.modal-header .btn-close:hover,
+.modal-header button.btn-close:hover,
+.modal-header button[data-bs-dismiss="modal"]:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 4px !important;
+  color: white !important;
+  opacity: 1 !important;
+}
+
+/* Focus state */
+.modal-header .btn-close:focus,
+.modal-header button.btn-close:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.3) !important;
+  outline-offset: 2px !important;
+  opacity: 1 !important;
+}
+
+/* Make sure text is visible - force it with content if needed */
+.modal-header .btn-close::before,
+.modal-header button.btn-close::before {
+  content: '×' !important;
+  display: inline-block !important;
+  color: white !important;
+  font-size: 36px !important;
+  line-height: 1 !important;
+  font-weight: 300 !important;
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+/* ========================================
+   LOOKUP MODAL BODY & FOOTER
+   ======================================== */
+
+.modal-lookup .modal-body {
+  padding: 20px !important;
+  max-height: calc(100vh - 250px) !important;
+  overflow-y: auto !important;
+}
+
+.modal-lookup .view-search.entitylist-search {
+  margin-bottom: 15px !important;
+}
+
+.modal-lookup .entitylist-search .query.form-control {
+  border: 1px solid #ccc !important;
+  border-radius: 4px 0 0 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  height: 38px !important;
+}
+
+.modal-lookup .entitylist-search .query.form-control:focus {
+  border-color: #2C5F6F !important;
+  box-shadow: 0 0 0 0.2rem rgba(44, 95, 111, 0.25) !important;
+}
+
+.modal-lookup .entitylist-search .btn-default {
+  background-color: #2C5F6F !important;
+  border: 1px solid #2C5F6F !important;
+  border-radius: 0 4px 4px 0 !important;
+  color: white !important;
+  height: 38px !important;
+  padding: 8px 16px !important;
+}
+
+.modal-lookup .entitylist-search .btn-default:hover {
+  background-color: #234A57 !important;
+  border-color: #234A57 !important;
+}
+
+.modal-lookup .view-grid table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-size: 14px !important;
+  min-width: 1200px !important;
+}
+
+.modal-lookup .view-grid table thead th {
+  background-color: #f8f9fa !important;
+  border-bottom: 2px solid #dee2e6 !important;
+  padding: 12px 8px !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+  color: #333 !important;
+}
+
+.modal-lookup .view-grid table tbody tr {
+  border-bottom: 1px solid #dee2e6 !important;
+  min-height: 44px !important;
+}
+
+.modal-lookup .view-grid table tbody tr:hover {
+  background-color: #f8f9fa !important;
+}
+
+.modal-lookup .view-grid table tbody td {
+  padding: 10px 12px !important;
+  vertical-align: middle !important;
+}
+
+.modal-lookup .view-grid table tbody td:first-child,
+.modal-lookup .view-grid table thead th:first-child {
+  width: 50px !important;
+  min-width: 50px !important;
+  max-width: 50px !important;
+  text-align: center !important;
+  padding: 8px !important;
+}
+
+.modal-lookup .view-grid table .fa.fa-fw,
+.modal-lookup .view-grid table .fa-square-o,
+.modal-lookup .view-grid table .fa-check-square {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+  cursor: pointer !important;
+  color: #2C5F6F !important;
+}
+
+.modal-lookup .view-grid table .fa.fa-fw:hover {
+  color: #234A57 !important;
+}
+
+.modal-lookup .modal-footer {
+  padding: 15px 20px !important;
+  border-top: 1px solid #dee2e6 !important;
+  background-color: #f8f9fa !important;
+  border-radius: 0 0 4px 4px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.modal-lookup .modal-footer .btn {
+  padding: 8px 20px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+}
+
+.modal-lookup .modal-footer .btn.btn-primary,
+.modal-lookup .modal-footer .btn.primary {
+  background-color: #2C5F6F !important;
+  border: 1px solid #2C5F6F !important;
+  color: white !important;
+}
+
+.modal-lookup .modal-footer .btn.btn-primary:hover,
+.modal-lookup .modal-footer .btn.primary:hover {
+  background-color: #234A57 !important;
+  border-color: #234A57 !important;
+}
+
+.modal-lookup .modal-footer .btn.btn-primary:disabled,
+.modal-lookup .modal-footer .btn.primary:disabled {
+  background-color: #ccc !important;
+  border-color: #ccc !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
+
+/* ========================================
+   MODAL FIXES
+   ======================================== */
+
+.modal.show {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+}
+
+.modal-dialog {
+  position: relative !important;
+  margin: auto !important;
+  max-height: calc(100vh - 40px) !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.modal-content {
+  max-height: calc(100vh - 60px) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: auto !important;
+}
+
+.modal-body {
+  overflow-y: auto !important;
+  max-height: calc(100vh - 220px) !important;
+  flex: 1 1 auto !important;
+  position: relative !important;
+}
+
+.modal {
+  overflow-y: auto !important;
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+}
+
+body.modal-open {
+  overflow: hidden !important;
+}
+
+/* Modal z-index hierarchy */
+.modal-lookup,
+section.modal-lookup {
+  z-index: 10050 !important;
+}
+
+.modal-lookup .modal-dialog {
+  z-index: 10051 !important;
+}
+
+.modal-form,
+.modal.show:not(.modal-lookup) {
+  z-index: 9999 !important;
+}
+
+.modal-backdrop {
+  z-index: 9998 !important;
+}
+
+.modal-lookup ~ .modal-backdrop,
+.modal-backdrop.modal-lookup {
+  z-index: 10049 !important;
+}
+
+/* Remove h1 underlines */
+h1,
+h1.modal-title,
+.modal-header h1,
+.modal-title,
+h1.h1,
+.h1 {
+  border-bottom: none !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+h1::after,
+h1::before,
+.modal-title::after,
+.modal-title::before {
+  content: none !important;
+  display: none !important;
+  border: none !important;
+  background: none !important;
+}
+
+.modal-header h1,
+.modal-header .modal-title,
+.modal-header h2,
+.modal-header h3 {
+  border-bottom: none !important;
+  text-decoration: none !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS
+   ======================================== */
+
+@media (max-width: 992px) {
+  .toolbar-actions {
+    justify-content: flex-start !important;
+  }
+  
+  .toolbar-actions .view-search.input-group {
+    flex: 1 1 auto !important;
+    min-width: 200px !important;
+    max-width: 500px !important;
+  }
+  
+  .entity-form .control input.form-control,
+  .entity-form .control .input-group input.lookup,
+  .entity-form .control .datetimepicker input.form-control {
+    min-height: 44px !important;
+    height: 44px !important;
+    font-size: 16px !important;
+  }
+  
+  .entity-form .control .input-group .btn,
+  .entity-form .control .datetimepicker .input-group-addon {
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    width: 48px !important;
+    min-width: 48px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .toolbar-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  
+  .toolbar-actions .view-search.input-group,
+  .create-action.btn-primary {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+  
+  .modal-lookup .modal-footer {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  
+  .modal-lookup .modal-footer .btn {
+    width: 100% !important;
+  }
+  
+  .entity-form td {
+    padding: 10px 5px !important;
+  }
+  
+  .entity-form .control input.form-control,
+  .entity-form .control .input-group input.lookup,
+  .entity-form .control .datetimepicker input.form-control {
+    min-height: 48px !important;
+    height: 48px !important;
+  }
+  
+  .entity-form .control .input-group .btn,
+  .entity-form .control .datetimepicker .input-group-addon {
+    height: 48px !important;
+    width: 52px !important;
+  }
+  
+  .entity-form .submit-btn,
+  .entity-form .actions .btn-primary {
+    width: 100% !important;
+    display: block !important;
+  }
+}
+
+/* ========================================
+   NESTED MODAL SUPPORT (LOOKUP WITHIN FORM)
+   ======================================== */
+
+/* When a lookup modal is opened from within a form modal, ensure proper stacking */
+.modal-form.show ~ .modal-lookup,
+.modal-lookup.show {
+  z-index: 10060 !important;
+}
+
+.modal-form.show ~ .modal-lookup .modal-dialog {
+  z-index: 10061 !important;
+}
+
+.modal-form.show ~ .modal-backdrop.modal-lookup,
+.modal-lookup ~ .modal-backdrop {
+  z-index: 10059 !important;
+}
+
+/* Ensure form modal stays below lookup when both are open */
+body.modal-open .modal-form.show {
+  z-index: 9999 !important;
+}
+
+body.modal-open .modal-lookup.show {
+  z-index: 10060 !important;
+}
+
+</style>

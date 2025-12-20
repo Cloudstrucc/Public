@@ -1,4 +1,8 @@
 adx_contentsnippet:
+- RecordId: 1217cc30-cddc-f011-8543-7ced8da58400
+  DisplayName: Basic-Form-JS-Baseline
+  CheckSum: 76e4bdb8d4660f95af8167e4abf87ec6fb6062280767125b6d6e9bfe9ebf7615
+  IsDeleted: false
 - RecordId: 1b6a1745-4bac-4e04-9ea1-47d6458a24a7
   DisplayName: Search/ResultsCount
   CheckSum: f903122e89099cf1ed1c516025c089f1e6da74318c5382646ec01a134aaf6c5d
@@ -10,6 +14,10 @@ adx_contentsnippet:
 - RecordId: 3c675ebf-2cf6-4a7d-9bfb-c32e840bfc34
   DisplayName: Footer
   CheckSum: 8b47019994b205370ff95198f0cb652f21d641c8aa176cdc06ef7b2b771cc59c
+  IsDeleted: false
+- RecordId: 496f2efa-84dd-f011-8406-7ced8da58400
+  DisplayName: PEPP-BasicForm-Library
+  CheckSum: 46c9686f522aa8bcad61273f6c6f15372338601d66cd90a00450b6aa7991202f
   IsDeleted: false
 - RecordId: 5e083fba-3796-4904-9360-dd845ffc7bcf
   DisplayName: Search/ResultsTitle
@@ -50,11 +58,16 @@ adx_entityform:
   IsDeleted: false
 - RecordId: 5c9f5415-21d5-f011-8544-7ced8d3606fc
   DisplayName: Edit Item
-  CheckSum: 1f20fa53e47649f6722e96fcdd88ae04c54a812c76a44e7fe3924a478423b962
+  CheckSum: 0dfc14518b5d4f0af703e79d2f089f09d7c016ab9432ec69dfdf6ccf13549a6b
   IsDeleted: false
 - RecordId: fb83a9e9-20d5-f011-8544-7ced8d3606fc
   DisplayName: Create Item
-  CheckSum: 82a358966b9d8d0a9b81118eda82488ef145033c2c6528815bff582d4e61f5c8
+  CheckSum: dcdd8351fcb903d0c99b5ae42f86a88220f258ed720e01a7d82ef2466a45ec87
+  IsDeleted: false
+adx_entityformmetadata:
+- RecordId: a2c10350-80dd-f011-8406-7ced8da58400
+  DisplayName: Create Item cs_lookupfield
+  CheckSum: 24fca5a5b2f76ad7c3dd0cebdb47837809dec16826d5b50eba4b1ae3fb827d83
   IsDeleted: false
 adx_entitylist:
 - RecordId: 81ae888b-0dd5-f011-8544-7ced8d3606fc
@@ -267,6 +280,10 @@ adx_sitesetting:
 - RecordId: 592bc5b0-33d4-f011-8544-7ced8d371ea7
   DisplayName: Authentication/OpenIdConnect/AzureAD/Caption
   CheckSum: e6ceb9581bb41b09f842ea67c823de8f161f1d1dc225bfbf5c2d40dee5d634f4
+  IsDeleted: false
+- RecordId: 5b1e73e6-81dd-f011-8406-7ced8da58400
+  DisplayName: Webform/EnableCodeComponents
+  CheckSum: 83797bc9cf4254d5911751c676daac4dfa7d60b1c1fab3c2837ca8123d702e09
   IsDeleted: false
 - RecordId: 5b2bc5b0-33d4-f011-8544-7ced8d371ea7
   DisplayName: Authentication/OpenIdConnect/AzureAD/RebrandDisclaimerEnabled
@@ -2570,7 +2587,7 @@ adx_webtemplate:
   IsDeleted: false
 - RecordId: 5d462fef-bfd4-f011-8544-7ced8d3606fc
   DisplayName: CS-footer
-  CheckSum: 68c35ccb46fe62ba3cc95d22c103f31ef7c1a51380f48aa6376f7e800e669515
+  CheckSum: e328dd492a7cbe10d291ff7204c3020f8fd0b02289a9f721cb0d79659539d512
   IsDeleted: false
 - RecordId: 66462fef-bfd4-f011-8544-7ced8d3606fc
   DisplayName: CS-header-bak
@@ -2587,6 +2604,10 @@ adx_webtemplate:
 - RecordId: a81dc0f4-8113-45a6-8ad0-121efe97daf7
   DisplayName: Page Header
   CheckSum: 3ce84fe869dfceb860aed453445335c901baeb349b8fc38c7126d758a705fcdf
+  IsDeleted: false
+- RecordId: a8dad27a-89dd-f011-8406-7ced8da58400
+  DisplayName: PEPP-Base-Styles
+  CheckSum: 6810bc2d2310bc09b14cc91e441c6d053859c41dd802dd4a9024f78929690437
   IsDeleted: false
 - RecordId: b1a26640-2d44-42d5-97ce-556145040c34
   DisplayName: Languages Dropdown
@@ -2630,7 +2651,11 @@ adx_webtemplate:
   IsDeleted: false
 - RecordId: ec9169f2-bfd4-f011-8544-7ced8d371ea7
   DisplayName: CS-header
-  CheckSum: 7fc927f11fb57ed63dcaac737e8cb5a4f7300121e43a528e6000874c01a70f33
+  CheckSum: 524f06dbe41a3c9d968971af85a3bb3dadab6f68ed6d932a8ff357e29df99f87
+  IsDeleted: false
+- RecordId: f0c229bd-8bdd-f011-8406-7ced8da58400
+  DisplayName: PEPP-Scripts-Base
+  CheckSum: dedfb3fa33d6325bbec0534839f127a6bb6d06823d581c8e682b82390534b12c
   IsDeleted: false
 annotation:
 - RecordId: 004f983b-c2d4-f011-8544-6045bd5c6e93
