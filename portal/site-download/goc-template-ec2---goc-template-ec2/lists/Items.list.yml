@@ -2,6 +2,17 @@ adx_calendar_enabled: false
 adx_calendar_initialview: 756150001
 adx_calendar_style: 756150000
 adx_calendar_timezonemode: 756150000
+adx_detailsbuttonlabel: >-
+  [
+    {
+      "LCID": 1033,
+      "Value": "Details"
+    },
+    {
+      "LCID": 1036,
+      "Value": "Details"
+    }
+  ]
 adx_entitylistid: 81ae888b-0dd5-f011-8544-7ced8d3606fc
 adx_entityname: cs_item
 adx_entitypermissionsenabled: true
@@ -906,3 +917,4 @@ adx_views: >-
       }
     ]
   }
+adx_webpagefordetailsview: b3d9f6bb-0dd5-f011-8544-7ced8d3606fc

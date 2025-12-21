@@ -1,8 +1,9 @@
 <script>
-console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
+console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.1');
 
 /* ========================================
-   PEPP Scripts Library v1.0
+   PEPP Scripts Library v1.1
+   Enhanced with delete and details modal support
    ======================================== */
 
 // Modal blocker DISABLED - all modals allowed
@@ -30,6 +31,9 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
       '.create-action, ' +
       '.edit-action, ' +
       '.delete-action, ' +
+      '.details-action, ' +
+      '.view-action, ' +
+      'a[href*="modal-form-template"], ' +
       '.dropdown-item, ' +
       '.launchentitylookup, ' +
       'a[role="button"], ' +
@@ -66,11 +70,15 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
     // Remove Bootstrap fade
     modal.classList.remove('fade');
     
+    // Determine z-index based on modal type
+    const isLookupModal = modal.classList.contains('modal-lookup');
+    const zIndex = isLookupModal ? '10060' : '10050';
+    
     // Force display on the modal wrapper
     modal.style.setProperty('display', 'flex', 'important');
     modal.style.setProperty('opacity', '1', 'important');
     modal.style.setProperty('visibility', 'visible', 'important');
-    modal.style.setProperty('z-index', '10050', 'important');
+    modal.style.setProperty('z-index', zIndex, 'important');
     modal.style.setProperty('align-items', 'center', 'important');
     modal.style.setProperty('justify-content', 'center', 'important');
     
@@ -85,51 +93,39 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
       const screenWidth = window.innerWidth;
       console.log('📐 Screen width:', screenWidth);
       
-      // Determine width based on modal type and screen size
-      const isLookupModal = modal.classList.contains('modal-lookup');
+      // Determine width based on modal type
+      const isDeleteModal = modal.classList.contains('modal-delete');
+      const isDetailsModal = modal.classList.contains('modal-details');
       
-      if (screenWidth >= 1400) {
-        // Large desktop - full widths
-        const width = isLookupModal ? '1400px' : '900px';
-        console.log('🖥️ Large desktop - setting width:', width);
-        
-        // Set width properties
-        modalDialog.style.setProperty('max-width', width, 'important');
-        modalDialog.style.setProperty('min-width', width, 'important');
-        modalDialog.style.setProperty('width', width, 'important');
-        
-        // Also remove any flex properties that might interfere
-        modalDialog.style.setProperty('flex', 'none', 'important');
-        modalDialog.style.setProperty('flex-basis', 'auto', 'important');
-        modalDialog.style.setProperty('flex-grow', '0', 'important');
-        modalDialog.style.setProperty('flex-shrink', '0', 'important');
-        
-      } else if (screenWidth >= 992) {
-        // Desktop - slightly smaller
-        const width = isLookupModal ? '95%' : '900px';
-        console.log('💻 Desktop - setting width:', width);
-        
-        modalDialog.style.setProperty('max-width', width, 'important');
-        modalDialog.style.setProperty('min-width', '0', 'important');
-        modalDialog.style.setProperty('width', width, 'important');
-        modalDialog.style.setProperty('flex', 'none', 'important');
-        
-      } else if (screenWidth >= 768) {
-        // Tablet
-        console.log('📱 Tablet - setting width: 95%');
-        modalDialog.style.setProperty('max-width', '95%', 'important');
-        modalDialog.style.setProperty('min-width', '0', 'important');
-        modalDialog.style.setProperty('width', '95%', 'important');
-        modalDialog.style.setProperty('flex', 'none', 'important');
-        
+      let widthValue;
+      if (isDeleteModal) {
+        // Delete modals are small
+        widthValue = screenWidth >= 768 ? '500px' : '95%';
+        console.log('🗑️ Delete modal - setting width:', widthValue);
+      } else if (isLookupModal) {
+        // Lookup modals are large
+        widthValue = screenWidth >= 1400 ? '1400px' : '95%';
+        console.log('🔍 Lookup modal - setting width:', widthValue);
+      } else if (isDetailsModal) {
+        // Details modals are medium-large
+        widthValue = screenWidth >= 1400 ? '1100px' : '900px';
+        console.log('👁️ Details modal - setting width:', widthValue);
       } else {
-        // Mobile
-        console.log('📱 Mobile - setting width: 100%');
-        modalDialog.style.setProperty('max-width', '100%', 'important');
-        modalDialog.style.setProperty('min-width', '0', 'important');
-        modalDialog.style.setProperty('width', '100%', 'important');
-        modalDialog.style.setProperty('flex', 'none', 'important');
+        // Form modals are medium
+        widthValue = screenWidth >= 1400 ? '900px' : '95%';
+        console.log('📝 Form modal - setting width:', widthValue);
       }
+      
+      // Set width properties
+      modalDialog.style.setProperty('max-width', widthValue, 'important');
+      modalDialog.style.setProperty('min-width', isDeleteModal ? '0' : widthValue, 'important');
+      modalDialog.style.setProperty('width', widthValue, 'important');
+      
+      // Remove any flex properties that might interfere
+      modalDialog.style.setProperty('flex', 'none', 'important');
+      modalDialog.style.setProperty('flex-basis', 'auto', 'important');
+      modalDialog.style.setProperty('flex-grow', '0', 'important');
+      modalDialog.style.setProperty('flex-shrink', '0', 'important');
       
       // Center the dialog
       modalDialog.style.setProperty('margin', '1.75rem auto', 'important');
@@ -138,17 +134,18 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
       const modalContent = modalDialog.querySelector('.modal-content');
       if (modalContent) {
         modalContent.style.setProperty('width', '100%', 'important');
-        modalContent.style.setProperty('min-height', '400px', 'important');
+        modalContent.style.setProperty('min-height', isDeleteModal ? '200px' : '400px', 'important');
         modalContent.style.setProperty('max-height', 'calc(100vh - 3.5rem)', 'important');
       }
       
       // NUCLEAR: Keep re-applying width for 2 seconds to fight any CSS
       let applyCount = 0;
-      const widthValue = isLookupModal ? (screenWidth >= 1400 ? '1400px' : '95%') : '900px';
       const keepApplying = setInterval(function() {
         modalDialog.style.setProperty('width', widthValue, 'important');
         modalDialog.style.setProperty('max-width', widthValue, 'important');
-        modalDialog.style.setProperty('min-width', widthValue, 'important');
+        if (!isDeleteModal) {
+          modalDialog.style.setProperty('min-width', widthValue, 'important');
+        }
         applyCount++;
         if (applyCount > 10) {
           clearInterval(keepApplying);
@@ -157,11 +154,12 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
       }, 200);
     }
     
-    // Ensure backdrop
+    // Ensure backdrop (with proper z-index for lookup modals)
+    const backdropZIndex = isLookupModal ? '10059' : '10040';
     if (!document.querySelector('.modal-backdrop.show')) {
       const backdrop = document.createElement('div');
       backdrop.className = 'modal-backdrop fade show';
-      backdrop.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 10040;';
+      backdrop.style.cssText = `position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: ${backdropZIndex};`;
       document.body.appendChild(backdrop);
       console.log('✅ Created modal backdrop');
     }
@@ -177,7 +175,9 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
   
   const isFormModal = function(modal) {
     return modal.classList.contains('modal-form') ||
-           modal.classList.contains('modal-lookup');
+           modal.classList.contains('modal-lookup') ||
+           modal.classList.contains('modal-delete') ||
+           modal.classList.contains('modal-details');
   };
   
   const checkForModals = function() {
@@ -186,48 +186,69 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
     // Only check if clicked recently
     if (timeSinceClick > 3000) return;
     
-    // Allow checking even if modalAlreadyShown is true (for nested lookup modals)
-    // We'll check if there's a NEW modal to show
-    
     console.log('🔍 Checking for modals...');
     
     // Find all modals
     const modals = document.querySelectorAll('.modal');
     console.log('Found', modals.length, 'total modals in DOM');
     
-    // Find the FIRST modal Power Pages wants to show (not the last!)
-    // PRIORITY: Lookup modals > Form modals (for nested scenarios)
+    // Find the modal Power Pages wants to show
+    // PRIORITY: Lookup > Delete > Details > Form
     let targetModal = null;
     
-    // First, check for lookup modals (they should appear on top)
+    // 1. First check for lookup modals (highest priority for nested scenarios)
     for (let i = 0; i < modals.length; i++) {
       const modal = modals[i];
       if (modal.classList.contains('modal-lookup') && modal.classList.contains('show')) {
-        // Check if this modal is already visible
         const isAlreadyVisible = modal.style.display === 'flex' && modal.style.opacity === '1';
         if (!isAlreadyVisible) {
-          console.log('🎯 Found NEW lookup modal with show class:', modal.className);
+          console.log('🔍 Found NEW lookup modal with show class:', modal.className);
           targetModal = modal;
           break;
         }
       }
     }
     
-    // If no lookup modal, find form modal
+    // 2. Then check for delete modals
     if (!targetModal) {
       for (let i = 0; i < modals.length; i++) {
         const modal = modals[i];
-        if (isFormModal(modal)) {
-          const hasShowClass = modal.classList.contains('show');
-          
-          if (hasShowClass) {
-            // Check if already visible
-            const isAlreadyVisible = modal.style.display === 'flex' && modal.style.opacity === '1';
-            if (!isAlreadyVisible || !modalAlreadyShown) {
-              console.log('🎯 Found FIRST modal with show class:', modal.className);
-              targetModal = modal;
-              break; // Stop at FIRST one, don't keep looping!
-            }
+        if (modal.classList.contains('modal-delete') && modal.classList.contains('show')) {
+          const isAlreadyVisible = modal.style.display === 'flex' && modal.style.opacity === '1';
+          if (!isAlreadyVisible || !modalAlreadyShown) {
+            console.log('🗑️ Found DELETE modal with show class:', modal.className);
+            targetModal = modal;
+            break;
+          }
+        }
+      }
+    }
+    
+    // 3. Then check for details modals
+    if (!targetModal) {
+      for (let i = 0; i < modals.length; i++) {
+        const modal = modals[i];
+        if (modal.classList.contains('modal-details') && modal.classList.contains('show')) {
+          const isAlreadyVisible = modal.style.display === 'flex' && modal.style.opacity === '1';
+          if (!isAlreadyVisible || !modalAlreadyShown) {
+            console.log('👁️ Found DETAILS modal with show class:', modal.className);
+            targetModal = modal;
+            break;
+          }
+        }
+      }
+    }
+    
+    // 4. Finally check for form modals
+    if (!targetModal) {
+      for (let i = 0; i < modals.length; i++) {
+        const modal = modals[i];
+        if (modal.classList.contains('modal-form') && modal.classList.contains('show')) {
+          const isAlreadyVisible = modal.style.display === 'flex' && modal.style.opacity === '1';
+          if (!isAlreadyVisible || !modalAlreadyShown) {
+            console.log('📝 Found FORM modal with show class:', modal.className);
+            targetModal = modal;
+            break;
           }
         }
       }
@@ -236,19 +257,25 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
     // If we found the target modal, show ONLY that one
     if (targetModal) {
       console.log('💪 Showing ONLY the target modal');
-      modalAlreadyShown = true; // Prevent showing more modals
+      modalAlreadyShown = true;
       
-      // Hide ALL other form modals (but only same type)
+      // Hide ALL other modals (except parent in nested scenarios)
       const isTargetLookup = targetModal.classList.contains('modal-lookup');
       modals.forEach(function(modal) {
         if (isFormModal(modal) && modal !== targetModal) {
-          // Only hide if not a nested scenario (lookup inside form)
-          const isLookup = modal.classList.contains('modal-lookup');
-          if (isTargetLookup || !isLookup) {
-            modal.style.display = 'none';
-            modal.classList.remove('show');
-            console.log('🚫 Hiding other modal:', modal.className);
+          // NESTED MODAL LOGIC: Don't hide parent form if showing nested lookup
+          if (isTargetLookup && modal.classList.contains('modal-form')) {
+            // Check if targetModal is a descendant of this form modal
+            if (modal.contains(targetModal)) {
+              console.log('👨‍👧 Keeping parent form modal:', modal.className);
+              return; // Don't hide the parent
+            }
           }
+          
+          // Hide other modals
+          modal.style.display = 'none';
+          modal.classList.remove('show');
+          console.log('🚫 Hiding other modal:', modal.className);
         }
       });
       
@@ -259,7 +286,7 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
     }
   };
   
-  // Watch for NEW modals being added (basic support, not primary mechanism)
+  // Watch for NEW modals being added
   const modalObserver = new MutationObserver(function(mutations) {
     const timeSinceClick = Date.now() - lastClickTime;
     if (timeSinceClick > 3000) return;
@@ -270,8 +297,10 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
           if (node.classList && node.classList.contains('modal') && isFormModal(node)) {
             const hasShowClass = node.classList.contains('show');
             if (hasShowClass) {
-              console.log('🔍 NEW form modal added with show class');
-              forceModalVisible(node);
+              console.log('🔍 NEW modal added with show class');
+              setTimeout(function() {
+                checkForModals();
+              }, 50);
             }
           }
         }
@@ -336,6 +365,12 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.0');
       if (lookupInput && recordName) {
         lookupInput.value = recordName;
         console.log('✅ Populated visible field');
+        
+        // Hide the placeholder dash
+        const placeholder = lookupInput.parentElement.querySelector('.text-muted');
+        if (placeholder) {
+          placeholder.style.display = 'none';
+        }
         
         if (lookupHiddenInput && recordId) {
           lookupHiddenInput.value = recordId;
@@ -500,7 +535,7 @@ console.log('🎯 All modal handlers loaded successfully');
   });
   
   document.addEventListener('click', function(e) {
-    if (e.target.closest('.create-action, .edit-action, .delete-action, .launchentitylookup')) {
+    if (e.target.closest('.create-action, .edit-action, .delete-action, .details-action, .view-action, .launchentitylookup, a[href*="modal-form-template"]')) {
       setTimeout(fixCloseButton, 200);
       setTimeout(fixCloseButton, 500);
     }

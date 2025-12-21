@@ -1,6 +1,7 @@
 <style>
 /* ========================================
-   PEPP Core Styles v1.0
+   PEPP Core Styles v1.1
+   Enhanced with delete and details modal support
    ======================================== */
 
 /* ========================================
@@ -829,7 +830,7 @@ select[id*="cs_"] {
 }
 
 /* ========================================
-   MODAL STYLING - FORM & LOOKUP
+   MODAL STYLING - ALL TYPES
    ======================================== */
 
 .modal-lookup {
@@ -841,12 +842,15 @@ select[id*="cs_"] {
   position: relative !important;
 }
 
-/* FORM MODAL HEADERS */
+/* ALL MODAL HEADERS - Form, Lookup, Delete, Details */
 .modal-form .modal-header,
 .modal-form-insert .modal-header,
 .modal-form-edit .modal-header,
 .modal-form-details .modal-header,
-.modal-form-createrecord .modal-header {
+.modal-form-createrecord .modal-header,
+.modal-lookup .modal-header,
+.modal-delete .modal-header,
+.modal-details .modal-header {
   position: relative !important;
   background-color: #2C5F6F !important;
   color: white !important;
@@ -855,45 +859,65 @@ select[id*="cs_"] {
   border-bottom: none !important;
 }
 
+/* ALL MODAL TITLES */
 .modal-form .modal-header .modal-title,
 .modal-form .modal-header h1,
 .modal-form .modal-header h2,
 .modal-form .modal-header h3,
-.modal-form .modal-header h4 {
+.modal-form .modal-header h4,
+.modal-lookup .modal-header .modal-title,
+.modal-lookup .modal-header h1,
+.modal-lookup .modal-header h2,
+.modal-lookup .modal-header h3,
+.modal-lookup .modal-header h4,
+.modal-delete .modal-header .modal-title,
+.modal-delete .modal-header h1,
+.modal-delete .modal-header h2,
+.modal-delete .modal-header h3,
+.modal-delete .modal-header h4,
+.modal-details .modal-header .modal-title,
+.modal-details .modal-header h1,
+.modal-details .modal-header h2,
+.modal-details .modal-header h3,
+.modal-details .modal-header h4 {
   color: white !important;
   font-size: 18px !important;
   font-weight: 600 !important;
   margin: 0 !important;
+  padding: 0 !important;
   border: none !important;
-}
-
-/* LOOKUP MODAL HEADERS */
-.modal-lookup .modal-header {
-  position: relative !important;
-  background-color: #2C5F6F !important;
-  color: white !important;
-  padding: 15px 20px !important;
-  border-radius: 4px 4px 0 0 !important;
   border-bottom: none !important;
-}
-
-.modal-lookup .modal-header .modal-title {
-  color: white !important;
-  font-size: 18px !important;
-  font-weight: 600 !important;
-  margin: 0 !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background-image: none !important;
 }
 
 /* ========================================
-   NUCLEAR CLOSE BUTTON FIX - BOOTSTRAP 5
+   NUCLEAR CLOSE BUTTON FIX - ALL MODALS
    ======================================== */
 
 /* Remove ALL Bootstrap close button styling and replace with our own */
-.modal-header .btn-close,
-.modal-header button.btn-close,
-.modal-header button[data-bs-dismiss="modal"],
-.modal-header .close,
-.modal-header .form-close {
+.modal-form .modal-header .btn-close,
+.modal-form .modal-header button.btn-close,
+.modal-form .modal-header button[data-bs-dismiss="modal"],
+.modal-form .modal-header .close,
+.modal-form .modal-header .form-close,
+.modal-lookup .modal-header .btn-close,
+.modal-lookup .modal-header button.btn-close,
+.modal-lookup .modal-header button[data-bs-dismiss="modal"],
+.modal-lookup .modal-header .close,
+.modal-lookup .modal-header .form-close,
+.modal-delete .modal-header .btn-close,
+.modal-delete .modal-header button.btn-close,
+.modal-delete .modal-header button[data-bs-dismiss="modal"],
+.modal-delete .modal-header .close,
+.modal-delete .modal-header .form-close,
+.modal-details .modal-header .btn-close,
+.modal-details .modal-header button.btn-close,
+.modal-details .modal-header button[data-bs-dismiss="modal"],
+.modal-details .modal-header .close,
+.modal-details .modal-header .form-close {
   /* Reset ALL Bootstrap styles */
   all: unset !important;
   
@@ -936,27 +960,52 @@ select[id*="cs_"] {
   pointer-events: auto !important;
 }
 
-/* Hover state */
-.modal-header .btn-close:hover,
-.modal-header button.btn-close:hover,
-.modal-header button[data-bs-dismiss="modal"]:hover {
+/* Hover state - ALL MODALS */
+.modal-form .modal-header .btn-close:hover,
+.modal-form .modal-header button.btn-close:hover,
+.modal-form .modal-header button[data-bs-dismiss="modal"]:hover,
+.modal-lookup .modal-header .btn-close:hover,
+.modal-lookup .modal-header button.btn-close:hover,
+.modal-lookup .modal-header button[data-bs-dismiss="modal"]:hover,
+.modal-delete .modal-header .btn-close:hover,
+.modal-delete .modal-header button.btn-close:hover,
+.modal-delete .modal-header button[data-bs-dismiss="modal"]:hover,
+.modal-details .modal-header .btn-close:hover,
+.modal-details .modal-header button.btn-close:hover,
+.modal-details .modal-header button[data-bs-dismiss="modal"]:hover {
   background-color: rgba(255, 255, 255, 0.15) !important;
   border-radius: 4px !important;
   color: white !important;
   opacity: 1 !important;
 }
 
-/* Focus state */
-.modal-header .btn-close:focus,
-.modal-header button.btn-close:focus {
+/* Focus state - ALL MODALS */
+.modal-form .modal-header .btn-close:focus,
+.modal-form .modal-header button.btn-close:focus,
+.modal-lookup .modal-header .btn-close:focus,
+.modal-lookup .modal-header button.btn-close:focus,
+.modal-delete .modal-header .btn-close:focus,
+.modal-delete .modal-header button.btn-close:focus,
+.modal-details .modal-header .btn-close:focus,
+.modal-details .modal-header button.btn-close:focus {
   outline: 2px solid rgba(255, 255, 255, 0.3) !important;
   outline-offset: 2px !important;
   opacity: 1 !important;
 }
 
-/* Make sure text is visible - force it with content if needed */
-.modal-header .btn-close::before,
-.modal-header button.btn-close::before {
+/* Force × character with pseudo-element - ALL MODALS */
+.modal-form .modal-header .btn-close::before,
+.modal-form .modal-header button.btn-close::before,
+.modal-form .modal-header button[data-bs-dismiss]::before,
+.modal-lookup .modal-header .btn-close::before,
+.modal-lookup .modal-header button.btn-close::before,
+.modal-lookup .modal-header button[data-bs-dismiss]::before,
+.modal-delete .modal-header .btn-close::before,
+.modal-delete .modal-header button.btn-close::before,
+.modal-delete .modal-header button[data-bs-dismiss]::before,
+.modal-details .modal-header .btn-close::before,
+.modal-details .modal-header button.btn-close::before,
+.modal-details .modal-header button[data-bs-dismiss]::before {
   content: '×' !important;
   display: inline-block !important;
   color: white !important;
@@ -1151,28 +1200,30 @@ body.modal-open {
   overflow: hidden !important;
 }
 
-/* Modal z-index hierarchy */
+/* Modal z-index hierarchy - ALL TYPES */
 .modal-lookup,
 section.modal-lookup {
-  z-index: 10050 !important;
+  z-index: 10060 !important;
 }
 
 .modal-lookup .modal-dialog {
-  z-index: 10051 !important;
+  z-index: 10061 !important;
 }
 
 .modal-form,
+.modal-delete,
+.modal-details,
 .modal.show:not(.modal-lookup) {
-  z-index: 9999 !important;
+  z-index: 10050 !important;
 }
 
 .modal-backdrop {
-  z-index: 9998 !important;
+  z-index: 10040 !important;
 }
 
 .modal-lookup ~ .modal-backdrop,
 .modal-backdrop.modal-lookup {
-  z-index: 10049 !important;
+  z-index: 10059 !important;
 }
 
 /* Remove h1 underlines */
@@ -1310,7 +1361,7 @@ h1::before,
 
 /* Ensure form modal stays below lookup when both are open */
 body.modal-open .modal-form.show {
-  z-index: 9999 !important;
+  z-index: 10050 !important;
 }
 
 body.modal-open .modal-lookup.show {
