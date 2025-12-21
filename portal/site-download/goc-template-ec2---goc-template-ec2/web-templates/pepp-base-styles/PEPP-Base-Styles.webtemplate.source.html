@@ -389,6 +389,69 @@ a.btn-primary.float-end.create-action,
 }
 
 /* ========================================
+   SEARCH CLEAR BUTTON
+   ======================================== */
+
+.search-clear-btn {
+  position: absolute !important;
+  right: 50px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: transparent !important;
+  border: none !important;
+  color: #999 !important;
+  font-size: 18px !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+  width: 30px !important;
+  height: 30px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  transition: all 0.2s ease !important;
+}
+
+.search-clear-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: #d9534f !important;
+}
+
+.search-clear-btn:active {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.search-clear-btn .fa {
+  pointer-events: none !important;
+  font-size: 18px !important;
+}
+
+/* Adjust input padding for clear button */
+.entitylist-search .query.form-control,
+.toolbar-actions .query.form-control {
+  padding-right: 90px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .search-clear-btn {
+    right: 45px !important;
+    width: 28px !important;
+    height: 28px !important;
+  }
+  
+  .search-clear-btn .fa {
+    font-size: 16px !important;
+  }
+  
+  .entitylist-search .query.form-control,
+  .toolbar-actions .query.form-control {
+    padding-right: 85px !important;
+  }
+}
+
+/* ========================================
    ENTITY LIST - FILTER PANEL
    ======================================== */
 
@@ -536,6 +599,104 @@ select.form-control.form-select {
   appearance: auto !important;
   background-color: white !important;
   cursor: pointer !important;
+}
+
+/* ========================================
+   FILTER CLEAR BUTTON
+   ======================================== */
+
+/* Button container - flexbox for proper alignment */
+.entitylist-filter .float-end {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-top: 15px !important;
+  float: none !important;
+  clear: both !important;
+}
+
+/* Apply button - primary style */
+.btn-entitylist-filter-submit {
+  background-color: #2b4380 !important;
+  border: 1px solid #2b4380 !important;
+  color: white !important;
+  padding: 8px 20px !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  order: 1 !important; /* Apply comes first */
+}
+
+.btn-entitylist-filter-submit:hover {
+  background-color: #1e2f5a !important;
+  border-color: #1e2f5a !important;
+}
+
+/* Clear Filters button - secondary style */
+.btn-entitylist-filter-clear {
+  background-color: #f8f9fa !important;
+  border: 1px solid #ccc !important;
+  color: #333 !important;
+  padding: 8px 20px !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin: 0 !important;
+  order: 2 !important; /* Clear comes second */
+}
+
+.btn-entitylist-filter-clear:hover {
+  background-color: #e9ecef !important;
+  border-color: #adb5bd !important;
+  color: #000 !important;
+}
+
+.btn-entitylist-filter-clear:active {
+  background-color: #dee2e6 !important;
+  border-color: #999 !important;
+}
+
+/* Responsive - stack buttons on mobile */
+@media (max-width: 768px) {
+  .entitylist-filter .float-end {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+  
+  .btn-entitylist-filter-submit,
+  .btn-entitylist-filter-clear {
+    width: 100% !important;
+    order: unset !important;
+  }
+  
+  /* Apply button stays on top on mobile */
+  .btn-entitylist-filter-submit {
+    order: 1 !important;
+  }
+  
+  .btn-entitylist-filter-clear {
+    order: 2 !important;
+  }
+}
+
+/* Tablet view */
+@media (min-width: 769px) and (max-width: 992px) {
+  .entitylist-filter .float-end {
+    gap: 8px !important;
+  }
+  
+  .btn-entitylist-filter-submit,
+  .btn-entitylist-filter-clear {
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+  }
 }
 
 /* ========================================
@@ -1366,6 +1527,10 @@ body.modal-open .modal-form.show {
 
 body.modal-open .modal-lookup.show {
   z-index: 10060 !important;
+}
+
+.message::after {
+  background: transparent;
 }
 
 </style>

@@ -218,6 +218,66 @@ adx_settings: >-
           }
         ],
         "FilterCriteria": ""
+      },
+      {
+        "Type": "CrmEntityFormView-DetailsAction",
+        "RecordIdQueryStringParameterName": "id",
+        "TargetType": 0,
+        "OnComplete": 0,
+        "RedirectWebpageId": "",
+        "RedirectUrl": "",
+        "EntityFormId": "5c9f5415-21d5-f011-8544-7ced8d3606fc",
+        "ShowModal": 0,
+        "Confirmation": [
+          {
+            "Type": "LanguageResources",
+            "LCID": 1033,
+            "Value": ""
+          },
+          {
+            "Type": "LanguageResources",
+            "LCID": 1036,
+            "Value": ""
+          }
+        ],
+        "SuccessMessage": [
+          {
+            "Type": "LanguageResources",
+            "LCID": 1033,
+            "Value": ""
+          },
+          {
+            "Type": "LanguageResources",
+            "LCID": 1036,
+            "Value": ""
+          }
+        ],
+        "ButtonLabel": [
+          {
+            "Type": "LanguageResources",
+            "LCID": 1033,
+            "Value": ""
+          },
+          {
+            "Type": "LanguageResources",
+            "LCID": 1036,
+            "Value": ""
+          }
+        ],
+        "ButtonTooltip": [
+          {
+            "Type": "LanguageResources",
+            "LCID": 1033,
+            "Value": ""
+          },
+          {
+            "Type": "LanguageResources",
+            "LCID": 1036,
+            "Value": ""
+          }
+        ],
+        "ActionIndex": 2,
+        "FilterCriteria": ""
       }
     ],
     "ExtendedItemActions": [],
@@ -917,4 +977,3 @@ adx_views: >-
       }
     ]
   }
-adx_webpagefordetailsview: b3d9f6bb-0dd5-f011-8544-7ced8d3606fc

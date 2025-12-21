@@ -30,13 +30,16 @@ console.log('🔥 PEPP-Scripts-Base LOADED - Version 1.1');
     const isModalTrigger = e.target.closest(
       '.create-action, ' +
       '.edit-action, ' +
+      '.edit-link, ' +
       '.delete-action, ' +
       '.details-action, ' +
+      '.details-link, ' +
       '.view-action, ' +
       'a[href*="modal-form-template"], ' +
       '.dropdown-item, ' +
       '.launchentitylookup, ' +
       'a[role="button"], ' +
+      'a[data-entityformid], ' +
       '[data-toggle="modal"], ' +
       '[data-bs-toggle="modal"]'
     );
@@ -543,5 +546,224 @@ console.log('🎯 All modal handlers loaded successfully');
   
   console.log('🧹 Close button fixer ready');
 })();
+// ========================================
+// SEARCH CLEAR BUTTON
+// ========================================
+(function() {
+  console.log('🔍 Search clear button initializer started');
+  
+  function addSearchClearButton() {
+    const searchInputs = document.querySelectorAll('.entitylist-search .query.form-control, .toolbar-actions .query.form-control');
+    
+    searchInputs.forEach(function(input) {
+      // Skip if already initialized
+      if (input.dataset.clearButtonAdded === 'true') return;
+      
+      // Create clear button
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'search-clear-btn';
+      clearBtn.innerHTML = '<span class="fa fa-times-circle" aria-hidden="true"></span>';
+      clearBtn.title = 'Clear search';
+      clearBtn.setAttribute('aria-label', 'Clear search');
+      clearBtn.style.display = 'none';
+      
+      // Position parent
+      input.parentElement.style.position = 'relative';
+      input.parentElement.appendChild(clearBtn);
+      
+      // Mark as initialized
+      input.dataset.clearButtonAdded = 'true';
+      
+      // Toggle visibility
+      function toggleClearButton() {
+        if (input.value.trim() !== '') {
+          clearBtn.style.display = 'block';
+          console.log('✅ Clear button shown');
+        } else {
+          clearBtn.style.display = 'none';
+        }
+      }
+      
+      // Clear search and reload page
+      clearBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log('🗑️ Clear button clicked');
+        
+        // Clear the input
+        input.value = '';
+        
+        // Remove query string parameters and reload
+        const url = new URL(window.location.href);
+        
+        // Remove search-related parameters
+        url.searchParams.delete('query');
+        url.searchParams.delete('search');
+        url.searchParams.delete('filter');
+        
+        // Also remove any filter parameters that might exist
+        const keysToDelete = [];
+        for (const [key, value] of url.searchParams.entries()) {
+          if (key.startsWith('filter-') || key.startsWith('search-')) {
+            keysToDelete.push(key);
+          }
+        }
+        keysToDelete.forEach(key => url.searchParams.delete(key));
+        
+        console.log('🔄 Reloading page without search parameters');
+        console.log('📍 New URL:', url.toString());
+        
+        // Reload page with clean URL
+        window.location.href = url.toString();
+      });
+      
+      // Event listeners
+      input.addEventListener('input', toggleClearButton);
+      input.addEventListener('change', toggleClearButton);
+      
+      // Initial check
+      toggleClearButton();
+      
+      console.log('✅ Clear button added to search input');
+    });
+  }
+  
+  // Run on load
+  document.addEventListener('DOMContentLoaded', addSearchClearButton);
+  
+  // Run after delays for dynamic content
+  setTimeout(addSearchClearButton, 500);
+  setTimeout(addSearchClearButton, 1000);
+  setTimeout(addSearchClearButton, 2000);
+  
+  // Watch for new search inputs
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.addedNodes.length > 0) {
+        setTimeout(addSearchClearButton, 100);
+      }
+    });
+  });
+  
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+  
+  console.log('✅ Search clear button watcher active');
+})();
+
+// ========================================
+// FILTER CLEAR BUTTON
+// ========================================
+(function() {
+  console.log('🔧 Filter clear button initializer started');
+  
+  function addFilterClearButton() {
+    // Find all Apply buttons in filter panels
+    const applyButtons = document.querySelectorAll('.btn-entitylist-filter-submit');
+    
+    applyButtons.forEach(function(applyBtn) {
+      // Skip if clear button already exists
+      if (applyBtn.parentElement.querySelector('.btn-entitylist-filter-clear')) {
+        return;
+      }
+      
+      // Create Clear button
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'btn btn-default btn-entitylist-filter-clear';
+      clearBtn.textContent = 'Clear Filters';
+      
+      // Insert AFTER Apply button (not before)
+      applyBtn.parentElement.appendChild(clearBtn);
+      
+      console.log('✅ Clear Filters button added');
+      
+      // Clear button click handler
+      clearBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log('🗑️ Clear Filters clicked');
+        
+        // Find the filter panel
+        const filterPanel = clearBtn.closest('.entitylist-filter');
+        
+        if (filterPanel) {
+          // Clear all text inputs
+          const textInputs = filterPanel.querySelectorAll('input[type="text"]');
+          textInputs.forEach(function(input) {
+            input.value = '';
+            console.log('✅ Cleared text input:', input.name);
+          });
+          
+          // Uncheck all checkboxes
+          const checkboxes = filterPanel.querySelectorAll('input[type="checkbox"]');
+          checkboxes.forEach(function(checkbox) {
+            checkbox.checked = false;
+            console.log('✅ Unchecked:', checkbox.name);
+          });
+          
+          // Reset all dropdowns
+          const dropdowns = filterPanel.querySelectorAll('select.form-select, select.form-control');
+          dropdowns.forEach(function(select) {
+            select.selectedIndex = 0; // Select first (empty) option
+            console.log('✅ Reset dropdown:', select.name);
+          });
+        }
+        
+        // Remove filter parameters from URL and reload
+        const url = new URL(window.location.href);
+        
+        // Remove all filter-related parameters
+        const keysToDelete = [];
+        for (const [key, value] of url.searchParams.entries()) {
+          if (key.startsWith('filter-') || 
+              key === 'filter' || 
+              !isNaN(key)) { // Numeric keys are filter IDs
+            keysToDelete.push(key);
+          }
+        }
+        
+        keysToDelete.forEach(key => url.searchParams.delete(key));
+        
+        console.log('🔄 Reloading without filter parameters');
+        console.log('📍 New URL:', url.toString());
+        
+        // Reload page
+        window.location.href = url.toString();
+      });
+    });
+  }
+  
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', addFilterClearButton);
+  
+  // Run after delays for dynamic content
+  setTimeout(addFilterClearButton, 500);
+  setTimeout(addFilterClearButton, 1000);
+  setTimeout(addFilterClearButton, 2000);
+  
+  // Watch for new filter panels
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.addedNodes.length > 0) {
+        setTimeout(addFilterClearButton, 100);
+      }
+    });
+  });
+  
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+  
+  console.log('✅ Filter clear button watcher active');
+})();
+
+
 
 </script>
