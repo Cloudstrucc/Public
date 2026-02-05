@@ -40,9 +40,9 @@ THEME_PATH="${BASE_PATH}theme.css"
 CUSTOMCSS_PATH="${BASE_PATH}custom-styles.css"
 BOOTSTRAP_PATH="${BASE_PATH}bootstrap.min.css"
 FAVICON_PATH="${BASE_PATH}favicon.ico"
-ZIP_FILE_PATH="${BASE_PATH}themes-dist-15.2.0-gcweb.zip"
+ZIP_FILE_PATH="${BASE_PATH}themes-dist-18.1.1-gcweb.zip"
 EXTRACTION_PATH="${BASE_PATH}"
-THEME_ROOT_FOLDER_NAME="themes-dist-15.2.0-gcweb"
+THEME_ROOT_FOLDER_NAME="themes-dist-18.1.1-gcweb"
 PAGE_TEMPLATE_NAME_NEW_HOME="CS-Home-WET"
 WEB_TEMPLATE_HEADER="CS-header"
 WEB_TEMPLATE_FOOTER="CS-footer"
@@ -884,13 +884,13 @@ run_portal_template_install() {
 # STEP 1: EXTRACT GCWEB FILES
 #####################################
     echo "Extracting theme files..."
-    # unzip -o "$ZIP_FILE_PATH" -d "$EXTRACTION_PATH"
+    unzip -o "$ZIP_FILE_PATH" -d "$EXTRACTION_PATH"
 
 #####################################
 # STEP 2: CREATE SNIPPETS
 #####################################
     echo "Creating snippets..."
-    # create_snippets
+    create_snippets
 
 #####################################
 # STEP 3: CREATE TEMPLATES
@@ -911,7 +911,7 @@ run_portal_template_install() {
     >&2 echo "DEBUG: HOME_PAGE_ID before write_hierarchy: $HOME_PAGE_ID"
     >&2 echo "DEBUG: Calling write_hierarchy with path: ${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}"
     
-    # write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
+    write_hierarchy "${EXTRACTION_PATH}${THEME_ROOT_FOLDER_NAME}" "$HOME_PAGE_ID"
 
 #####################################
 # STEP 6: UPSERT THE BASELINE STYLES REQUIRED BY POWER PAGES

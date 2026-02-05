@@ -5,9 +5,10 @@
 - [ ] Azure DevOps Organization Administrator access confirmed
 - [ ] Microsoft Entra ID Global Administrator or Privileged Role Administrator access
 - [ ] Azure subscription with Contributor access
-- [ ] Coordination confirmed with Leonardo Italy IT team
-- [ ] Coordination confirmed with Leonardo UK IT team
+- [ ] Coordination confirmed with Leonardo Italy IT team (if applicable)
+- [ ] Coordination confirmed with Leonardo UK IT team (if applicable)
 - [ ] Current configuration backup completed
+- [ ] 
 
 ## A.2 Zero Trust Identity Configuration
 
